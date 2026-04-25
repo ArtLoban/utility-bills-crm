@@ -5,7 +5,7 @@ import { useTheme } from "next-themes";
 
 import { Button } from "@/components/ui/button";
 
-export function ThemeToggle() {
+export const ThemeToggle = () => {
   const { resolvedTheme, setTheme } = useTheme();
 
   return (
@@ -19,4 +19,4 @@ export function ThemeToggle() {
       <Moon className="absolute size-4 scale-0 rotate-90 transition-transform dark:scale-100 dark:rotate-0" />
     </Button>
   );
-}
+};

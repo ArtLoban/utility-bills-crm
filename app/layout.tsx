@@ -18,11 +18,7 @@ export const metadata: Metadata = {
   description: "Personal utility bills tracker",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html
       lang="en"
