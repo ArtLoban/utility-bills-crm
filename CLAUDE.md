@@ -38,12 +38,28 @@ Speed is explicitly less important than understanding.
    OAuth registration, Vercel/Neon/Sentry account work is done by the author
    manually.
 
+## Session model
+
+The project is built in **planned iterations** (a scaffolding document exists in Claude chat).
+Each Claude Code session = one iteration with a concrete, hands-checkable result.
+
+- **One session = one deliverable.** If a task requires touching too many concerns to fit in
+  one focused session, split it *before* starting — not mid-flight.
+- **"Too much in one answer" is a stop signal.** If a response creates more than ~3 files or
+  feels like too large a step, say "stop — break this down and restart." That is not slowdown;
+  that is the point of the project.
+- **Commit = checkpoint of understanding.** Never commit code you cannot explain. Before
+  `git commit`, do a mental walk-through of every file in the changeset. If anything is
+  unclear — ask first, then commit.
+
 ## Project context
 
 Authoritative documents:
-- `README.md` — project overview, stack, architecture decisions, decision log
-- `/doc/UI_ARCHITECTURE.md` — UI structure, routes, design system
-- `/doc/MVP_definition.md` — product scope
+- `README.md` — project overview, stack, current phase status
+- `db/DATA_MODEL.md` — full database schema with rationale
+- `db/SCHEMA_REFERENCE.md` — quick schema lookup
+- `docs/UI_ARCHITECTURE.md` — UI structure, routes, design system
+- `docs/MVP_definition.md` — product scope
 
 ## Stack (summary — see README.living.md for rationale)
 

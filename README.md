@@ -12,9 +12,10 @@ Built primarily as a senior/architect-level growth playground in frontend engine
 
 ## Status
 
-Phase 4 complete — architecture and stack finalized.
-Phase 5 in progress — data model design.
-No code yet.
+- Phase 4 complete — architecture and stack finalized.
+- Phase 5 complete — data model designed. See `db/DATA_MODEL.md` and `db/SCHEMA_REFERENCE.md`.
+- Phase 6 complete — UI architecture designed. See `docs/UI_ARCHITECTURE.md`.
+- Phase 7 in progress — build MVP. Next.js scaffold initialized; no production code yet.
 
 ## MVP Scope
 
