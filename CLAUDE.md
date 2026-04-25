@@ -73,3 +73,7 @@ Package manager: npm. OS: macOS.
 
 Code, identifiers, technical terms: English.
 Explanations: English by default, Russian if the author switches to Russian.
+
+## Imports
+
+@.claude/rules/git-operations.md
