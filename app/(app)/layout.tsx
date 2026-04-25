@@ -1,4 +1,6 @@
-export default function AppLayout({ children }: { children: React.ReactNode }) {
+import type { ReactNode } from "react";
+
+export default function AppLayout({ children }: { children: ReactNode }) {
   return (
     <div className="flex min-h-full flex-col">
       <header className="border-b border-zinc-200 px-6 py-4 dark:border-zinc-800">
