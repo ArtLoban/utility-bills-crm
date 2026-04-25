@@ -27,12 +27,12 @@
 
 The application has **four distinct surfaces** organized as Next.js App Router route groups:
 
-| Group | URL prefix | Access | Visual identity |
-|-------|-----------|--------|-----------------|
-| `(public)` | `/`, `/about`, `/project` | Anonymous + authenticated | Public landing, SEO-friendly |
-| `(auth)` | `/auth/*` | Anonymous | Fullscreen centered card |
-| `(app)` | `/dashboard`, `/properties`, `/bills`, etc. | Authenticated users | Standard app with top bar |
-| `(admin)` | `/art-admin/*` | Admin users only (`systemRole === 'admin'`) | Amber accent + "Admin" badge |
+| Group      | URL prefix                                  | Access                                      | Visual identity              |
+| ---------- | ------------------------------------------- | ------------------------------------------- | ---------------------------- |
+| `(public)` | `/`, `/about`, `/project`                   | Anonymous + authenticated                   | Public landing, SEO-friendly |
+| `(auth)`   | `/auth/*`                                   | Anonymous                                   | Fullscreen centered card     |
+| `(app)`    | `/dashboard`, `/properties`, `/bills`, etc. | Authenticated users                         | Standard app with top bar    |
+| `(admin)`  | `/art-admin/*`                              | Admin users only (`systemRole === 'admin'`) | Amber accent + "Admin" badge |
 
 The admin URL prefix `/art-admin` is deliberately non-standard (not `/admin`) as a light security-through-obscurity measure. Real protection is via middleware + layout check against `systemRole`.
 
@@ -61,14 +61,14 @@ lucide-react, semantic choices per context (e.g., `Zap` for electricity, `Drople
 
 ### Service type icons
 
-| Service | Icon |
-|---------|------|
-| Electricity | `Zap` |
-| Gas | `Flame` |
-| Cold water, Hot water | `Droplets` |
-| Heating | `Flame` or `Thermometer` |
-| Internet | `Wifi` |
-| Other fixed services | Contextual |
+| Service               | Icon                     |
+| --------------------- | ------------------------ |
+| Electricity           | `Zap`                    |
+| Gas                   | `Flame`                  |
+| Cold water, Hot water | `Droplets`               |
+| Heating               | `Flame` or `Thermometer` |
+| Internet              | `Wifi`                   |
+| Other fixed services  | Contextual               |
 
 ---
 
@@ -207,6 +207,7 @@ All entity creation/editing uses modals, not dedicated pages. Used for:
 - Confirmation modals (delete, leave, role change)
 
 **Structure:**
+
 - Header: title + close X
 - Body: form content
 - Footer: Cancel (left, `variant="outline"`) + Primary action (right, `variant="default"`)
@@ -219,6 +220,7 @@ All entity creation/editing uses modals, not dedicated pages. Used for:
 Used for: Bills list, Payments list, Admin properties, Admin users, etc.
 
 **Structure:**
+
 - Page header with title + count + primary action
 - Filter bar: horizontal row of `<Select>` dropdowns + Clear filters link
 - Table (TanStack Table + shadcn `<Table>` primitives)
@@ -237,12 +239,14 @@ Used for: Bills list, Payments list, Admin properties, Admin users, etc.
 Two categories with different CTAs:
 
 **First-time empty** ("nothing yet"):
+
 - Icon (64px, muted)
 - h3 "No X yet"
 - Muted paragraph
 - Primary CTA to create
 
 **Filtered empty** ("no matches"):
+
 - Different icon (filter/search-off)
 - h3 "No X match your filters"
 - Muted paragraph
@@ -273,9 +277,10 @@ Three levels:
 3. **Client action:** button shows spinner + "Submitting..." label
 
 **Loading feedback duration policy:**
+
 - <200ms: no skeleton (prevents flicker)
 - 200ms–1s: skeleton with default styling
-- >1s: skeleton + subtle pulse animation
+- > 1s: skeleton + subtle pulse animation
 
 Implemented via CSS `animation-delay: 200ms` on skeletons.
 
@@ -315,6 +320,7 @@ Implemented via CSS `animation-delay: 200ms` on skeletons.
 **Purpose:** answer "Do I need to act?" → "What's my state?" → "How are trends?"
 
 **Composition:**
+
 1. **Attention block** (conditional) — amber-accented card with actionable alerts
 2. **Balance summary** — total debt/overpayment + breakdown by property
 3. **Charts section:**
@@ -340,6 +346,7 @@ Implemented via CSS `animation-delay: 200ms` on skeletons.
 **Pattern:** card grid (1/2/3 columns responsive).
 
 **Card contents:**
+
 - Type icon + name
 - Address
 - Service count
@@ -356,11 +363,13 @@ Implemented via CSS `animation-delay: 200ms` on skeletons.
 **Tabs:** Overview (default) | Meters (if metered services) | Sharing
 
 **Page header:**
+
 - Title (property name) + subtitle (address · N services · Created date)
 - Actions: [Edit] [Share] [⋮]
 - Actions hidden/disabled for viewers
 
 **Overview tab:**
+
 - Services list, one row per service
 - Each row: icon + name + provider + last reading date + balance
 - Row clickable → service detail
@@ -373,6 +382,7 @@ Implemented via CSS `animation-delay: 200ms` on skeletons.
 **Pattern:** hybrid (single page with sections + drawers for history).
 
 **Blocks:**
+
 1. **Balance** — large number, breakdown, [View bills] [View payments]
 2. **Current contract** — provider, since, account, tariff, payment details + [Update contract] [View history]
 3. **Meter** (if metered) — serial, zones, last reading + [View meter] [Submit reading]
@@ -380,6 +390,7 @@ Implemented via CSS `animation-delay: 200ms` on skeletons.
 5. **Notes**
 
 **Quick actions at bottom:**
+
 - Metered: [Submit reading] (primary) + [Add bill] + [Record payment]
 - Fixed: [Add bill] (primary) + [Record payment]
 
@@ -392,6 +403,7 @@ Implemented via CSS `animation-delay: 200ms` on skeletons.
 **Pattern:** wizard-style form with sections.
 
 **Sections:**
+
 1. Service type (card grid, metered/fixed determined automatically)
 2. Initial contract (provider, start date, account number, payment details)
 3. Initial tariff (rates for metered, fixed amount for fixed services)
@@ -402,10 +414,12 @@ Implemented via CSS `animation-delay: 200ms` on skeletons.
 ### Meters list (`/properties/[id]/meters`)
 
 **Sections:**
+
 - **Active meters** (cards, always shown)
 - **Historical meters** (collapsible section, hidden by default)
 
 **Card contents:**
+
 - Service icon + type + serial number
 - Zones + installed date
 - Last reading or "No readings yet"
@@ -416,11 +430,13 @@ Implemented via CSS `animation-delay: 200ms` on skeletons.
 **Pattern:** single column scrolling (not split view).
 
 **Sections top to bottom:**
+
 1. Metadata (serial, zones, installed, notes)
 2. Readings table with [+ Submit reading] button
 3. Consumption chart (line chart of raw reading values; consumption per month is v2+)
 
 **Readings table:**
+
 - Columns: Date | Value (T1, T2, T3 if applicable) | Edit icon
 - Click edit icon → Submit reading modal in edit mode
 - Adaptive columns based on zone count
@@ -432,6 +448,7 @@ Implemented via CSS `animation-delay: 200ms` on skeletons.
 Opens from: Meter detail (primary action), Service detail (quick action), Dashboard attention block.
 
 **Fields:**
+
 - Reading date (default: today)
 - Value(s) per zone with "Last reading was X on date" hint
 - Notes (optional)
@@ -461,6 +478,7 @@ Modal. Fields: service type (filtered to services without active meter), serial,
 **Mobile:** card list with same info. Filters in bottom sheet.
 
 **Empty states:**
+
 - No bills at all: "Record your first bill" + CTA
 - Filtered empty: "No bills match" + [Clear filters]
 
@@ -469,6 +487,7 @@ Modal. Fields: service type (filtered to services without active meter), serial,
 Opens from: /bills, Service detail, quick actions.
 
 **Fields:**
+
 - Property (preselected if opened from service detail)
 - Service (filtered by selected property)
 - Month (dropdown with recent months + Custom option)
@@ -480,6 +499,7 @@ Opens from: /bills, Service detail, quick actions.
 ### Payments list (`/payments`)
 
 Structural copy of `/bills`. Differences:
+
 - No "Period" column (payments are events, not ranges)
 - Amount color: `text-green-600` (payments are income)
 - Footer: "Total paid (filtered)"
@@ -487,6 +507,7 @@ Structural copy of `/bills`. Differences:
 ### Record payment modal
 
 Similar to Add bill but:
+
 - Payment date (not month)
 - "Current debt for this service: X UAH" hint (instead of expected amount)
 - Amount validation: > 0
@@ -496,6 +517,7 @@ Similar to Add bill but:
 **Access:** via Property detail tab or `/properties/[id]/sharing`.
 
 **Content:**
+
 - List of users with access (cards)
   - Each card: avatar, name, email, role badge (dropdown for owners), metadata (joined/added by)
   - "You" indicator for current user
@@ -503,6 +525,7 @@ Similar to Add bill but:
 - [+ Invite person] button below list
 
 **Invite modal:**
+
 - Email input
 - Role radio (Viewer / Editor / Owner)
 - Note: person must have an account
@@ -594,6 +617,7 @@ Visual language: "Variant B" — shared design system with CRM, but more visual 
 ### `/` — CRM showcase
 
 **Sections:**
+
 1. **Hero** — title + 2-paragraph description, no CTA
 2. **Screenshot showcase** — large Dashboard mockup with browser frame + caption
 3. **Feature highlights** — 2×2 grid of 4 feature cards
@@ -606,6 +630,7 @@ Visual language: "Variant B" — shared design system with CRM, but more visual 
 Three sections. Minimal content.
 
 **Decisions:**
+
 - Name: "Art" only (no surname)
 - No level self-labeling (not "middle" or "senior")
 - No full-stack mention (positioned as pure frontend)
@@ -614,6 +639,7 @@ Three sections. Minimal content.
 - Single contact path: LinkedIn (via "See more" section)
 
 **Sections:**
+
 1. **Hero** — "Hi, I'm Art." + role + location/format
 2. **What I work with** — React, TypeScript, Next.js + domain specialty
 3. **See more** — links to LinkedIn, GitHub, `/project`
@@ -621,6 +647,7 @@ Three sections. Minimal content.
 ### `/project` — technical deep-dive
 
 **Sections:**
+
 1. **Hero** — title, description, [View on GitHub →] CTA
 2. **Stack at a glance** — two columns (Frontend / Backend), clickable items. Infrastructure intentionally omitted (status metadata, not core stack)
 3. **Architecture highlights** — 6 cards (Next.js full-stack / PostgreSQL temporal / Drizzle / Auth.js / Ledger / Multi-tenant)
@@ -637,6 +664,7 @@ Three sections. Minimal content.
 Fullscreen centered card.
 
 **Contents:**
+
 - Logo + app name
 - Title + subtitle
 - [Continue with Google] primary CTA
@@ -675,6 +703,7 @@ Allow HR / recruiters / potential collaborators to view the live CRM without cre
 ### Access
 
 Three entry points:
+
 - [Try demo →] CTA on `/` landing
 - [Try demo →] CTA on `/auth/login`
 - [View live demo →] CTA on `/project`
@@ -816,28 +845,33 @@ Documented here so they're not lost for future phases.
 ### Claude Design visualized
 
 **Iteration 1 (complete):**
+
 - Dashboard — full data state, empty state, dark mode
 - Properties list — full and empty states
 - Property detail — Overview tab with services, empty state
 - Accent color chosen: Violet
 
 **Iteration 1.1 refinements (applied):**
+
 - Card shadows in light mode / borders in dark mode
 - Pie chart resized to 40-45% with compact legend
 - Stacked bar chart with rich tooltip + clickable legend
 
 **Iteration 2 (partial):**
+
 - Submit Reading modal (single-zone)
 - Submit Reading modal (two-zone)
 - Bills list with data (156 records)
 
 **Iteration 3 (complete):**
+
 - Service detail — metered electricity with full layout: balance, current contract (two-zone tariff), meter card, recent activity, notes, quick actions
 - Update contract modal — "what's changing" radio selector with "Tariff changed" expanded form
 - Contract history drawer — timeline of contract eras with nested tariff periods
 - Light and dark mode for the main view
 
 **Iteration 4 (complete):**
+
 - Sharing tab — owner's view with three users (owner, editor, viewer)
 - Sharing tab — editor's view (role matrix demonstrated via paired comparison)
 - Invite modal — email + role radio (Viewer / Editor / Owner)
@@ -846,6 +880,7 @@ Documented here so they're not lost for future phases.
 - Light mode only
 
 **Iteration 5 (complete):**
+
 - Login — Google OAuth, Remember me, Try demo, Back to home
 - Auth error — "Sign-in didn't complete" variant (access_denied scenario)
 - Both screens in light and dark mode

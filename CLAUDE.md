@@ -44,7 +44,7 @@ The project is built in **planned iterations** (a scaffolding document exists in
 Each Claude Code session = one iteration with a concrete, hands-checkable result.
 
 - **One session = one deliverable.** If a task requires touching too many concerns to fit in
-  one focused session, split it *before* starting — not mid-flight.
+  one focused session, split it _before_ starting — not mid-flight.
 - **"Too much in one answer" is a stop signal.** If a response creates more than ~3 files or
   feels like too large a step, say "stop — break this down and restart." That is not slowdown;
   that is the point of the project.
@@ -55,6 +55,7 @@ Each Claude Code session = one iteration with a concrete, hands-checkable result
 ## Project context
 
 Authoritative documents:
+
 - `README.md` — project overview, stack, current phase status
 - `db/DATA_MODEL.md` — full database schema with rationale
 - `db/SCHEMA_REFERENCE.md` — quick schema lookup
@@ -64,8 +65,9 @@ Authoritative documents:
 ## Stack (summary — see README.living.md for rationale)
 
 Next.js App Router + TypeScript (strict) + PostgreSQL (Neon) + Drizzle ORM
-+ Auth.js v5 + shadcn/ui + Tailwind v4 + next-intl + next-themes
-+ Vitest + ESLint Flat Config + Prettier + Husky.
+
+- Auth.js v5 + shadcn/ui + Tailwind v4 + next-intl + next-themes
+- Vitest + ESLint Flat Config + Prettier + Husky.
 
 Package manager: npm. OS: macOS.
 

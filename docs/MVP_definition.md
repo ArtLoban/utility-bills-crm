@@ -33,6 +33,7 @@ The full record of the pivot is in `README.living.md` → Decision Log, under "S
 **"A project that demonstrates senior/architect-level frontend engineering and is fully functional end-to-end, with real users in active use."**
 
 This criterion unifies the three goals. A piece of work is in MVP if and only if it serves at least one of:
+
 - A senior-level engineering practice that the author is internalizing.
 - A portfolio signal that communicates skill to an informed reviewer.
 - A capability that an actual user needs to use the system for its stated purpose.
@@ -64,6 +65,7 @@ The system is **multi-user from day one**. Any user can sign up with a Google ac
 - `propertyAccess.propertyRole`: `'owner' | 'editor' | 'viewer'` — per-property role granted to a user.
 
 **Rules:**
+
 - A property can have multiple users with any combination of roles (multi-owner supported for family scenarios).
 - Only owners can invite users or change roles.
 - Owners can remove editors and viewers, but cannot remove other owners (soft protection for family setups).
@@ -99,14 +101,16 @@ Each property has its own set of connected services, chosen from a catalog. The 
 
 **Service type catalog (MVP, 11 entries):**
 
-*Metered:*
+_Metered:_
+
 - Electricity
 - Gas
 - Cold water
 - Hot water
 - Gas delivery (treated as a distinct service type; currently fixed-amount in Ukraine, may transition to metered later)
 
-*Fixed:*
+_Fixed:_
+
 - Heating (central, without a meter)
 - Building maintenance
 - Garbage collection
@@ -182,17 +186,20 @@ The main screen after sign-in. Its purpose is to answer three questions in order
 **Composition (top to bottom):**
 
 **Attention block** (conditional, amber accent):
+
 - Reading submission deadline approaching.
 - Outstanding debt.
 - Payment deadline approaching.
 
-*In MVP these alerts live on the dashboard only. Telegram/email reminders are post-MVP.*
+_In MVP these alerts live on the dashboard only. Telegram/email reminders are post-MVP._
 
 **Balance summary:**
+
 - Total debt across all properties.
 - Breakdown by property.
 
 **Charts section:**
+
 - URL-synced filters (Period / Property / Service).
 - **Pie chart** — expense structure by service for the selected period.
 - **Stacked bar chart** — monthly expenses stacked by service, with rich tooltip and clickable legend for series isolation.
@@ -319,6 +326,7 @@ A `notes` field is available on all key entities: Property, Service, Contract, M
 ### 3.25. Accessibility
 
 Baseline level:
+
 - Semantic HTML throughout.
 - Keyboard navigation works.
 - ARIA attributes where needed.
@@ -446,7 +454,7 @@ Type safety, readability, separation of concerns, explicit types, no magic. If s
 
 ## 7. Core entities (conceptual)
 
-*This is a conceptual list. The detailed schema lives in `README.living.md` and the Drizzle schema itself.*
+_This is a conceptual list. The detailed schema lives in `README.living.md` and the Drizzle schema itself._
 
 - **User** — system user with a `systemRole`.
 - **Property** — a unit being tracked (apartment, house, cottage).
@@ -473,6 +481,7 @@ All entities carry `notes` (where relevant), `createdAt`, `updatedAt`, and `dele
 These do not require answers now; they are recorded so they are not lost.
 
 **Phase 7 (build MVP):**
+
 - Test database strategy for the first real tests (in-memory substitute vs. a dedicated Neon/local branch).
 - Translation workflow: author, wife, AI-assisted — and who reviews.
 - Error code catalog structure in `i18n` files.
@@ -481,11 +490,13 @@ These do not require answers now; they are recorded so they are not lost.
 - Demo account seed: one-time deployment pipeline, idempotent re-seed procedure.
 
 **Data model refinements:**
+
 - Exact exclusion constraint SQL for all temporal entities using `btree_gist`.
 - Indexing strategy for the most common dashboard queries (balance aggregation, monthly rollups).
 - Cache strategy for landing visibility flags.
 
 **Deferred to v2+:**
+
 - `gas_delivery` transition to metered: when legislation changes, execute a manual admin migration.
 - `payment_details` potentially needing structured fields (IBAN, bank, recipient) for QR/integration use cases.
 - Landing multi-language support.

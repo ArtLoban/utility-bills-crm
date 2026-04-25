@@ -19,25 +19,25 @@
 
 ## Tables at a glance
 
-| Block | Table | Purpose |
-|-------|-------|---------|
-| 1 | `users` | Application users |
-| 1 | `accounts` | OAuth provider accounts (Auth.js) |
-| 1 | `sessions` | Active user sessions (Auth.js + custom policy) |
-| 1 | `verification_tokens` | Auth.js (unused in MVP) |
-| 2 | `properties` | Real estate objects |
-| 2 | `property_access` | User ↔ Property with role |
-| 3 | `service_types` | Fixed catalog of utility types |
-| 3 | `services` | Service instances on properties |
-| 4 | `providers` | User-owned provider directory |
-| 4 | `contracts` | Agreement with provider (temporal) |
-| 4 | `tariffs` | Rates within contract (temporal) |
-| 4 | `account_numbers` | Account refs within contract (temporal) |
-| 4 | `payment_details` | Payment info within contract (temporal) |
-| 5 | `meters` | Physical meters on property (temporal) |
-| 5 | `readings` | Meter readings |
-| 6 | `bills` | Charges for a period |
-| 6 | `payments` | Payments (ledger) |
+| Block | Table                 | Purpose                                        |
+| ----- | --------------------- | ---------------------------------------------- |
+| 1     | `users`               | Application users                              |
+| 1     | `accounts`            | OAuth provider accounts (Auth.js)              |
+| 1     | `sessions`            | Active user sessions (Auth.js + custom policy) |
+| 1     | `verification_tokens` | Auth.js (unused in MVP)                        |
+| 2     | `properties`          | Real estate objects                            |
+| 2     | `property_access`     | User ↔ Property with role                      |
+| 3     | `service_types`       | Fixed catalog of utility types                 |
+| 3     | `services`            | Service instances on properties                |
+| 4     | `providers`           | User-owned provider directory                  |
+| 4     | `contracts`           | Agreement with provider (temporal)             |
+| 4     | `tariffs`             | Rates within contract (temporal)               |
+| 4     | `account_numbers`     | Account refs within contract (temporal)        |
+| 4     | `payment_details`     | Payment info within contract (temporal)        |
+| 5     | `meters`              | Physical meters on property (temporal)         |
+| 5     | `readings`            | Meter readings                                 |
+| 6     | `bills`               | Charges for a period                           |
+| 6     | `payments`            | Payments (ledger)                              |
 
 ---
 
@@ -101,6 +101,7 @@ absoluteExpires    timestamptz?                       -- extension
 **Indexes:** index `userId`, index `expires`.
 
 **Policy:**
+
 - Without rememberMe: `expires = now + 1h`, sliding.
 - With rememberMe: `expires = min(now + 7d, absoluteExpires)`, `absoluteExpires = loginTime + 30d`.
 
@@ -154,6 +155,7 @@ deletedAt       timestamptz?
 ```
 
 **Indexes:**
+
 - UNIQUE partial `(propertyId, userId) WHERE deletedAt IS NULL`
 - index `userId`, `propertyId`, `deletedAt`
 
@@ -178,6 +180,7 @@ updatedAt           timestamptz NOT NULL DEFAULT now()
 ```
 
 **Checks:**
+
 - `(measurementType = 'metered') = (unit IS NOT NULL)`
 
 **No `deletedAt`.** Retirement via `isActive = false`.
@@ -199,6 +202,7 @@ deletedAt        timestamptz?
 ```
 
 **Indexes:**
+
 - UNIQUE partial `(propertyId, serviceTypeId) WHERE deletedAt IS NULL`
 - index `propertyId`, `deletedAt`
 
@@ -243,6 +247,7 @@ deletedAt      timestamptz?
 **Indexes:** `(serviceId, validFrom)`, `providerId`, `deletedAt`.
 
 **Exclusion constraint:**
+
 ```sql
 EXCLUDE USING gist (
   service_id WITH =,
@@ -270,6 +275,7 @@ deletedAt      timestamptz?
 ```
 
 **Checks:**
+
 - `(rateT1 IS NOT NULL AND fixedAmount IS NULL) OR (rateT1 IS NULL AND rateT2 IS NULL AND rateT3 IS NULL AND fixedAmount IS NOT NULL)`
 - rates > 0, fixedAmount >= 0
 
@@ -336,10 +342,12 @@ deletedAt        timestamptz?
 ```
 
 **Checks:**
+
 - `zoneCount IN (1, 2, 3)`
 - `removedAt > installedAt` when both present
 
 **Exclusion constraint:**
+
 ```sql
 EXCLUDE USING gist (
   property_id WITH =,
@@ -395,6 +403,7 @@ deletedAt      timestamptz?
 ```
 
 **Checks:**
+
 - `amount >= 0`
 - `periodEnd >= periodStart`
 - `periodMonth` is first of month

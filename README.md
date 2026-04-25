@@ -22,6 +22,7 @@ Built primarily as a senior/architect-level growth playground in frontend engine
 MVP is defined as a **minimum viable portfolio piece** — a project that demonstrates senior-level frontend skills and is fully functional end-to-end.
 
 **In scope for v1 (MVP):**
+
 - Public landing page (SEO-friendly, doubles as portfolio)
 - Authenticated CRM: properties, services, meter readings, bills, payments, ledger balance, dashboard with charts
 - Multi-user sharing with roles (owner / editor / viewer)
@@ -77,20 +78,24 @@ Required environment variables:
 ## Roadmap
 
 ### v1 (MVP)
+
 Public landing, authenticated CRM, sharing, admin with CMS, i18n, theming.
 
 ### v2 — Extensions
+
 - Email/password authentication alongside Google
 - Google Drive integration for bill photos and receipts
 - Telegram notifications for deadlines and debts
 
 ### v3 — Convenience and analytics
+
 - Custom user-defined services
 - Data export (CSV / Excel / PDF)
 - Full-text search
 - Device-level session management
 
 ### v4+ — Automation
+
 - Email bill parsing
 - OCR for scanned bills
 - Integrations with provider APIs
