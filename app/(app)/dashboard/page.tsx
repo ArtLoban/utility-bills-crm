@@ -1,29 +1,28 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { redirect } from "next/navigation";
+import { auth, signOut } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { ThemeToggle } from "@/components/theme-toggle";
 
-export default function DashboardPage() {
+const handleSignOut = async () => {
+  "use server";
+  await signOut({ redirectTo: "/login" });
+};
+
+export default async function DashboardPage() {
+  const session = await auth();
+
+  if (!session) redirect("/login");
+
   return (
-    <div className="flex flex-1 flex-col items-center justify-center gap-6 p-8">
-      <Card className="w-full max-w-sm">
-        <CardHeader>
-          <CardTitle>Dashboard</CardTitle>
-          <CardDescription>Design system smoke test</CardDescription>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-4">
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="meter-reading">Meter reading</Label>
-            <Input id="meter-reading" type="number" placeholder="0.00" />
-          </div>
-          <div className="flex items-center gap-3">
-            <Button>Save reading</Button>
-            <Button variant="outline">Cancel</Button>
-            <ThemeToggle />
-          </div>
-        </CardContent>
-      </Card>
+    <div className="flex flex-1 flex-col items-center justify-center gap-4 p-8">
+      <p className="text-sm text-zinc-500 dark:text-zinc-400">
+        Signed in as{" "}
+        <span className="font-medium text-zinc-900 dark:text-zinc-50">{session.user.email}</span>
+      </p>
+      <form action={handleSignOut}>
+        <Button type="submit" variant="outline">
+          Sign out
+        </Button>
+      </form>
     </div>
   );
 }
