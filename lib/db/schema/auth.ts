@@ -1,9 +1,9 @@
 import { sql } from "drizzle-orm";
 import {
-  bigint,
   boolean,
   check,
   index,
+  integer,
   pgTable,
   primaryKey,
   text,
@@ -70,8 +70,7 @@ export const accounts = pgTable(
     providerAccountId: text("provider_account_id").notNull(),
     refresh_token: text("refresh_token"),
     access_token: text("access_token"),
-    // Unix epoch seconds. bigint avoids int overflow past 2038.
-    expires_at: bigint("expires_at", { mode: "number" }),
+    expires_at: integer("expires_at"),
     token_type: text("token_type"),
     scope: text("scope"),
     id_token: text("id_token"),

@@ -15,6 +15,13 @@
       "when": 1777209170327,
       "tag": "0001_conscious_cerebro",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1777212133418,
+      "tag": "0002_mute_blonde_phantom",
+      "breakpoints": true
     }
   ]
 }

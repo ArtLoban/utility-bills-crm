@@ -39,7 +39,7 @@ These apply uniformly across all 14 tables in the schema. They were decided duri
 - Drizzle table variable: same plural form as DB table name — `pgTable('properties')` assigned to `properties`.
 - Columns: `camelCase` in TypeScript, mapped to `snake_case` in the DB via Drizzle's column constructor second argument.
 - Domain types: singular — `type Property = typeof properties.$inferSelect`.
-- Auth.js OAuth token fields are an exception from camelCase only in the DB layer (`refresh_token`, `access_token`); TS layer still uses `refreshToken`, `accessToken`.
+- Auth.js OAuth token fields (`refresh_token`, `access_token`, `expires_at`, `token_type`, `id_token`, `session_state`) use snake_case in **both** the DB and the TypeScript/Drizzle layers. `@auth/drizzle-adapter` reads TypeScript property names directly, so they must match the snake_case names the adapter expects.
 
 ### Primary Keys
 
@@ -199,19 +199,19 @@ Application users.
 
 Auth.js standard. OAuth provider link per user. One user can have multiple accounts (e.g., Google + future email/password).
 
-| Column              | Type                     | Null | Notes                                            |
-| ------------------- | ------------------------ | ---- | ------------------------------------------------ |
-| `userId`            | `uuid`                   | NO   | FK → `users.id` ON DELETE CASCADE.               |
-| `type`              | `text`                   | NO   | `'oauth' \| 'email' \| 'credentials'` (Auth.js). |
-| `provider`          | `text`                   | NO   | `'google'` in MVP.                               |
-| `providerAccountId` | `text`                   | NO   | User's ID at the provider.                       |
-| `refreshToken`      | `text` (`refresh_token`) | YES  | OAuth refresh token.                             |
-| `accessToken`       | `text` (`access_token`)  | YES  | OAuth access token.                              |
-| `expiresAt`         | `bigint` (`expires_at`)  | YES  | Unix timestamp.                                  |
-| `tokenType`         | `text` (`token_type`)    | YES  | `'Bearer'`.                                      |
-| `scope`             | `text`                   | YES  | OAuth scopes.                                    |
-| `idToken`           | `text` (`id_token`)      | YES  | OpenID token.                                    |
-| `sessionState`      | `text` (`session_state`) | YES  | OpenID session state.                            |
+| Column              | Type      | Null | Notes                                                                                       |
+| ------------------- | --------- | ---- | ------------------------------------------------------------------------------------------- |
+| `userId`            | `uuid`    | NO   | FK → `users.id` ON DELETE CASCADE.                                                          |
+| `type`              | `text`    | NO   | `'oauth' \| 'email' \| 'credentials'` (Auth.js).                                            |
+| `provider`          | `text`    | NO   | `'google'` in MVP.                                                                          |
+| `providerAccountId` | `text`    | NO   | User's ID at the provider.                                                                  |
+| `refresh_token`     | `text`    | YES  | OAuth refresh token.                                                                        |
+| `access_token`      | `text`    | YES  | OAuth access token.                                                                         |
+| `expires_at`        | `integer` | YES  | Unix epoch seconds. `integer`, not `bigint` — `@auth/drizzle-adapter` requires `PgInteger`. |
+| `token_type`        | `text`    | YES  | `'Bearer'`.                                                                                 |
+| `scope`             | `text`    | YES  | OAuth scopes.                                                                               |
+| `id_token`          | `text`    | YES  | OpenID token.                                                                               |
+| `session_state`     | `text`    | YES  | OpenID session state.                                                                       |
 
 **Primary key:** composite `(provider, providerAccountId)`.
 
