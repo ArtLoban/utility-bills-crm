@@ -53,15 +53,30 @@ MVP is defined as a **minimum viable portfolio piece** — a project that demons
 
 ## Getting Started
 
-> Instructions will be added when the project is initialized.
-
 ```bash
 # Install dependencies
 npm install
 
+# Start local PostgreSQL (Docker)
+npm run db:up
+
+# Apply migrations
+npm run db:migrate
+
 # Run the development server
 npm run dev
 ```
+
+### Database scripts
+
+| Command               | Description                                         |
+| --------------------- | --------------------------------------------------- |
+| `npm run db:up`       | Start local PostgreSQL via Docker Compose           |
+| `npm run db:down`     | Stop PostgreSQL container                           |
+| `npm run db:reset`    | Wipe and restart the database                       |
+| `npm run db:generate` | Generate a migration from schema changes            |
+| `npm run db:migrate`  | Apply pending migrations                            |
+| `npm run db:studio`   | Open Drizzle Studio at https://local.drizzle.studio |
 
 Required environment variables:
 
