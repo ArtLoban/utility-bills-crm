@@ -4,7 +4,15 @@
     "signIn": "Увійти"
   },
   "nav": {
-    "dashboard": "Панель"
+    "dashboard": "Панель",
+    "properties": "Об'єкти",
+    "bills": "Рахунки",
+    "payments": "Платежі",
+    "settings": "Налаштування",
+    "adminDashboard": "Панель",
+    "adminProperties": "Об'єкти",
+    "adminUsers": "Користувачі",
+    "adminLanding": "Лендінг"
   },
   "landing": {
     "comingSoon": "Незабаром",

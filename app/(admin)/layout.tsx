@@ -1,10 +1,10 @@
 import type { ReactNode } from "react";
-import { AppNav } from "@/components/app-nav";
+import { AdminNav } from "@/components/admin-nav";
 
-export default function AppLayout({ children }: { children: ReactNode }) {
+export default function AdminLayout({ children }: { children: ReactNode }) {
   return (
     <div className="flex min-h-full flex-col">
-      <AppNav />
+      <AdminNav />
       <div className="flex flex-1 flex-col">{children}</div>
     </div>
   );

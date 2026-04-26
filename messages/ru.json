@@ -4,7 +4,15 @@
     "signIn": "Войти"
   },
   "nav": {
-    "dashboard": "Панель"
+    "dashboard": "Панель",
+    "properties": "Объекты",
+    "bills": "Счета",
+    "payments": "Платежи",
+    "settings": "Настройки",
+    "adminDashboard": "Панель",
+    "adminProperties": "Объекты",
+    "adminUsers": "Пользователи",
+    "adminLanding": "Лендинг"
   },
   "landing": {
     "comingSoon": "Скоро",

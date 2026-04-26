@@ -4,7 +4,15 @@
     "signIn": "Sign in"
   },
   "nav": {
-    "dashboard": "Dashboard"
+    "dashboard": "Dashboard",
+    "properties": "Properties",
+    "bills": "Bills",
+    "payments": "Payments",
+    "settings": "Settings",
+    "adminDashboard": "Dashboard",
+    "adminProperties": "Properties",
+    "adminUsers": "Users",
+    "adminLanding": "Landing"
   },
   "landing": {
     "comingSoon": "Coming soon",
