@@ -11,7 +11,7 @@ import { CORRELATION_ID_HEADER } from "@/lib/logger/constants";
 const getSessionToken = (req: NextRequest) =>
   req.cookies.get("authjs.session-token") ?? req.cookies.get("__Secure-authjs.session-token");
 
-export const middleware = (req: NextRequest) => {
+export const proxy = (req: NextRequest) => {
   if (!getSessionToken(req)) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
