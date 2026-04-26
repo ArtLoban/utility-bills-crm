@@ -1,0 +1,23 @@
+{
+  "common": {
+    "appName": "Коммунальные услуги CRM",
+    "signIn": "Войти"
+  },
+  "nav": {
+    "dashboard": "Панель"
+  },
+  "landing": {
+    "comingSoon": "Скоро",
+    "login": "Войти",
+    "dashboard": "Панель"
+  },
+  "auth": {
+    "subtitle": "Войдите, чтобы продолжить",
+    "signInWithGoogle": "Войти через Google",
+    "backToHome": "На главную"
+  },
+  "dashboard": {
+    "signedInAs": "Вы вошли как",
+    "signOut": "Выйти"
+  }
+}

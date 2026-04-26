@@ -1,17 +1,11 @@
 import type { ReactNode } from "react";
-import { getTranslations } from "next-intl/server";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 
-export default async function PublicLayout({ children }: { children: ReactNode }) {
-  const t = await getTranslations();
-
+export default function AuthLayout({ children }: { children: ReactNode }) {
   return (
     <div className="flex min-h-full flex-col">
       <header className="border-b border-zinc-200 px-6 py-4 dark:border-zinc-800">
         <div className="flex items-center">
-          <span className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
-            {t("common.appName")}
-          </span>
           <div className="ml-auto">
             <LocaleSwitcher />
           </div>

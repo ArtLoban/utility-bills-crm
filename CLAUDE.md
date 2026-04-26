@@ -38,6 +38,14 @@ Speed is explicitly less important than understanding.
    OAuth registration, Vercel/Neon/Sentry account work is done by the author
    manually.
 
+## DevNote convention
+
+The author marks questions and concerns in generated code with `// [DevNote] ...` comments.
+
+- **Before accepting any changeset**, scan all modified files for `// [DevNote]` comments.
+- Address each one explicitly: answer the question, fix the code if needed, or explain why the current approach is correct.
+- Do not commit while any `// [DevNote]` comment remains in the codebase.
+
 ## Session model
 
 The project is built in **planned iterations** (a scaffolding document exists in Claude chat).

@@ -1,0 +1,23 @@
+{
+  "common": {
+    "appName": "Utility Bills CRM",
+    "signIn": "Sign in"
+  },
+  "nav": {
+    "dashboard": "Dashboard"
+  },
+  "landing": {
+    "comingSoon": "Coming soon",
+    "login": "Login",
+    "dashboard": "Dashboard"
+  },
+  "auth": {
+    "subtitle": "Sign in to continue",
+    "signInWithGoogle": "Sign in with Google",
+    "backToHome": "Back to home"
+  },
+  "dashboard": {
+    "signedInAs": "Signed in as",
+    "signOut": "Sign out"
+  }
+}
