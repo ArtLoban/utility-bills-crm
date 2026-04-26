@@ -2,14 +2,12 @@ import { Zap } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
-// [DevNote] type TProps
-type TLogoProps = {
+type TProps = {
   href?: string;
   className?: string;
 };
 
-// // [DevNote] WHy not FC<TProps>??
-export const Logo = ({ href = "/", className }: TLogoProps) => {
+export const Logo = ({ href = "/", className }: TProps) => {
   return (
     <Link href={href} className={cn("flex items-center gap-2", className)}>
       <div className="flex size-7 items-center justify-center rounded-[7px] bg-violet-600">

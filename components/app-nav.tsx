@@ -19,15 +19,14 @@ const NAV_LINKS = [
 
 type TNavLinkKey = (typeof NAV_LINKS)[number]["key"];
 
-// [DevNote] TProps
-type TNavLinkProps = {
+type TProps = {
   href: string;
   label: string;
   active: boolean;
   onClick?: () => void;
 };
 
-const NavLink = ({ href, label, active, onClick }: TNavLinkProps) => (
+const NavLink = ({ href, label, active, onClick }: TProps) => (
   <Link
     href={href}
     onClick={onClick}
