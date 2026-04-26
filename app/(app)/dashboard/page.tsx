@@ -2,6 +2,8 @@ import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { auth, signOut } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
+import { withCorrelationId } from "@/lib/logger";
+import { getCorrelationId } from "@/lib/logger/get-correlation-id";
 
 const handleSignOut = async () => {
   "use server";
@@ -9,9 +11,13 @@ const handleSignOut = async () => {
 };
 
 export default async function DashboardPage() {
+  const correlationId = await getCorrelationId();
+  const log = withCorrelationId(correlationId);
+
   const session = await auth();
 
   if (!session) redirect("/login");
+  log.info({ userId: session.user.id }, "dashboard rendered");
 
   const t = await getTranslations();
 
