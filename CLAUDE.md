@@ -69,6 +69,9 @@ Authoritative documents:
 - `db/SCHEMA_REFERENCE.md` — quick schema lookup
 - `docs/UI_ARCHITECTURE.md` — UI structure, routes, design system
 - `docs/MVP_definition.md` — product scope
+- `.claude/design/OBSERVATIONS.md` — visual design analysis: spacing, shadows, color tokens,
+  component conventions, and conflicts with `UI_ARCHITECTURE.md`. **Read before implementing
+  any UI component, screen, or modal.**
 
 ## Stack (summary — see README.living.md for rationale)
 

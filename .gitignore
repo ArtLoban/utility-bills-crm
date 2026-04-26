@@ -44,3 +44,8 @@ next-env.d.ts
 # IDE
 .idea/
 .vscode/
+
+# Local Claude working files (not for repo)
+.claude/instructions/
+.claude/design/*
+!.claude/design/OBSERVATIONS.md
