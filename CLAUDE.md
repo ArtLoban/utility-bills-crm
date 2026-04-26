@@ -78,4 +78,5 @@ Explanations: English by default, Russian if the author switches to Russian.
 
 ## Imports
 
-@.claude/rules/git-operations.md
+@.claude/rules/commits.md
+@.claude/rules/code-style.md
