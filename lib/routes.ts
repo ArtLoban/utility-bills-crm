@@ -1,5 +1,7 @@
 export const ROUTES = {
   home: "/",
+  about: "/about",
+  project: "/project",
   login: "/login",
   dashboard: "/dashboard",
   properties: "/properties",
