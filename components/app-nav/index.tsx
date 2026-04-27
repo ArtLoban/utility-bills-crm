@@ -11,14 +11,12 @@ import { NavLink } from "./components/nav-link";
 import { UserAvatarStub } from "./components/user-avatar-stub";
 
 const NAV_LINKS = [
-  { key: "dashboard" as const, href: ROUTES.dashboard },
-  { key: "properties" as const, href: ROUTES.properties },
-  { key: "bills" as const, href: ROUTES.bills },
-  { key: "payments" as const, href: ROUTES.payments },
-  { key: "settings" as const, href: ROUTES.settings },
+  { key: "dashboard", href: ROUTES.dashboard },
+  { key: "properties", href: ROUTES.properties },
+  { key: "bills", href: ROUTES.bills },
+  { key: "payments", href: ROUTES.payments },
+  { key: "settings", href: ROUTES.settings },
 ];
-
-type TNavLinkKey = (typeof NAV_LINKS)[number]["key"];
 
 export const AppNav = () => {
   const pathname = usePathname();
@@ -29,7 +27,7 @@ export const AppNav = () => {
 
   const links = NAV_LINKS.map(({ key, href }) => ({
     href,
-    label: t(key as TNavLinkKey),
+    label: t(key),
     active: isActive(href),
   }));
 

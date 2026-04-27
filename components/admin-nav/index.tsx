@@ -19,13 +19,11 @@ import { NavLink } from "./components/nav-link";
 import { UserAvatarStub } from "./components/user-avatar-stub";
 
 const NAV_LINKS = [
-  { key: "adminDashboard" as const, href: ROUTES.admin.root },
-  { key: "adminProperties" as const, href: ROUTES.admin.properties },
-  { key: "adminUsers" as const, href: ROUTES.admin.users },
-  { key: "adminLanding" as const, href: ROUTES.admin.landing },
+  { key: "adminDashboard", href: ROUTES.admin.root },
+  { key: "adminProperties", href: ROUTES.admin.properties },
+  { key: "adminUsers", href: ROUTES.admin.users },
+  { key: "adminLanding", href: ROUTES.admin.landing },
 ];
-
-type TNavLinkKey = (typeof NAV_LINKS)[number]["key"];
 
 export const AdminNav = () => {
   const pathname = usePathname();
@@ -37,7 +35,7 @@ export const AdminNav = () => {
 
   const links = NAV_LINKS.map(({ key, href }) => ({
     href,
-    label: t(key as TNavLinkKey),
+    label: t(key),
     active: isActive(href),
   }));
 
