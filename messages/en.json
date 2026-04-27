@@ -20,9 +20,24 @@
     "dashboard": "Dashboard"
   },
   "auth": {
-    "subtitle": "Sign in to continue",
-    "signInWithGoogle": "Sign in with Google",
-    "backToHome": "Back to home"
+    "signIn": "Sign in",
+    "signInSubtitle": "Track your utility bills across properties.",
+    "continueWithGoogle": "Continue with Google",
+    "rememberMe": "Remember me for 30 days",
+    "tryDemo": "Try demo",
+    "tryDemoHint": "View a sample workspace. No account needed.",
+    "backToHome": "Back to home",
+    "legal": {
+      "prefix": "By signing in you agree to the",
+      "terms": "Terms of Service",
+      "and": "and",
+      "privacy": "Privacy Policy"
+    },
+    "error": {
+      "title": "Sign-in didn't complete",
+      "description": "Access was denied during the sign-in process. This usually happens when sign-in is canceled or permission is declined.",
+      "tryAgain": "Try again"
+    }
   },
   "dashboard": {
     "signedInAs": "Signed in as",

@@ -36,7 +36,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   providers: [Google],
   session: { strategy: "database" },
   // Auth.js redirects unauthenticated users to /login instead of its default /api/auth/signin.
-  pages: { signIn: "/login" },
+  pages: { signIn: "/login", error: "/error" },
   callbacks: {
     // Expose user.id in the session so server components don't need an extra DB query.
     // With database strategy, 'user' here is the actual DB row.
