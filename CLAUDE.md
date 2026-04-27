@@ -40,11 +40,11 @@ Speed is explicitly less important than understanding.
 
 ## DevNote convention
 
-The author marks questions and concerns in generated code with `// [DevNote] ...` comments.
+The author marks questions and concerns in generated code with `// devnote: ...` comments.
 
-- **Before accepting any changeset**, scan all modified files for `// [DevNote]` comments.
+- **Before accepting any changeset**, scan all modified files for `// devnote:` comments.
 - Address each one explicitly: answer the question, fix the code if needed, or explain why the current approach is correct.
-- Do not commit while any `// [DevNote]` comment remains in the codebase.
+- Do not commit while any `// devnote:` comment remains in the codebase.
 
 ## Session model
 
@@ -69,6 +69,7 @@ Authoritative documents:
 - `db/SCHEMA_REFERENCE.md` — quick schema lookup
 - `docs/UI_ARCHITECTURE.md` — UI structure, routes, design system
 - `docs/MVP_definition.md` — product scope
+- `docs/README.living.md` — more info about project
 - `.claude/design/OBSERVATIONS.md` — visual design analysis: spacing, shadows, color tokens,
   component conventions, and conflicts with `UI_ARCHITECTURE.md`. **Read before implementing
   any UI component, screen, or modal.**
