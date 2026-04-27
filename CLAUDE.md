@@ -90,4 +90,4 @@ Explanations: English by default, Russian if the author switches to Russian.
 ## Imports
 
 @.claude/rules/commits.md
-@.claude/rules/code-style.md
+@.claude/rules/code-conventions.md
