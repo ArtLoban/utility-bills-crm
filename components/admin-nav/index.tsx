@@ -45,7 +45,7 @@ export const AdminNav = () => {
       <header className="bg-background/80 sticky top-0 z-50 h-16 border-b backdrop-blur-sm">
         <div className="mx-auto flex h-full max-w-screen-2xl items-center gap-6 px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-2">
-            <Logo href={ROUTES.admin.root} />
+            <Logo href={ROUTES.home} />
             <AdminBadge />
           </div>
 

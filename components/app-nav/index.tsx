@@ -16,7 +16,6 @@ const NAV_LINKS = [
   { key: "properties", href: ROUTES.properties },
   { key: "bills", href: ROUTES.bills },
   { key: "payments", href: ROUTES.payments },
-  { key: "settings", href: ROUTES.settings },
 ];
 
 type TProps = {
@@ -39,7 +38,7 @@ export const AppNav = ({ user }: TProps) => {
   return (
     <header className="bg-background/80 sticky top-0 z-50 h-16 border-b backdrop-blur-sm">
       <div className="mx-auto flex h-full max-w-screen-2xl items-center gap-6 px-4 sm:px-6 lg:px-8">
-        <Logo href={ROUTES.dashboard} />
+        <Logo href={ROUTES.home} />
 
         <nav className="hidden items-center gap-6 md:flex">
           {links.map((link) => (

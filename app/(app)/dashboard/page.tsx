@@ -1,37 +1,22 @@
 import { redirect } from "next/navigation";
-import { getTranslations } from "next-intl/server";
-import { auth, signOut } from "@/lib/auth";
-import { Button } from "@/components/ui/button";
+import { auth } from "@/lib/auth";
 import { withCorrelationId } from "@/lib/logger";
 import { getCorrelationId } from "@/lib/logger/get-correlation-id";
 
-const handleSignOut = async () => {
-  "use server";
-  await signOut({ redirectTo: "/login" });
-};
-
 export default async function DashboardPage() {
+  const session = await auth();
+  if (!session) redirect("/login");
+
   const correlationId = await getCorrelationId();
   const log = withCorrelationId(correlationId);
-
-  const session = await auth();
-
-  if (!session) redirect("/login");
   log.info({ userId: session.user.id }, "dashboard rendered");
-
-  const t = await getTranslations();
 
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-4 p-8">
-      <p className="text-sm text-zinc-500 dark:text-zinc-400">
-        {t("dashboard.signedInAs")}{" "}
-        <span className="font-medium text-zinc-900 dark:text-zinc-50">{session.user.email}</span>
-      </p>
-      <form action={handleSignOut}>
-        <Button type="submit" variant="outline">
-          {t("dashboard.signOut")}
-        </Button>
-      </form>
+      <h1 className="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
+        Dashboard
+      </h1>
+      <p className="text-zinc-500 dark:text-zinc-400">Todo</p>
     </div>
   );
 }
