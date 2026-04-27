@@ -5,11 +5,17 @@ import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { db } from "@/lib/db/client";
 import { accounts, sessions, users, verificationTokens } from "@/lib/db/schema";
 
-// Auth.js's default Session type does not include user.id.
-// This augmentation makes it available in server components via auth().
 declare module "next-auth" {
   interface Session {
-    user: { id: string } & DefaultSession["user"];
+    user: { id: string; systemRole: "user" | "admin" } & DefaultSession["user"];
+  }
+}
+
+// DrizzleAdapter returns the full DB row including custom columns like systemRole.
+// The base AdapterUser type from @auth/core doesn't know about them, so we extend it.
+declare module "@auth/core/adapters" {
+  interface AdapterUser {
+    systemRole: "user" | "admin";
   }
 }
 
@@ -36,6 +42,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     // With database strategy, 'user' here is the actual DB row.
     session: ({ session, user }) => {
       session.user.id = user.id;
+      session.user.systemRole = user.systemRole;
       return session;
     },
     // Idempotent: promotes to admin if email is in ADMIN_EMAILS, demotes otherwise.

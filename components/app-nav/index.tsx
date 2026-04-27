@@ -8,7 +8,8 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { AppNavMobileMenu } from "./components/app-nav-mobile-menu";
 import { LanguageSwitcherStub } from "./components/language-switcher-stub";
 import { NavLink } from "./components/nav-link";
-import { UserAvatarStub } from "./components/user-avatar-stub";
+import { UserDropdown } from "./components/user-dropdown";
+import type { TNavUser } from "./types";
 
 const NAV_LINKS = [
   { key: "dashboard", href: ROUTES.dashboard },
@@ -18,7 +19,11 @@ const NAV_LINKS = [
   { key: "settings", href: ROUTES.settings },
 ];
 
-export const AppNav = () => {
+type TProps = {
+  user: TNavUser;
+};
+
+export const AppNav = ({ user }: TProps) => {
   const pathname = usePathname();
   const t = useTranslations("nav");
 
@@ -45,7 +50,8 @@ export const AppNav = () => {
         <div className="ml-auto flex items-center gap-1">
           <LanguageSwitcherStub />
           <ThemeToggle />
-          <UserAvatarStub />
+          <div className="bg-border mx-2 h-5 w-px" />
+          <UserDropdown user={user} />
           <AppNavMobileMenu links={links} />
         </div>
       </div>
