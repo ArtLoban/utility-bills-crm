@@ -1,4 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
+import { ROUTES } from "@/lib/routes";
 import { CORRELATION_ID_HEADER } from "@/lib/logger/constants";
 
 // Auth.js uses different cookie names depending on protocol:
@@ -13,7 +14,7 @@ const getSessionToken = (req: NextRequest) =>
 
 export const proxy = (req: NextRequest) => {
   if (!getSessionToken(req)) {
-    return NextResponse.redirect(new URL("/login", req.url));
+    return NextResponse.redirect(new URL(ROUTES.login, req.url));
   }
 
   // crypto.randomUUID() is available in Edge Runtime.

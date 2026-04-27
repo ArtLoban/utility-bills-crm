@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { ROUTES } from "@/lib/routes";
 import { Logo } from "@/components/logo";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { AppNavMobileMenu } from "./components/app-nav-mobile-menu";
@@ -10,11 +11,11 @@ import { NavLink } from "./components/nav-link";
 import { UserAvatarStub } from "./components/user-avatar-stub";
 
 const NAV_LINKS = [
-  { key: "dashboard" as const, href: "/dashboard" },
-  { key: "properties" as const, href: "/properties" },
-  { key: "bills" as const, href: "/bills" },
-  { key: "payments" as const, href: "/payments" },
-  { key: "settings" as const, href: "/settings" },
+  { key: "dashboard" as const, href: ROUTES.dashboard },
+  { key: "properties" as const, href: ROUTES.properties },
+  { key: "bills" as const, href: ROUTES.bills },
+  { key: "payments" as const, href: ROUTES.payments },
+  { key: "settings" as const, href: ROUTES.settings },
 ];
 
 type TNavLinkKey = (typeof NAV_LINKS)[number]["key"];
@@ -24,7 +25,7 @@ export const AppNav = () => {
   const t = useTranslations("nav");
 
   const isActive = (href: string) =>
-    href === "/dashboard" ? pathname === href : pathname.startsWith(href);
+    href === ROUTES.dashboard ? pathname === href : pathname.startsWith(href);
 
   const links = NAV_LINKS.map(({ key, href }) => ({
     href,
@@ -35,7 +36,7 @@ export const AppNav = () => {
   return (
     <header className="bg-background/80 sticky top-0 z-50 h-16 border-b backdrop-blur-sm">
       <div className="mx-auto flex h-full max-w-screen-2xl items-center gap-6 px-4 sm:px-6 lg:px-8">
-        <Logo href="/dashboard" />
+        <Logo href={ROUTES.dashboard} />
 
         <nav className="hidden items-center gap-6 md:flex">
           {links.map((link) => (

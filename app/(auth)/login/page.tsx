@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { signIn } from "@/lib/auth";
+import { ROUTES } from "@/lib/routes";
 import { Button } from "@/components/ui/button";
 
 const googleSignIn = async () => {
   "use server";
-  await signIn("google", { redirectTo: "/dashboard" });
+  await signIn("google", { redirectTo: ROUTES.dashboard });
 };
 
 export default async function LoginPage() {
@@ -21,7 +22,7 @@ export default async function LoginPage() {
         <Button type="submit">{t("auth.signInWithGoogle")}</Button>
       </form>
       <Link
-        href="/"
+        href={ROUTES.home}
         className="text-sm text-zinc-500 underline-offset-4 hover:underline dark:text-zinc-400"
       >
         {t("auth.backToHome")}

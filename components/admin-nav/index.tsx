@@ -3,6 +3,7 @@
 import { usePathname, useRouter } from "next/navigation";
 import { LayoutDashboard } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { ROUTES } from "@/lib/routes";
 import { Logo } from "@/components/logo";
 import { ThemeToggle } from "@/components/theme-toggle";
 import {
@@ -18,10 +19,10 @@ import { NavLink } from "./components/nav-link";
 import { UserAvatarStub } from "./components/user-avatar-stub";
 
 const NAV_LINKS = [
-  { key: "adminDashboard" as const, href: "/art-admin" },
-  { key: "adminProperties" as const, href: "/art-admin/properties" },
-  { key: "adminUsers" as const, href: "/art-admin/users" },
-  { key: "adminLanding" as const, href: "/art-admin/landing" },
+  { key: "adminDashboard" as const, href: ROUTES.admin.root },
+  { key: "adminProperties" as const, href: ROUTES.admin.properties },
+  { key: "adminUsers" as const, href: ROUTES.admin.users },
+  { key: "adminLanding" as const, href: ROUTES.admin.landing },
 ];
 
 type TNavLinkKey = (typeof NAV_LINKS)[number]["key"];
@@ -32,7 +33,7 @@ export const AdminNav = () => {
   const t = useTranslations("nav");
 
   const isActive = (href: string) =>
-    href === "/art-admin" ? pathname === href : pathname.startsWith(href);
+    href === ROUTES.admin.root ? pathname === href : pathname.startsWith(href);
 
   const links = NAV_LINKS.map(({ key, href }) => ({
     href,
@@ -46,7 +47,7 @@ export const AdminNav = () => {
       <header className="bg-background/80 sticky top-0 z-50 h-16 border-b backdrop-blur-sm">
         <div className="mx-auto flex h-full max-w-screen-2xl items-center gap-6 px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-2">
-            <Logo href="/art-admin" />
+            <Logo href={ROUTES.admin.root} />
             <AdminBadge />
           </div>
 
@@ -67,7 +68,7 @@ export const AdminNav = () => {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   className="cursor-pointer"
-                  onClick={() => router.push("/dashboard")}
+                  onClick={() => router.push(ROUTES.dashboard)}
                 >
                   <LayoutDashboard className="size-4" />
                   Switch to user view
