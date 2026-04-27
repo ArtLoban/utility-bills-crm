@@ -91,3 +91,4 @@ Explanations: English by default, Russian if the author switches to Russian.
 
 @.claude/rules/commits.md
 @.claude/rules/code-conventions.md
+@.claude/rules/typescript.md
