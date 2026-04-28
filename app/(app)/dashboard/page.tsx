@@ -4,6 +4,9 @@ import { MOCK_DASHBOARD_DATA } from "./_data/mock";
 import { AttentionBlock } from "./_components/attention-block";
 import { BalanceBlock } from "./_components/balance-block";
 import { ChartsSection } from "./_components/charts-section";
+import { DashboardEmptyState } from "./_components/dashboard-empty-state";
+
+const MOCK_HAS_PROPERTIES = true;
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -21,24 +24,30 @@ export default async function DashboardPage() {
         width: "100%",
       }}
     >
-      <h2
-        style={{
-          margin: 0,
-          marginBottom: 28,
-          fontSize: 28,
-          fontWeight: 600,
-          letterSpacing: -0.6,
-        }}
-        className="text-zinc-950 dark:text-zinc-50"
-      >
-        {firstName ? `Hi, ${firstName}` : "Hello!"}
-      </h2>
+      {!MOCK_HAS_PROPERTIES ? (
+        <DashboardEmptyState firstName={firstName} />
+      ) : (
+        <>
+          <h2
+            style={{
+              margin: 0,
+              marginBottom: 28,
+              fontSize: 28,
+              fontWeight: 600,
+              letterSpacing: -0.6,
+            }}
+            className="text-zinc-950 dark:text-zinc-50"
+          >
+            {firstName ? `Hi, ${firstName}` : "Hello!"}
+          </h2>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-        {data.attention !== null && <AttentionBlock data={data.attention} />}
-        <BalanceBlock data={data.balance} />
-        <ChartsSection data={data.charts} />
-      </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+            {data.attention !== null && <AttentionBlock data={data.attention} />}
+            <BalanceBlock data={data.balance} />
+            <ChartsSection data={data.charts} />
+          </div>
+        </>
+      )}
     </div>
   );
 }

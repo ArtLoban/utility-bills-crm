@@ -1,20 +1,7 @@
-export const SERVICE_COLORS = {
-  electricity: "#f59e0b",
-  gas: "#ef4444",
-  coldWater: "#3b82f6",
-  hotWater: "#ec4899",
-  heating: "#8b5cf6",
-  internet: "#14b8a6",
-} as const;
+import { SERVICE_COLORS, SERVICE_LABELS, type TServiceKey } from "@/lib/constants/service-colors";
 
-export const SERVICE_LABELS: Record<keyof typeof SERVICE_COLORS, string> = {
-  electricity: "Electricity",
-  gas: "Gas",
-  coldWater: "Cold water",
-  hotWater: "Hot water",
-  heating: "Heating",
-  internet: "Internet",
-};
+export { SERVICE_COLORS, SERVICE_LABELS };
+export type { TServiceKey };
 
 type TPropertyBalance = {
   id: string;
@@ -24,7 +11,7 @@ type TPropertyBalance = {
 };
 
 type TServiceMonthlyExpense = {
-  serviceKey: keyof typeof SERVICE_COLORS;
+  serviceKey: TServiceKey;
   label: string;
   monthlyAmounts: number[];
 };
