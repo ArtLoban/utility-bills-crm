@@ -1,22 +1,44 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
-import { withCorrelationId } from "@/lib/logger";
-import { getCorrelationId } from "@/lib/logger/get-correlation-id";
+import { MOCK_DASHBOARD_DATA } from "./_data/mock";
+import { AttentionBlock } from "./_components/attention-block";
+import { BalanceBlock } from "./_components/balance-block";
+import { ChartsSection } from "./_components/charts-section";
 
 export default async function DashboardPage() {
   const session = await auth();
   if (!session) redirect("/login");
 
-  const correlationId = await getCorrelationId();
-  const log = withCorrelationId(correlationId);
-  log.info({ userId: session.user.id }, "dashboard rendered");
+  const data = MOCK_DASHBOARD_DATA;
+  const firstName = session.user.name?.split(" ")[0] ?? null;
 
   return (
-    <div className="flex flex-1 flex-col items-center justify-center gap-4 p-8">
-      <h1 className="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
-        Dashboard
-      </h1>
-      <p className="text-zinc-500 dark:text-zinc-400">Todo</p>
+    <div
+      style={{
+        maxWidth: 1360,
+        margin: "0 auto",
+        padding: "32px 32px 48px",
+        width: "100%",
+      }}
+    >
+      <h2
+        style={{
+          margin: 0,
+          marginBottom: 28,
+          fontSize: 28,
+          fontWeight: 600,
+          letterSpacing: -0.6,
+        }}
+        className="text-zinc-950 dark:text-zinc-50"
+      >
+        {firstName ? `Hi, ${firstName}` : "Hello!"}
+      </h2>
+
+      <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+        {data.attention !== null && <AttentionBlock data={data.attention} />}
+        <BalanceBlock data={data.balance} />
+        <ChartsSection data={data.charts} />
+      </div>
     </div>
   );
 }
