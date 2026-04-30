@@ -1,21 +1,11 @@
-import { Droplets, Flame, Thermometer, Wifi, Zap } from "lucide-react";
-
 import { SERVICE_COLORS, SERVICE_LABELS, TServiceKey } from "@/lib/constants/service-colors";
+import { SERVICE_ICONS } from "@/lib/constants/service-icons";
 
 type TProps = { serviceId: TServiceKey };
 
-const ICON_MAP: Record<string, React.ElementType> = {
-  electricity: Zap,
-  gas: Flame,
-  coldWater: Droplets,
-  hotWater: Droplets,
-  heating: Thermometer,
-  internet: Wifi,
-};
-
 const ServiceChip = ({ serviceId }: TProps) => {
   const color = SERVICE_COLORS[serviceId];
-  const Icon = ICON_MAP[serviceId] ?? Zap;
+  const Icon = SERVICE_ICONS[serviceId];
 
   return (
     <span

@@ -4,8 +4,9 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogClose, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { BILL_PROPERTIES, BILL_SERVICES } from "@/app/(app)/bills/_data/mock";
 import { TServiceKey } from "@/lib/constants/service-colors";
+import { ACCENT, BORDER, MUTED_FG, TINT_BG, TINT_BORDER } from "@/lib/constants/ui-tokens";
+import { BILL_PROPERTIES, BILL_SERVICES } from "@/app/(app)/bills/_data/mock";
 import { ServiceChip } from "./service-chip";
 
 type TProps = {
@@ -39,11 +40,6 @@ const MONTH_OPTIONS = [
   { value: "custom", label: "Custom month…" },
 ];
 
-const ACCENT = "#7c3aed";
-const MUTED_FG = "#71717a";
-const TINT_BG = "#f5f3ff";
-const TINT_BORDER = "#ede9fe";
-const BORDER = "#e4e4e7";
 const MOCK_EXPECTED = 432;
 
 type TModalSelectProps = {

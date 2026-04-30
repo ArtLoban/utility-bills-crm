@@ -1,30 +1,22 @@
-import { Droplets, Flame, MoreHorizontal, Thermometer, Wifi, Zap } from "lucide-react";
-import { useState } from "react";
+import { MoreHorizontal } from "lucide-react";
 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { SERVICE_COLORS } from "@/lib/constants/service-colors";
+import { SERVICE_ICONS } from "@/lib/constants/service-icons";
+import { BORDER, DESTRUCTIVE, MUTED_FG } from "@/lib/constants/ui-tokens";
 import { TBill } from "@/app/(app)/bills/_data/mock";
 
 type TProps = { row: TBill };
 
-const ICON_MAP: Record<string, React.ElementType> = {
-  electricity: Zap,
-  gas: Flame,
-  coldWater: Droplets,
-  hotWater: Droplets,
-  heating: Thermometer,
-  internet: Wifi,
-};
-
-const BORDER = "#e4e4e7";
-const MUTED = "#f4f4f5";
-const MUTED_FG = "#71717a";
-const DESTRUCTIVE = "#dc2626";
-
 const BillCard = ({ row }: TProps) => {
-  const [menuOpen, setMenuOpen] = useState(false);
-
   const color = SERVICE_COLORS[row.service.id];
-  const Icon = ICON_MAP[row.service.id] ?? Zap;
+  const Icon = SERVICE_ICONS[row.service.id];
   const shortDate = row.date.split(" ").slice(0, 2).join(" ");
   const amountStr = `−${row.amount.toLocaleString()}`;
 
@@ -119,84 +111,32 @@ const BillCard = ({ row }: TProps) => {
       </div>
 
       {/* Kebab */}
-      <div style={{ position: "relative", flexShrink: 0 }}>
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            setMenuOpen((v) => !v);
-          }}
+      <DropdownMenu>
+        <DropdownMenuTrigger
           style={{
             width: 28,
             height: 28,
             borderRadius: 5,
-            border: menuOpen ? `1px solid ${BORDER}` : "1px solid transparent",
-            background: menuOpen ? MUTED : "transparent",
+            border: "1px solid transparent",
+            background: "transparent",
             cursor: "pointer",
             display: "inline-flex",
             alignItems: "center",
             justifyContent: "center",
+            flexShrink: 0,
           }}
+          className="data-popup-open:border-zinc-200 data-popup-open:bg-zinc-100"
         >
           <MoreHorizontal size={15} strokeWidth={1.75} color="#09090b" />
-        </button>
-
-        {menuOpen && (
-          <div
-            style={{
-              position: "absolute",
-              right: 0,
-              top: 34,
-              width: 130,
-              background: "#fff",
-              border: `1px solid ${BORDER}`,
-              borderRadius: 6,
-              boxShadow: "0 4px 16px rgba(9,9,11,0.10)",
-              zIndex: 20,
-              overflow: "hidden",
-            }}
-          >
-            <button
-              onClick={() => setMenuOpen(false)}
-              style={{
-                display: "block",
-                width: "100%",
-                padding: "9px 14px",
-                fontSize: 13,
-                fontFamily: "inherit",
-                background: "none",
-                border: "none",
-                textAlign: "left",
-                cursor: "pointer",
-                color: "#09090b",
-              }}
-              // devnote: wire Edit action when API routes exist
-            >
-              Edit
-            </button>
-            <button
-              onClick={() => setMenuOpen(false)}
-              style={{
-                display: "block",
-                width: "100%",
-                padding: "9px 14px",
-                fontSize: 13,
-                fontFamily: "inherit",
-                background: "none",
-                borderTop: `1px solid ${BORDER}`,
-                borderLeft: "none",
-                borderRight: "none",
-                borderBottom: "none",
-                textAlign: "left",
-                cursor: "pointer",
-                color: DESTRUCTIVE,
-              }}
-              // devnote: wire Delete action when API routes exist
-            >
-              Delete
-            </button>
-          </div>
-        )}
-      </div>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-40">
+          {/* devnote: wire Edit action when API routes exist */}
+          <DropdownMenuItem>Edit</DropdownMenuItem>
+          <DropdownMenuSeparator />
+          {/* devnote: wire Delete action when API routes exist */}
+          <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   );
 };

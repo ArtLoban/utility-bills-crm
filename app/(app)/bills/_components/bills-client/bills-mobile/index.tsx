@@ -3,6 +3,14 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { SERVICE_COLORS } from "@/lib/constants/service-colors";
+import {
+  ACCENT,
+  BORDER,
+  DESTRUCTIVE,
+  MUTED_FG,
+  TINT_BG,
+  TINT_BORDER,
+} from "@/lib/constants/ui-tokens";
 import { BILL_PROPERTIES, BILL_SERVICES, TBill, TFilterState } from "@/app/(app)/bills/_data/mock";
 import { BillCard } from "./bill-card";
 import { FilterChip } from "./filter-chip";
@@ -20,13 +28,6 @@ type TProps = {
   pageRows: TBill[];
   onAddBill: () => void;
 };
-
-const BORDER = "#e4e4e7";
-const MUTED_FG = "#71717a";
-const ACCENT = "#7c3aed";
-const TINT_BG = "#f5f3ff";
-const TINT_BORDER = "#ede9fe";
-const DESTRUCTIVE = "#dc2626";
 
 const PERIOD_LABELS: Record<string, string> = {
   last6: "Last 6 months",

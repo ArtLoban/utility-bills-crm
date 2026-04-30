@@ -44,7 +44,6 @@ const BillsClient = () => {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(25);
   const [addBillOpen, setAddBillOpen] = useState(false);
-  const [openMenuId, setOpenMenuId] = useState<number | null>(null);
 
   const filteredBills = useMemo(() => {
     let rows = [...ALL_BILLS];
@@ -85,10 +84,7 @@ const BillsClient = () => {
   };
 
   return (
-    <div
-      style={{ maxWidth: 1360, margin: "0 auto", padding: "32px 32px 48px" }}
-      onClick={() => setOpenMenuId(null)}
-    >
+    <div style={{ maxWidth: 1360, margin: "0 auto", padding: "32px 32px 48px" }}>
       {/* Desktop header */}
       <div
         className="hidden md:flex"
@@ -162,15 +158,15 @@ const BillsClient = () => {
         )}
 
         {filteredBills.length > 0 && (
-          <>
-            <BillsTable
-              rows={pageRows}
-              sortCol={sortCol}
-              sortDir={sortDir}
-              onSort={handleSort}
-              openMenuId={openMenuId}
-              onMenuOpenChange={setOpenMenuId}
-            />
+          <div
+            style={{
+              border: "1px solid #e4e4e7",
+              borderRadius: 8,
+              boxShadow: "0 1px 2px 0 rgba(24,24,27,0.05)",
+              overflow: "hidden",
+            }}
+          >
+            <BillsTable rows={pageRows} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
             <BillsFooter
               total={total}
               page={page}
@@ -182,7 +178,7 @@ const BillsClient = () => {
                 setPage(1);
               }}
             />
-          </>
+          </div>
         )}
       </div>
 

@@ -1,5 +1,7 @@
 import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 
+import { ACCENT, BORDER, DESTRUCTIVE, MUTED_FG, SUBTLE, TINT_BG } from "@/lib/constants/ui-tokens";
+
 type TProps = {
   total: number;
   page: number;
@@ -8,13 +10,6 @@ type TProps = {
   onPageChange: (page: number) => void;
   onPerPageChange: (perPage: number) => void;
 };
-
-const BORDER = "#e4e4e7";
-const SUBTLE = "#fafafa";
-const MUTED_FG = "#71717a";
-const DESTRUCTIVE = "#dc2626";
-const ACCENT = "#7c3aed";
-const TINT_BG = "#f5f3ff";
 
 const getPageRange = (page: number, totalPages: number): (number | "…")[] => {
   if (totalPages <= 7) return Array.from({ length: totalPages }, (_, i) => i + 1);

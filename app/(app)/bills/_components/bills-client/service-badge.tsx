@@ -1,6 +1,5 @@
-import { Droplets, Flame, Thermometer, Wifi, Zap } from "lucide-react";
-
 import { SERVICE_COLORS } from "@/lib/constants/service-colors";
+import { SERVICE_ICONS } from "@/lib/constants/service-icons";
 import { TBillService } from "@/app/(app)/bills/_data/mock";
 
 type TProps = {
@@ -8,18 +7,9 @@ type TProps = {
   size?: "sm" | "default";
 };
 
-const ICON_MAP: Record<string, React.ElementType> = {
-  electricity: Zap,
-  gas: Flame,
-  coldWater: Droplets,
-  hotWater: Droplets,
-  heating: Thermometer,
-  internet: Wifi,
-};
-
 const ServiceBadge = ({ service, size = "default" }: TProps) => {
   const color = SERVICE_COLORS[service.id];
-  const Icon = ICON_MAP[service.id] ?? Zap;
+  const Icon = SERVICE_ICONS[service.id];
 
   const squareSize = size === "sm" ? 16 : 20;
   const iconSize = size === "sm" ? 10 : 12;

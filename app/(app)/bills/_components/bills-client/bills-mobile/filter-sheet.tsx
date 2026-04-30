@@ -1,6 +1,7 @@
 import { ChevronDown, X } from "lucide-react";
 
 import { Sheet, SheetClose, SheetContent, SheetTitle } from "@/components/ui/sheet";
+import { ACCENT, BORDER, MUTED_FG } from "@/lib/constants/ui-tokens";
 import { BILL_PROPERTIES, BILL_SERVICES, TFilterState } from "@/app/(app)/bills/_data/mock";
 
 type TProps = {
@@ -9,10 +10,6 @@ type TProps = {
   filters: TFilterState;
   onFilterChange: (filters: TFilterState) => void;
 };
-
-const BORDER = "#e4e4e7";
-const MUTED_FG = "#71717a";
-const ACCENT = "#7c3aed";
 
 type TSheetSelectProps = {
   label: string;

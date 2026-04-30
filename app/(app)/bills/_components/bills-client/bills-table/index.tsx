@@ -1,6 +1,7 @@
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 
 import { TBill, TSortColumn, TSortDir } from "@/app/(app)/bills/_data/mock";
+import { BORDER, MUTED_FG, SUBTLE } from "@/lib/constants/ui-tokens";
 import { BillRow } from "./bill-row";
 
 type TProps = {
@@ -8,13 +9,7 @@ type TProps = {
   sortCol: TSortColumn;
   sortDir: TSortDir;
   onSort: (col: TSortColumn) => void;
-  openMenuId: number | null;
-  onMenuOpenChange: (id: number | null) => void;
 };
-
-const BORDER = "#e4e4e7";
-const SUBTLE = "#fafafa";
-const MUTED_FG = "#71717a";
 
 const COLUMNS: { key: TSortColumn; label: string; align?: "right" }[] = [
   { key: "date", label: "Date" },
@@ -24,26 +19,20 @@ const COLUMNS: { key: TSortColumn; label: string; align?: "right" }[] = [
   { key: "amount", label: "Amount", align: "right" },
 ];
 
-const BillsTable = ({ rows, sortCol, sortDir, onSort, openMenuId, onMenuOpenChange }: TProps) => {
-  const SortIcon = ({ col }: { col: TSortColumn }) => {
-    if (sortCol !== col) return <ArrowUpDown size={12} style={{ color: BORDER }} />;
-    return sortDir === "asc" ? (
-      <ArrowUp size={12} className="text-violet-600" />
-    ) : (
-      <ArrowDown size={12} className="text-violet-600" />
-    );
-  };
+type TSortIconProps = { col: TSortColumn; sortCol: TSortColumn; sortDir: TSortDir };
 
+const SortIcon = ({ col, sortCol, sortDir }: TSortIconProps) => {
+  if (sortCol !== col) return <ArrowUpDown size={12} style={{ color: BORDER }} />;
+  return sortDir === "asc" ? (
+    <ArrowUp size={12} className="text-violet-600" />
+  ) : (
+    <ArrowDown size={12} className="text-violet-600" />
+  );
+};
+
+const BillsTable = ({ rows, sortCol, sortDir, onSort }: TProps) => {
   return (
-    <div
-      style={{
-        background: "#fff",
-        border: `1px solid ${BORDER}`,
-        borderRadius: 8,
-        boxShadow: "0 1px 2px 0 rgba(24,24,27,0.05)",
-        overflow: "hidden",
-      }}
-    >
+    <div style={{ background: "#fff" }}>
       <table style={{ width: "100%", borderCollapse: "collapse" }}>
         <thead>
           <tr style={{ background: SUBTLE }}>
@@ -64,7 +53,7 @@ const BillsTable = ({ rows, sortCol, sortDir, onSort, openMenuId, onMenuOpenChan
               >
                 <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
                   {col.label}
-                  <SortIcon col={col.key} />
+                  <SortIcon col={col.key} sortCol={sortCol} sortDir={sortDir} />
                 </span>
               </th>
             ))}
@@ -80,14 +69,7 @@ const BillsTable = ({ rows, sortCol, sortDir, onSort, openMenuId, onMenuOpenChan
         </thead>
         <tbody>
           {rows.map((row, i) => (
-            <BillRow
-              key={row.id}
-              row={row}
-              isLast={i === rows.length - 1}
-              menuOpen={openMenuId === row.id}
-              onMenuOpen={() => onMenuOpenChange(row.id)}
-              onMenuClose={() => onMenuOpenChange(null)}
-            />
+            <BillRow key={row.id} row={row} isLast={i === rows.length - 1} />
           ))}
         </tbody>
       </table>

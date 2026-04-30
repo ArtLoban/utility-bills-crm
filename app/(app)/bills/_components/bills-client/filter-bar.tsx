@@ -1,17 +1,13 @@
 import { ChevronDown } from "lucide-react";
 
 import { BILL_PROPERTIES, BILL_SERVICES, TFilterState } from "@/app/(app)/bills/_data/mock";
+import { ACCENT, BORDER, MUTED_FG, TINT_BG, TINT_BORDER } from "@/lib/constants/ui-tokens";
 
 type TProps = {
   filters: TFilterState;
   onFilterChange: (filters: TFilterState) => void;
   anyFilter: boolean;
 };
-
-const ACCENT = "#7c3aed";
-const MUTED_FG = "#71717a";
-const TINT_BG = "#f5f3ff";
-const TINT_BORDER = "#ede9fe";
 
 type TSelectProps = {
   value: string;
@@ -70,7 +66,7 @@ const FilterBar = ({ filters, onFilterChange, anyFilter }: TProps) => {
         flexWrap: "wrap",
         padding: "10px 14px",
         background: "#fff",
-        border: "1px solid #e4e4e7",
+        border: `1px solid ${BORDER}`,
         borderRadius: 8,
         marginBottom: 16,
       }}
