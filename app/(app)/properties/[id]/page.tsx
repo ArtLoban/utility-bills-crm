@@ -3,6 +3,7 @@ import { MetersTabPlaceholder } from "./_components/meters-tab-placeholder";
 import { OverviewTab } from "./_components/overview-tab";
 import { PropertyHeader } from "./_components/property-header";
 import { PropertyTabsNav } from "./_components/property-tabs-nav";
+import { SharingTab } from "./_components/sharing-tab";
 
 const VALID_TABS = ["overview", "meters", "sharing"] as const;
 type TTab = (typeof VALID_TABS)[number];
@@ -39,11 +40,7 @@ export default async function PropertyPage({ params, searchParams }: TProps) {
 
       {tab === "overview" && <OverviewTab services={services} propertyId={id} />}
       {tab === "meters" && <MetersTabPlaceholder />}
-      {tab === "sharing" && (
-        <div className="text-zinc-500" style={{ fontSize: 14 }}>
-          Sharing tab — coming soon
-        </div>
-      )}
+      {tab === "sharing" && <SharingTab myRole={property.myRole} propertyName={property.name} />}
     </div>
   );
 }
