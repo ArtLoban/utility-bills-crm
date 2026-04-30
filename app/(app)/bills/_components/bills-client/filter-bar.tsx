@@ -1,7 +1,7 @@
 import { ChevronDown } from "lucide-react";
 
 import { BILL_PROPERTIES, BILL_SERVICES, TFilterState } from "@/app/(app)/bills/_data/mock";
-import { ACCENT, BORDER, MUTED_FG, TINT_BG, TINT_BORDER } from "@/lib/constants/ui-tokens";
+import { ACCENT, TINT_BG, TINT_BORDER } from "@/lib/constants/ui-tokens";
 
 type TProps = {
   filters: TFilterState;
@@ -21,6 +21,11 @@ const FilterSelect = ({ value, isActive, onChange, children }: TSelectProps) => 
     <select
       value={value}
       onChange={(e) => onChange(e.target.value)}
+      className={
+        !isActive
+          ? "border border-zinc-200 bg-white text-zinc-950 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50"
+          : ""
+      }
       style={{
         appearance: "none",
         height: 32,
@@ -29,13 +34,17 @@ const FilterSelect = ({ value, isActive, onChange, children }: TSelectProps) => 
         fontSize: 13,
         borderRadius: 6,
         minWidth: 140,
-        border: `1px solid ${isActive ? TINT_BORDER : "#e4e4e7"}`,
-        background: isActive ? TINT_BG : "#fff",
-        color: isActive ? ACCENT : "#09090b",
-        fontWeight: isActive ? 500 : 400,
         cursor: "pointer",
         outline: "none",
         fontFamily: "inherit",
+        ...(isActive
+          ? {
+              border: `1px solid ${TINT_BORDER}`,
+              background: TINT_BG,
+              color: ACCENT,
+              fontWeight: 500,
+            }
+          : { fontWeight: 400 }),
       }}
     >
       {children}
@@ -43,11 +52,12 @@ const FilterSelect = ({ value, isActive, onChange, children }: TSelectProps) => 
     <ChevronDown
       size={13}
       strokeWidth={2}
+      className={!isActive ? "text-zinc-500 dark:text-zinc-400" : ""}
       style={{
         position: "absolute",
         right: 8,
         pointerEvents: "none",
-        color: isActive ? ACCENT : MUTED_FG,
+        ...(isActive ? { color: ACCENT } : {}),
       }}
     />
   </div>
@@ -59,19 +69,20 @@ const FilterBar = ({ filters, onFilterChange, anyFilter }: TProps) => {
 
   return (
     <div
+      className="border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900"
       style={{
         display: "flex",
         alignItems: "center",
         gap: 10,
         flexWrap: "wrap",
         padding: "10px 14px",
-        background: "#fff",
-        border: `1px solid ${BORDER}`,
         borderRadius: 8,
         marginBottom: 16,
       }}
     >
-      <span style={{ fontSize: 12.5, color: MUTED_FG, paddingLeft: 2 }}>Filter</span>
+      <span className="text-zinc-500 dark:text-zinc-400" style={{ fontSize: 12.5, paddingLeft: 2 }}>
+        Filter
+      </span>
 
       <FilterSelect
         value={filters.property}
@@ -112,9 +123,9 @@ const FilterBar = ({ filters, onFilterChange, anyFilter }: TProps) => {
       {anyFilter && (
         <button
           onClick={() => onFilterChange({ property: "all", service: "all", period: "last12" })}
+          className="text-zinc-500 dark:text-zinc-400"
           style={{
             fontSize: 12.5,
-            color: MUTED_FG,
             textDecoration: "underline",
             background: "none",
             border: "none",

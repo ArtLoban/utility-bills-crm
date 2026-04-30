@@ -1,6 +1,6 @@
 import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 
-import { ACCENT, BORDER, DESTRUCTIVE, MUTED_FG, SUBTLE, TINT_BG } from "@/lib/constants/ui-tokens";
+import { ACCENT, DESTRUCTIVE, TINT_BG } from "@/lib/constants/ui-tokens";
 
 type TProps = {
   total: number;
@@ -23,6 +23,28 @@ const getPageRange = (page: number, totalPages: number): (number | "…")[] => {
   return pages;
 };
 
+const pageButtonStyle = (isActive: boolean, isDisabled: boolean): React.CSSProperties => ({
+  minWidth: 30,
+  height: 30,
+  borderRadius: 5,
+  fontSize: 13,
+  fontFamily: "inherit",
+  border: isActive ? `1px solid ${ACCENT}` : "1px solid transparent",
+  background: isActive ? TINT_BG : "transparent",
+  ...(isActive ? { color: ACCENT, fontWeight: 600 } : { fontWeight: 400 }),
+  cursor: isDisabled ? "default" : "pointer",
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  padding: "0 4px",
+});
+
+const pageButtonClass = (isActive: boolean, isDisabled: boolean): string => {
+  if (isActive) return "";
+  if (isDisabled) return "text-zinc-200 dark:text-zinc-700";
+  return "text-zinc-950 dark:text-zinc-50";
+};
+
 const BillsFooter = ({
   total,
   page,
@@ -33,36 +55,13 @@ const BillsFooter = ({
 }: TProps) => {
   const pageRange = getPageRange(page, totalPages);
 
-  const pageButtonStyle = (isActive: boolean, isDisabled: boolean): React.CSSProperties => ({
-    minWidth: 30,
-    height: 30,
-    borderRadius: 5,
-    fontSize: 13,
-    fontFamily: "inherit",
-    border: isActive ? `1px solid ${ACCENT}` : "1px solid transparent",
-    background: isActive ? TINT_BG : "transparent",
-    color: isDisabled ? BORDER : isActive ? ACCENT : "#09090b",
-    fontWeight: isActive ? 600 : 400,
-    cursor: isDisabled ? "default" : "pointer",
-    display: "inline-flex",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: "0 4px",
-  });
-
   return (
     <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        padding: "14px 16px",
-        borderTop: `1px solid ${BORDER}`,
-        background: SUBTLE,
-      }}
+      className="flex items-center justify-between border-t border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-800/50"
+      style={{ padding: "14px 16px" }}
     >
       {/* Total */}
-      <span style={{ fontSize: 13.5, color: MUTED_FG }}>
+      <span className="text-zinc-500 dark:text-zinc-400" style={{ fontSize: 13.5 }}>
         Total (filtered):{" "}
         <span
           style={{
@@ -83,6 +82,7 @@ const BillsFooter = ({
           <select
             value={perPage}
             onChange={(e) => onPerPageChange(Number(e.target.value))}
+            className="border border-zinc-200 bg-white text-zinc-950 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50"
             style={{
               appearance: "none",
               height: 30,
@@ -91,9 +91,6 @@ const BillsFooter = ({
               fontSize: 12.5,
               borderRadius: 6,
               minWidth: 100,
-              border: `1px solid ${BORDER}`,
-              background: "#fff",
-              color: "#09090b",
               cursor: "pointer",
               fontFamily: "inherit",
               outline: "none",
@@ -105,7 +102,8 @@ const BillsFooter = ({
           <ChevronDown
             size={12}
             strokeWidth={2}
-            style={{ position: "absolute", right: 7, pointerEvents: "none", color: MUTED_FG }}
+            className="text-zinc-500 dark:text-zinc-400"
+            style={{ position: "absolute", right: 7, pointerEvents: "none" }}
           />
         </div>
 
@@ -115,6 +113,7 @@ const BillsFooter = ({
             onClick={() => onPageChange(page - 1)}
             disabled={page <= 1}
             style={pageButtonStyle(false, page <= 1)}
+            className={pageButtonClass(false, page <= 1)}
           >
             <ChevronLeft size={14} />
           </button>
@@ -123,7 +122,8 @@ const BillsFooter = ({
             p === "…" ? (
               <span
                 key={`ellipsis-${i}`}
-                style={{ fontSize: 13, color: MUTED_FG, padding: "0 4px" }}
+                className="text-zinc-500 dark:text-zinc-400"
+                style={{ fontSize: 13, padding: "0 4px" }}
               >
                 …
               </span>
@@ -132,6 +132,7 @@ const BillsFooter = ({
                 key={p}
                 onClick={() => onPageChange(p)}
                 style={pageButtonStyle(p === page, false)}
+                className={pageButtonClass(p === page, false)}
               >
                 {p}
               </button>
@@ -142,6 +143,7 @@ const BillsFooter = ({
             onClick={() => onPageChange(page + 1)}
             disabled={page >= totalPages}
             style={pageButtonStyle(false, page >= totalPages)}
+            className={pageButtonClass(false, page >= totalPages)}
           >
             <ChevronRight size={14} />
           </button>

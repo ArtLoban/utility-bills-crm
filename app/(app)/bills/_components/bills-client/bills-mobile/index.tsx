@@ -3,14 +3,7 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { SERVICE_COLORS } from "@/lib/constants/service-colors";
-import {
-  ACCENT,
-  BORDER,
-  DESTRUCTIVE,
-  MUTED_FG,
-  TINT_BG,
-  TINT_BORDER,
-} from "@/lib/constants/ui-tokens";
+import { ACCENT, DESTRUCTIVE, TINT_BG, TINT_BORDER } from "@/lib/constants/ui-tokens";
 import { BILL_PROPERTIES, BILL_SERVICES, TBill, TFilterState } from "@/app/(app)/bills/_data/mock";
 import { BillCard } from "./bill-card";
 import { FilterChip } from "./filter-chip";
@@ -83,7 +76,7 @@ const BillsMobile = ({
       >
         <div>
           <h2 style={{ fontSize: 22, fontWeight: 700, letterSpacing: -0.5, margin: 0 }}>Bills</h2>
-          <p style={{ fontSize: 12.5, color: MUTED_FG, marginTop: 3 }}>
+          <p className="text-zinc-500 dark:text-zinc-400" style={{ fontSize: 12.5, marginTop: 3 }}>
             {filteredBills.length} records
           </p>
         </div>
@@ -104,20 +97,29 @@ const BillsMobile = ({
       >
         <button
           onClick={() => setSheetOpen(true)}
+          className={
+            activeCount === 0
+              ? "border border-zinc-200 bg-white text-zinc-950 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50"
+              : ""
+          }
           style={{
             height: 32,
             padding: "0 12px",
             fontSize: 13,
             fontWeight: 500,
             borderRadius: 6,
-            border: `1px solid ${activeCount > 0 ? TINT_BORDER : BORDER}`,
-            background: activeCount > 0 ? TINT_BG : "#fff",
-            color: activeCount > 0 ? ACCENT : "#09090b",
             cursor: "pointer",
             display: "inline-flex",
             alignItems: "center",
             gap: 6,
             fontFamily: "inherit",
+            ...(activeCount > 0
+              ? {
+                  border: `1px solid ${TINT_BORDER}`,
+                  background: TINT_BG,
+                  color: ACCENT,
+                }
+              : {}),
           }}
         >
           Filters
@@ -143,13 +145,8 @@ const BillsMobile = ({
         </button>
 
         <span
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 4,
-            fontSize: 12,
-            color: MUTED_FG,
-          }}
+          className="text-zinc-500 dark:text-zinc-400"
+          style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 12 }}
         >
           <ArrowDown size={13} />
           Date (newest)
@@ -158,14 +155,7 @@ const BillsMobile = ({
 
       {/* Active filter chips */}
       {activeCount > 0 && (
-        <div
-          style={{
-            display: "flex",
-            flexWrap: "wrap",
-            gap: 6,
-            marginBottom: 14,
-          }}
-        >
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 14 }}>
           {propertyName && (
             <FilterChip
               label={propertyName}
@@ -207,18 +197,19 @@ const BillsMobile = ({
 
       {/* Total footer */}
       <div
+        className="border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900"
         style={{
           marginTop: 16,
           padding: 14,
           borderRadius: 8,
-          background: "#fff",
-          border: `1px solid ${BORDER}`,
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
         }}
       >
-        <span style={{ fontSize: 13, color: MUTED_FG }}>Total (filtered)</span>
+        <span className="text-zinc-500 dark:text-zinc-400" style={{ fontSize: 13 }}>
+          Total (filtered)
+        </span>
         <span
           style={{
             fontSize: 15,

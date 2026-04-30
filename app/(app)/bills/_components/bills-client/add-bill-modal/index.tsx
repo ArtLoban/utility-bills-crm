@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogClose, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { TServiceKey } from "@/lib/constants/service-colors";
-import { ACCENT, BORDER, MUTED_FG, TINT_BG, TINT_BORDER } from "@/lib/constants/ui-tokens";
+import { ACCENT, TINT_BG, TINT_BORDER } from "@/lib/constants/ui-tokens";
 import { BILL_PROPERTIES, BILL_SERVICES } from "@/app/(app)/bills/_data/mock";
 import { ServiceChip } from "./service-chip";
 
@@ -54,6 +54,13 @@ const ModalSelect = ({ value, isFilled, onChange, children }: TModalSelectProps)
     <select
       value={value}
       onChange={(e) => onChange(e.target.value)}
+      className={
+        !isFilled
+          ? `border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900 ${
+              value === "" ? "text-zinc-500 dark:text-zinc-400" : "text-zinc-950 dark:text-zinc-50"
+            }`
+          : ""
+      }
       style={{
         appearance: "none",
         width: "100%",
@@ -62,13 +69,17 @@ const ModalSelect = ({ value, isFilled, onChange, children }: TModalSelectProps)
         paddingRight: 32,
         fontSize: 14,
         borderRadius: 6,
-        border: `1px solid ${isFilled ? TINT_BORDER : BORDER}`,
-        background: isFilled ? TINT_BG : "#fff",
-        color: isFilled ? "#09090b" : value === "" ? MUTED_FG : "#09090b",
-        fontWeight: isFilled ? 500 : 400,
         cursor: "pointer",
         outline: "none",
         fontFamily: "inherit",
+        ...(isFilled
+          ? {
+              border: `1px solid ${TINT_BORDER}`,
+              background: TINT_BG,
+              color: "#09090b",
+              fontWeight: 500,
+            }
+          : { fontWeight: 400 }),
       }}
     >
       {children}
@@ -76,13 +87,14 @@ const ModalSelect = ({ value, isFilled, onChange, children }: TModalSelectProps)
     <ChevronDown
       size={14}
       strokeWidth={2}
+      className={!isFilled ? "text-zinc-500 dark:text-zinc-400" : ""}
       style={{
         position: "absolute",
         right: 10,
         top: "50%",
         transform: "translateY(-50%)",
         pointerEvents: "none",
-        color: isFilled ? ACCENT : MUTED_FG,
+        ...(isFilled ? { color: ACCENT } : {}),
       }}
     />
   </div>
@@ -121,12 +133,12 @@ const AddBillModal = ({ open, onOpenChange }: TProps) => {
       >
         {/* Header */}
         <div
+          className="border-b border-zinc-200 dark:border-zinc-800"
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
             padding: "16px 24px",
-            borderBottom: `1px solid ${BORDER}`,
           }}
         >
           <DialogTitle style={{ fontSize: 15, fontWeight: 600, letterSpacing: -0.2, margin: 0 }}>
@@ -146,7 +158,7 @@ const AddBillModal = ({ open, onOpenChange }: TProps) => {
               padding: 0,
             }}
           >
-            <X size={16} color={MUTED_FG} />
+            <X size={16} className="text-zinc-500 dark:text-zinc-400" />
           </DialogClose>
         </div>
 
@@ -193,19 +205,22 @@ const AddBillModal = ({ open, onOpenChange }: TProps) => {
               ))}
             </ModalSelect>
             {form.service === "" && (
-              <p style={{ fontSize: 12.5, color: MUTED_FG, marginTop: 6 }}>
+              <p
+                className="text-zinc-500 dark:text-zinc-400"
+                style={{ fontSize: 12.5, marginTop: 6 }}
+              >
                 Filtered by selected property
               </p>
             )}
             {form.service !== "" && isServiceKey(form.service) && (
               <div
+                className="text-zinc-500 dark:text-zinc-400"
                 style={{
                   display: "flex",
                   alignItems: "center",
                   gap: 6,
                   marginTop: 6,
                   fontSize: 12.5,
-                  color: MUTED_FG,
                 }}
               >
                 Selected: <ServiceChip serviceId={form.service} />
@@ -248,20 +263,15 @@ const AddBillModal = ({ open, onOpenChange }: TProps) => {
             {showTariffHint && (
               <div style={{ marginTop: 6, display: "flex", flexDirection: "column", gap: 4 }}>
                 <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 6,
-                    fontSize: 12.5,
-                    color: MUTED_FG,
-                  }}
+                  className="text-zinc-500 dark:text-zinc-400"
+                  style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12.5 }}
                 >
                   Expected based on your tariff:
                   <span
+                    className="bg-zinc-100 dark:bg-zinc-800"
                     style={{
                       fontSize: 12.5,
                       fontWeight: 600,
-                      background: "#f4f4f5",
                       padding: "1px 7px",
                       borderRadius: 4,
                       fontFeatureSettings: '"tnum" 1',
@@ -291,7 +301,10 @@ const AddBillModal = ({ open, onOpenChange }: TProps) => {
           {/* Notes */}
           <div>
             <label style={{ fontSize: 13.5, fontWeight: 500, display: "block", marginBottom: 6 }}>
-              Notes <span style={{ fontWeight: 400, color: MUTED_FG }}>(optional)</span>
+              Notes{" "}
+              <span className="text-zinc-500 dark:text-zinc-400" style={{ fontWeight: 400 }}>
+                (optional)
+              </span>
             </label>
             <Textarea
               value={form.notes}
@@ -304,27 +317,24 @@ const AddBillModal = ({ open, onOpenChange }: TProps) => {
 
         {/* Footer */}
         <div
+          className="border-t border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-800/50"
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
             padding: "14px 24px",
-            borderTop: `1px solid ${BORDER}`,
-            background: "#fafafa",
             borderRadius: "0 0 10px 10px",
           }}
         >
           <DialogClose
+            className="border border-zinc-200 bg-white text-zinc-950 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50"
             style={{
               height: 34,
               padding: "0 16px",
               fontSize: 14,
               fontFamily: "inherit",
-              background: "#fff",
-              border: `1px solid ${BORDER}`,
               borderRadius: 6,
               cursor: "pointer",
-              color: "#09090b",
             }}
           >
             Cancel
@@ -332,17 +342,19 @@ const AddBillModal = ({ open, onOpenChange }: TProps) => {
           <button
             onClick={handleSave}
             disabled={!canSave}
+            className={
+              !canSave ? "bg-zinc-200 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400" : ""
+            }
             style={{
               height: 34,
               padding: "0 18px",
               fontSize: 14,
               fontFamily: "inherit",
-              background: canSave ? ACCENT : "#e4e4e7",
-              color: canSave ? "#fff" : MUTED_FG,
               border: "none",
               borderRadius: 6,
               cursor: canSave ? "pointer" : "default",
               fontWeight: 500,
+              ...(canSave ? { background: ACCENT, color: "#fff" } : {}),
             }}
           >
             Save

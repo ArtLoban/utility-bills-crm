@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { SERVICE_COLORS } from "@/lib/constants/service-colors";
 import { SERVICE_ICONS } from "@/lib/constants/service-icons";
-import { BORDER, DESTRUCTIVE, MUTED_FG } from "@/lib/constants/ui-tokens";
+import { DESTRUCTIVE } from "@/lib/constants/ui-tokens";
 import { TBill } from "@/app/(app)/bills/_data/mock";
 
 type TProps = { row: TBill };
@@ -22,11 +22,9 @@ const BillCard = ({ row }: TProps) => {
 
   return (
     <div
+      className="border border-zinc-200 bg-white shadow-[0_1px_2px_rgba(24,24,27,0.04)] dark:border-zinc-800 dark:bg-zinc-900 dark:shadow-none"
       style={{
-        background: "#fff",
-        border: `1px solid ${BORDER}`,
         borderRadius: 8,
-        boxShadow: "0 1px 2px rgba(24,24,27,0.04)",
         padding: 14,
         display: "flex",
         alignItems: "center",
@@ -95,9 +93,9 @@ const BillCard = ({ row }: TProps) => {
           }}
         >
           <span
+            className="text-zinc-500 dark:text-zinc-400"
             style={{
               fontSize: 12,
-              color: MUTED_FG,
               overflow: "hidden",
               textOverflow: "ellipsis",
               whiteSpace: "nowrap",
@@ -106,7 +104,12 @@ const BillCard = ({ row }: TProps) => {
           >
             {row.property.name} · {row.period}
           </span>
-          <span style={{ fontSize: 11.5, color: MUTED_FG, marginLeft: 4, flexShrink: 0 }}>UAH</span>
+          <span
+            className="text-zinc-500 dark:text-zinc-400"
+            style={{ fontSize: 11.5, marginLeft: 4, flexShrink: 0 }}
+          >
+            UAH
+          </span>
         </div>
       </div>
 
@@ -125,9 +128,13 @@ const BillCard = ({ row }: TProps) => {
             justifyContent: "center",
             flexShrink: 0,
           }}
-          className="data-popup-open:border-zinc-200 data-popup-open:bg-zinc-100"
+          className="data-popup-open:border-zinc-200 data-popup-open:bg-zinc-100 dark:data-popup-open:border-zinc-700 dark:data-popup-open:bg-zinc-800"
         >
-          <MoreHorizontal size={15} strokeWidth={1.75} color="#09090b" />
+          <MoreHorizontal
+            size={15}
+            strokeWidth={1.75}
+            className="text-zinc-950 dark:text-zinc-50"
+          />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-40">
           {/* devnote: wire Edit action when API routes exist */}

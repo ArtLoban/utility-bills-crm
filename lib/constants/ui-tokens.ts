@@ -1,7 +1,3 @@
-export const BORDER = "#e4e4e7";
-export const SUBTLE = "#fafafa";
-export const MUTED = "#f4f4f5";
-export const MUTED_FG = "#71717a";
 export const DESTRUCTIVE = "#dc2626";
 export const SUCCESS = "#16a34a";
 export const ACCENT = "#7c3aed";

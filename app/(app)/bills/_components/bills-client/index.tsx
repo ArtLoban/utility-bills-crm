@@ -96,7 +96,7 @@ const BillsClient = () => {
       >
         <div>
           <h2 style={{ fontSize: 28, fontWeight: 600, letterSpacing: -0.6, margin: 0 }}>Bills</h2>
-          <p style={{ fontSize: 13, color: "#71717a", marginTop: 4 }}>
+          <p className="text-zinc-500 dark:text-zinc-400" style={{ fontSize: 13, marginTop: 4 }}>
             {filteredBills.length} records
           </p>
         </div>
@@ -158,14 +158,7 @@ const BillsClient = () => {
         )}
 
         {filteredBills.length > 0 && (
-          <div
-            style={{
-              border: "1px solid #e4e4e7",
-              borderRadius: 8,
-              boxShadow: "0 1px 2px 0 rgba(24,24,27,0.05)",
-              overflow: "hidden",
-            }}
-          >
+          <div className="overflow-hidden rounded-lg border border-zinc-200 shadow-[0_1px_2px_0_rgba(24,24,27,0.05)] dark:border-zinc-800 dark:shadow-none">
             <BillsTable rows={pageRows} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
             <BillsFooter
               total={total}

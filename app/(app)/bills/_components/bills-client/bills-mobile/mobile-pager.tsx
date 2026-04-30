@@ -7,9 +7,6 @@ type TProps = {
   onNext: () => void;
 };
 
-const BORDER = "#e4e4e7";
-const MUTED_FG = "#71717a";
-
 const MobilePager = ({ page, totalPages, onPrev, onNext }: TProps) => {
   const prevDisabled = page <= 1;
   const nextDisabled = page >= totalPages;
@@ -18,8 +15,6 @@ const MobilePager = ({ page, totalPages, onPrev, onNext }: TProps) => {
     width: 36,
     height: 36,
     borderRadius: 8,
-    border: `1px solid ${BORDER}`,
-    background: "#fff",
     display: "inline-flex",
     alignItems: "center",
     justifyContent: "center",
@@ -36,16 +31,26 @@ const MobilePager = ({ page, totalPages, onPrev, onNext }: TProps) => {
         padding: "14px 0 4px",
       }}
     >
-      <button onClick={onPrev} disabled={prevDisabled} style={navBtnStyle(prevDisabled)}>
-        <ChevronLeft size={14} color="#09090b" />
+      <button
+        onClick={onPrev}
+        disabled={prevDisabled}
+        style={navBtnStyle(prevDisabled)}
+        className="border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900"
+      >
+        <ChevronLeft size={14} className="text-zinc-950 dark:text-zinc-50" />
       </button>
 
-      <span style={{ fontSize: 13, color: MUTED_FG }}>
-        Page <strong style={{ color: "#09090b" }}>{page}</strong> of {totalPages}
+      <span className="text-zinc-500 dark:text-zinc-400" style={{ fontSize: 13 }}>
+        Page <strong className="text-zinc-950 dark:text-zinc-50">{page}</strong> of {totalPages}
       </span>
 
-      <button onClick={onNext} disabled={nextDisabled} style={navBtnStyle(nextDisabled)}>
-        <ChevronRight size={14} color="#09090b" />
+      <button
+        onClick={onNext}
+        disabled={nextDisabled}
+        style={navBtnStyle(nextDisabled)}
+        className="border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900"
+      >
+        <ChevronRight size={14} className="text-zinc-950 dark:text-zinc-50" />
       </button>
     </div>
   );

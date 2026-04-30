@@ -1,7 +1,6 @@
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 
 import { TBill, TSortColumn, TSortDir } from "@/app/(app)/bills/_data/mock";
-import { BORDER, MUTED_FG, SUBTLE } from "@/lib/constants/ui-tokens";
 import { BillRow } from "./bill-row";
 
 type TProps = {
@@ -22,7 +21,8 @@ const COLUMNS: { key: TSortColumn; label: string; align?: "right" }[] = [
 type TSortIconProps = { col: TSortColumn; sortCol: TSortColumn; sortDir: TSortDir };
 
 const SortIcon = ({ col, sortCol, sortDir }: TSortIconProps) => {
-  if (sortCol !== col) return <ArrowUpDown size={12} style={{ color: BORDER }} />;
+  if (sortCol !== col)
+    return <ArrowUpDown size={12} className="text-zinc-300 dark:text-zinc-700" />;
   return sortDir === "asc" ? (
     <ArrowUp size={12} className="text-violet-600" />
   ) : (
@@ -32,23 +32,22 @@ const SortIcon = ({ col, sortCol, sortDir }: TSortIconProps) => {
 
 const BillsTable = ({ rows, sortCol, sortDir, onSort }: TProps) => {
   return (
-    <div style={{ background: "#fff" }}>
+    <div className="bg-white dark:bg-zinc-900">
       <table style={{ width: "100%", borderCollapse: "collapse" }}>
         <thead>
-          <tr style={{ background: SUBTLE }}>
+          <tr className="bg-zinc-50 dark:bg-zinc-900">
             {COLUMNS.map((col) => (
               <th
                 key={col.key}
                 onClick={() => onSort(col.key)}
+                className="border-b border-zinc-200 text-zinc-500 dark:border-zinc-800 dark:text-zinc-400"
                 style={{
                   padding: "10px 16px",
                   fontSize: 12.5,
                   fontWeight: 500,
-                  color: MUTED_FG,
                   textAlign: col.align ?? "left",
                   cursor: "pointer",
                   userSelect: "none",
-                  borderBottom: `1px solid ${BORDER}`,
                 }}
               >
                 <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
@@ -58,12 +57,8 @@ const BillsTable = ({ rows, sortCol, sortDir, onSort }: TProps) => {
               </th>
             ))}
             <th
-              style={{
-                width: 48,
-                padding: "10px 16px",
-                borderBottom: `1px solid ${BORDER}`,
-                cursor: "default",
-              }}
+              className="border-b border-zinc-200 dark:border-zinc-800"
+              style={{ width: 48, padding: "10px 16px", cursor: "default" }}
             />
           </tr>
         </thead>

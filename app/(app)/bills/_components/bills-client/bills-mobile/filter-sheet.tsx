@@ -1,7 +1,7 @@
 import { ChevronDown, X } from "lucide-react";
 
 import { Sheet, SheetClose, SheetContent, SheetTitle } from "@/components/ui/sheet";
-import { ACCENT, BORDER, MUTED_FG } from "@/lib/constants/ui-tokens";
+import { ACCENT } from "@/lib/constants/ui-tokens";
 import { BILL_PROPERTIES, BILL_SERVICES, TFilterState } from "@/app/(app)/bills/_data/mock";
 
 type TProps = {
@@ -27,6 +27,7 @@ const SheetSelect = ({ label, value, onChange, children }: TSheetSelectProps) =>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
+        className="border border-zinc-200 bg-white text-zinc-950 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50"
         style={{
           appearance: "none",
           width: "100%",
@@ -35,9 +36,6 @@ const SheetSelect = ({ label, value, onChange, children }: TSheetSelectProps) =>
           paddingRight: 32,
           fontSize: 14,
           borderRadius: 6,
-          border: `1px solid ${BORDER}`,
-          background: "#fff",
-          color: "#09090b",
           cursor: "pointer",
           outline: "none",
           fontFamily: "inherit",
@@ -48,13 +46,13 @@ const SheetSelect = ({ label, value, onChange, children }: TSheetSelectProps) =>
       <ChevronDown
         size={14}
         strokeWidth={2}
+        className="text-zinc-500 dark:text-zinc-400"
         style={{
           position: "absolute",
           right: 10,
           top: "50%",
           transform: "translateY(-50%)",
           pointerEvents: "none",
-          color: MUTED_FG,
         }}
       />
     </div>
@@ -75,7 +73,10 @@ const FilterSheet = ({ open, onOpenChange, filters, onFilterChange }: TProps) =>
       <SheetContent side="bottom" showCloseButton={false} className="gap-0 rounded-t-[14px] p-0">
         {/* Drag handle */}
         <div style={{ display: "flex", justifyContent: "center", paddingTop: 10 }}>
-          <div style={{ width: 36, height: 4, borderRadius: 2, background: BORDER }} />
+          <div
+            className="bg-zinc-200 dark:bg-zinc-700"
+            style={{ width: 36, height: 4, borderRadius: 2 }}
+          />
         </div>
 
         {/* Inner content */}
@@ -104,7 +105,7 @@ const FilterSheet = ({ open, onOpenChange, filters, onFilterChange }: TProps) =>
                 padding: 0,
               }}
             >
-              <X size={16} color={MUTED_FG} />
+              <X size={16} className="text-zinc-500 dark:text-zinc-400" />
             </SheetClose>
           </div>
 
@@ -139,17 +140,16 @@ const FilterSheet = ({ open, onOpenChange, filters, onFilterChange }: TProps) =>
           <div style={{ display: "flex", gap: 10, marginTop: 20 }}>
             <button
               onClick={handleClear}
+              className="bg-zinc-100 text-zinc-950 dark:bg-zinc-800 dark:text-zinc-50"
               style={{
                 flex: 1,
                 height: 40,
                 borderRadius: 8,
                 border: "none",
-                background: "#f4f4f5",
                 fontSize: 14,
                 fontFamily: "inherit",
                 fontWeight: 500,
                 cursor: "pointer",
-                color: "#09090b",
               }}
             >
               Clear
