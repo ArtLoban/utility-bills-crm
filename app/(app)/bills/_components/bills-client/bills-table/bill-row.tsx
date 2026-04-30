@@ -69,7 +69,11 @@ const BillRow = ({ row, isLast, menuOpen, onMenuOpen, onMenuClose }: TProps) => 
         <button
           onClick={(e) => {
             e.stopPropagation();
-            menuOpen ? onMenuClose() : onMenuOpen();
+            if (menuOpen) {
+              onMenuClose();
+            } else {
+              onMenuOpen();
+            }
           }}
           style={{
             width: 28,

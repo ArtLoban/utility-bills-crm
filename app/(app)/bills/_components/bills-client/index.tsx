@@ -15,6 +15,7 @@ import {
 import { FilterBar } from "./filter-bar";
 import { BillsTable } from "./bills-table";
 import { BillsFooter } from "./bills-footer";
+import { BillsMobile } from "./bills-mobile";
 import { AddBillModal } from "./add-bill-modal";
 
 const getSortValue = (bill: TBill, col: TSortColumn): string | number => {
@@ -185,8 +186,20 @@ const BillsClient = () => {
         )}
       </div>
 
-      {/* Mobile layout — implemented in a later step */}
-      <div className="md:hidden" />
+      {/* Mobile layout */}
+      <div className="md:hidden" style={{ margin: "0 -32px" }}>
+        <BillsMobile
+          filteredBills={filteredBills}
+          filters={filters}
+          onFilterChange={handleFilterChange}
+          page={page}
+          totalPages={totalPages}
+          onPageChange={setPage}
+          total={total}
+          pageRows={pageRows}
+          onAddBill={() => setAddBillOpen(true)}
+        />
+      </div>
 
       <AddBillModal open={addBillOpen} onOpenChange={setAddBillOpen} />
     </div>
