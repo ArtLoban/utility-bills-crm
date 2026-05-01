@@ -16,6 +16,7 @@
   },
   "landing": {
     "nav": {
+      "home": "Home",
       "about": "About",
       "project": "Project",
       "dashboard": "Dashboard",

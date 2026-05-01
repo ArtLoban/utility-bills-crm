@@ -6,6 +6,7 @@ import { PublicMobileMenu } from "@/components/public-mobile-menu";
 import { auth } from "@/lib/auth";
 import { ROUTES } from "@/lib/routes";
 import { PublicHeaderShell } from "./public-header-shell";
+import { PublicNavLink } from "./public-nav-link";
 
 export const PublicHeader = async () => {
   const [session, t] = await Promise.all([auth(), getTranslations("landing")]);
@@ -17,33 +18,12 @@ export const PublicHeader = async () => {
         <PublicLogo />
 
         <nav className="hidden flex-1 items-center justify-center gap-1 md:flex">
-          <Link
-            href={ROUTES.about}
-            className="text-muted-foreground hover:text-foreground rounded-md px-2.5 py-1 text-sm transition-colors"
-          >
-            {t("nav.about")}
-          </Link>
-          <Link
-            href={ROUTES.project}
-            className="text-muted-foreground hover:text-foreground rounded-md px-2.5 py-1 text-sm transition-colors"
-          >
-            {t("nav.project")}
-          </Link>
-          {user && (
-            <Link
-              href={ROUTES.dashboard}
-              className="text-muted-foreground hover:text-foreground rounded-md px-2.5 py-1 text-sm transition-colors"
-            >
-              {t("nav.dashboard")}
-            </Link>
-          )}
+          <PublicNavLink href={ROUTES.home} label={t("nav.home")} />
+          <PublicNavLink href={ROUTES.about} label={t("nav.about")} />
+          <PublicNavLink href={ROUTES.project} label={t("nav.project")} />
+          {user && <PublicNavLink href={ROUTES.dashboard} label={t("nav.dashboard")} />}
           {user?.systemRole === "admin" && (
-            <Link
-              href={ROUTES.admin.root}
-              className="text-muted-foreground hover:text-foreground rounded-md px-2.5 py-1 text-sm transition-colors"
-            >
-              {t("nav.adminPanel")}
-            </Link>
+            <PublicNavLink href={ROUTES.admin.root} label={t("nav.adminPanel")} />
           )}
         </nav>
 

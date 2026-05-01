@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import { Menu } from "lucide-react";
+import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { cn } from "@/lib/utils";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import { PublicLogo } from "@/components/public-logo";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -15,6 +17,15 @@ type TProps = {
 
 export const PublicMobileMenu = ({ isLoggedIn, isAdmin }: TProps) => {
   const t = useTranslations("landing");
+  const pathname = usePathname();
+
+  const navLinkClass = (href: string) =>
+    cn(
+      "text-sm transition-colors",
+      pathname === href
+        ? "text-foreground underline decoration-violet-600 decoration-2 underline-offset-4"
+        : "text-muted-foreground hover:text-foreground",
+    );
 
   return (
     <Sheet>
@@ -29,31 +40,22 @@ export const PublicMobileMenu = ({ isLoggedIn, isAdmin }: TProps) => {
         <div className="flex flex-col gap-6 pt-6">
           <PublicLogo />
           <nav className="flex flex-col gap-1">
-            <Link
-              href={ROUTES.about}
-              className="text-muted-foreground hover:text-foreground text-sm transition-colors"
-            >
+            <Link href={ROUTES.home} className={navLinkClass(ROUTES.home)}>
+              {t("nav.home")}
+            </Link>
+            <Link href={ROUTES.about} className={navLinkClass(ROUTES.about)}>
               {t("nav.about")}
             </Link>
-            <Link
-              href={ROUTES.project}
-              className="text-muted-foreground hover:text-foreground text-sm transition-colors"
-            >
+            <Link href={ROUTES.project} className={navLinkClass(ROUTES.project)}>
               {t("nav.project")}
             </Link>
             {isLoggedIn && (
-              <Link
-                href={ROUTES.dashboard}
-                className="text-muted-foreground hover:text-foreground text-sm transition-colors"
-              >
+              <Link href={ROUTES.dashboard} className={navLinkClass(ROUTES.dashboard)}>
                 {t("nav.dashboard")}
               </Link>
             )}
             {isAdmin && (
-              <Link
-                href={ROUTES.admin.root}
-                className="text-muted-foreground hover:text-foreground text-sm transition-colors"
-              >
+              <Link href={ROUTES.admin.root} className={navLinkClass(ROUTES.admin.root)}>
                 {t("nav.adminPanel")}
               </Link>
             )}
