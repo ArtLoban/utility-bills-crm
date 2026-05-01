@@ -15,9 +15,49 @@
     "adminLanding": "Landing"
   },
   "landing": {
-    "comingSoon": "Coming soon",
-    "login": "Login",
-    "dashboard": "Dashboard"
+    "nav": {
+      "about": "About",
+      "project": "Project",
+      "dashboard": "Dashboard",
+      "adminPanel": "Admin Panel",
+      "signIn": "Sign in",
+      "goToApp": "Go to app"
+    },
+    "footer": {
+      "aboutDeveloper": "About the developer",
+      "architectureCode": "Architecture & code",
+      "copyright": "© {year} · Utility Bills CRM"
+    },
+    "hero": {
+      "eyebrow": "Portfolio project · v1 in progress",
+      "h1": "Utility Bills CRM",
+      "subtitle1": "A multi-tenant web application for tracking utility bills across multiple properties — apartments, houses, summer homes. Log meter readings, record bills and payments, see balances and consumption analytics over time.",
+      "subtitle2": "Built as a portfolio piece and a real product. The first user is the author's wife, who's been tracking two apartments in a paper notebook for years."
+    },
+    "dashboardSection": {
+      "caption": "<strong>Dashboard.</strong> Balance summary across all properties, expense breakdown by service, monthly trends, and consumption analytics with switchable money/units view."
+    },
+    "features": {
+      "sectionLabel": "Features",
+      "sectionTitle": "Built around how households actually work",
+      "propertiesTitle": "Properties and people",
+      "propertiesBody": "Track multiple properties — apartments, houses, summer homes — and share access with family at owner, editor, or viewer level.",
+      "tariffsTitle": "Tariffs change. History stays.",
+      "tariffsBody": "Every tariff, account number, and payment detail is stored with its validity period. Recompute past months correctly even after rates change.",
+      "walletTitle": "Bills and payments as a ledger",
+      "walletBody": "Bills and payments are independent records. Balance is derived. No forced \"this payment pays that bill\" links — just the math, the way real households do it.",
+      "trendsTitle": "From numbers to trends",
+      "trendsBody": "Pie, stacked bar, and line charts show where money goes, how consumption shifts month to month, and whether things are getting better or worse."
+    },
+    "propertySection": {
+      "caption": "<strong>Property detail.</strong> Each property holds its own services with full contract history — provider changes, tariff changes, account number changes, all preserved."
+    },
+    "tech": {
+      "sectionLabel": "Stack",
+      "sectionTitle": "How it's built",
+      "description": "Built with <b>Next.js</b>, <b>TypeScript</b>, <b>PostgreSQL</b>, <b>Drizzle ORM</b>, <b>Auth.js</b>, <b>shadcn/ui</b>, and <b>Tailwind</b>.",
+      "link": "Architecture deep-dive"
+    }
   },
   "auth": {
     "signIn": "Sign in",

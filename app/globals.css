@@ -49,6 +49,25 @@
 }
 
 :root {
+  /* mockup illustration tokens — used by landing page browser-frame mockups */
+  --mockup-bg: #ffffff;
+  --mockup-card: #ffffff;
+  --mockup-border: #e4e4e7;
+  --mockup-muted: #f4f4f5;
+  --mockup-muted-fg: #71717a;
+  --mockup-fg: #09090b;
+  --mockup-fg-sub: #71717a;
+  --mockup-accent: #7c3aed;
+  --mockup-accent-light: #7c3aed;
+  --mockup-bar-inactive: #e4e4e7;
+  --mockup-frame-bg: #f4f4f5;
+  --mockup-url-bg: #ffffff;
+  --mockup-url-text: #a1a1aa;
+  --mockup-dot-1: #fc5f57;
+  --mockup-dot-2: #fdbc2c;
+  --mockup-dot-3: #33c748;
+  --hero-glow: rgba(124, 58, 237, 0.1);
+
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -84,6 +103,25 @@
 }
 
 .dark {
+  /* mockup illustration tokens — dark */
+  --mockup-bg: #09090b;
+  --mockup-card: #18181b;
+  --mockup-border: #27272a;
+  --mockup-muted: #1c1c1f;
+  --mockup-muted-fg: #71717a;
+  --mockup-fg: #fafafa;
+  --mockup-fg-sub: #a1a1aa;
+  --mockup-accent: #7c3aed;
+  --mockup-accent-light: #a78bfa;
+  --mockup-bar-inactive: #3f3f46;
+  --mockup-frame-bg: #18181b;
+  --mockup-url-bg: #09090b;
+  --mockup-url-text: #52525b;
+  --mockup-dot-1: #3f3f46;
+  --mockup-dot-2: #3f3f46;
+  --mockup-dot-3: #3f3f46;
+  --hero-glow: rgba(124, 58, 237, 0.18);
+
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);
