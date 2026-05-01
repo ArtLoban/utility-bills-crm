@@ -75,6 +75,54 @@
         "projectLabel": "About this project",
         "projectCaption": "architecture, decisions, stack rationale."
       }
+    },
+    "project": {
+      "hero": {
+        "h1": "Utility Bills CRM",
+        "subtitle": "A multi-tenant web application for utility bill tracking, built as both a real product and a senior-level engineering practice ground. The page below walks through the stack, architecture, and the decisions behind them.",
+        "githubLink": "View on GitHub"
+      },
+      "stack": {
+        "sectionLabel": "Stack",
+        "sectionTitle": "At a glance",
+        "frontendLabel": "Frontend",
+        "backendLabel": "Backend"
+      },
+      "arch": {
+        "sectionLabel": "Architecture",
+        "sectionTitle": "Six decisions worth explaining",
+        "card1Title": "Next.js full-stack with RSC",
+        "card1Body": "One codebase, no separate API layer. Server Components fetch from the database directly; Server Actions handle mutations with typed validation. No type duplication, no CORS, no version skew between services.",
+        "card2Title": "PostgreSQL with temporal data",
+        "card2Body": "Tariffs, account numbers, payment details — anything that changes over time — is stored with <code>validFrom</code> / <code>validTo</code> intervals using half-open semantics <code>[start, end)</code>. Past months recompute correctly using whichever rate was valid then.",
+        "card3Title": "Drizzle ORM, not Prisma",
+        "card3Body": "Drizzle keeps SQL visible — schema-as-TypeScript, but queries that read like SQL. Better fit for the learning goal, better fit for serverless connection patterns, and <code>drizzle-zod</code> removes a whole class of schema/validation duplication.",
+        "card4Title": "Auth.js with database sessions",
+        "card4Body": "Sliding expiration, immediate revocation, and a \"Remember me\" 30-day cap that forces conscious re-authentication. The OAuth flow is delegated to the library; sessions live in the database where revoking them takes one row update.",
+        "card5Title": "Ledger-style accounting",
+        "card5Body": "Bills and payments are independent records. There is no \"this payment pays that bill\" relationship — balance is derived from <code>sum(bills) − sum(payments)</code>. Matches how households actually think about their utilities and stays correct when amounts don't line up perfectly.",
+        "card6Title": "Multi-tenant from day one",
+        "card6Body": "Every entity carries an owner reference. Every query filters by access through typed helpers like <code>accessibleProperties(userId)</code>. Multi-tenancy is in the data model, not bolted on later — and that decision shapes auth, sharing, soft-delete, and admin all at once."
+      },
+      "schema": {
+        "sectionTitle": "Data model",
+        "caption": "Full schema in the GitHub repository — Drizzle definitions, exclusion constraints, indexes, the lot."
+      },
+      "status": {
+        "sectionTitle": "Status",
+        "p1": "<strong>Where it is now.</strong> The app is in active development. Architecture is finalized, the data model is implemented, the UI is being built screen by screen. The first real user — the author's wife — is testing flows as they ship.",
+        "p2": "<strong>v1 (in progress).</strong> Public landing, authenticated CRM, multi-user sharing, admin section with landing CMS, three languages, light/dark theme.",
+        "p3": "<strong>Beyond v1.</strong> File storage (Google Drive), Telegram notifications, custom services, export, OCR for scanned bills, provider integrations. Roadmap detail in the README.",
+        "p4": "<strong>Hosted on</strong> Vercel (app) and Neon (database)."
+      },
+      "links": {
+        "githubLabel": "GitHub",
+        "githubCaption": "full source, README, decision log.",
+        "demoLabel": "Live demo",
+        "demoCaption": "view-only, with sample data.",
+        "aboutLabel": "About me",
+        "aboutCaption": "who built this."
+      }
     }
   },
   "auth": {
