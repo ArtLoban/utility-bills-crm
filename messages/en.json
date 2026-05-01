@@ -57,6 +57,24 @@
       "sectionTitle": "How it's built",
       "description": "Built with <b>Next.js</b>, <b>TypeScript</b>, <b>PostgreSQL</b>, <b>Drizzle ORM</b>, <b>Auth.js</b>, <b>shadcn/ui</b>, and <b>Tailwind</b>.",
       "link": "Architecture deep-dive"
+    },
+    "about": {
+      "hero": {
+        "h1": "Hi, I'm Art.",
+        "role": "Frontend developer. React, TypeScript, complex UIs.",
+        "location": "Working remotely, based in Ukraine."
+      },
+      "prose": {
+        "p1": "Day-to-day: React with TypeScript, Next.js, modern data tables and visualizations, design systems.",
+        "p2": "Comfortable with: state management at scale (Redux Toolkit, RTK Query), forms and validation, authentication, role-based access.",
+        "p3": "Most of the last few years went into building a payment orchestration platform — a large back-office admin panel that grew to 50+ pages and a few thousand TypeScript files. This CRM is the next thing I'm building."
+      },
+      "links": {
+        "linkedinCaption": "full background, recommendations, work history.",
+        "githubCaption": "code lives here.",
+        "projectLabel": "About this project",
+        "projectCaption": "architecture, decisions, stack rationale."
+      }
     }
   },
   "auth": {
