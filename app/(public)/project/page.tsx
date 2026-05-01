@@ -1,9 +1,9 @@
-import { ArchSection } from "../_components/project/arch-section";
-import { HeroSection } from "../_components/project/hero-section";
-import { LinksSection } from "../_components/project/links-section";
-import { SchemaSection } from "../_components/project/schema-section";
-import { StackSection } from "../_components/project/stack-section";
-import { StatusSection } from "../_components/project/status-section";
+import { ArchSection } from "./_components/arch-section";
+import { HeroSection } from "./_components/hero-section";
+import { LinksSection } from "./_components/links-section";
+import { SchemaSection } from "./_components/schema-section";
+import { StackSection } from "./_components/stack-section";
+import { StatusSection } from "./_components/status-section";
 
 export default function ProjectPage() {
   return (
