@@ -1,95 +1,97 @@
-# Utility Bills CRM — Working Agreement with Claude Code
+# Utility Bills CRM — Claude Code instructions
 
-This project is primarily a senior-level engineering growth exercise for the author.
-Speed is explicitly less important than understanding.
+## 1. Core working rules
 
-## Core working rules
+### 1.1 Plan before any file change
 
-1. **Small steps only.** One logical task per response. If a request seems to
-   require touching multiple concerns or multiple files, propose a split and
-   wait for confirmation before proceeding.
+Before creating or modifying any file, describe in plain language what will
+change, which files are affected, and why this approach. Wait for approval.
 
-2. **Explain before writing.** Before creating or modifying any file, describe
-   the plan in plain language: what files, what each contains, why this
-   structure. Wait for approval.
+### 1.2 Highlight non-trivial decisions only
 
-3. **Explain after writing.** After any file is created or changed, walk through
-   it block by block. Name patterns explicitly — SOLID, dependency injection,
-   compound components, inversion of control, etc. — when they apply.
+After any change, list 1–3 decisions that are non-obvious or have a notable trade-off.
+For each: name the pattern (if applicable) and the alternative that was rejected — in one sentence.
+Skip everything mechanical, idiomatic, or self-evident from reading the code.
+If the entire change was mechanical — say "no notable decisions" and stop.
 
-4. **No silent magic.** If a piece of code relies on framework behavior that is
-   not obvious from reading it — Next.js RSC boundaries, `'use client'` /
-   `'use server'` directives, caching, streaming, Suspense behavior — call
-   it out and explain.
+### 1.3 Small steps
 
-5. **Match the declared stack exactly.** See `README.living.md` for the
-   authoritative stack. Do not introduce libraries, patterns, or tools that
-   are not in it. If a new dependency seems necessary, propose it with
-   trade-offs first.
+One logical task per response. If a request grows beyond ~3 files or feels
+like a large step — stop and propose a split.
 
-6. **Senior-level code is the baseline.** Strict type safety, clear names,
-   separation of concerns, no clever tricks without comment. Assume every line
-   will be defended on a future code review by the author.
+### 1.4 No silent framework magic
 
-7. **The author owns decisions.** When multiple reasonable approaches exist,
-   present them honestly with trade-offs. Do not silently pick one.
+Call out and explain non-obvious framework behavior: RSC boundaries,
+`'use client'` / `'use server'`, caching, streaming, Suspense.
 
-8. **Never touch external credentials or accounts.** Env variable setup,
-   OAuth registration, Vercel/Neon/Sentry account work is done by the author
-   manually.
+### 1.5 Author owns decisions
 
-## DevNote convention
+When multiple reasonable approaches exist, present them with trade-offs.
+Do not silently pick one.
 
-The author marks questions and concerns in generated code with `// devnote: ...` comments.
+### 1.6 Verify type assertions
 
-- **Before accepting any changeset**, scan all modified files for `// devnote:` comments.
-- Address each one explicitly: answer the question, fix the code if needed, or explain why the current approach is correct.
-- Do not commit while any `// devnote:` comment remains in the codebase.
+Before adding `as SomeType` or `as const`, remove it and run `npx tsc --noEmit`.
+If tsc passes without it, don't add it.
 
-## Session model
+### 1.7 Match the declared stack
 
-The project is built in **planned iterations** (a scaffolding document exists in Claude chat).
-Each Claude Code session = one iteration with a concrete, hands-checkable result.
+Do not introduce libraries or patterns that are not already in the project.
+If a new dependency seems necessary, propose it with trade-offs first.
 
-- **One session = one deliverable.** If a task requires touching too many concerns to fit in
-  one focused session, split it _before_ starting — not mid-flight.
-- **"Too much in one answer" is a stop signal.** If a response creates more than ~3 files or
-  feels like too large a step, say "stop — break this down and restart." That is not slowdown;
-  that is the point of the project.
-- **Commit = checkpoint of understanding.** Never commit code you cannot explain. Before
-  `git commit`, do a mental walk-through of every file in the changeset. If anything is
-  unclear — ask first, then commit.
+## 2. DevNote convention
 
-## Project context
+The author marks questions and concerns in generated code with
+`// devnote: ...` comments.
 
-Authoritative documents:
+- Before completing any task, scan modified files for `// devnote:` comments.
+- Resolve each one: answer, fix, or explain why no change is needed.
+- Do not commit while any `// devnote:` remains.
 
-- `README.md` — project overview, stack, current phase status
-- `db/DATA_MODEL.md` — full database schema with rationale
-- `db/SCHEMA_REFERENCE.md` — quick schema lookup
-- `docs/UI_ARCHITECTURE.md` — UI structure, routes, design system
+## 3. Session model
+
+One session = one deliverable. Commit = checkpoint of understanding —
+never commit code you cannot explain.
+
+## 4. Boundaries (manual by author)
+
+- External credentials, env variable values, OAuth setup
+- Vercel / Neon / Sentry account work
+- Anything outside the codebase itself
+
+## 5. Authoritative documents
+
+Read the relevant document(s) when working on a related task. Do not preload.
+
+**Project:**
+
+- `README.md` — overview, current status
+- `docs/README.living.md` — extended project documentation
 - `docs/MVP_definition.md` — product scope
-- `docs/README.living.md` — more info about project
-- `.claude/design/OBSERVATIONS.md` — visual design analysis: spacing, shadows, color tokens,
-  component conventions, and conflicts with `UI_ARCHITECTURE.md`. **Read before implementing
-  any UI component, screen, or modal.**
 
-## Stack (summary — see README.living.md for rationale)
+**Database:**
 
-Next.js App Router + TypeScript (strict) + PostgreSQL (Neon) + Drizzle ORM
+- `db/DATA_MODEL.md` — full schema with rationale
+- `db/SCHEMA_REFERENCE.md` — quick lookup
 
-- Auth.js v5 + shadcn/ui + Tailwind v4 + next-intl + next-themes
-- Vitest + ESLint Flat Config + Prettier + Husky.
+**UI:**
 
-Package manager: npm. OS: macOS.
+- `docs/UI_ARCHITECTURE.md` — routes, layouts, design system
+- `.claude/design/OBSERVATIONS.md` — visual rules. Read before any UI work.
 
-## Language
+**Code:**
 
-Code, identifiers, technical terms: English.
-Explanations: English by default, Russian if the author switches to Russian.
+- `.claude/rules/component-architecture.md` — when to split, folder structure,
+  decomposition triggers. Read before creating or refactoring components.
+- `.claude/rules/code-style.md` — naming, function form, file organization.
+  Read before writing or refactoring code.
 
-## Imports
+## 6. Git
 
-@.claude/rules/commits.md
-@.claude/rules/code-conventions.md
-@.claude/rules/typescript.md
+- Do not add `Co-Authored-By: Claude` lines.
+- Do not add `🤖 Generated with Claude Code` footers.
+
+## 7. Language
+
+Code, identifiers, technical terms — English.
+Explanations — match the user's language.
