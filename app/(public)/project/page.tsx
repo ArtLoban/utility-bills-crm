@@ -1,12 +1,19 @@
+import { ArchSection } from "../_components/project/arch-section";
+import { HeroSection } from "../_components/project/hero-section";
+import { LinksSection } from "../_components/project/links-section";
+import { SchemaSection } from "../_components/project/schema-section";
+import { StackSection } from "../_components/project/stack-section";
+import { StatusSection } from "../_components/project/status-section";
+
 export default function ProjectPage() {
   return (
-    <div className="flex flex-1 flex-col items-center justify-center gap-4 p-8">
-      <h1 className="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
-        The Project
-      </h1>
-      <p className="text-zinc-500 dark:text-zinc-400">
-        Technical background and stack — coming soon.
-      </p>
-    </div>
+    <>
+      <HeroSection />
+      <StackSection />
+      <ArchSection />
+      <SchemaSection />
+      <StatusSection />
+      <LinksSection />
+    </>
   );
 }
