@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Gauge } from "lucide-react";
+import Link from "next/link";
 
 import { ReadingModal } from "@/components/reading-modal";
 import type { TMeter } from "@/components/reading-modal/types";
@@ -38,13 +39,14 @@ const MeterCard = ({ meter, readingMeter }: TProps) => {
               <Gauge size={13} />
               Submit reading
             </button>
-            {/* devnote: navigate to /properties/[id]/meters/[mid] when meter detail page is implemented */}
-            <button
-              className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border-0 bg-transparent text-[13px] font-medium text-zinc-500"
+            {/* devnote: replace /properties/1/meters/1 with real IDs when wired to DB */}
+            <Link
+              href="/properties/1/meters/1"
+              className="inline-flex cursor-pointer items-center gap-1.5 rounded-md text-[13px] font-medium text-zinc-500 no-underline"
               style={{ height: 32, padding: "0 10px" }}
             >
               View meter details
-            </button>
+            </Link>
           </div>
         </div>
 
