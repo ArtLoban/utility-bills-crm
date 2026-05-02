@@ -6,6 +6,7 @@
   "nav": {
     "dashboard": "Панель",
     "properties": "Объекты",
+    "meters": "Счётчики",
     "bills": "Счета",
     "payments": "Платежи",
     "settings": "Настройки",
@@ -144,6 +145,54 @@
       "title": "Вход не завершён",
       "description": "Доступ был отклонён в процессе входа. Обычно это происходит при отмене входа или отказе в разрешении.",
       "tryAgain": "Попробовать снова"
+    }
+  },
+  "meters": {
+    "list": {
+      "title": "Счётчики",
+      "subtitle": "{count, plural, one {# счётчик} few {# счётчика} other {# счётчиков}} по {propertyCount, plural, one {# объекту} few {# объектам} other {# объектам}}",
+      "subtitleActive": "{activeCount} активных",
+      "filters": {
+        "property": "Объект",
+        "serviceType": "Тип услуги",
+        "status": "Статус",
+        "statusActive": "Активные",
+        "statusHistorical": "Исторические",
+        "statusAll": "Все",
+        "clear": "Сбросить фильтры"
+      },
+      "columns": {
+        "property": "Объект",
+        "service": "Услуга",
+        "serial": "Серийный номер",
+        "zones": "Зоны",
+        "installed": "Установлен",
+        "lastReading": "Последнее показание"
+      },
+      "zones": {
+        "count": "{count, plural, one {# зона} few {# зоны} other {# зон}}"
+      },
+      "lastReading": {
+        "none": "—"
+      },
+      "badge": {
+        "historical": "Исторический"
+      },
+      "actions": {
+        "viewDetails": "Подробнее",
+        "submitReading": "Передать показание"
+      },
+      "empty": {
+        "noMeters": {
+          "title": "Счётчиков пока нет",
+          "body": "Счётчики добавляются на странице объекта.",
+          "cta": "К объектам"
+        },
+        "filtered": {
+          "title": "Счётчики не найдены",
+          "cta": "Сбросить фильтры"
+        }
+      }
     }
   },
   "dashboard": {

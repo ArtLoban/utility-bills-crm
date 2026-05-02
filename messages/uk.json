@@ -6,6 +6,7 @@
   "nav": {
     "dashboard": "Панель",
     "properties": "Об'єкти",
+    "meters": "Лічильники",
     "bills": "Рахунки",
     "payments": "Платежі",
     "settings": "Налаштування",
@@ -144,6 +145,54 @@
       "title": "Вхід не завершено",
       "description": "Доступ було відхилено під час входу. Зазвичай це відбувається, коли вхід скасовано або дозвіл відхилено.",
       "tryAgain": "Спробувати знову"
+    }
+  },
+  "meters": {
+    "list": {
+      "title": "Лічильники",
+      "subtitle": "{count, plural, one {# лічильник} few {# лічильники} other {# лічильників}} по {propertyCount, plural, one {# об'єкту} few {# об'єктах} other {# об'єктах}}",
+      "subtitleActive": "{activeCount} активних",
+      "filters": {
+        "property": "Об'єкт",
+        "serviceType": "Тип послуги",
+        "status": "Статус",
+        "statusActive": "Активні",
+        "statusHistorical": "Історичні",
+        "statusAll": "Всі",
+        "clear": "Скинути фільтри"
+      },
+      "columns": {
+        "property": "Об'єкт",
+        "service": "Послуга",
+        "serial": "Серійний номер",
+        "zones": "Зони",
+        "installed": "Встановлено",
+        "lastReading": "Останнє показання"
+      },
+      "zones": {
+        "count": "{count, plural, one {# зона} few {# зони} other {# зон}}"
+      },
+      "lastReading": {
+        "none": "—"
+      },
+      "badge": {
+        "historical": "Історичний"
+      },
+      "actions": {
+        "viewDetails": "Детальніше",
+        "submitReading": "Передати показання"
+      },
+      "empty": {
+        "noMeters": {
+          "title": "Лічильників ще немає",
+          "body": "Лічильники додаються на сторінці об'єкта.",
+          "cta": "До об'єктів"
+        },
+        "filtered": {
+          "title": "Лічильники не знайдено",
+          "cta": "Скинути фільтри"
+        }
+      }
     }
   },
   "dashboard": {

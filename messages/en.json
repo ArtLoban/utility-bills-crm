@@ -6,6 +6,7 @@
   "nav": {
     "dashboard": "Dashboard",
     "properties": "Properties",
+    "meters": "Meters",
     "bills": "Bills",
     "payments": "Payments",
     "settings": "Settings",
@@ -144,6 +145,54 @@
       "title": "Sign-in didn't complete",
       "description": "Access was denied during the sign-in process. This usually happens when sign-in is canceled or permission is declined.",
       "tryAgain": "Try again"
+    }
+  },
+  "meters": {
+    "list": {
+      "title": "Meters",
+      "subtitle": "{count, plural, one {# meter} other {# meters}} across {propertyCount, plural, one {# property} other {# properties}}",
+      "subtitleActive": "{activeCount} active",
+      "filters": {
+        "property": "Property",
+        "serviceType": "Service type",
+        "status": "Status",
+        "statusActive": "Active",
+        "statusHistorical": "Historical",
+        "statusAll": "All",
+        "clear": "Clear filters"
+      },
+      "columns": {
+        "property": "Property",
+        "service": "Service",
+        "serial": "Serial",
+        "zones": "Zones",
+        "installed": "Installed",
+        "lastReading": "Last reading"
+      },
+      "zones": {
+        "count": "{count, plural, one {# zone} other {# zones}}"
+      },
+      "lastReading": {
+        "none": "—"
+      },
+      "badge": {
+        "historical": "Historical"
+      },
+      "actions": {
+        "viewDetails": "View details",
+        "submitReading": "Submit reading"
+      },
+      "empty": {
+        "noMeters": {
+          "title": "No meters yet",
+          "body": "Meters are added on a property page.",
+          "cta": "Go to properties"
+        },
+        "filtered": {
+          "title": "No meters match your filters",
+          "cta": "Clear filters"
+        }
+      }
     }
   },
   "dashboard": {

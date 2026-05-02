@@ -14,6 +14,7 @@ import type { TNavUser } from "./types";
 const NAV_LINKS = [
   { key: "dashboard", href: ROUTES.dashboard },
   { key: "properties", href: ROUTES.properties },
+  { key: "meters", href: ROUTES.meters },
   { key: "bills", href: ROUTES.bills },
   { key: "payments", href: ROUTES.payments },
 ];

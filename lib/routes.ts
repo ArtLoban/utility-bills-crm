@@ -6,6 +6,7 @@ export const ROUTES = {
   dashboard: "/dashboard",
   properties: "/properties",
   bills: "/bills",
+  meters: "/meters",
   payments: "/payments",
   settings: "/settings",
   admin: {
