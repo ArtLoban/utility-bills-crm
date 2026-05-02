@@ -1,10 +1,24 @@
-export default function MetersPage() {
+import { Breadcrumbs } from "@/components/breadcrumbs";
+import { MOCK_METERS } from "./_data/mock";
+import { MetersClient } from "./_components/meters-client";
+
+type TProps = {
+  params: Promise<{ id: string }>;
+};
+
+export default async function MetersPage({ params }: TProps) {
+  const { id } = await params;
+
   return (
-    <div className="flex flex-1 flex-col items-center justify-center gap-4 p-8">
-      <h1 className="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
-        Meters
-      </h1>
-      <p className="text-zinc-500 dark:text-zinc-400">Meters for this property.</p>
+    <div style={{ maxWidth: 920, margin: "0 auto", padding: "28px 32px 80px", width: "100%" }}>
+      <Breadcrumbs
+        items={[
+          { label: "Properties", href: "/properties" },
+          { label: "Main apartment", href: `/properties/${id}` },
+          { label: "Meters" },
+        ]}
+      />
+      <MetersClient propertyId={id} meters={MOCK_METERS} />
     </div>
   );
 }
