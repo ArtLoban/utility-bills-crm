@@ -1,6 +1,7 @@
 import { Breadcrumbs } from "@/components/breadcrumbs";
 
 import type { TMeterDetail } from "../_data/mock";
+import { ReplaceMeterButton } from "./replace-meter-button";
 import { OverflowMenu } from "./overflow-menu";
 
 type TProps = { meter: TMeterDetail };
@@ -39,13 +40,7 @@ const MeterPageHeader = ({ meter }: TProps) => (
       </div>
 
       <div className="flex shrink-0 items-center" style={{ gap: 8 }}>
-        {/* devnote: Replace meter flow not yet designed */}
-        <button
-          className="inline-flex cursor-pointer items-center rounded-md border border-zinc-200 bg-white text-[13px] font-medium text-zinc-950 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50"
-          style={{ height: 32, padding: "0 14px" }}
-        >
-          Replace meter
-        </button>
+        <ReplaceMeterButton meter={meter} />
         <OverflowMenu />
       </div>
     </div>
