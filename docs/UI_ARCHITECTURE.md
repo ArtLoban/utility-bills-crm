@@ -135,7 +135,7 @@ Three distinct header variants, all sharing the same base structure (height, sti
 ### App header
 
 - Logo + app name → `/dashboard`
-- Primary nav: `Dashboard | Properties | Bills | Payments | Settings`
+- Primary nav: `Dashboard | Properties | Meters | Bills | Payments | Settings`
 - Active link has subtle underline in accent color
 - Right:
   - Language switcher (globe → `en / uk / ru`)
@@ -175,9 +175,10 @@ Three distinct header variants, all sharing the same base structure (height, sti
 ├── /properties/[id]/edit                          — Edit property
 ├── /properties/[id]/services/new                  — Create service
 ├── /properties/[id]/services/[sid]                — Service detail
-├── /properties/[id]/meters                        — Meters list
+├── /properties/[id]/meters                        — Meters list (per property)
 ├── /properties/[id]/meters/[mid]                  — Meter detail + readings
 ├── /properties/[id]/sharing                       — Sharing tab
+├── /meters                                        — Global meters list
 ├── /bills                                         — Global bills list
 ├── /payments                                      — Global payments list
 └── /settings                                      — Profile + preferences
@@ -424,6 +425,41 @@ Implemented via CSS `animation-delay: 200ms` on skeletons.
 - Zones + installed date
 - Last reading or "No readings yet"
 - [View details →]
+
+### Meters list (`/meters`)
+
+**Purpose:** global list of all meters across all accessible properties.
+
+**Pattern:** data table with filters, mirroring `/bills` and `/payments`.
+
+**Filters:** Property | Service type | Status (Active / Historical / All) | Clear filters
+
+**Table columns:** Property | Service | Serial | Zones | Installed | Last reading | Actions
+
+- Last reading column shows date + value(s) (e.g. "Oct 12, 2024 · 4521 kWh"). For multi-zone meters: compact representation ("T1: 2310 / T2: 1841"). For meters without readings: "—" muted.
+- Status of meter (active/historical) is implicit through the filter; a small `Historical` badge appears on the row if filter is set to "All" and the row is historical.
+
+**Footer:** count summary ("N meters across M properties · K active") + pagination + per-page selector.
+
+**Mobile:** table collapses to card list. Filters move to bottom sheet.
+
+**URL sync:** filter state in search params (`?property=X&service=Y&status=active`).
+
+**Row interaction:** click navigates to `/properties/[propertyId]/meters/[meterId]` — the existing meter detail page. No separate global meter detail.
+
+**Row actions (`⋮` dropdown):**
+
+- View details (= row click)
+- Submit reading (active meters only; respects per-property role)
+
+**Empty states:**
+
+- **No meters anywhere:** icon + "No meters yet" + muted text "Meters are added on a property page" + secondary link "Go to properties" → `/properties`. No primary CTA — meters cannot be created outside a property context.
+- **Filtered empty:** standard "No meters match your filters" + [Clear filters].
+
+**Icon in primary nav:** `Gauge` (lucide-react).
+
+**Permissions:** list scoped to properties accessible to the user (any role: owner / editor / viewer). Action availability respects per-property role (e.g., viewers don't see "Submit reading").
 
 ### Meter detail (`/properties/[id]/meters/[mid]`)
 
@@ -910,3 +946,17 @@ Remaining after iterations 3–5:
 - CMS admin
 
 **Closed by iterations 3–5:** Service detail, Sharing tab + invite modal, Login screen + error.
+
+### Post-iteration adjustment (May 2026)
+
+After Iteration 5, a navigation gap was identified: dashboard → all-meters had no direct path. Decision made to add a global `/meters` list for navigation symmetry with `/bills` and `/payments`.
+
+**Decision summary:**
+
+- Global `/meters` page added under `(app)` route group.
+- Primary navigation expanded to: `Dashboard | Properties | Meters | Bills | Payments | Settings`.
+- Page follows the same data-table-with-filters pattern as `/bills` and `/payments`.
+- Per-property meters page (`/properties/[id]/meters`) retained without changes — global list is an additional entry point, not a replacement.
+- Visualization in Claude Design **skipped** — implementation follows established patterns from `/bills` and per-property meters list. Visual fidelity verification happens during Claude Code build.
+
+This addition is the only post-Iteration-5 adjustment to UI Architecture. Iteration 8 (Admin, amber accent) remains the final Claude Design iteration as planned.

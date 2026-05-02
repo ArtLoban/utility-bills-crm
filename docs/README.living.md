@@ -373,56 +373,57 @@ Additional decisions made during detailed schema specification:
 
 ### 2026-04 — Phase 6: UI design
 
-| #   | Decision                                                                  | Alternatives considered                        | Outcome                      |
-| --- | ------------------------------------------------------------------------- | ---------------------------------------------- | ---------------------------- |
-| 61  | Navigation pattern: top bar (not sidebar)                                 | Sidebar (classic CRM)                          | Top bar                      |
-| 62  | Admin URL prefix: `/art-admin`                                            | `/admin`, `/manage`, `/control`                | `/art-admin`                 |
-| 63  | Admin visual identity: amber accent line + Admin badge                    | Accent only; badge only; tinted background     | Both combined                |
-| 64  | Landing pages: three separate (not single-page)                           | Single-page with anchors                       | Three pages                  |
-| 65  | Global `/bills` and `/payments` lists                                     | Only nested in property/service                | Global + nested access       |
-| 66  | Property list: card grid                                                  | Table                                          | Card grid                    |
-| 67  | Property detail: tabs pattern                                             | Long scroll; separate pages                    | Tabs                         |
-| 68  | Service detail: hybrid (main view + drawers)                              | Tabs; long scroll                              | Hybrid                       |
-| 69  | Service edit: notes only                                                  | Full edit form including contract/tariff       | Notes only                   |
-| 70  | Contract history: side drawer                                             | Full page; modal                               | Drawer                       |
-| 71  | Entry records (reading, bill, payment): modals                            | Dedicated pages                                | Modals                       |
-| 72  | Meter: belongs to Property                                                | Belongs to Service                             | Property                     |
-| 73  | Multi-zone readings: multi-value fields (valueT1/T2/T3)                   | Row-per-zone                                   | Multi-value                  |
-| 74  | Meter detail: single column scroll                                        | Split view                                     | Single column                |
-| 75  | Reading edit: reuse Submit Reading modal                                  | Inline edit; dedicated page                    | Reuse modal                  |
-| 76  | Bills list pattern: data table with URL-synced filters                    | Card list; nested only                         | Data table + URL sync        |
-| 77  | Bill period: UI accepts month, schema tracks periodStart/End/Month        | UI allows custom range in MVP                  | Month only in MVP UI         |
-| 78  | Stacked bar: stacked + tooltip + clickable legend                         | Toggle stacked/grouped; one service at a time  | Stacked only with enrichment |
-| 79  | Line chart modes: money (multi-line) + consumption (single)               | Single mode; three modes                       | Two modes with toggle        |
-| 80  | Property detail does not have Bills/Payments tabs                         | Separate tabs for bills and payments           | Global list with prefilter   |
-| 81  | Sharing invite flow: immediate access (no accept step)                    | Accept/decline with pending state              | Immediate                    |
-| 82  | Last-owner leave protection: explicit helpful modal                       | Error toast; disabled button                   | Helpful modal                |
-| 83  | Subtle banner on first login after invite                                 | Toast; notification center; nothing            | Subtle banner                |
-| 84  | Hard delete confirmation: type-to-confirm                                 | Double confirm; single confirm                 | Type "DELETE"                |
-| 85  | Soft-deleted rows in admin: opacity + strikethrough + badge               | Separate "Trash" page                          | Inline visual distinction    |
-| 86  | Admin users view: read-only in MVP                                        | Full CRUD                                      | Read-only                    |
-| 87  | Admin dashboard: minimal (4 stats + recent activity)                      | Full analytics dashboard                       | Minimal                      |
-| 88  | Landing visual: "Variant B" — shared design + landing flavor              | Full consistency with CRM; radically different | Shared base, distinct flavor |
-| 89  | Landing page structure: `/` + `/about` + `/project` separate              | Single page with sections                      | Separate pages               |
-| 90  | `/about` minimalism: no surname, no level label, no email                 | Full professional bio with CV download         | Minimal gateway              |
-| 91  | `/about` contact: LinkedIn only, no email                                 | Email + LinkedIn + contact form                | LinkedIn only                |
-| 92  | `/project` stack grid: Frontend + Backend (no Infrastructure)             | Three columns including Infrastructure         | Two columns                  |
-| 93  | Schema visualization on `/project`: text tree in MVP                      | ER diagram                                     | Text tree (ER in v2)         |
-| 94  | Live demo: view-only demo account with pre-seeded data                    | No demo; full public access; recorded video    | View-only demo               |
-| 95  | Demo data seed: one-time at deploy                                        | Nightly re-seed via cron                       | One-time                     |
-| 96  | Demo mode enforcement: backend reject + frontend friendly modal           | Backend error only                             | Both (defense in depth)      |
-| 97  | CMS data model: five singleton-row tables (entity-per-section)            | Key-value store; JSON blob per page            | Entity-per-section           |
-| 98  | CMS editing: per-tab save                                                 | Global save                                    | Per-tab                      |
-| 99  | CMS preview: not in MVP                                                   | Split-view preview                             | Deferred                     |
-| 100 | CMS visibility: two flags (nav + URL access) per page                     | Single flag                                    | Two independent flags        |
-| 101 | Auth login: Google OAuth + Remember me checkbox                           | Separate email/password form                   | Google OAuth only in MVP     |
-| 102 | Sign out confirmation: none for regular, modal for "all devices"          | Confirmation for all sign outs                 | Asymmetric                   |
-| 103 | Session policy: sliding 1h default / sliding 7d + 30d cap                 | Longer defaults; no absolute cap               | Confirmed from Phase 4       |
-| 104 | Return-to redirects on auth: implemented with query param                 | Always redirect to dashboard                   | Query param supported        |
-| 105 | Form validation: inline, not toast                                        | Toast notifications for form errors            | Inline                       |
-| 106 | Loading feedback: 200ms delay before skeleton                             | Immediate skeleton; 500ms delay                | 200ms                        |
-| 107 | Color coding: destructive for debt/expense, green for payment/overpayment | Neutral for both                               | Colored semantics            |
-| 108 | Forbidden (403) response: return 404 instead                              | Explicit 403 page                              | 404 (hide existence)         |
+| #   | Decision                                                                  | Alternatives considered                            | Outcome                      |
+| --- | ------------------------------------------------------------------------- | -------------------------------------------------- | ---------------------------- |
+| 61  | Navigation pattern: top bar (not sidebar)                                 | Sidebar (classic CRM)                              | Top bar                      |
+| 62  | Admin URL prefix: `/art-admin`                                            | `/admin`, `/manage`, `/control`                    | `/art-admin`                 |
+| 63  | Admin visual identity: amber accent line + Admin badge                    | Accent only; badge only; tinted background         | Both combined                |
+| 64  | Landing pages: three separate (not single-page)                           | Single-page with anchors                           | Three pages                  |
+| 65  | Global `/bills` and `/payments` lists                                     | Only nested in property/service                    | Global + nested access       |
+| 66  | Property list: card grid                                                  | Table                                              | Card grid                    |
+| 67  | Property detail: tabs pattern                                             | Long scroll; separate pages                        | Tabs                         |
+| 68  | Service detail: hybrid (main view + drawers)                              | Tabs; long scroll                                  | Hybrid                       |
+| 69  | Service edit: notes only                                                  | Full edit form including contract/tariff           | Notes only                   |
+| 70  | Contract history: side drawer                                             | Full page; modal                                   | Drawer                       |
+| 71  | Entry records (reading, bill, payment): modals                            | Dedicated pages                                    | Modals                       |
+| 72  | Meter: belongs to Property                                                | Belongs to Service                                 | Property                     |
+| 73  | Multi-zone readings: multi-value fields (valueT1/T2/T3)                   | Row-per-zone                                       | Multi-value                  |
+| 74  | Meter detail: single column scroll                                        | Split view                                         | Single column                |
+| 75  | Reading edit: reuse Submit Reading modal                                  | Inline edit; dedicated page                        | Reuse modal                  |
+| 76  | Bills list pattern: data table with URL-synced filters                    | Card list; nested only                             | Data table + URL sync        |
+| 77  | Bill period: UI accepts month, schema tracks periodStart/End/Month        | UI allows custom range in MVP                      | Month only in MVP UI         |
+| 78  | Stacked bar: stacked + tooltip + clickable legend                         | Toggle stacked/grouped; one service at a time      | Stacked only with enrichment |
+| 79  | Line chart modes: money (multi-line) + consumption (single)               | Single mode; three modes                           | Two modes with toggle        |
+| 80  | Property detail does not have Bills/Payments tabs                         | Separate tabs for bills and payments               | Global list with prefilter   |
+| 81  | Sharing invite flow: immediate access (no accept step)                    | Accept/decline with pending state                  | Immediate                    |
+| 82  | Last-owner leave protection: explicit helpful modal                       | Error toast; disabled button                       | Helpful modal                |
+| 83  | Subtle banner on first login after invite                                 | Toast; notification center; nothing                | Subtle banner                |
+| 84  | Hard delete confirmation: type-to-confirm                                 | Double confirm; single confirm                     | Type "DELETE"                |
+| 85  | Soft-deleted rows in admin: opacity + strikethrough + badge               | Separate "Trash" page                              | Inline visual distinction    |
+| 86  | Admin users view: read-only in MVP                                        | Full CRUD                                          | Read-only                    |
+| 87  | Admin dashboard: minimal (4 stats + recent activity)                      | Full analytics dashboard                           | Minimal                      |
+| 88  | Landing visual: "Variant B" — shared design + landing flavor              | Full consistency with CRM; radically different     | Shared base, distinct flavor |
+| 89  | Landing page structure: `/` + `/about` + `/project` separate              | Single page with sections                          | Separate pages               |
+| 90  | `/about` minimalism: no surname, no level label, no email                 | Full professional bio with CV download             | Minimal gateway              |
+| 91  | `/about` contact: LinkedIn only, no email                                 | Email + LinkedIn + contact form                    | LinkedIn only                |
+| 92  | `/project` stack grid: Frontend + Backend (no Infrastructure)             | Three columns including Infrastructure             | Two columns                  |
+| 93  | Schema visualization on `/project`: text tree in MVP                      | ER diagram                                         | Text tree (ER in v2)         |
+| 94  | Live demo: view-only demo account with pre-seeded data                    | No demo; full public access; recorded video        | View-only demo               |
+| 95  | Demo data seed: one-time at deploy                                        | Nightly re-seed via cron                           | One-time                     |
+| 96  | Demo mode enforcement: backend reject + frontend friendly modal           | Backend error only                                 | Both (defense in depth)      |
+| 97  | CMS data model: five singleton-row tables (entity-per-section)            | Key-value store; JSON blob per page                | Entity-per-section           |
+| 98  | CMS editing: per-tab save                                                 | Global save                                        | Per-tab                      |
+| 99  | CMS preview: not in MVP                                                   | Split-view preview                                 | Deferred                     |
+| 100 | CMS visibility: two flags (nav + URL access) per page                     | Single flag                                        | Two independent flags        |
+| 101 | Auth login: Google OAuth + Remember me checkbox                           | Separate email/password form                       | Google OAuth only in MVP     |
+| 102 | Sign out confirmation: none for regular, modal for "all devices"          | Confirmation for all sign outs                     | Asymmetric                   |
+| 103 | Session policy: sliding 1h default / sliding 7d + 30d cap                 | Longer defaults; no absolute cap                   | Confirmed from Phase 4       |
+| 104 | Return-to redirects on auth: implemented with query param                 | Always redirect to dashboard                       | Query param supported        |
+| 105 | Form validation: inline, not toast                                        | Toast notifications for form errors                | Inline                       |
+| 106 | Loading feedback: 200ms delay before skeleton                             | Immediate skeleton; 500ms delay                    | 200ms                        |
+| 107 | Color coding: destructive for debt/expense, green for payment/overpayment | Neutral for both                                   | Colored semantics            |
+| 108 | Forbidden (403) response: return 404 instead                              | Explicit 403 page                                  | 404 (hide existence)         |
+| 109 | Global `/meters` list page added (post-iteration 5)                       | Keep meters per-property only; widget on dashboard | Global page added            |
 
 ### 2026-04 — Scope pivot: from "product-first" to "portfolio-first"
 
