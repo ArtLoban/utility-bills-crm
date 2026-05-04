@@ -1,10 +1,15 @@
-export default function PaymentsPage() {
-  return (
-    <div className="flex flex-1 flex-col items-center justify-center gap-4 p-8">
-      <h1 className="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
-        Payments
-      </h1>
-      <p className="text-zinc-500 dark:text-zinc-400">Payment history and pending payments.</p>
-    </div>
-  );
-}
+import type { Metadata } from "next";
+
+import { PaymentsClient } from "./_components/payments-client";
+
+export const metadata: Metadata = {
+  title: "Payments",
+};
+
+const PaymentsPage = () => (
+  <div className="flex-1 bg-zinc-100 md:bg-white dark:bg-zinc-950 md:dark:bg-zinc-950">
+    <PaymentsClient />
+  </div>
+);
+
+export default PaymentsPage;
