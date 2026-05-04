@@ -195,6 +195,67 @@
       }
     }
   },
+  "payments": {
+    "list": {
+      "title": "Платежі",
+      "subtitle": "{count, plural, one {# платіж} few {# платежі} other {# платежів}} · {totalPaid}",
+      "cta": {
+        "recordPayment": "Додати платіж"
+      },
+      "filters": {
+        "label": "Фільтр",
+        "property": "Об'єкт",
+        "service": "Послуга",
+        "period": "Період",
+        "clear": "Скинути фільтри",
+        "allProperties": "Всі об'єкти",
+        "allServices": "Всі послуги",
+        "periodLast12": "Останні 12 місяців",
+        "periodLast6": "Останні 6 місяців",
+        "periodLast3": "Останні 3 місяці"
+      },
+      "columns": {
+        "date": "Дата",
+        "property": "Об'єкт",
+        "service": "Послуга",
+        "amount": "Сума"
+      },
+      "actions": {
+        "edit": "Редагувати",
+        "delete": "Видалити"
+      },
+      "footer": {
+        "totalPaid": "Всього сплачено",
+        "perPage25": "25 на сторінку",
+        "perPage50": "50 на сторінку"
+      },
+      "mobile": {
+        "filters": "Фільтри",
+        "add": "Додати",
+        "apply": "Застосувати",
+        "sortDefault": "Дата (новіші)"
+      },
+      "empty": {
+        "noPayments": {
+          "title": "Платежів ще немає",
+          "body": "Додайте перший платіж, щоб почати відстеження.",
+          "cta": "Додати перший платіж"
+        },
+        "filtered": {
+          "title": "Платежі не знайдено",
+          "cta": "Скинути фільтри"
+        }
+      },
+      "delete": {
+        "confirm": {
+          "title": "Видалити платіж",
+          "body": "Цю дію неможливо скасувати.",
+          "confirmLabel": "Видалити",
+          "cancelLabel": "Скасувати"
+        }
+      }
+    }
+  },
   "dashboard": {
     "signedInAs": "Ви увійшли як",
     "signOut": "Вийти"

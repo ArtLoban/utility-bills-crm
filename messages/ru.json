@@ -195,6 +195,67 @@
       }
     }
   },
+  "payments": {
+    "list": {
+      "title": "Платежи",
+      "subtitle": "{count, plural, one {# платёж} few {# платежа} many {# платежей} other {# платежей}} · {totalPaid}",
+      "cta": {
+        "recordPayment": "Добавить платёж"
+      },
+      "filters": {
+        "label": "Фильтр",
+        "property": "Объект",
+        "service": "Услуга",
+        "period": "Период",
+        "clear": "Сбросить фильтры",
+        "allProperties": "Все объекты",
+        "allServices": "Все услуги",
+        "periodLast12": "Последние 12 месяцев",
+        "periodLast6": "Последние 6 месяцев",
+        "periodLast3": "Последние 3 месяца"
+      },
+      "columns": {
+        "date": "Дата",
+        "property": "Объект",
+        "service": "Услуга",
+        "amount": "Сумма"
+      },
+      "actions": {
+        "edit": "Редактировать",
+        "delete": "Удалить"
+      },
+      "footer": {
+        "totalPaid": "Итого оплачено",
+        "perPage25": "25 на страницу",
+        "perPage50": "50 на страницу"
+      },
+      "mobile": {
+        "filters": "Фильтры",
+        "add": "Добавить",
+        "apply": "Применить",
+        "sortDefault": "Дата (новые)"
+      },
+      "empty": {
+        "noPayments": {
+          "title": "Платежей пока нет",
+          "body": "Добавьте первый платёж для начала отслеживания.",
+          "cta": "Добавить первый платёж"
+        },
+        "filtered": {
+          "title": "Платежи не найдены",
+          "cta": "Сбросить фильтры"
+        }
+      },
+      "delete": {
+        "confirm": {
+          "title": "Удалить платёж",
+          "body": "Это действие нельзя отменить.",
+          "confirmLabel": "Удалить",
+          "cancelLabel": "Отмена"
+        }
+      }
+    }
+  },
   "dashboard": {
     "signedInAs": "Вы вошли как",
     "signOut": "Выйти"

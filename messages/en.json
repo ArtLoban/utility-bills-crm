@@ -195,6 +195,67 @@
       }
     }
   },
+  "payments": {
+    "list": {
+      "title": "Payments",
+      "subtitle": "{count, plural, one {# payment} other {# payments}} · {totalPaid}",
+      "cta": {
+        "recordPayment": "Record payment"
+      },
+      "filters": {
+        "label": "Filter",
+        "property": "Property",
+        "service": "Service",
+        "period": "Period",
+        "clear": "Clear filters",
+        "allProperties": "All properties",
+        "allServices": "All services",
+        "periodLast12": "Last 12 months",
+        "periodLast6": "Last 6 months",
+        "periodLast3": "Last 3 months"
+      },
+      "columns": {
+        "date": "Date",
+        "property": "Property",
+        "service": "Service",
+        "amount": "Amount"
+      },
+      "actions": {
+        "edit": "Edit",
+        "delete": "Delete"
+      },
+      "footer": {
+        "totalPaid": "Total paid",
+        "perPage25": "25 per page",
+        "perPage50": "50 per page"
+      },
+      "mobile": {
+        "filters": "Filters",
+        "add": "Add",
+        "apply": "Apply",
+        "sortDefault": "Date (newest)"
+      },
+      "empty": {
+        "noPayments": {
+          "title": "No payments yet",
+          "body": "Record your first payment to start tracking.",
+          "cta": "Record your first payment"
+        },
+        "filtered": {
+          "title": "No payments match your filters",
+          "cta": "Clear filters"
+        }
+      },
+      "delete": {
+        "confirm": {
+          "title": "Delete payment",
+          "body": "This action cannot be undone.",
+          "confirmLabel": "Delete",
+          "cancelLabel": "Cancel"
+        }
+      }
+    }
+  },
   "dashboard": {
     "signedInAs": "Signed in as",
     "signOut": "Sign out"
