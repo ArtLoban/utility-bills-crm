@@ -170,9 +170,7 @@ Three distinct header variants, all sharing the same base structure (height, sti
 (app)
 ├── /dashboard                                    — Overview + charts
 ├── /properties                                    — Property card grid
-├── /properties/new                                — Create property
 ├── /properties/[id]                               — Property detail (tabs)
-├── /properties/[id]/edit                          — Edit property
 ├── /properties/[id]/services/new                  — Create service
 ├── /properties/[id]/services/[sid]                — Service detail
 ├── /properties/[id]/meters                        — Meters list (per property)
@@ -201,6 +199,7 @@ Three distinct header variants, all sharing the same base structure (height, sti
 All entity creation/editing uses modals, not dedicated pages. Used for:
 
 - Submit Reading
+- Add / Edit Property
 - Add / Edit Bill
 - Record / Edit Payment
 - Invite person (sharing)
@@ -356,6 +355,37 @@ Implemented via CSS `animation-delay: 200ms` on skeletons.
 - [Open →] CTA (whole card clickable)
 
 **Empty state:** welcome + [Add property] CTA.
+
+### Add / Edit Property modal
+
+**Pattern:** modal form, opened from contextual locations (no dedicated route).
+
+**Opened from:**
+
+- `[+ Add property]` button on `/properties` page header
+- Empty-state CTA "Add your first property" on `/properties`
+- First-time welcome CTA on Dashboard
+- `[Edit]` button on `/properties/[id]` page header (Edit mode, owners only)
+
+**Fields:**
+
+- Name (required, text)
+- Type (required, card grid: apartment / house / cottage / other, with icons)
+- Address (optional, text)
+- Notes (optional, textarea)
+
+**Behavior:**
+
+- First input (Name) auto-focused on open.
+- Inline validation errors below fields.
+- Submit button shows spinner during save.
+- Closes on successful save with confirmation toast.
+- Type is editable in both modes (Add and Edit) — it's a display label, not a structural property.
+
+**Permissions:**
+
+- Add: any authenticated user. Creator is granted `propertyRole = 'owner'` automatically.
+- Edit: owners only. The `[Edit]` button is hidden (not disabled) for editors and viewers.
 
 ### Property detail (`/properties/[id]`)
 
@@ -960,3 +990,14 @@ After Iteration 5, a navigation gap was identified: dashboard → all-meters had
 - Visualization in Claude Design **skipped** — implementation follows established patterns from `/bills` and per-property meters list. Visual fidelity verification happens during Claude Code build.
 
 This addition is the only post-Iteration-5 adjustment to UI Architecture. Iteration 8 (Admin, amber accent) remains the final Claude Design iteration as planned.
+
+### Post-iteration adjustment (May 2026) — Property create/edit as modals
+
+Site Map originally listed `/properties/new` and `/properties/[id]/edit` as dedicated pages. On review during code-transfer phase, these were converted to modals to align with the project's established modal-form pattern (used for Submit Reading, Add/Edit Bill, Record/Edit Payment, etc.).
+
+**Decision summary:**
+
+- `/properties/new` and `/properties/[id]/edit` removed from Site Map.
+- Add Property and Edit Property are now modal forms opened from existing entry points (Properties list, Property detail, Dashboard welcome).
+- Form is simple enough (name + type + optional address + optional notes) that a modal is a better fit than a dedicated page.
+- Visualization in Claude Design **skipped** — modal pattern is already established and visually verified through other modals (Bills, Payments, Readings).

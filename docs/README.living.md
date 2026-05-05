@@ -424,6 +424,7 @@ Additional decisions made during detailed schema specification:
 | 107 | Color coding: destructive for debt/expense, green for payment/overpayment | Neutral for both                                   | Colored semantics            |
 | 108 | Forbidden (403) response: return 404 instead                              | Explicit 403 page                                  | 404 (hide existence)         |
 | 109 | Global `/meters` list page added (post-iteration 5)                       | Keep meters per-property only; widget on dashboard | Global page added            |
+| 110 | Property create/edit migrated from dedicated pages to modals              | Keep dedicated pages /new and /[id]/edit           | Modals                       |
 
 ### 2026-04 — Scope pivot: from "product-first" to "portfolio-first"
 
