@@ -1,6 +1,11 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 import { ChevronRight, MoreHorizontal, Pencil, Share2 } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
+import { PropertyModal } from "@/components/feature/properties/property-modal";
 import { type TPropertyDetail } from "../../_data/mock";
 
 type TProps = {
@@ -8,6 +13,8 @@ type TProps = {
 };
 
 const PropertyHeader = ({ property }: TProps) => {
+  const [editOpen, setEditOpen] = useState(false);
+
   return (
     <div style={{ marginBottom: 24 }}>
       <div className="mb-2.5 flex items-center gap-1" style={{ fontSize: 13 }}>
@@ -39,10 +46,12 @@ const PropertyHeader = ({ property }: TProps) => {
         </div>
 
         <div className="flex shrink-0 items-center gap-2">
-          <Button variant="outline" render={<Link href={`/properties/${property.id}/edit`} />}>
-            <Pencil size={13} />
-            Edit
-          </Button>
+          {property.myRole === "owner" && (
+            <Button variant="outline" onClick={() => setEditOpen(true)}>
+              <Pencil size={13} />
+              Edit
+            </Button>
+          )}
           <Button variant="outline" render={<Link href={`/properties/${property.id}/sharing`} />}>
             <Share2 size={13} />
             Share
@@ -56,6 +65,18 @@ const PropertyHeader = ({ property }: TProps) => {
           </button>
         </div>
       </div>
+
+      <PropertyModal
+        open={editOpen}
+        onOpenChange={setEditOpen}
+        property={{
+          id: property.id,
+          name: property.name,
+          type: property.type,
+          address: property.address,
+          notes: property.notes,
+        }}
+      />
     </div>
   );
 };

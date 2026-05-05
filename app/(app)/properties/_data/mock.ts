@@ -18,6 +18,7 @@ export type TPropertyDetail = {
   type: "apartment" | "house" | "cottage" | "other";
   name: string;
   address: string | null;
+  notes: string | null;
   serviceCount: number;
   createdAt: string;
   myRole: "owner" | "editor" | "viewer";
@@ -73,6 +74,7 @@ export const MOCK_PROPERTY_DETAIL: TPropertyDetail = {
   type: "apartment",
   name: "Apartment on Main St",
   address: "Main St 15",
+  notes: null,
   serviceCount: 5,
   createdAt: "Jan 2024",
   myRole: "owner",
