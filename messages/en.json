@@ -259,5 +259,57 @@
   "dashboard": {
     "signedInAs": "Signed in as",
     "signOut": "Sign out"
+  },
+  "properties": {
+    "modal": {
+      "add": {
+        "title": "Add property",
+        "submit": "Add property"
+      },
+      "edit": {
+        "title": "Edit property",
+        "submit": "Save changes"
+      },
+      "cancel": "Cancel"
+    },
+    "fields": {
+      "name": {
+        "label": "Name",
+        "placeholder": "e.g. Main apartment"
+      },
+      "type": {
+        "label": "Type"
+      },
+      "address": {
+        "label": "Address",
+        "placeholder": "e.g. Main St 15"
+      },
+      "notes": {
+        "label": "Notes",
+        "placeholder": "Any remarks…"
+      }
+    },
+    "type": {
+      "apartment": "Apartment",
+      "house": "House",
+      "cottage": "Cottage",
+      "other": "Other"
+    },
+    "toast": {
+      "added": "Property added",
+      "updated": "Property updated"
+    },
+    "validation": {
+      "name": {
+        "required": "Name is required",
+        "tooLong": "Name is too long (max 100 characters)"
+      },
+      "address": {
+        "tooLong": "Address is too long (max 200 characters)"
+      },
+      "notes": {
+        "tooLong": "Notes are too long (max 1000 characters)"
+      }
+    }
   }
 }
