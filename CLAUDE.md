@@ -1,5 +1,20 @@
 # Utility Bills CRM — Claude Code instructions
 
+## 0. Code quality bar
+
+Every piece of code must be production-ready on first delivery.
+The bar is: **a senior engineer would not need to refactor this.**
+
+"It works" is not enough. Working drafts are not acceptable.
+
+Before writing any code:
+
+- Actually read the relevant project rules files (not from memory — open and read them).
+- Check existing code in the project for established patterns to follow.
+- Apply DRY, correct decomposition, and consistent style before outputting anything.
+
+If I realize I'm about to violate a project rule — stop, flag it, fix the approach. Do not silently produce code with a known problem inside.
+
 ## 1. Core working rules
 
 ### 1.1 Plan before any file change
