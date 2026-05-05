@@ -16,16 +16,16 @@ export const StatusSection = async () => {
             {t("project.status.sectionTitle")}
           </h2>
           <div className="flex flex-col gap-5">
-            <p className="text-[15px] leading-[1.75] text-zinc-500">
+            <p className="text-md leading-[1.75] text-zinc-500">
               {t.rich("project.status.p1", { strong: strongTag })}
             </p>
-            <p className="text-[15px] leading-[1.75] text-zinc-500">
+            <p className="text-md leading-[1.75] text-zinc-500">
               {t.rich("project.status.p2", { strong: strongTag })}
             </p>
-            <p className="text-[15px] leading-[1.75] text-zinc-500">
+            <p className="text-md leading-[1.75] text-zinc-500">
               {t.rich("project.status.p3", { strong: strongTag })}
             </p>
-            <p className="text-[15px] leading-[1.75] text-zinc-500">
+            <p className="text-md leading-[1.75] text-zinc-500">
               {t.rich("project.status.p4", { strong: strongTag })}
             </p>
           </div>

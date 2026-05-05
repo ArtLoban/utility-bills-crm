@@ -21,7 +21,7 @@ const MeterContext = ({ meter }: TProps) => {
         <Icon size={18} style={{ color }} strokeWidth={1.75} />
       </div>
       <div>
-        <div className="text-[13.5px] font-semibold tracking-[-0.1px] text-zinc-950 dark:text-zinc-50">
+        <div className="text-sm font-semibold tracking-[-0.1px] text-zinc-950 dark:text-zinc-50">
           {label} meter · SN {meter.serialNumber}
           {meter.zones === 2 && (
             <span className="font-normal text-zinc-500 dark:text-zinc-400">{" · 2 zones"}</span>

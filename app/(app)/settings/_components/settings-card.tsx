@@ -34,7 +34,7 @@ const SettingsCardHeader = ({ title, description }: TSettingsCardHeaderProps) =>
       {title}
     </div>
     {description && (
-      <div className="mt-0.5 text-[13px] text-zinc-500 dark:text-zinc-400">{description}</div>
+      <div className="mt-0.5 text-sm text-zinc-500 dark:text-zinc-400">{description}</div>
     )}
   </div>
 );
@@ -50,15 +50,13 @@ const SettingsCardFooter = ({ children }: TSettingsCardFooterProps) => (
 );
 
 const FieldLabel = ({ children }: TFieldLabelProps) => (
-  <label className="mb-1.5 block text-[13.5px] font-medium text-zinc-950 dark:text-zinc-50">
+  <label className="mb-1.5 block text-sm font-medium text-zinc-950 dark:text-zinc-50">
     {children}
   </label>
 );
 
 const FieldHint = ({ children }: TFieldHintProps) => (
-  <p className="mt-[5px] text-[12.5px] leading-[1.55] text-zinc-500 dark:text-zinc-400">
-    {children}
-  </p>
+  <p className="mt-[5px] text-xs leading-[1.55] text-zinc-500 dark:text-zinc-400">{children}</p>
 );
 
 export {

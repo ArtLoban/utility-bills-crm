@@ -22,7 +22,7 @@ export const HeroSection = async () => {
             <rect x="0.5" y="7.5" width="4" height="4" rx="0.75" fill="#7c3aed" opacity="0.5" />
             <rect x="7.5" y="7.5" width="4" height="4" rx="0.75" fill="#7c3aed" opacity="0.3" />
           </svg>
-          <span className="text-[12px] font-medium text-violet-700 dark:text-violet-300">
+          <span className="text-xs font-medium text-violet-700 dark:text-violet-300">
             {t("hero.eyebrow")}
           </span>
         </div>
@@ -31,11 +31,9 @@ export const HeroSection = async () => {
           {t("hero.h1")}
         </h1>
 
-        <p className="max-w-[580px] text-[18px] leading-[1.65] text-zinc-500">
-          {t("hero.subtitle1")}
-        </p>
+        <p className="max-w-[580px] text-lg leading-[1.65] text-zinc-500">{t("hero.subtitle1")}</p>
 
-        <p className="mt-4 max-w-[580px] text-[15px] leading-[1.65] text-zinc-500">
+        <p className="text-md mt-4 max-w-[580px] leading-[1.65] text-zinc-500">
           {t("hero.subtitle2")}
         </p>
       </div>

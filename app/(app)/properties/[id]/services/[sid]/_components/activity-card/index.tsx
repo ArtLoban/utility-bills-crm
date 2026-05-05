@@ -35,7 +35,7 @@ const ActivityCard = ({ activity }: TProps) => (
     <div className="border-t border-zinc-200 px-5 py-3 dark:border-zinc-800">
       {/* devnote: wire to /bills?service=sid when service filter is supported */}
       <button
-        className="cursor-pointer border-0 bg-transparent text-[13px] font-medium"
+        className="cursor-pointer border-0 bg-transparent text-sm font-medium"
         style={{ color: "#7c3aed", padding: 0 }}
       >
         See all activity →

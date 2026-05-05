@@ -37,8 +37,8 @@ export const SharingTab = ({ myRole, propertyName }: TProps) => {
     <div onClick={() => openMenuId && setOpenMenuId(null)}>
       {/* Section heading */}
       <div className="mb-4">
-        <h2 className="m-0 text-[17px] font-semibold tracking-[-0.2px]">People with access</h2>
-        <p className="mt-1 mb-0 text-[13.5px] text-zinc-500">
+        <h2 className="m-0 text-lg font-semibold tracking-[-0.2px]">People with access</h2>
+        <p className="mt-1 mb-0 text-sm text-zinc-500">
           Manage who can view or edit this property.
         </p>
       </div>
@@ -63,7 +63,7 @@ export const SharingTab = ({ myRole, propertyName }: TProps) => {
         <>
           <button
             onClick={() => setInviteOpen(true)}
-            className="inline-flex h-9 cursor-pointer items-center gap-[6px] rounded-[6px] border-0 bg-[#7c3aed] px-4 text-[13.5px] font-medium text-white"
+            className="inline-flex h-9 cursor-pointer items-center gap-[6px] rounded-[6px] border-0 bg-[#7c3aed] px-4 text-sm font-medium text-white"
           >
             <Plus size={14} color="#fff" />
             Invite person

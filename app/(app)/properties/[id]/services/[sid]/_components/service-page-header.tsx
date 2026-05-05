@@ -51,7 +51,7 @@ const ServicePageHeader = ({ serviceDetail }: TProps) => {
         <div className="flex items-center gap-2">
           {/* devnote: wire Edit notes button to NotesEditModal when implemented */}
           <button
-            className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-zinc-200 bg-white text-[13px] font-medium text-zinc-950 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50"
+            className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-zinc-200 bg-white text-sm font-medium text-zinc-950 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50"
             style={{ height: 32, padding: "0 12px" }}
           >
             <Pencil size={13} />

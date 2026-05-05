@@ -31,7 +31,7 @@ const ThemeRadio = () => {
             type="button"
             onClick={() => setTheme(opt.value)}
             className={cn(
-              "inline-flex h-9 items-center gap-1.5 rounded-md border px-[14px] text-[13.5px] transition-colors duration-[120ms]",
+              "inline-flex h-9 items-center gap-1.5 rounded-md border px-[14px] text-sm transition-colors duration-[120ms]",
               active
                 ? "border-zinc-950 bg-zinc-950 font-medium text-white dark:border-zinc-50 dark:bg-zinc-50 dark:text-zinc-950"
                 : "border-zinc-200 bg-white font-normal text-zinc-500 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800",

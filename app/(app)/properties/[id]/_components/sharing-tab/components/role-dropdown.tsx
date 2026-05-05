@@ -8,7 +8,7 @@ export const RoleDropdown = ({ value }: TProps) => (
     <select
       defaultValue={value}
       // devnote: wire onChange to role update Server Action when role management is implemented
-      className="h-7 cursor-pointer appearance-none rounded-[6px] border border-[#ede9fe] bg-[#f5f3ff] py-0 pr-[26px] pl-[10px] text-[12.5px] font-medium text-[#7c3aed]"
+      className="h-7 cursor-pointer appearance-none rounded-[6px] border border-[#ede9fe] bg-[#f5f3ff] py-0 pr-[26px] pl-[10px] text-xs font-medium text-[#7c3aed]"
     >
       <option value="Owner">Owner</option>
       <option value="Editor">Editor</option>

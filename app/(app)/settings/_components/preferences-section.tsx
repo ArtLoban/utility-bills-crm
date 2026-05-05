@@ -41,7 +41,7 @@ const NativeSelect = ({
       value={value}
       onChange={onChange ? (e) => onChange(e.target.value) : undefined}
       disabled={disabled}
-      className="h-9 w-full appearance-none rounded-md border border-zinc-200 bg-white py-0 pr-8 pl-3 text-[13.5px] text-zinc-950 transition-colors duration-[120ms] outline-none focus:border-violet-600 focus:ring-3 focus:ring-violet-600/20 disabled:cursor-default disabled:bg-zinc-100 disabled:text-zinc-500 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50 dark:focus:border-violet-500 dark:focus:ring-violet-500/20 dark:disabled:bg-zinc-800 dark:disabled:text-zinc-400"
+      className="h-9 w-full appearance-none rounded-md border border-zinc-200 bg-white py-0 pr-8 pl-3 text-sm text-zinc-950 transition-colors duration-[120ms] outline-none focus:border-violet-600 focus:ring-3 focus:ring-violet-600/20 disabled:cursor-default disabled:bg-zinc-100 disabled:text-zinc-500 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50 dark:focus:border-violet-500 dark:focus:ring-violet-500/20 dark:disabled:bg-zinc-800 dark:disabled:text-zinc-400"
     >
       {options.map((o) => (
         <option key={o.value} value={o.value}>

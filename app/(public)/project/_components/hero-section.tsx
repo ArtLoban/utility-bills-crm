@@ -26,14 +26,14 @@ export const HeroSection = async () => {
         <h1 className="mb-5 max-w-[680px] text-[clamp(32px,4.5vw,52px)] leading-[1.12] font-semibold tracking-[-0.03em] text-zinc-900 dark:text-zinc-50">
           {t("project.hero.h1")}
         </h1>
-        <p className="mb-8 max-w-[560px] text-[17px] leading-[1.7] text-zinc-500">
+        <p className="mb-8 max-w-[560px] text-lg leading-[1.7] text-zinc-500">
           {t("project.hero.subtitle")}
         </p>
         <a
           href="https://github.com"
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 rounded-md bg-violet-600 px-[18px] py-2 text-[14px] font-medium text-white transition-colors hover:bg-violet-700"
+          className="inline-flex items-center gap-2 rounded-md bg-violet-600 px-[18px] py-2 text-sm font-medium text-white transition-colors hover:bg-violet-700"
         >
           <GithubIcon />
           {t("project.hero.githubLink")}

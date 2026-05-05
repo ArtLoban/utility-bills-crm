@@ -17,7 +17,7 @@ export const PublicLogo = ({ href = "/", className }: TProps) => {
           <rect x="7.5" y="7.5" width="4.5" height="4.5" rx="1" fill="white" fillOpacity="0.4" />
         </svg>
       </div>
-      <span className="text-[14px] font-semibold tracking-tight">Utility Bills CRM</span>
+      <span className="text-sm font-semibold tracking-tight">Utility Bills CRM</span>
     </Link>
   );
 };

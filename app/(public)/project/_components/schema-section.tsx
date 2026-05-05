@@ -23,10 +23,10 @@ export const SchemaSection = async () => {
           <h2 className="mb-6 text-[clamp(22px,2.5vw,30px)] font-semibold tracking-[-0.02em] text-zinc-900 dark:text-zinc-50">
             {t("project.schema.sectionTitle")}
           </h2>
-          <pre className="overflow-x-auto rounded-lg border border-zinc-200 bg-white px-7 py-6 font-mono text-[13px] leading-[1.8] text-zinc-600 shadow-[0_1px_2px_rgba(0,0,0,0.04)] dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400 dark:shadow-none">
+          <pre className="overflow-x-auto rounded-lg border border-zinc-200 bg-white px-7 py-6 font-mono text-sm leading-[1.8] text-zinc-600 shadow-[0_1px_2px_rgba(0,0,0,0.04)] dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400 dark:shadow-none">
             {SCHEMA_TREE}
           </pre>
-          <p className="mt-4 text-[14px] text-zinc-500">{t("project.schema.caption")}</p>
+          <p className="mt-4 text-sm text-zinc-500">{t("project.schema.caption")}</p>
         </div>
       </div>
     </section>

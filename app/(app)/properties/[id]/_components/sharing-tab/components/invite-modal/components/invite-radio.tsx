@@ -31,8 +31,8 @@ export const InviteRadio = ({ value, selected, onSelect, label, helper }: TProps
       </div>
 
       <div>
-        <div className="text-[13.5px] font-semibold tracking-[-0.1px]">{label}</div>
-        <div className="mt-[2px] text-[12.5px] text-zinc-500">{helper}</div>
+        <div className="text-sm font-semibold tracking-[-0.1px]">{label}</div>
+        <div className="mt-[2px] text-xs text-zinc-500">{helper}</div>
       </div>
     </div>
   );

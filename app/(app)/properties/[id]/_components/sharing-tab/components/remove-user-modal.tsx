@@ -23,7 +23,7 @@ export const RemoveUserModal = ({ open, onOpenChange, user }: TProps) => {
       >
         {/* Header */}
         <div className="flex items-center justify-between border-b border-zinc-200 px-6 py-4">
-          <DialogTitle className="text-[15px] font-semibold tracking-[-0.2px]">
+          <DialogTitle className="text-md font-semibold tracking-[-0.2px]">
             Remove access?
           </DialogTitle>
           <DialogClose className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-md border-0 bg-transparent p-0">
@@ -44,8 +44,8 @@ export const RemoveUserModal = ({ open, onOpenChange, user }: TProps) => {
           <div className="mb-4 flex items-center gap-3 rounded-lg border border-zinc-200 bg-zinc-100 px-[14px] py-3">
             <Avatar size={36} idx={user.avatarIdx} name={user.name} />
             <div>
-              <div className="text-[14px] font-semibold">{user.name}</div>
-              <div className="text-[12.5px] text-zinc-500">
+              <div className="text-sm font-semibold">{user.name}</div>
+              <div className="text-xs text-zinc-500">
                 {user.email} · {user.role}
               </div>
             </div>
@@ -53,12 +53,12 @@ export const RemoveUserModal = ({ open, onOpenChange, user }: TProps) => {
 
           {/* Confirmation text */}
           {/* devnote: propertyName should come from props when connected to real data */}
-          <p className="mb-[10px] text-[14px] leading-[1.55]">
+          <p className="mb-[10px] text-sm leading-[1.55]">
             Remove <strong>{user.name}</strong> from <strong>Apartment on Main St</strong>?
           </p>
 
           {/* Sub-text */}
-          <p className="text-[13.5px] leading-[1.55] text-zinc-500">
+          <p className="text-sm leading-[1.55] text-zinc-500">
             They will immediately lose access to this property and all its data. This can be undone
             by inviting them again.
           </p>
@@ -69,11 +69,11 @@ export const RemoveUserModal = ({ open, onOpenChange, user }: TProps) => {
           className="flex items-center justify-between border-t border-zinc-200 bg-zinc-50 px-6 py-3.5"
           style={{ borderRadius: "0 0 10px 10px" }}
         >
-          <DialogClose className="inline-flex h-[34px] cursor-pointer items-center rounded-[6px] border border-zinc-200 bg-white px-4 text-[13.5px] font-medium text-zinc-950">
+          <DialogClose className="inline-flex h-[34px] cursor-pointer items-center rounded-[6px] border border-zinc-200 bg-white px-4 text-sm font-medium text-zinc-950">
             Cancel
           </DialogClose>
           {/* devnote: wire to Server Action when access management is implemented */}
-          <button className="inline-flex h-[34px] cursor-pointer items-center rounded-[6px] border-0 bg-[#dc2626] px-4 text-[13.5px] font-medium text-white">
+          <button className="inline-flex h-[34px] cursor-pointer items-center rounded-[6px] border-0 bg-[#dc2626] px-4 text-sm font-medium text-white">
             Remove access
           </button>
         </div>

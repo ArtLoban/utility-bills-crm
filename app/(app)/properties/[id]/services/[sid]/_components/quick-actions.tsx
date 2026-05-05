@@ -30,7 +30,7 @@ const QuickActions = ({ readingMeter }: TProps) => {
         <div className="flex items-center gap-3 px-5 py-4">
           <button
             onClick={() => setReadingOpen(true)}
-            className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border-0 text-[13px] font-medium text-white"
+            className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border-0 text-sm font-medium text-white"
             style={{ height: 32, padding: "0 14px", background: ACCENT }}
           >
             <Gauge size={13} />
@@ -38,7 +38,7 @@ const QuickActions = ({ readingMeter }: TProps) => {
           </button>
           {/* devnote: wire to AddBillModal/RecordPaymentModal when implemented */}
           <button
-            className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-zinc-200 bg-white text-[13px] font-medium text-zinc-950 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50"
+            className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-zinc-200 bg-white text-sm font-medium text-zinc-950 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50"
             style={{ height: 32, padding: "0 12px" }}
           >
             <FileText size={13} />
@@ -46,7 +46,7 @@ const QuickActions = ({ readingMeter }: TProps) => {
           </button>
           {/* devnote: wire to AddBillModal/RecordPaymentModal when implemented */}
           <button
-            className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-zinc-200 bg-white text-[13px] font-medium text-zinc-950 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50"
+            className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-zinc-200 bg-white text-sm font-medium text-zinc-950 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50"
             style={{ height: 32, padding: "0 12px" }}
           >
             <Wallet size={13} />

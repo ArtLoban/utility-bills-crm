@@ -35,7 +35,7 @@ const ReadingsSection = ({ readings, readingMeter }: TProps) => {
           </h2>
           <button
             onClick={() => setModalOpen(true)}
-            className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border-0 text-[13px] font-medium text-white"
+            className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border-0 text-sm font-medium text-white"
             style={{
               height: 32,
               padding: "0 14px",
@@ -204,7 +204,7 @@ const ReadingsSection = ({ readings, readingMeter }: TProps) => {
               style={{ padding: "14px 16px", boxShadow: "0 1px 2px rgba(24,24,27,0.05)" }}
             >
               <div className="mb-2.5 flex items-center justify-between">
-                <span className="text-[13px] font-semibold text-zinc-950 dark:text-zinc-50">
+                <span className="text-sm font-semibold text-zinc-950 dark:text-zinc-50">
                   {row.date}
                 </span>
                 {/* devnote: wire to edit reading modal when designed */}
@@ -218,7 +218,7 @@ const ReadingsSection = ({ readings, readingMeter }: TProps) => {
                   { label: "T2 (night)", value: row.t2, delta: row.d2 },
                 ].map(({ label, value, delta }) => (
                   <div key={label} className="flex items-baseline justify-between">
-                    <span className="text-[12.5px] text-zinc-500 dark:text-zinc-400">{label}</span>
+                    <span className="text-xs text-zinc-500 dark:text-zinc-400">{label}</span>
                     <span
                       className="text-zinc-950 dark:text-zinc-50"
                       style={{
@@ -229,7 +229,7 @@ const ReadingsSection = ({ readings, readingMeter }: TProps) => {
                     >
                       {fmt(value)} kWh
                       {delta !== null && (
-                        <span className="ml-1 text-[12px] font-normal text-zinc-500 dark:text-zinc-400">
+                        <span className="ml-1 text-xs font-normal text-zinc-500 dark:text-zinc-400">
                           +{fmt(delta)}
                         </span>
                       )}
@@ -237,7 +237,7 @@ const ReadingsSection = ({ readings, readingMeter }: TProps) => {
                   </div>
                 ))}
                 {row.note && (
-                  <p className="mt-1 text-[12.5px] text-zinc-500 dark:text-zinc-400">{row.note}</p>
+                  <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">{row.note}</p>
                 )}
               </div>
             </div>

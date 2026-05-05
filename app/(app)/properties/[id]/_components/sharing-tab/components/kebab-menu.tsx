@@ -27,7 +27,7 @@ export const KebabMenu = ({ open, onToggle, items }: TProps) => (
               e.stopPropagation();
               item.onClick?.();
             }}
-            className={`block w-full cursor-pointer border-0 bg-transparent px-[14px] py-[9px] text-left text-[13px] ${
+            className={`block w-full cursor-pointer border-0 bg-transparent px-[14px] py-[9px] text-left text-sm ${
               item.destructive ? "text-[#dc2626]" : "text-[#09090b]"
             } ${i === 0 ? "" : "border-t border-zinc-100"}`}
           >

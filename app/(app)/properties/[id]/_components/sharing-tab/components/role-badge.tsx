@@ -9,7 +9,7 @@ const ROLE_CLASSES: Record<TUserRole, string> = {
 };
 
 export const RoleBadge = ({ role }: TProps) => (
-  <span className={`rounded-full px-2 py-[2px] text-[11.5px] font-semibold ${ROLE_CLASSES[role]}`}>
+  <span className={`rounded-full px-2 py-[2px] text-xs font-semibold ${ROLE_CLASSES[role]}`}>
     {role}
   </span>
 );

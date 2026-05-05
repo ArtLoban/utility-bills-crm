@@ -20,7 +20,7 @@ export const InviteModal = ({ open, onOpenChange }: TProps) => {
       >
         {/* Header */}
         <div className="flex items-center justify-between border-b border-zinc-200 px-6 py-4">
-          <DialogTitle className="text-[15px] font-semibold tracking-[-0.2px]">
+          <DialogTitle className="text-md font-semibold tracking-[-0.2px]">
             Invite person
           </DialogTitle>
           <DialogClose className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-md border-0 bg-transparent p-0">
@@ -32,13 +32,13 @@ export const InviteModal = ({ open, onOpenChange }: TProps) => {
         <div className="px-6 py-5">
           {/* Email field */}
           <div>
-            <label className="mb-1.5 block text-[13.5px] font-medium">Email</label>
+            <label className="mb-1.5 block text-sm font-medium">Email</label>
             <input
               type="email"
               placeholder="name@example.com"
-              className="h-9 w-full rounded-[6px] border border-zinc-200 px-3 text-[14px] outline-none focus:border-[#7c3aed]"
+              className="h-9 w-full rounded-[6px] border border-zinc-200 px-3 text-sm outline-none focus:border-[#7c3aed]"
             />
-            <p className="mt-[6px] text-[12.5px] text-zinc-500">
+            <p className="mt-[6px] text-xs text-zinc-500">
               The person must already have an account.
             </p>
           </div>
@@ -47,7 +47,7 @@ export const InviteModal = ({ open, onOpenChange }: TProps) => {
 
           {/* Role section */}
           <div>
-            <p className="mb-[10px] text-[13.5px] font-medium">Role</p>
+            <p className="mb-[10px] text-sm font-medium">Role</p>
             <div className="flex flex-col gap-2">
               <InviteRadio
                 value="Viewer"
@@ -79,11 +79,11 @@ export const InviteModal = ({ open, onOpenChange }: TProps) => {
           className="flex items-center justify-between border-t border-zinc-200 bg-zinc-50 px-6 py-3.5"
           style={{ borderRadius: "0 0 10px 10px" }}
         >
-          <DialogClose className="inline-flex h-[34px] cursor-pointer items-center rounded-[6px] border border-zinc-200 bg-white px-4 text-[13.5px] font-medium text-zinc-950">
+          <DialogClose className="inline-flex h-[34px] cursor-pointer items-center rounded-[6px] border border-zinc-200 bg-white px-4 text-sm font-medium text-zinc-950">
             Cancel
           </DialogClose>
           {/* devnote: wire Send invite to Server Action when invitation logic is implemented */}
-          <button className="inline-flex h-[34px] cursor-pointer items-center rounded-[6px] border-0 bg-[#7c3aed] px-4 text-[13.5px] font-medium text-white">
+          <button className="inline-flex h-[34px] cursor-pointer items-center rounded-[6px] border-0 bg-[#7c3aed] px-4 text-sm font-medium text-white">
             Send invite
           </button>
         </div>

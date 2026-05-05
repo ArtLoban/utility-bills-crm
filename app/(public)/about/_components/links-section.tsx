@@ -16,11 +16,11 @@ export const LinksSection = async () => {
                 href="https://linkedin.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 text-[16px] font-medium text-violet-600 transition-opacity hover:opacity-75 dark:text-violet-400"
+                className="inline-flex items-center gap-1.5 text-base font-medium text-violet-600 transition-opacity hover:opacity-75 dark:text-violet-400"
               >
                 LinkedIn <ArrowRight className="size-3.5" strokeWidth={2} />
               </a>
-              <span className="text-[14px] text-zinc-500">
+              <span className="text-sm text-zinc-500">
                 <span className="text-zinc-300 dark:text-zinc-600">—</span>{" "}
                 {t("about.links.linkedinCaption")}
               </span>
@@ -31,11 +31,11 @@ export const LinksSection = async () => {
                 href="https://github.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 text-[16px] font-medium text-violet-600 transition-opacity hover:opacity-75 dark:text-violet-400"
+                className="inline-flex items-center gap-1.5 text-base font-medium text-violet-600 transition-opacity hover:opacity-75 dark:text-violet-400"
               >
                 GitHub <ArrowRight className="size-3.5" strokeWidth={2} />
               </a>
-              <span className="text-[14px] text-zinc-500">
+              <span className="text-sm text-zinc-500">
                 <span className="text-zinc-300 dark:text-zinc-600">—</span>{" "}
                 {t("about.links.githubCaption")}
               </span>
@@ -44,11 +44,11 @@ export const LinksSection = async () => {
             <div className="flex flex-col gap-1">
               <Link
                 href={ROUTES.project}
-                className="inline-flex items-center gap-1.5 text-[16px] font-medium text-violet-600 transition-opacity hover:opacity-75 dark:text-violet-400"
+                className="inline-flex items-center gap-1.5 text-base font-medium text-violet-600 transition-opacity hover:opacity-75 dark:text-violet-400"
               >
                 {t("about.links.projectLabel")} <ArrowRight className="size-3.5" strokeWidth={2} />
               </Link>
-              <span className="text-[14px] text-zinc-500">
+              <span className="text-sm text-zinc-500">
                 <span className="text-zinc-300 dark:text-zinc-600">—</span>{" "}
                 {t("about.links.projectCaption")}
               </span>

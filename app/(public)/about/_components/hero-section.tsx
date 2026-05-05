@@ -10,10 +10,10 @@ export const HeroSection = async () => {
           <h1 className="mb-5 text-[clamp(34px,4.5vw,52px)] leading-[1.12] font-semibold tracking-[-0.03em] text-zinc-900 dark:text-zinc-50">
             {t("about.hero.h1")}
           </h1>
-          <p className="mb-1.5 text-[18px] leading-relaxed text-zinc-900 dark:text-zinc-50">
+          <p className="mb-1.5 text-lg leading-relaxed text-zinc-900 dark:text-zinc-50">
             {t("about.hero.role")}
           </p>
-          <p className="text-[16px] text-zinc-500">{t("about.hero.location")}</p>
+          <p className="text-base text-zinc-500">{t("about.hero.location")}</p>
         </div>
       </div>
     </section>

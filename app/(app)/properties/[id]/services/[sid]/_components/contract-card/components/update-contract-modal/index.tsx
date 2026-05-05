@@ -80,14 +80,14 @@ const UpdateContractModal = ({ open, onOpenChange }: TProps) => {
           style={{ padding: "14px 24px", borderRadius: "0 0 10px 10px" }}
         >
           <DialogClose
-            className="cursor-pointer rounded-md border border-zinc-200 bg-white px-4 text-[13.5px] font-medium text-zinc-950 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50"
+            className="cursor-pointer rounded-md border border-zinc-200 bg-white px-4 text-sm font-medium text-zinc-950 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50"
             style={{ height: 34 }}
           >
             Cancel
           </DialogClose>
           {/* devnote: wire Apply change to Server Action when contract update logic is implemented */}
           <button
-            className="cursor-pointer rounded-md border-0 text-[13.5px] font-medium text-white"
+            className="cursor-pointer rounded-md border-0 text-sm font-medium text-white"
             style={{ height: 34, padding: "0 18px", background: ACCENT }}
           >
             Apply change

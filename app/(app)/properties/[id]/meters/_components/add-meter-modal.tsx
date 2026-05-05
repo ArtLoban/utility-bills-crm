@@ -109,7 +109,7 @@ const AddMeterModal = ({ open, onOpenChange }: TProps) => {
         >
           {/* Service type */}
           <div>
-            <label className="mb-1.5 block text-[13px] font-medium">
+            <label className="mb-1.5 block text-sm font-medium">
               Service type <span className="font-normal text-zinc-500 dark:text-zinc-400">*</span>
             </label>
             <div className="relative">
@@ -143,7 +143,7 @@ const AddMeterModal = ({ open, onOpenChange }: TProps) => {
 
           {/* Serial number */}
           <div>
-            <label className="mb-1.5 block text-[13px] font-medium">
+            <label className="mb-1.5 block text-sm font-medium">
               Serial number <span className="font-normal text-zinc-500 dark:text-zinc-400">*</span>
             </label>
             <Input
@@ -156,7 +156,7 @@ const AddMeterModal = ({ open, onOpenChange }: TProps) => {
 
           {/* Zones */}
           <div>
-            <label className="mb-1.5 block text-[13px] font-medium">
+            <label className="mb-1.5 block text-sm font-medium">
               Zones <span className="font-normal text-zinc-500 dark:text-zinc-400">*</span>
             </label>
             <div className="relative">
@@ -183,7 +183,7 @@ const AddMeterModal = ({ open, onOpenChange }: TProps) => {
           <div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
               <div>
-                <label className="mb-1.5 block text-[13px] font-medium">
+                <label className="mb-1.5 block text-sm font-medium">
                   Installed at{" "}
                   <span className="font-normal text-zinc-500 dark:text-zinc-400">*</span>
                 </label>
@@ -201,7 +201,7 @@ const AddMeterModal = ({ open, onOpenChange }: TProps) => {
                 </div>
               </div>
               <div>
-                <label className="mb-1.5 block text-[13px] font-medium">
+                <label className="mb-1.5 block text-sm font-medium">
                   Active since{" "}
                   <span className="font-normal text-zinc-500 dark:text-zinc-400">*</span>
                 </label>
@@ -229,7 +229,7 @@ const AddMeterModal = ({ open, onOpenChange }: TProps) => {
 
           {/* Notes */}
           <div>
-            <label className="mb-1.5 block text-[13px] font-medium">
+            <label className="mb-1.5 block text-sm font-medium">
               Notes <span className="font-normal text-zinc-500 dark:text-zinc-400">(optional)</span>
             </label>
             <Textarea
@@ -247,7 +247,7 @@ const AddMeterModal = ({ open, onOpenChange }: TProps) => {
           style={{ padding: "16px 24px", gap: 8, borderRadius: "0 0 12px 12px" }}
         >
           <DialogClose
-            className="cursor-pointer rounded-md border border-zinc-200 bg-white px-4 text-[13.5px] font-medium text-zinc-950 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50"
+            className="cursor-pointer rounded-md border border-zinc-200 bg-white px-4 text-sm font-medium text-zinc-950 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50"
             style={{ height: 36 }}
           >
             Cancel
@@ -257,8 +257,8 @@ const AddMeterModal = ({ open, onOpenChange }: TProps) => {
             disabled={!canSubmit}
             className={
               !canSubmit
-                ? "cursor-default rounded-md border-0 bg-zinc-200 px-4 text-[13.5px] font-medium text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400"
-                : "cursor-pointer rounded-md border-0 text-[13.5px] font-medium text-white"
+                ? "cursor-default rounded-md border-0 bg-zinc-200 px-4 text-sm font-medium text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400"
+                : "cursor-pointer rounded-md border-0 text-sm font-medium text-white"
             }
             style={{
               height: 36,

@@ -20,10 +20,8 @@ export default async function AuthErrorPage() {
         </div>
       </div>
 
-      <h1 className="mb-3 text-center text-[22px] font-bold tracking-[-0.4px]">
-        {t("error.title")}
-      </h1>
-      <p className="mb-7 text-center text-[13.5px] leading-[1.55] text-zinc-500">
+      <h1 className="mb-3 text-center text-2xl font-bold tracking-[-0.4px]">{t("error.title")}</h1>
+      <p className="mb-7 text-center text-sm leading-[1.55] text-zinc-500">
         {t("error.description")}
       </p>
 
@@ -36,7 +34,7 @@ export default async function AuthErrorPage() {
 
       <Link
         href={ROUTES.home}
-        className="flex items-center justify-center gap-1.5 text-[13px] text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300"
+        className="flex items-center justify-center gap-1.5 text-sm text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300"
       >
         <ArrowLeft className="size-3" strokeWidth={2} />
         {t("backToHome")}

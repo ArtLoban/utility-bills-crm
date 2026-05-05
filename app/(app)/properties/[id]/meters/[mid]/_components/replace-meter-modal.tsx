@@ -112,7 +112,7 @@ const ReplaceMeterModal = ({ open, onOpenChange, meter }: TProps) => {
         >
           {/* Replacement date */}
           <div>
-            <label className="mb-1.5 block text-[13px] font-medium">
+            <label className="mb-1.5 block text-sm font-medium">
               Replacement date{" "}
               <span className="font-normal text-zinc-500 dark:text-zinc-400">*</span>
             </label>
@@ -156,7 +156,7 @@ const ReplaceMeterModal = ({ open, onOpenChange, meter }: TProps) => {
 
           {/* Serial number */}
           <div>
-            <label className="mb-1.5 block text-[13px] font-medium">
+            <label className="mb-1.5 block text-sm font-medium">
               Serial number <span className="font-normal text-zinc-500 dark:text-zinc-400">*</span>
             </label>
             <Input
@@ -170,7 +170,7 @@ const ReplaceMeterModal = ({ open, onOpenChange, meter }: TProps) => {
 
           {/* Zones */}
           <div>
-            <label className="mb-1.5 block text-[13px] font-medium">
+            <label className="mb-1.5 block text-sm font-medium">
               Zones <span className="font-normal text-zinc-500 dark:text-zinc-400">*</span>
             </label>
             <div className="relative">
@@ -201,7 +201,7 @@ const ReplaceMeterModal = ({ open, onOpenChange, meter }: TProps) => {
 
           {/* Initial readings */}
           <div>
-            <label className="mb-1.5 block text-[13px] font-medium">
+            <label className="mb-1.5 block text-sm font-medium">
               Initial readings{" "}
               <span className="font-normal text-zinc-500 dark:text-zinc-400">*</span>
             </label>
@@ -298,7 +298,7 @@ const ReplaceMeterModal = ({ open, onOpenChange, meter }: TProps) => {
 
           {/* Notes */}
           <div>
-            <label className="mb-1.5 block text-[13px] font-medium">
+            <label className="mb-1.5 block text-sm font-medium">
               Notes <span className="font-normal text-zinc-500 dark:text-zinc-400">(optional)</span>
             </label>
             <Textarea
@@ -342,14 +342,14 @@ const ReplaceMeterModal = ({ open, onOpenChange, meter }: TProps) => {
           style={{ padding: "16px 24px", gap: 8, borderRadius: "0 0 12px 12px" }}
         >
           <DialogClose
-            className="cursor-pointer rounded-md border border-zinc-200 bg-white px-4 text-[13.5px] font-medium text-zinc-950 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50"
+            className="cursor-pointer rounded-md border border-zinc-200 bg-white px-4 text-sm font-medium text-zinc-950 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50"
             style={{ height: 36 }}
           >
             Cancel
           </DialogClose>
           <button
             onClick={handleSubmit}
-            className="cursor-pointer rounded-md border-0 text-[13.5px] font-medium text-white"
+            className="cursor-pointer rounded-md border-0 text-sm font-medium text-white"
             style={{ height: 36, padding: "0 18px", background: ACCENT }}
           >
             Replace

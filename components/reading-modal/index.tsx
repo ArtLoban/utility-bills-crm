@@ -114,7 +114,7 @@ const ReadingModal = ({ open, onOpenChange, meter, onSubmit }: TProps) => {
           <div className="flex flex-col gap-4">
             {/* Date field */}
             <div>
-              <label className="mb-1.5 block text-[13.5px] font-medium">Reading date</label>
+              <label className="mb-1.5 block text-sm font-medium">Reading date</label>
               <div className="relative">
                 {/* devnote: replace with date picker in a later iteration */}
                 <Input
@@ -132,9 +132,7 @@ const ReadingModal = ({ open, onOpenChange, meter, onSubmit }: TProps) => {
             {/* Value field(s) */}
             {meter.zones === 1 ? (
               <div>
-                <label className="mb-1.5 block text-[13.5px] font-medium">
-                  Value ({meter.unit})
-                </label>
+                <label className="mb-1.5 block text-sm font-medium">Value ({meter.unit})</label>
                 <Input
                   value={formState.value}
                   onChange={(e) => set("value")(e.target.value)}
@@ -166,7 +164,7 @@ const ReadingModal = ({ open, onOpenChange, meter, onSubmit }: TProps) => {
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
                 {/* T1 — day */}
                 <div>
-                  <label className="mb-1.5 block text-[13.5px] font-medium">
+                  <label className="mb-1.5 block text-sm font-medium">
                     Value T1 — day ({meter.unit})
                   </label>
                   <Input
@@ -198,7 +196,7 @@ const ReadingModal = ({ open, onOpenChange, meter, onSubmit }: TProps) => {
 
                 {/* T2 — night */}
                 <div>
-                  <label className="mb-1.5 block text-[13.5px] font-medium">
+                  <label className="mb-1.5 block text-sm font-medium">
                     Value T2 — night ({meter.unit})
                   </label>
                   <Input
@@ -231,7 +229,7 @@ const ReadingModal = ({ open, onOpenChange, meter, onSubmit }: TProps) => {
 
             {/* Notes field */}
             <div>
-              <label className="mb-1.5 block text-[13.5px] font-medium">
+              <label className="mb-1.5 block text-sm font-medium">
                 Notes{" "}
                 <span className="font-normal text-zinc-500 dark:text-zinc-400">(optional)</span>
               </label>
@@ -251,14 +249,14 @@ const ReadingModal = ({ open, onOpenChange, meter, onSubmit }: TProps) => {
           style={{ borderRadius: "0 0 10px 10px" }}
         >
           <DialogClose
-            className="cursor-pointer rounded-md border border-zinc-200 bg-white px-4 text-[13.5px] font-medium text-zinc-950 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50"
+            className="cursor-pointer rounded-md border border-zinc-200 bg-white px-4 text-sm font-medium text-zinc-950 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50"
             style={{ height: 34 }}
           >
             Cancel
           </DialogClose>
           <button
             onClick={handleSubmit}
-            className="cursor-pointer rounded-md border-0 text-[13.5px] font-medium text-white"
+            className="cursor-pointer rounded-md border-0 text-sm font-medium text-white"
             style={{ height: 34, padding: "0 18px", background: ACCENT }}
           >
             {submitLabel}

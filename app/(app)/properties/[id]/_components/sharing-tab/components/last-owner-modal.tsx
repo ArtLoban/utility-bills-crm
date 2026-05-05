@@ -18,7 +18,7 @@ export const LastOwnerModal = ({ open, onOpenChange, propertyName }: TProps) => 
     >
       {/* Header */}
       <div className="flex items-center justify-between border-b border-zinc-200 px-6 py-4">
-        <DialogTitle className="text-[15px] font-semibold tracking-[-0.2px]">
+        <DialogTitle className="text-md font-semibold tracking-[-0.2px]">
           Can&apos;t leave as the last owner
         </DialogTitle>
         <DialogClose className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-md border-0 bg-transparent p-0">
@@ -36,15 +36,13 @@ export const LastOwnerModal = ({ open, onOpenChange, propertyName }: TProps) => 
         </div>
 
         {/* Main text */}
-        <p className="mb-3 text-center text-[14px] leading-[1.55]">
+        <p className="mb-3 text-center text-sm leading-[1.55]">
           Every property needs at least one owner. You&apos;re currently the only owner of{" "}
           <strong>{propertyName}</strong>.
         </p>
 
         {/* Guidance label */}
-        <p className="mb-[14px] text-center text-[13.5px] text-zinc-500">
-          To leave, you can either:
-        </p>
+        <p className="mb-[14px] text-center text-sm text-zinc-500">To leave, you can either:</p>
 
         {/* Numbered steps */}
         <div className="flex flex-col gap-2">
@@ -56,10 +54,10 @@ export const LastOwnerModal = ({ open, onOpenChange, propertyName }: TProps) => 
               key={i}
               className="flex flex-row gap-3 rounded-lg border border-zinc-200 bg-zinc-100 px-[14px] py-3"
             >
-              <div className="flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full bg-zinc-200 text-[12px] font-bold text-zinc-500">
+              <div className="flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full bg-zinc-200 text-xs font-bold text-zinc-500">
                 {i + 1}
               </div>
-              <p className="m-0 text-[13.5px] leading-[1.5]">{text}</p>
+              <p className="m-0 text-sm leading-[1.5]">{text}</p>
             </div>
           ))}
         </div>
@@ -70,7 +68,7 @@ export const LastOwnerModal = ({ open, onOpenChange, propertyName }: TProps) => 
         className="flex justify-end border-t border-zinc-200 bg-zinc-50 px-6 py-3.5"
         style={{ borderRadius: "0 0 10px 10px" }}
       >
-        <DialogClose className="inline-flex h-[34px] cursor-pointer items-center rounded-[6px] border-0 bg-[#7c3aed] px-4 text-[13.5px] font-medium text-white">
+        <DialogClose className="inline-flex h-[34px] cursor-pointer items-center rounded-[6px] border-0 bg-[#7c3aed] px-4 text-sm font-medium text-white">
           Got it
         </DialogClose>
       </div>

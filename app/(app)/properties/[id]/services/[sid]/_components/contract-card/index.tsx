@@ -32,14 +32,14 @@ const ContractCard = ({ contract, history }: TProps) => {
           <div className="flex items-center gap-2">
             <button
               onClick={() => setUpdateOpen(true)}
-              className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border-0 text-[13px] font-medium text-white"
+              className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border-0 text-sm font-medium text-white"
               style={{ height: 32, padding: "0 14px", background: ACCENT }}
             >
               Update contract
             </button>
             <button
               onClick={() => setHistoryOpen(true)}
-              className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border-0 bg-transparent text-[13px] font-medium text-zinc-500"
+              className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border-0 bg-transparent text-sm font-medium text-zinc-500"
               style={{ height: 32, padding: "0 10px" }}
             >
               View history

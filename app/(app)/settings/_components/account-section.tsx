@@ -40,19 +40,17 @@ const AccountSection = ({ email }: TProps) => (
       <div className="flex items-center gap-3 rounded-lg border border-zinc-200 bg-zinc-50 p-3 dark:border-zinc-800 dark:bg-zinc-800/50">
         <GoogleGIcon />
         <div>
-          <div className="text-[12px] text-zinc-500 dark:text-zinc-400">Signed in with Google</div>
-          <div className="text-[13.5px] font-medium text-zinc-950 dark:text-zinc-50">
-            {email ?? "—"}
-          </div>
+          <div className="text-xs text-zinc-500 dark:text-zinc-400">Signed in with Google</div>
+          <div className="text-sm font-medium text-zinc-950 dark:text-zinc-50">{email ?? "—"}</div>
         </div>
       </div>
 
       {/* Active sessions */}
       <div>
-        <div className="mb-1 text-[13.5px] font-medium text-zinc-950 dark:text-zinc-50">
+        <div className="mb-1 text-sm font-medium text-zinc-950 dark:text-zinc-50">
           Active sessions
         </div>
-        <p className="text-[13px] leading-[1.6] text-zinc-500 dark:text-zinc-400">
+        <p className="text-sm leading-[1.6] text-zinc-500 dark:text-zinc-400">
           Per-device session management is coming in a future release.
         </p>
       </div>
@@ -61,10 +59,10 @@ const AccountSection = ({ email }: TProps) => (
 
       {/* Sign out everywhere */}
       <div>
-        <div className="mb-1.5 text-[13.5px] font-semibold text-zinc-950 dark:text-zinc-50">
+        <div className="mb-1.5 text-sm font-semibold text-zinc-950 dark:text-zinc-50">
           Sign out everywhere
         </div>
-        <p className="mb-3.5 text-[13px] leading-[1.65] text-zinc-500 dark:text-zinc-400">
+        <p className="mb-3.5 text-sm leading-[1.65] text-zinc-500 dark:text-zinc-400">
           This signs you out on all browsers and devices, including this one. You&apos;ll need to
           sign in again.
         </p>

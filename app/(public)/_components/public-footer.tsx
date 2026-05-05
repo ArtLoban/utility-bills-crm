@@ -23,7 +23,7 @@ export const PublicFooter = async () => {
             {t("footer.architectureCode")}
           </Link>
           <div className="h-3.5 w-px bg-zinc-200 dark:bg-zinc-800" />
-          <span className="text-[13px] text-zinc-400 dark:text-zinc-700">
+          <span className="text-sm text-zinc-400 dark:text-zinc-700">
             {t("footer.copyright", { year: new Date().getFullYear() })}
           </span>
         </div>

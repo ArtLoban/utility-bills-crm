@@ -33,7 +33,7 @@ export const UserDropdown = ({ user }: TProps) => {
       >
         <span className="hidden text-sm font-medium sm:block">{name ?? email}</span>
         <div
-          className={`flex size-7 items-center justify-center rounded-full border text-[11px] font-semibold select-none ${color.bg} ${color.text} ${color.border}`}
+          className={`flex size-7 items-center justify-center rounded-full border text-xs font-semibold select-none ${color.bg} ${color.text} ${color.border}`}
         >
           {initials}
         </div>

@@ -50,7 +50,7 @@ const ProfileSection = ({ name, email, image }: TProps) => {
               {initials}
             </div>
           )}
-          <p className="max-w-[340px] text-[13px] leading-[1.6] text-zinc-500 dark:text-zinc-400">
+          <p className="max-w-[340px] text-sm leading-[1.6] text-zinc-500 dark:text-zinc-400">
             Your avatar comes from Google. Sign in with a different Google account to change it.
           </p>
         </div>

@@ -3,7 +3,7 @@ type TProps = {
 };
 
 export const RememberMe = ({ label }: TProps) => (
-  <label className="group mb-5 flex cursor-pointer items-center gap-2 text-[13px] text-zinc-500 select-none dark:text-zinc-400">
+  <label className="group mb-5 flex cursor-pointer items-center gap-2 text-sm text-zinc-500 select-none dark:text-zinc-400">
     <input type="checkbox" name="rememberMe" className="sr-only" />
     <span className="flex size-4 shrink-0 items-center justify-center rounded-[4px] border-[1.5px] border-zinc-300 bg-white transition-all group-has-[:checked]:border-violet-600 group-has-[:checked]:bg-violet-600 dark:border-zinc-700 dark:bg-zinc-950">
       <svg

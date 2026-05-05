@@ -3,7 +3,7 @@ import { getTranslations } from "next-intl/server";
 import type { ReactNode } from "react";
 
 const codeTag = (chunks: ReactNode) => (
-  <code className="rounded bg-zinc-100 px-[5px] py-px font-mono text-[12px] text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400">
+  <code className="rounded bg-zinc-100 px-[5px] py-px font-mono text-xs text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400">
     {chunks}
   </code>
 );
@@ -44,7 +44,7 @@ export const ArchSection = async () => {
   return (
     <section className="py-24">
       <div className="mx-auto max-w-[1100px] px-6">
-        <p className="mb-3 text-[12px] font-medium tracking-[0.08em] text-violet-600 uppercase dark:text-violet-400">
+        <p className="mb-3 text-xs font-medium tracking-[0.08em] text-violet-600 uppercase dark:text-violet-400">
           {t("project.arch.sectionLabel")}
         </p>
         <h2 className="mb-10 text-[clamp(24px,2.8vw,32px)] font-semibold tracking-[-0.02em] text-zinc-900 dark:text-zinc-50">
@@ -57,10 +57,10 @@ export const ArchSection = async () => {
               className="rounded-lg border border-zinc-200 bg-white p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)] dark:border-zinc-800 dark:bg-zinc-900 dark:shadow-none"
             >
               <div className="mb-3.5 text-violet-600 dark:text-violet-400">{ARCH_ICONS[i]}</div>
-              <div className="mb-2.5 text-[14px] font-semibold text-zinc-900 dark:text-zinc-50">
+              <div className="mb-2.5 text-sm font-semibold text-zinc-900 dark:text-zinc-50">
                 {card.title}
               </div>
-              <p className="text-[13px] leading-[1.7] text-zinc-500">{card.body}</p>
+              <p className="text-sm leading-[1.7] text-zinc-500">{card.body}</p>
             </div>
           ))}
         </div>

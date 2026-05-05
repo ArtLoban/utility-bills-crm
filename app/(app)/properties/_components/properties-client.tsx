@@ -9,7 +9,7 @@ import { PropertyModal } from "@/components/feature/properties/property-modal";
 import { MOCK_PROPERTIES } from "../_data/mock";
 import { PropertyCard } from "./property-card";
 
-const PropertiesClient = () => {
+export const PropertiesClient = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const hasProperties = MOCK_PROPERTIES.length > 0;
 
@@ -62,5 +62,3 @@ const PropertiesClient = () => {
     </div>
   );
 };
-
-export { PropertiesClient };

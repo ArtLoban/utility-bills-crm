@@ -33,7 +33,7 @@ const MeterCard = ({ meter, readingMeter }: TProps) => {
           <div className="flex items-center gap-2">
             <button
               onClick={() => setReadingOpen(true)}
-              className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border-0 text-[13px] font-medium text-white"
+              className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border-0 text-sm font-medium text-white"
               style={{ height: 32, padding: "0 14px", background: ACCENT }}
             >
               <Gauge size={13} />
@@ -42,7 +42,7 @@ const MeterCard = ({ meter, readingMeter }: TProps) => {
             {/* devnote: replace /properties/1/meters/1 with real IDs when wired to DB */}
             <Link
               href="/properties/1/meters/1"
-              className="inline-flex cursor-pointer items-center gap-1.5 rounded-md text-[13px] font-medium text-zinc-500 no-underline"
+              className="inline-flex cursor-pointer items-center gap-1.5 rounded-md text-sm font-medium text-zinc-500 no-underline"
               style={{ height: 32, padding: "0 10px" }}
             >
               View meter details

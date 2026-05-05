@@ -15,7 +15,7 @@ export const MockupSection = ({ url, caption, children }: TProps) => {
           <BrowserFrame url={url}>{children}</BrowserFrame>
         </div>
         <div className="mt-5 max-w-[560px] text-center">
-          <p className="text-[14px] leading-[1.6] text-zinc-500">{caption}</p>
+          <p className="text-sm leading-[1.6] text-zinc-500">{caption}</p>
         </div>
       </div>
     </section>

@@ -51,11 +51,11 @@ export default async function LoginPage() {
         {t("tryDemo")}
         <ArrowRight className="size-[13px]" strokeWidth={2} />
       </Link>
-      <p className="text-center text-[12.5px] text-zinc-500">{t("tryDemoHint")}</p>
+      <p className="text-center text-xs text-zinc-500">{t("tryDemoHint")}</p>
 
       <Link
         href={ROUTES.home}
-        className="mt-6 flex items-center justify-center gap-1.5 text-[13px] text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300"
+        className="mt-6 flex items-center justify-center gap-1.5 text-sm text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300"
       >
         <ArrowLeft className="size-3" strokeWidth={2} />
         {t("backToHome")}

@@ -15,7 +15,7 @@ export const FeaturesSection = async () => {
     <section className="py-24">
       <div className="mx-auto max-w-[1100px] px-6">
         <div className="mb-10">
-          <p className="mb-2.5 text-[12px] font-medium tracking-[0.08em] text-violet-600 uppercase dark:text-violet-400">
+          <p className="mb-2.5 text-xs font-medium tracking-[0.08em] text-violet-600 uppercase dark:text-violet-400">
             {t("features.sectionLabel")}
           </p>
           <h2 className="text-[clamp(26px,3vw,36px)] font-semibold tracking-[-0.02em] text-zinc-900 dark:text-zinc-50">
@@ -33,10 +33,10 @@ export const FeaturesSection = async () => {
                 className="mb-3.5 size-8 text-violet-600 dark:text-violet-400"
                 strokeWidth={1.75}
               />
-              <p className="mb-2 text-[15px] font-semibold text-zinc-900 dark:text-zinc-50">
+              <p className="text-md mb-2 font-semibold text-zinc-900 dark:text-zinc-50">
                 {t(titleKey)}
               </p>
-              <p className="text-[14px] leading-[1.65] text-zinc-500">{t(bodyKey)}</p>
+              <p className="text-sm leading-[1.65] text-zinc-500">{t(bodyKey)}</p>
             </div>
           ))}
         </div>
