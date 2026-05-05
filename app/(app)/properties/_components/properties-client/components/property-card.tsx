@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Building2, ChevronRight, Home, TreePine, Users } from "lucide-react";
-import { type TProperty } from "../_data/mock";
+import { type TProperty } from "@/app/(app)/properties/_data/mock";
 
 const PROPERTY_ICONS = {
   apartment: Building2,
