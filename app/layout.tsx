@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { Inter } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
+import { Toaster } from "sonner";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 
@@ -31,6 +32,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
             disableTransitionOnChange
           >
             {children}
+            <Toaster position="bottom-right" />
           </ThemeProvider>
         </NextIntlClientProvider>
       </body>

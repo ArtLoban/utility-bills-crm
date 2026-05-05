@@ -49,6 +49,13 @@
 }
 
 :root {
+  /* tint tokens — filled input state, selected type card */
+  --type-card-bg: #ffffff;
+  --type-card-border: #e4e4e7;
+  --field-tint-bg: #f5f3ff;
+  --field-tint-border: #ede9fe;
+  --field-tint-fg: #7c3aed;
+
   /* mockup illustration tokens — used by landing page browser-frame mockups */
   --mockup-bg: #ffffff;
   --mockup-card: #ffffff;
@@ -103,6 +110,13 @@
 }
 
 .dark {
+  /* tint tokens — dark mode */
+  --type-card-bg: #18181b;
+  --type-card-border: #3f3f46;
+  --field-tint-bg: #1e1338;
+  --field-tint-border: #7c3aed;
+  --field-tint-fg: #a78bfa;
+
   /* mockup illustration tokens — dark */
   --mockup-bg: #09090b;
   --mockup-card: #18181b;
