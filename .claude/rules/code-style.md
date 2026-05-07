@@ -85,7 +85,20 @@ of a shared module** (e.g., a `features/auth/index.ts` that explicitly declares
 what is public). Even then, prefer explicit named exports over re-exporting
 everything.
 
-## 4. Verify type assertions
+## 4. Inline exports
+
+Export at the declaration site, never separately.
+
+```ts
+// correct
+export const ComponentName = () => { ... };
+
+// wrong
+const ComponentName = () => { ... };
+export { ComponentName };
+```
+
+## 5. Verify type assertions
 
 Before adding `as SomeType`, `as const`, or any type cast — remove it and
 run `npx tsc --noEmit`. If tsc passes without it, don't add it.
