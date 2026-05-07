@@ -100,6 +100,8 @@ Read the relevant document(s) when working on a related task. Do not preload.
   decomposition triggers. Read before creating or refactoring components.
 - `.claude/rules/code-style.md` — naming, function form, file organization.
   Read before writing or refactoring code.
+- `.claude/rules/ui-patterns.md` — separation of concerns, Tailwind vs inline styles,
+  design tokens, constants organization. Read before creating new or refactoring any existing component.
 
 ## 6. Git
 
