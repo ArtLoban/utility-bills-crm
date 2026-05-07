@@ -1,14 +1,11 @@
 import { MOCK_PROPERTY_DETAIL, MOCK_SERVICES } from "../_data/mock";
-import { TABS, TAB_PARAM, type TTab } from "./_components/constants";
+import { TABS, TAB_PARAM } from "./_components/constants";
 import { MetersTabPlaceholder } from "./_components/meters-tab-placeholder";
 import { OverviewTab } from "./_components/overview-tab";
 import { PropertyHeader } from "./_components/property-header";
 import { PropertyTabsNav } from "./_components/property-tabs-nav";
 import { SharingTab } from "./_components/sharing-tab";
-
-const resolveTab = (tabValue?: string): TTab => {
-  return Object.values(TABS).find((tab): tab is TTab => tab === tabValue) ?? TABS.OVERVIEW;
-};
+import { resolveTab } from "./_utils/resolve-tab";
 
 type TProps = {
   params: Promise<{ id: string }>;

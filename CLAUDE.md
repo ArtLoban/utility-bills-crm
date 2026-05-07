@@ -3,9 +3,14 @@
 ## 0. Code quality bar
 
 Every piece of code must be production-ready on first delivery.
-The bar is: **a senior engineer would not need to refactor this.**
+The bar is: **a senior/architect engineer would not need to refactor this.**
 
 "It works" is not enough. Working drafts are not acceptable.
+
+Think and write code like a senior engineer and architect — not a junior:
+
+- When a question is architectural (naming, structure, decomposition), **discuss first, code second**. Never start writing before the decision is made.
+- A working solution with a structural smell is not done. Fix the smell before calling it done.
 
 Before writing any code:
 
