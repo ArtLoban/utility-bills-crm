@@ -136,7 +136,7 @@ Three variants used in the design:
 
 ### Forms (modals)
 
-- Label above input, `font-size: 13.5px, font-weight: 500`.
+- Label above input, `font-size: 13.5px, font-weight: 500`. Implementation uses `text-sm` (14px) — nearest standard Tailwind token, 0.5px deviation is imperceptible, no custom token needed.
 - Input height: `36px`, `padding: 0 12px`, `font-size: 14px`, `borderRadius: 6`.
 - Hint text below field: `font-size: 12.5px, color: mutedFg, marginTop: 6px`.
 - Warning hint: amber text with `AlertTriangle` icon prepended at 13px, displayed inline.
