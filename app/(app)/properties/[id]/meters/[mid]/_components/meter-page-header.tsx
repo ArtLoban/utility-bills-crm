@@ -1,4 +1,5 @@
 import { Breadcrumbs } from "@/components/breadcrumbs";
+import { ROUTES } from "@/lib/routes";
 
 import type { TMeterDetail } from "../_data/mock";
 import { ReplaceMeterButton } from "./replace-meter-button";
@@ -10,9 +11,9 @@ const MeterPageHeader = ({ meter }: TProps) => (
   <div style={{ marginBottom: 28 }}>
     <Breadcrumbs
       items={[
-        { label: "Properties", href: "/properties" },
-        { label: meter.propertyName, href: "/properties/1" },
-        { label: "Meters", href: "/properties/1/meters" },
+        { label: "Properties", href: ROUTES.properties },
+        { label: meter.propertyName, href: `${ROUTES.properties}/1` },
+        { label: "Meters", href: `${ROUTES.properties}/1/meters` },
         { label: "Electricity meter" },
       ]}
     />

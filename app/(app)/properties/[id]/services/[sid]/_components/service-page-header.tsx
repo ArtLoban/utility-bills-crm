@@ -1,6 +1,7 @@
 import { MoreHorizontal, Pencil } from "lucide-react";
 
 import { Breadcrumbs } from "@/components/breadcrumbs";
+import { ROUTES } from "@/lib/routes";
 import { SERVICE_COLORS } from "@/lib/constants/service-colors";
 import { SERVICE_ICONS } from "@/lib/constants/service-icons";
 import type { TServiceDetail } from "../_data/mock";
@@ -16,8 +17,8 @@ const ServicePageHeader = ({ serviceDetail }: TProps) => {
     <div style={{ marginBottom: 28 }}>
       <Breadcrumbs
         items={[
-          { label: "Home", href: "/" },
-          { label: propertyName, href: "/properties/1" },
+          { label: "Home", href: ROUTES.home },
+          { label: propertyName, href: `${ROUTES.properties}/1` },
           { label: name },
         ]}
       />

@@ -1,33 +1,39 @@
+import { Fragment } from "react";
 import Link from "next/link";
-import { ChevronRight } from "lucide-react";
 
-type TBreadcrumb = { label: string; href?: string };
-type TProps = { items: TBreadcrumb[] };
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 
-const Breadcrumbs = ({ items }: TProps) => (
-  <nav className="mb-4 flex items-center gap-1" style={{ fontSize: 13 }}>
-    {items.map((item, i) => {
-      const isLast = i === items.length - 1;
-      return (
-        <span key={i} className="flex items-center gap-1">
-          {i > 0 && <ChevronRight size={13} className="text-zinc-300 dark:text-zinc-700" />}
-          {isLast || !item.href ? (
-            <span
-              className={
-                isLast ? "text-zinc-950 dark:text-zinc-50" : "text-zinc-500 dark:text-zinc-400"
-              }
-            >
-              {item.label}
-            </span>
-          ) : (
-            <Link href={item.href} className="text-zinc-500 no-underline dark:text-zinc-400">
-              {item.label}
-            </Link>
-          )}
-        </span>
-      );
-    })}
-  </nav>
+type TBreadcrumb = {
+  label: string;
+  href?: string;
+};
+
+type TProps = {
+  items: TBreadcrumb[];
+};
+
+export const Breadcrumbs = ({ items }: TProps) => (
+  <Breadcrumb className="mb-4">
+    <BreadcrumbList>
+      {items.map((item, i) => (
+        <Fragment key={item.label}>
+          {i > 0 && <BreadcrumbSeparator />}
+          <BreadcrumbItem>
+            {item.href ? (
+              <BreadcrumbLink render={<Link href={item.href} />}>{item.label}</BreadcrumbLink>
+            ) : (
+              <BreadcrumbPage>{item.label}</BreadcrumbPage>
+            )}
+          </BreadcrumbItem>
+        </Fragment>
+      ))}
+    </BreadcrumbList>
+  </Breadcrumb>
 );
-
-export { Breadcrumbs };

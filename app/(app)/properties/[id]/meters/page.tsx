@@ -1,4 +1,5 @@
 import { Breadcrumbs } from "@/components/breadcrumbs";
+import { ROUTES } from "@/lib/routes";
 import { MOCK_METERS } from "./_data/mock";
 import { MetersClient } from "./_components/meters-client";
 
@@ -13,8 +14,8 @@ export default async function MetersPage({ params }: TProps) {
     <div style={{ maxWidth: 920, margin: "0 auto", padding: "28px 32px 80px", width: "100%" }}>
       <Breadcrumbs
         items={[
-          { label: "Properties", href: "/properties" },
-          { label: "Main apartment", href: `/properties/${id}` },
+          { label: "Properties", href: ROUTES.properties },
+          { label: "Main apartment", href: `${ROUTES.properties}/${id}` },
           { label: "Meters" },
         ]}
       />

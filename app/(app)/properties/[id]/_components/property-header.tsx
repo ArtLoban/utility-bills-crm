@@ -2,11 +2,13 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ChevronRight, MoreHorizontal, Pencil, Share2 } from "lucide-react";
+import { MoreHorizontal, Pencil, Share2 } from "lucide-react";
 
+import { Breadcrumbs } from "@/components/breadcrumbs";
 import { Button } from "@/components/ui/button";
 import { PropertyModal } from "@/components/feature/properties/property-modal";
 import { type TPropertyDetail } from "../../_data/mock";
+import { ROUTES } from "@/lib/routes";
 
 type TProps = {
   property: TPropertyDetail;
@@ -17,20 +19,13 @@ const PropertyHeader = ({ property }: TProps) => {
 
   return (
     <div className="mb-6">
-      <div className="mb-2.5 flex items-center gap-1 text-sm">
-        <Link
-          href="/properties"
-          className="text-zinc-500 no-underline hover:text-zinc-700 dark:hover:text-zinc-300"
-        >
-          Properties
-        </Link>
-        <ChevronRight size={14} className="text-zinc-200 dark:text-zinc-700" strokeWidth={2} />
-        <span className="text-zinc-950 dark:text-zinc-50">{property.name}</span>
-      </div>
+      <Breadcrumbs
+        items={[{ label: "Properties", href: ROUTES.properties }, { label: property.name }]}
+      />
 
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="m-0 text-[28px] font-semibold tracking-[-0.6px] text-zinc-950 dark:text-zinc-50">
+          <h1 className="m-0 text-[28px] font-semibold text-zinc-950 dark:text-zinc-50">
             {property.name}
           </h1>
           <div className="mt-1.5 flex items-center gap-2 text-sm text-zinc-500">

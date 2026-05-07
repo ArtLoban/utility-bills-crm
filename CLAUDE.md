@@ -62,6 +62,7 @@ The author marks questions and concerns in generated code with
 - Before completing any task, scan modified files for `// devnote:` comments.
 - Resolve each one: answer, fix, or explain why no change is needed.
 - Do not commit while any `// devnote:` remains.
+- **After every file edit the user accepts (with or without modifications): re-read the file before touching the next one.** If the accepted version introduced new devnotes — stop and resolve them first.
 
 ## 3. Session model
 
