@@ -16,8 +16,8 @@ const PropertyHeader = ({ property }: TProps) => {
   const [editOpen, setEditOpen] = useState(false);
 
   return (
-    <div style={{ marginBottom: 24 }}>
-      <div className="mb-2.5 flex items-center gap-1" style={{ fontSize: 13 }}>
+    <div className="mb-6">
+      <div className="mb-2.5 flex items-center gap-1 text-sm">
         <Link
           href="/properties"
           className="text-zinc-500 no-underline hover:text-zinc-700 dark:hover:text-zinc-300"
@@ -30,13 +30,10 @@ const PropertyHeader = ({ property }: TProps) => {
 
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1
-            className="text-zinc-950 dark:text-zinc-50"
-            style={{ margin: 0, fontSize: 28, fontWeight: 600, letterSpacing: -0.6 }}
-          >
+          <h1 className="m-0 text-[28px] font-semibold tracking-[-0.6px] text-zinc-950 dark:text-zinc-50">
             {property.name}
           </h1>
-          <div className="mt-1.5 flex items-center gap-2 text-zinc-500" style={{ fontSize: 13.5 }}>
+          <div className="mt-1.5 flex items-center gap-2 text-sm text-zinc-500">
             {property.address && <span>{property.address}</span>}
             {property.address && <span className="text-zinc-300 dark:text-zinc-700">·</span>}
             <span>{property.serviceCount} services</span>
@@ -58,8 +55,7 @@ const PropertyHeader = ({ property }: TProps) => {
           </Button>
           <button
             type="button"
-            className="flex items-center justify-center rounded-md border border-zinc-200 bg-white text-zinc-600 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800"
-            style={{ width: 32, height: 32, borderRadius: 6 }}
+            className="flex h-8 w-8 items-center justify-center rounded-md border border-zinc-200 bg-white text-zinc-600 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800"
           >
             <MoreHorizontal size={15} />
           </button>
