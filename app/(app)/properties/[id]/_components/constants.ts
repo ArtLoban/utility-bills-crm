@@ -11,3 +11,5 @@ export const TAB_CONFIG = [
   { key: TABS.METERS, label: "Meters" },
   { key: TABS.SHARING, label: "Sharing" },
 ] as const;
+
+export const TAB_PARAM = "tab";

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { TAB_CONFIG, type TTab } from "./constants";
+import { TAB_CONFIG, TAB_PARAM, type TTab } from "./constants";
+import { ROUTES } from "@/lib/routes";
 
 type TProps = {
   propertyId: string;
@@ -15,7 +16,7 @@ export const PropertyTabsNav = ({ propertyId, activeTab }: TProps) => {
         return (
           <Link
             key={key}
-            href={`/properties/${propertyId}?tab=${key}`}
+            href={`${ROUTES.properties}/${propertyId}?${TAB_PARAM}=${key}`}
             className={cn(
               "rounded-md px-3.5 py-1.5 text-sm no-underline transition-colors duration-[120ms]",
               isActive
