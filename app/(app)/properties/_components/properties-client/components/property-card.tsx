@@ -29,7 +29,7 @@ type TProps = {
   property: TProperty;
 };
 
-const PropertyCard = ({ property }: TProps) => {
+export const PropertyCard = ({ property }: TProps) => {
   const Icon = PROPERTY_ICONS[property.type];
   const { text: balanceText, className: balanceClass } = formatBalance(property.balance);
 
@@ -94,5 +94,3 @@ const PropertyCard = ({ property }: TProps) => {
     </Link>
   );
 };
-
-export { PropertyCard };
