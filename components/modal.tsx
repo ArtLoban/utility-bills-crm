@@ -1,4 +1,4 @@
-import { FC, type ReactNode } from "react";
+import { type ReactNode } from "react";
 import {
   Dialog,
   DialogClose,
@@ -32,7 +32,7 @@ export type TProps = {
   size?: TSize;
 };
 
-export const Modal: FC<TProps> = (props) => {
+export const Modal = (props: TProps) => {
   const {
     title,
     description,

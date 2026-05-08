@@ -4,12 +4,12 @@ import { useTranslations } from "next-intl";
 import { Modal } from "@/components/modal";
 import { PropertyForm } from "@/components/feature/properties/property-form";
 import { usePropertyForm } from "@/components/feature/properties/hooks/use-property-form";
-import type { TPropertyForEdit } from "@/components/feature/properties/types";
+import { TPropertyDetail } from "@/app/(app)/properties/_data/mock";
 
 type TProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  property?: TPropertyForEdit;
+  property?: TPropertyDetail;
   onCreated?: (id: string) => void;
 };
 

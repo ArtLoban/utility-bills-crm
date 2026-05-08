@@ -6,16 +6,17 @@ import { toast } from "sonner";
 
 import { propertySchema } from "@/lib/validation/property";
 import { createProperty, updateProperty } from "@/lib/actions/properties";
-import type { TFormState, TPropertyForEdit } from "../types";
+import type { TFormState } from "../types";
+import { TPropertyDetail } from "@/app/(app)/properties/_data/mock";
 
 type TParams = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  property?: TPropertyForEdit;
+  property?: TPropertyDetail;
   onCreated?: (id: string) => void;
 };
 
-const makeInitialState = (property?: TPropertyForEdit): TFormState => ({
+const makeInitialState = (property?: TPropertyDetail): TFormState => ({
   name: property?.name ?? "",
   type: property?.type ?? "",
   address: property?.address ?? "",
