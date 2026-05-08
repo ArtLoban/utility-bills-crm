@@ -8,7 +8,10 @@ import { AccountSection } from "./_components/account-section";
 import { PreferencesSection } from "./_components/preferences-section";
 import { ProfileSection } from "./_components/profile-section";
 
-export const metadata: Metadata = { title: "Settings" };
+export const metadata: Metadata = {
+  title: "Settings",
+  description: "Manage your account, profile, and application preferences.",
+};
 
 export default async function SettingsPage() {
   const session = await auth();

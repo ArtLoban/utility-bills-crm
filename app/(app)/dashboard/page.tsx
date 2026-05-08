@@ -1,5 +1,11 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
+
+export const metadata: Metadata = {
+  title: "Dashboard",
+  description: "Overview of your properties, balances, and recent activity.",
+};
 import { MOCK_DASHBOARD_DATA } from "./_data/mock";
 import { AttentionBlock } from "./_components/attention-block";
 import { BalanceBlock } from "./_components/balance-block";
