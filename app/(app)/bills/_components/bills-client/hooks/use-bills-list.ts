@@ -15,7 +15,6 @@ export const useBillsList = () => {
   const [sortDir, setSortDir] = useState<TSortDir>("desc");
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(25);
-  const [addBillOpen, setAddBillOpen] = useState(false);
 
   const filteredBills = useMemo(() => {
     let rows = [...ALL_BILLS];
@@ -67,8 +66,6 @@ export const useBillsList = () => {
     page,
     setPage,
     perPage,
-    addBillOpen,
-    setAddBillOpen,
     filteredBills,
     totalPages,
     pageRows,

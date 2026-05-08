@@ -142,7 +142,7 @@ const AddBillModal = ({ open, onOpenChange }: TProps) => {
           }}
         >
           <DialogTitle style={{ fontSize: 15, fontWeight: 600, letterSpacing: -0.2, margin: 0 }}>
-            Add bill
+            Add Bill
           </DialogTitle>
           <DialogClose
             style={{

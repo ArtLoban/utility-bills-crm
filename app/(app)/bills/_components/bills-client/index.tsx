@@ -1,16 +1,17 @@
 "use client";
 
-import { FilterX, Plus, Receipt } from "lucide-react";
+import { FilterX, Receipt } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { EmptyStateCard } from "@/components/empty-state-card";
 import { PageContainer } from "@/components/page-container";
+import { PageMeta } from "@/components/page-meta";
 import { useBillsList } from "./hooks/use-bills-list";
 import { FilterBar } from "./filter-bar";
 import { BillsTable } from "./bills-table";
 import { BillsFooter } from "./bills-footer";
 import { BillsMobile } from "./bills-mobile";
-import { AddBillModal } from "./add-bill-modal";
+import { BillsActions } from "../bills-actions";
 
 export const BillsClient = () => {
   const {
@@ -20,8 +21,6 @@ export const BillsClient = () => {
     page,
     setPage,
     perPage,
-    addBillOpen,
-    setAddBillOpen,
     filteredBills,
     totalPages,
     pageRows,
@@ -35,23 +34,8 @@ export const BillsClient = () => {
   return (
     <PageContainer
       title="Bills"
-      meta={
-        <p className="mt-1 text-[13px] text-zinc-500 dark:text-zinc-400">
-          {filteredBills.length} records
-        </p>
-      }
-      actions={
-        <Button
-          className="h-[34px] gap-1.5"
-          onClick={(e) => {
-            e.stopPropagation();
-            setAddBillOpen(true);
-          }}
-        >
-          <Plus size={14} />
-          Add bill
-        </Button>
-      }
+      meta={<PageMeta items={[`${filteredBills.length} records`]} />}
+      actions={<BillsActions />}
     >
       {/* Desktop layout */}
       <div className="hidden md:block">
@@ -64,18 +48,6 @@ export const BillsClient = () => {
             icon={<Receipt size={36} strokeWidth={1.5} className="text-zinc-400" />}
             title="No bills yet"
             body="Record your first bill to start tracking expenses."
-            cta={
-              <Button
-                className="h-9 gap-1.5"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setAddBillOpen(true);
-                }}
-              >
-                <Plus size={14} />
-                Add bill
-              </Button>
-            }
           />
         )}
 
@@ -125,8 +97,6 @@ export const BillsClient = () => {
           pageRows={pageRows}
         />
       </div>
-
-      <AddBillModal open={addBillOpen} onOpenChange={setAddBillOpen} />
     </PageContainer>
   );
 };
