@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+
 import { MOCK_PROPERTY_DETAIL, MOCK_SERVICES } from "../_data/mock";
 import { TABS, TAB_PARAM } from "./_components/constants";
 import { MetersTabPlaceholder } from "./_components/meters-tab-placeholder";
@@ -14,6 +16,16 @@ type TProps = {
   params: Promise<{ id: string }>;
   searchParams: Promise<{ [key: string]: string | undefined }>;
 };
+
+export async function generateMetadata({ params }: TProps): Promise<Metadata> {
+  const { id: _id } = await params;
+  const { name } = MOCK_PROPERTY_DETAIL;
+
+  return {
+    title: name,
+    description: `Bills, meters, and services for ${name}.`,
+  };
+}
 
 export default async function PropertyPage({ params, searchParams }: TProps) {
   const { id } = await params;
