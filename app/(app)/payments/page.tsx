@@ -7,10 +7,6 @@ export const metadata: Metadata = {
   description: "View and record payments for your utility bills.",
 };
 
-const PaymentsPage = () => (
-  <div className="flex-1 bg-zinc-100 md:bg-white dark:bg-zinc-950 md:dark:bg-zinc-950">
-    <PaymentsClient />
-  </div>
-);
-
-export default PaymentsPage;
+export default function PaymentsPage() {
+  return <PaymentsClient />;
+}

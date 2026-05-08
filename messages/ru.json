@@ -198,7 +198,9 @@
   "payments": {
     "list": {
       "title": "Платежи",
-      "subtitle": "{count, plural, one {# платёж} few {# платежа} many {# платежей} other {# платежей}} · {totalPaid}",
+      "meta": {
+        "records": "{count, plural, one {# платёж} few {# платежа} many {# платежей} other {# платежей}}"
+      },
       "cta": {
         "recordPayment": "Добавить платёж"
       },

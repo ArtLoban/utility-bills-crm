@@ -198,7 +198,9 @@
   "payments": {
     "list": {
       "title": "Payments",
-      "subtitle": "{count, plural, one {# payment} other {# payments}} · {totalPaid}",
+      "meta": {
+        "records": "{count, plural, one {# payment} other {# payments}}"
+      },
       "cta": {
         "recordPayment": "Record payment"
       },
