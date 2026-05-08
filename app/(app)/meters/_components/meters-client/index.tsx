@@ -1,21 +1,19 @@
 "use client";
 
 import { FilterX, Gauge } from "lucide-react";
-import { useMemo, useState } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
 import { useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
+
 import { EmptyStateCard } from "@/components/empty-state-card";
+import { PageContainer } from "@/components/page-container";
+import { PageMeta } from "@/components/page-meta";
 import { ReadingModal } from "@/components/reading-modal";
 import type { TMeter } from "@/components/reading-modal/types";
 import { Button } from "@/components/ui/button";
 import { ROUTES } from "@/lib/routes";
-import {
-  ALL_METERS,
-  SERVICE_ORDER,
-  type TFilterState,
-  type TGlobalMeter,
-  type TMeterStatus,
-} from "../../_data/mock";
+import type { TGlobalMeter } from "../../_data/mock";
+import { useMetersList } from "./hooks/use-meters-list";
 import { FilterBar } from "./filter-bar";
 import { MetersTable } from "./meters-table";
 import { MetersFooter } from "./meters-footer";
@@ -33,108 +31,51 @@ const toReadingMeter = (meter: TGlobalMeter): TMeter => ({
   lastReadingT2: meter.lastReading?.values[1],
 });
 
-const MetersClient = () => {
+export const MetersClient = () => {
   const t = useTranslations("meters.list");
-  const pathname = usePathname();
   const router = useRouter();
-  const sp = useSearchParams();
 
-  const [page, setPage] = useState(1);
-  const [perPage, setPerPage] = useState(25);
+  const {
+    filters,
+    filteredMeters,
+    anyFilter,
+    showHistoricalBadge,
+    page,
+    setPage,
+    perPage,
+    totalPages,
+    pageRows,
+    propertyCount,
+    activeCount,
+    handleFilterChange,
+    handleClearFilters,
+    handlePerPageChange,
+  } = useMetersList();
+
   const [readingMeter, setReadingMeter] = useState<TMeter | null>(null);
 
-  const filters: TFilterState = {
-    property: sp.get("property") ?? "all",
-    service: sp.get("service") ?? "all",
-    status: (sp.get("status") ?? "active") as TMeterStatus,
-  };
-
-  const updateFilter = (key: keyof TFilterState, value: string) => {
-    const params = new URLSearchParams(sp.toString());
-    const defaults: Record<keyof TFilterState, string> = {
-      property: "all",
-      service: "all",
-      status: "active",
-    };
-    if (value === defaults[key]) {
-      params.delete(key);
-    } else {
-      params.set(key, value);
-    }
-    setPage(1);
-    const qs = params.toString();
-    router.push(pathname + (qs ? `?${qs}` : ""));
-  };
-
-  const clearFilters = () => {
-    setPage(1);
-    router.push(pathname);
-  };
-
-  const anyFilter =
-    filters.property !== "all" || filters.service !== "all" || filters.status !== "active";
-
-  const filteredMeters = useMemo(() => {
-    let rows = [...ALL_METERS];
-
-    if (filters.status === "active") rows = rows.filter((m) => m.removedAt === null);
-    else if (filters.status === "historical") rows = rows.filter((m) => m.removedAt !== null);
-
-    if (filters.property !== "all") rows = rows.filter((m) => m.property.id === filters.property);
-    if (filters.service !== "all") rows = rows.filter((m) => m.serviceKey === filters.service);
-
-    rows.sort((a, b) => {
-      const propCmp = a.property.name.localeCompare(b.property.name);
-      if (propCmp !== 0) return propCmp;
-      const svcCmp = (SERVICE_ORDER[a.serviceKey] ?? 99) - (SERVICE_ORDER[b.serviceKey] ?? 99);
-      if (svcCmp !== 0) return svcCmp;
-      return b.installedAtMs - a.installedAtMs;
-    });
-
-    return rows;
-  }, [filters.property, filters.service, filters.status]);
-
-  const totalPages = Math.ceil(filteredMeters.length / perPage);
-  const pageRows = filteredMeters.slice((page - 1) * perPage, page * perPage);
-
-  const propertyCount = useMemo(
-    () => new Set(filteredMeters.map((m) => m.property.id)).size,
-    [filteredMeters],
-  );
-
-  const activeCount = useMemo(
-    () => filteredMeters.filter((m) => m.removedAt === null).length,
-    [filteredMeters],
-  );
-
-  const showHistoricalBadge = filters.status === "all";
-
   return (
-    <div style={{ maxWidth: 1360, margin: "0 auto", padding: "32px 32px 48px" }}>
-      {/* Desktop header */}
-      <div className="hidden md:flex" style={{ alignItems: "flex-start", marginBottom: 24 }}>
-        <div>
-          <h2 style={{ fontSize: 28, fontWeight: 600, letterSpacing: -0.6, margin: 0 }}>
-            {t("title")}
-          </h2>
-          {filteredMeters.length > 0 && (
-            <p className="text-zinc-500 dark:text-zinc-400" style={{ fontSize: 13, marginTop: 4 }}>
-              {t("subtitle", { count: filteredMeters.length, propertyCount })}
-              {" · "}
-              {t("subtitleActive", { activeCount })}
-            </p>
-          )}
-        </div>
-      </div>
-
+    <PageContainer
+      title={t("title")}
+      meta={
+        filteredMeters.length > 0 ? (
+          <PageMeta
+            items={[
+              t("subtitle", { count: filteredMeters.length, propertyCount }),
+              t("subtitleActive", { activeCount }),
+            ]}
+          />
+        ) : undefined
+      }
+    >
       {/* Desktop layout */}
       <div className="hidden md:block">
         {(filteredMeters.length > 0 || anyFilter) && (
           <FilterBar
             filters={filters}
-            onFilterChange={updateFilter}
+            onFilterChange={handleFilterChange}
             anyFilter={anyFilter}
-            onClear={clearFilters}
+            onClear={handleClearFilters}
           />
         )}
 
@@ -144,11 +85,7 @@ const MetersClient = () => {
             title={t("empty.noMeters.title")}
             body={t("empty.noMeters.body")}
             cta={
-              <Button
-                variant="outline"
-                onClick={() => router.push(ROUTES.properties)}
-                style={{ height: 36 }}
-              >
+              <Button variant="outline" onClick={() => router.push(ROUTES.properties)}>
                 {t("empty.noMeters.cta")}
               </Button>
             }
@@ -161,7 +98,7 @@ const MetersClient = () => {
             title={t("empty.filtered.title")}
             body=""
             cta={
-              <Button variant="outline" onClick={clearFilters} style={{ height: 36 }}>
+              <Button variant="outline" onClick={handleClearFilters}>
                 {t("empty.filtered.cta")}
               </Button>
             }
@@ -183,22 +120,19 @@ const MetersClient = () => {
               totalPages={totalPages}
               perPage={perPage}
               onPageChange={setPage}
-              onPerPageChange={(next) => {
-                setPerPage(next);
-                setPage(1);
-              }}
+              onPerPageChange={handlePerPageChange}
             />
           </div>
         )}
       </div>
 
       {/* Mobile layout */}
-      <div className="md:hidden" style={{ margin: "0 -32px" }}>
+      <div className="-mx-8 md:hidden">
         <MetersMobile
           filteredMeters={filteredMeters}
           filters={filters}
-          onFilterChange={updateFilter}
-          onClear={clearFilters}
+          onFilterChange={handleFilterChange}
+          onClear={handleClearFilters}
           page={page}
           totalPages={totalPages}
           onPageChange={setPage}
@@ -209,15 +143,13 @@ const MetersClient = () => {
 
       {readingMeter && (
         <ReadingModal
-          open={readingMeter !== null}
+          open
           onOpenChange={(open) => {
             if (!open) setReadingMeter(null);
           }}
           meter={readingMeter}
         />
       )}
-    </div>
+    </PageContainer>
   );
 };
-
-export { MetersClient };
