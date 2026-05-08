@@ -1,12 +1,11 @@
 import Link from "next/link";
 import { Home, TreePine, ChevronRight } from "lucide-react";
 import type { TDashboardData } from "../_data/mock";
+import { type TPropertyType } from "@/lib/constants/property";
 
 type TProps = {
   data: TDashboardData["balance"];
 };
-
-type TPropertyType = "apartment" | "house" | "cottage" | "other";
 
 const PropertyIcon = ({ type }: { type: TPropertyType }) => {
   if (type === "cottage") {

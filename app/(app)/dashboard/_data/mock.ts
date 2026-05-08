@@ -1,4 +1,5 @@
 import { SERVICE_COLORS, SERVICE_LABELS, type TServiceKey } from "@/lib/constants/service-colors";
+import { type TPropertyType } from "@/lib/constants/property";
 
 export { SERVICE_COLORS, SERVICE_LABELS };
 export type { TServiceKey };
@@ -6,7 +7,7 @@ export type { TServiceKey };
 type TPropertyBalance = {
   id: string;
   name: string;
-  type: "apartment" | "house" | "cottage" | "other";
+  type: TPropertyType;
   balance: number;
 };
 

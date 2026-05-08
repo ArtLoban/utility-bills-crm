@@ -10,9 +10,10 @@ import { UserCard } from "./components/user-card";
 import { InviteModal } from "./components/invite-modal";
 import { LastOwnerModal } from "./components/last-owner-modal";
 import { RemoveUserModal } from "./components/remove-user-modal";
+import { type TPropertyRole } from "@/lib/constants/property";
 
 type TProps = {
-  myRole: "owner" | "editor" | "viewer";
+  myRole: TPropertyRole;
   propertyName: string;
 };
 

@@ -150,6 +150,22 @@ z.string().max(PROPERTY_LIMITS.name, ...)
 `TYPE_OPTIONS`, tab configs, select options — not in the hook, not hardcoded in the component.
 The hook handles logic. The component handles rendering. The list lives in `constants.ts`.
 
+### Domain string unions → const-object enum
+
+Any string union that represents a domain concept (property type, role, status, etc.) and
+appears in 2+ places **must** be defined as a const-object enum.
+
+```ts
+// Example
+export const PROPERTY_ROLES = {
+  OWNER: "owner",
+  EDITOR: "editor",
+  VIEWER: "viewer",
+} as const;
+
+export type TPropertyRole = (typeof PROPERTY_ROLES)[keyof typeof PROPERTY_ROLES];
+```
+
 ---
 
 ## 6. Shared vs private components

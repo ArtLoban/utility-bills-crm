@@ -1,27 +1,28 @@
 import { SERVICE_COLORS, type TServiceKey } from "@/lib/constants/service-colors";
+import { type TPropertyType, type TPropertyRole } from "@/lib/constants/property";
 
 export { SERVICE_COLORS };
 
 export type TProperty = {
   id: string;
-  type: "apartment" | "house" | "cottage" | "other";
+  type: TPropertyType;
   name: string;
   address: string | null;
   serviceCount: number;
   balance: number;
   isShared: boolean;
-  myRole: "owner" | "editor" | "viewer";
+  myRole: TPropertyRole;
 };
 
 export type TPropertyDetail = {
   id: string;
-  type: "apartment" | "house" | "cottage" | "other";
+  type: TPropertyType;
   name: string;
   address: string | null;
   notes: string | null;
   serviceCount: number;
   createdAt: string;
-  myRole: "owner" | "editor" | "viewer";
+  myRole: TPropertyRole;
 };
 
 export type TServiceSummary = {

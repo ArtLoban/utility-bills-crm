@@ -1,4 +1,5 @@
 import type { TServiceKey } from "@/lib/constants/service-colors";
+import { type TPropertyRole } from "@/lib/constants/property";
 
 export type TMeterProperty = {
   id: string;
@@ -21,7 +22,7 @@ export type TGlobalMeter = {
   serviceKey: TServiceKey;
   unit: string | null;
   lastReading: TMeterLastReading | null;
-  propertyRole: "owner" | "editor" | "viewer";
+  propertyRole: TPropertyRole;
 };
 
 export type TMeterStatus = "active" | "historical" | "all";
