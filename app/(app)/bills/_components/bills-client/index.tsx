@@ -1,117 +1,58 @@
 "use client";
 
 import { FilterX, Plus, Receipt } from "lucide-react";
-import { useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { EmptyStateCard } from "@/components/empty-state-card";
-import {
-  ALL_BILLS,
-  TBill,
-  TFilterState,
-  TSortColumn,
-  TSortDir,
-} from "@/app/(app)/bills/_data/mock";
+import { PageContainer } from "@/components/page-container";
+import { useBillsList } from "./hooks/use-bills-list";
 import { FilterBar } from "./filter-bar";
 import { BillsTable } from "./bills-table";
 import { BillsFooter } from "./bills-footer";
 import { BillsMobile } from "./bills-mobile";
 import { AddBillModal } from "./add-bill-modal";
 
-const getSortValue = (bill: TBill, col: TSortColumn): string | number => {
-  switch (col) {
-    case "date":
-      return bill.sortTs;
-    case "amount":
-      return bill.amount;
-    case "property":
-      return bill.property.name;
-    case "service":
-      return bill.service.name;
-    case "period":
-      return bill.periodSort;
-  }
-};
-
-const BillsClient = () => {
-  const [filters, setFilters] = useState<TFilterState>({
-    property: "all",
-    service: "all",
-    period: "last12",
-  });
-  const [sortCol, setSortCol] = useState<TSortColumn>("date");
-  const [sortDir, setSortDir] = useState<TSortDir>("desc");
-  const [page, setPage] = useState(1);
-  const [perPage, setPerPage] = useState(25);
-  const [addBillOpen, setAddBillOpen] = useState(false);
-
-  const filteredBills = useMemo(() => {
-    let rows = [...ALL_BILLS];
-
-    if (filters.property !== "all") rows = rows.filter((r) => r.property.id === filters.property);
-    if (filters.service !== "all") rows = rows.filter((r) => r.service.id === filters.service);
-    if (filters.period === "last6") rows = rows.filter((r) => r.periodSort >= 202410);
-    if (filters.period === "last3") rows = rows.filter((r) => r.periodSort >= 202501);
-
-    rows.sort((a, b) => {
-      const av = getSortValue(a, sortCol);
-      const bv = getSortValue(b, sortCol);
-      return sortDir === "asc" ? (av > bv ? 1 : -1) : av < bv ? 1 : -1;
-    });
-
-    return rows;
-  }, [filters, sortCol, sortDir]);
-
-  const totalPages = Math.ceil(filteredBills.length / perPage);
-  const pageRows = filteredBills.slice((page - 1) * perPage, page * perPage);
-  const total = filteredBills.reduce((sum, b) => sum + b.amount, 0);
-  const anyFilter =
-    filters.property !== "all" || filters.service !== "all" || filters.period !== "last12";
-
-  const handleFilterChange = (next: TFilterState) => {
-    setFilters(next);
-    setPage(1);
-  };
-
-  const handleSort = (col: TSortColumn) => {
-    setPage(1);
-    if (col === sortCol) {
-      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
-    } else {
-      setSortCol(col);
-      setSortDir("desc");
-    }
-  };
+export const BillsClient = () => {
+  const {
+    filters,
+    sortCol,
+    sortDir,
+    page,
+    setPage,
+    perPage,
+    addBillOpen,
+    setAddBillOpen,
+    filteredBills,
+    totalPages,
+    pageRows,
+    total,
+    anyFilter,
+    handleFilterChange,
+    handleSort,
+    handlePerPageChange,
+  } = useBillsList();
 
   return (
-    <div style={{ maxWidth: 1360, margin: "0 auto", padding: "32px 32px 48px" }}>
-      {/* Desktop header */}
-      <div
-        className="hidden md:flex"
-        style={{
-          alignItems: "flex-start",
-          justifyContent: "space-between",
-          marginBottom: 24,
-        }}
-      >
-        <div>
-          <h2 style={{ fontSize: 28, fontWeight: 600, letterSpacing: -0.6, margin: 0 }}>Bills</h2>
-          <p className="text-zinc-500 dark:text-zinc-400" style={{ fontSize: 13, marginTop: 4 }}>
-            {filteredBills.length} records
-          </p>
-        </div>
+    <PageContainer
+      title="Bills"
+      meta={
+        <p className="mt-1 text-[13px] text-zinc-500 dark:text-zinc-400">
+          {filteredBills.length} records
+        </p>
+      }
+      actions={
         <Button
+          className="h-[34px] gap-1.5"
           onClick={(e) => {
             e.stopPropagation();
             setAddBillOpen(true);
           }}
-          style={{ height: 34, gap: 6 }}
         >
           <Plus size={14} />
           Add bill
         </Button>
-      </div>
-
+      }
+    >
       {/* Desktop layout */}
       <div className="hidden md:block">
         {(filteredBills.length > 0 || anyFilter) && (
@@ -125,11 +66,11 @@ const BillsClient = () => {
             body="Record your first bill to start tracking expenses."
             cta={
               <Button
+                className="h-9 gap-1.5"
                 onClick={(e) => {
                   e.stopPropagation();
                   setAddBillOpen(true);
                 }}
-                style={{ height: 36, gap: 6 }}
               >
                 <Plus size={14} />
                 Add bill
@@ -146,10 +87,10 @@ const BillsClient = () => {
             cta={
               <Button
                 variant="outline"
+                className="h-9"
                 onClick={() =>
                   handleFilterChange({ property: "all", service: "all", period: "last12" })
                 }
-                style={{ height: 36 }}
               >
                 Clear filters
               </Button>
@@ -166,19 +107,15 @@ const BillsClient = () => {
               totalPages={totalPages}
               perPage={perPage}
               onPageChange={setPage}
-              onPerPageChange={(next) => {
-                setPerPage(next);
-                setPage(1);
-              }}
+              onPerPageChange={handlePerPageChange}
             />
           </div>
         )}
       </div>
 
       {/* Mobile layout */}
-      <div className="md:hidden" style={{ margin: "0 -32px" }}>
+      <div className="-mx-8 md:hidden">
         <BillsMobile
-          filteredBills={filteredBills}
           filters={filters}
           onFilterChange={handleFilterChange}
           page={page}
@@ -186,13 +123,10 @@ const BillsClient = () => {
           onPageChange={setPage}
           total={total}
           pageRows={pageRows}
-          onAddBill={() => setAddBillOpen(true)}
         />
       </div>
 
       <AddBillModal open={addBillOpen} onOpenChange={setAddBillOpen} />
-    </div>
+    </PageContainer>
   );
 };
-
-export { BillsClient };

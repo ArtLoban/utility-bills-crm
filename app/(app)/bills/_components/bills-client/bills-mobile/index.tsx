@@ -1,7 +1,6 @@
-import { ArrowDown, Plus } from "lucide-react";
+import { ArrowDown } from "lucide-react";
 import { useState } from "react";
 
-import { Button } from "@/components/ui/button";
 import { SERVICE_COLORS } from "@/lib/constants/service-colors";
 import { ACCENT, DESTRUCTIVE, TINT_BG, TINT_BORDER } from "@/lib/constants/ui-tokens";
 import { BILL_PROPERTIES, BILL_SERVICES, TBill, TFilterState } from "@/app/(app)/bills/_data/mock";
@@ -11,7 +10,6 @@ import { FilterSheet } from "./filter-sheet";
 import { MobilePager } from "./mobile-pager";
 
 type TProps = {
-  filteredBills: TBill[];
   filters: TFilterState;
   onFilterChange: (filters: TFilterState) => void;
   page: number;
@@ -19,7 +17,6 @@ type TProps = {
   onPageChange: (page: number) => void;
   total: number;
   pageRows: TBill[];
-  onAddBill: () => void;
 };
 
 const PERIOD_LABELS: Record<string, string> = {
@@ -28,7 +25,6 @@ const PERIOD_LABELS: Record<string, string> = {
 };
 
 const BillsMobile = ({
-  filteredBills,
   filters,
   onFilterChange,
   page,
@@ -36,7 +32,6 @@ const BillsMobile = ({
   onPageChange,
   total,
   pageRows,
-  onAddBill,
 }: TProps) => {
   const [sheetOpen, setSheetOpen] = useState(false);
 
@@ -64,28 +59,7 @@ const BillsMobile = ({
   const periodLabel = filters.period !== "last12" ? PERIOD_LABELS[filters.period] : null;
 
   return (
-    <div style={{ padding: "20px 14px 32px" }}>
-      {/* Header */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "flex-start",
-          justifyContent: "space-between",
-          marginBottom: 14,
-        }}
-      >
-        <div>
-          <h2 style={{ fontSize: 22, fontWeight: 700, letterSpacing: -0.5, margin: 0 }}>Bills</h2>
-          <p className="text-zinc-500 dark:text-zinc-400" style={{ fontSize: 12.5, marginTop: 3 }}>
-            {filteredBills.length} records
-          </p>
-        </div>
-        <Button onClick={onAddBill} style={{ height: 34, gap: 6, fontSize: 13 }}>
-          <Plus size={14} />
-          Add
-        </Button>
-      </div>
-
+    <div style={{ padding: "12px 14px 32px" }}>
       {/* Filter trigger row */}
       <div
         style={{
