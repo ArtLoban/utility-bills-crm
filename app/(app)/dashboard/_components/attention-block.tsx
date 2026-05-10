@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { AlertTriangle, ChevronRight } from "lucide-react";
 import type { TDashboardData } from "../_data/mock";
+import { DataCard } from "@/components/data-card";
 
 type TProps = {
   data: NonNullable<TDashboardData["attention"]>;
@@ -10,8 +11,7 @@ export const AttentionBlock = ({ data }: TProps) => {
   const { totalDebt, debtServicesCount, readingsDueCount, readingsDueDate } = data;
 
   return (
-    <div
-      className="rounded-lg border bg-white shadow transition-shadow duration-150 hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900 dark:shadow-none dark:hover:shadow-none"
+    <DataCard
       style={{
         borderLeft: "4px solid #f59e0b",
         padding: "20px 24px",
@@ -116,6 +116,6 @@ export const AttentionBlock = ({ data }: TProps) => {
           </li>
         )}
       </ul>
-    </div>
+    </DataCard>
   );
 };

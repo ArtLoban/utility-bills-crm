@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { TDashboardData } from "../../_data/mock";
 import { SERVICE_COLORS } from "../../_data/mock";
+import { DataCard } from "@/components/data-card";
 
 type TProps = {
   services: TDashboardData["charts"]["services"];
@@ -81,12 +82,7 @@ export const TrendLineChart = ({ services, months }: TProps) => {
   const tooltipUnit = mode === "expenses" ? "UAH" : CONSUMPTION_RATES[selectedService].unit;
 
   return (
-    <div
-      className="rounded-lg border bg-white shadow transition-shadow duration-150 hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900 dark:shadow-none dark:hover:shadow-none"
-      style={{
-        padding: 20,
-      }}
-    >
+    <DataCard style={{ padding: 20 }}>
       {/* Header row */}
       <div
         style={{
@@ -423,6 +419,6 @@ export const TrendLineChart = ({ services, months }: TProps) => {
           </div>
         ))}
       </div>
-    </div>
+    </DataCard>
   );
 };

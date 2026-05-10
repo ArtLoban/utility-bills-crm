@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Home, TreePine, ChevronRight } from "lucide-react";
 import type { TDashboardData } from "../_data/mock";
 import { type TPropertyType } from "@/lib/constants/property";
+import { DataCard } from "@/components/data-card";
 
 type TProps = {
   data: TDashboardData["balance"];
@@ -29,12 +30,7 @@ export const BalanceBlock = ({ data }: TProps) => {
   const { totalDebt, debtServicesCount, totalOverpayment, overpayServicesCount, byProperty } = data;
 
   return (
-    <div
-      className="rounded-lg border bg-white shadow transition-shadow duration-150 hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900 dark:shadow-none dark:hover:shadow-none"
-      style={{
-        overflow: "hidden",
-      }}
-    >
+    <DataCard className="overflow-hidden">
       {/* Top section — summary KV grid */}
       <div className="border-b dark:border-zinc-800" style={{ padding: "20px 24px 16px" }}>
         <div
@@ -180,6 +176,6 @@ export const BalanceBlock = ({ data }: TProps) => {
           })}
         </div>
       </div>
-    </div>
+    </DataCard>
   );
 };

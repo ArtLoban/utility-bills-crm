@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { TDashboardData } from "../../_data/mock";
 import { SERVICE_COLORS } from "../../_data/mock";
+import { DataCard } from "@/components/data-card";
 
 type TProps = {
   services: TDashboardData["charts"]["services"];
@@ -47,13 +48,7 @@ export const MonthlyBarChart = ({ services, months }: TProps) => {
   const yTicks = [0, yMax / 4, yMax / 2, (3 * yMax) / 4, yMax];
 
   return (
-    <div
-      className="rounded-lg border bg-white shadow transition-shadow duration-150 hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900 dark:shadow-none dark:hover:shadow-none"
-      style={{
-        padding: 20,
-        position: "relative",
-      }}
-    >
+    <DataCard style={{ padding: 20, position: "relative" }}>
       <h3
         className="text-zinc-950 dark:text-zinc-50"
         style={{ margin: 0, fontSize: 14, fontWeight: 600, letterSpacing: -0.1 }}
@@ -289,6 +284,6 @@ export const MonthlyBarChart = ({ services, months }: TProps) => {
           );
         })}
       </div>
-    </div>
+    </DataCard>
   );
 };

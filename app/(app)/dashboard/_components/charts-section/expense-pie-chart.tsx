@@ -2,6 +2,7 @@
 
 import type { TDashboardData } from "../../_data/mock";
 import { SERVICE_COLORS } from "../../_data/mock";
+import { DataCard } from "@/components/data-card";
 
 type TProps = {
   services: TDashboardData["charts"]["services"];
@@ -57,12 +58,7 @@ export const ExpensePieChart = ({ services }: TProps) => {
   const total = arcs.reduce((sum, a) => sum + a.value, 0);
 
   return (
-    <div
-      className="rounded-lg border bg-white shadow transition-shadow duration-150 hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900 dark:shadow-none dark:hover:shadow-none"
-      style={{
-        padding: 24,
-      }}
-    >
+    <DataCard style={{ padding: 24 }}>
       <h3
         className="text-zinc-950 dark:text-zinc-50"
         style={{ margin: 0, fontSize: 14, fontWeight: 600, letterSpacing: -0.1 }}
@@ -175,6 +171,6 @@ export const ExpensePieChart = ({ services }: TProps) => {
           ))}
         </ul>
       </div>
-    </div>
+    </DataCard>
   );
 };
