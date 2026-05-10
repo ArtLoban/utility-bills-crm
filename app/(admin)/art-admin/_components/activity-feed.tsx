@@ -4,10 +4,10 @@ import { Home, KeyRound, Receipt, Trash2, UserPlus } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { DataCard } from "@/components/data-card";
+import { IconBadge } from "@/components/icon-badge";
 
 type TActivityRow = {
   icon: ElementType;
-  iconBg: string;
   iconColor: string;
   bold: string;
   body: string;
@@ -17,7 +17,6 @@ type TActivityRow = {
 const MOCK_ACTIVITY_ROWS: TActivityRow[] = [
   {
     icon: UserPlus,
-    iconBg: "#ede9fe",
     iconColor: "#7c3aed",
     bold: "New user joined",
     body: "alex.kovalenko@example.com signed in with Google",
@@ -25,7 +24,6 @@ const MOCK_ACTIVITY_ROWS: TActivityRow[] = [
   },
   {
     icon: Receipt,
-    iconBg: "#e0f2fe",
     iconColor: "#0284c7",
     bold: "Bill recorded",
     body: "Art Loban recorded electricity bill for Main apartment",
@@ -33,7 +31,6 @@ const MOCK_ACTIVITY_ROWS: TActivityRow[] = [
   },
   {
     icon: Home,
-    iconBg: "#f4f4f5",
     iconColor: "#71717a",
     bold: "Property created",
     body: 'Olena Petrenko added "Sea-view condo"',
@@ -41,7 +38,6 @@ const MOCK_ACTIVITY_ROWS: TActivityRow[] = [
   },
   {
     icon: KeyRound,
-    iconBg: "#fef3c7",
     iconColor: "#d97706",
     bold: "Sharing changed",
     body: 'Art Loban added Olena Loban as editor on "Family home"',
@@ -49,7 +45,6 @@ const MOCK_ACTIVITY_ROWS: TActivityRow[] = [
   },
   {
     icon: Trash2,
-    iconBg: "#fee2e2",
     iconColor: "#dc2626",
     bold: "Property soft-deleted",
     body: 'Mykhailo Tkachenko removed "Old apartment"',
@@ -57,7 +52,6 @@ const MOCK_ACTIVITY_ROWS: TActivityRow[] = [
   },
   {
     icon: Receipt,
-    iconBg: "#e0f2fe",
     iconColor: "#0284c7",
     bold: "Bill recorded",
     body: "Mykhailo Tkachenko recorded gas bill for Forest cabin",
@@ -65,7 +59,6 @@ const MOCK_ACTIVITY_ROWS: TActivityRow[] = [
   },
   {
     icon: Home,
-    iconBg: "#f4f4f5",
     iconColor: "#71717a",
     bold: "Property created",
     body: 'Iryna Shevchenko added "Shared family home"',
@@ -92,12 +85,7 @@ export const ActivityFeed = () => {
                 !isLast && "border-b",
               )}
             >
-              <div
-                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg"
-                style={{ background: row.iconBg }}
-              >
-                <Icon className="h-4 w-4" style={{ color: row.iconColor }} />
-              </div>
+              <IconBadge icon={Icon} color={row.iconColor} size="sm" />
               <p className="flex-1 text-sm leading-snug">
                 <span className="font-medium">{row.bold}</span>
                 <span className="text-muted-foreground"> — {row.body}</span>

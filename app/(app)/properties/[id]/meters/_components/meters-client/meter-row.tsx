@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { SERVICE_COLORS } from "@/lib/constants/service-colors";
 import { SERVICE_ICONS } from "@/lib/constants/service-icons";
+import { IconBadge } from "@/components/icon-badge";
 import type { TMeterListItem } from "../../_data/mock";
 
 type TProps = {
@@ -19,12 +20,7 @@ const MeterRow = ({ meter, propertyId }: TProps) => {
       className="group flex items-center gap-3.5 rounded-lg border border-zinc-200 bg-white px-5 py-4 no-underline transition-shadow duration-[150ms] hover:shadow-[0_4px_8px_-2px_rgba(24,24,27,0.08),0_2px_4px_-2px_rgba(24,24,27,0.05)] dark:border-zinc-800 dark:bg-zinc-900"
       style={{ display: "flex" }}
     >
-      <div
-        className="flex shrink-0 items-center justify-center rounded-lg"
-        style={{ width: 36, height: 36, background: `${color}1A` }}
-      >
-        <Icon size={18} style={{ color }} strokeWidth={1.75} />
-      </div>
+      <IconBadge icon={Icon} color={color} />
 
       <div className="min-w-0 flex-1">
         <p

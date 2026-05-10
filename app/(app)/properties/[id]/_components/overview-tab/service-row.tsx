@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ChevronRight, Droplets, Flame, Thermometer, Wifi, Zap } from "lucide-react";
 import { SERVICE_COLORS, type TServiceKey } from "@/lib/constants/service-colors";
+import { IconBadge } from "@/components/icon-badge";
 import { type TServiceSummary } from "../../../_data/mock";
 
 const SERVICE_ICONS: Record<TServiceKey, React.ElementType> = {
@@ -46,16 +47,7 @@ const ServiceRow = ({ service, propertyId, isLast }: TProps) => {
       className={`group flex items-center gap-4 px-6 py-[18px] transition-colors duration-[120ms] hover:bg-zinc-50 dark:hover:bg-zinc-800/50 ${!isLast ? "border-b border-zinc-100 dark:border-zinc-800" : ""}`}
       style={{ textDecoration: "none" }}
     >
-      <div
-        className="flex shrink-0 items-center justify-center rounded-lg"
-        style={{
-          width: 36,
-          height: 36,
-          background: `${color}1A`,
-        }}
-      >
-        <Icon size={18} style={{ color }} strokeWidth={1.75} />
-      </div>
+      <IconBadge icon={Icon} color={color} />
 
       <div className="min-w-0 flex-1">
         <p

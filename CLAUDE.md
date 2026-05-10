@@ -108,6 +108,8 @@ Read the relevant document(s) when working on a related task. Do not preload.
   Read before writing or refactoring code.
 - `.claude/rules/ui-patterns.md` — separation of concerns, Tailwind vs inline styles,
   design tokens, constants organization. Read before creating new or refactoring any existing component.
+- `.claude/rules/color-system.md` — where colors live, how to add new colors, anti-patterns.
+  Read before adding any color or touching color-related code.
 
 ## 6. Git
 

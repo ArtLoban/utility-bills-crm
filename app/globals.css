@@ -53,6 +53,14 @@
 }
 
 :root {
+  /* service colors — single source of truth for design; JS uses hex mirror in service-colors.ts (SVG constraint) */
+  --service-electricity: #f59e0b;
+  --service-gas: #ef4444;
+  --service-cold-water: #3b82f6;
+  --service-hot-water: #ec4899;
+  --service-heating: #8b5cf6;
+  --service-internet: #14b8a6;
+
   /* tint tokens — filled input state, selected type card */
   --type-card-bg: #ffffff;
   --type-card-border: #e4e4e7;
