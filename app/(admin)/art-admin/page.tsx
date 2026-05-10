@@ -1,10 +1,29 @@
-export default function AdminPage() {
+import type { Metadata } from "next";
+
+import { PageContainer } from "@/components/page-container";
+import { ActivityFeed } from "./_components/activity-feed";
+import { StatCard } from "./_components/stat-card";
+import { STAT_CARDS } from "./constants";
+
+export const metadata: Metadata = {
+  title: "Admin Dashboard",
+  description: "System-wide overview.",
+};
+
+export default function AdminDashboardPage() {
   return (
-    <div className="flex flex-1 flex-col items-center justify-center gap-4 p-8">
-      <h1 className="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
-        Admin
-      </h1>
-      <p className="text-zinc-500 dark:text-zinc-400">Admin panel — coming soon</p>
-    </div>
+    <PageContainer
+      title="Admin dashboard"
+      meta={<p className="text-muted-foreground mt-1.5 text-sm">System-wide overview.</p>}
+    >
+      <div className="space-y-7">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {STAT_CARDS.map((card) => (
+            <StatCard key={card.label} {...card} />
+          ))}
+        </div>
+        <ActivityFeed />
+      </div>
+    </PageContainer>
   );
 }
