@@ -1,0 +1,36 @@
+/* Layer 3 component tokens — scoped to the browser-frame mockup wrapper.
+   These tokens are NOT global; they only resolve inside an element with class .mockup.
+   References Layer 2 semantic tokens (--background, --border, --primary…) only —
+   Layer 1 primitives (--neutral-*, --purple-*) are stripped by Tailwind v4 at build time. */
+
+.mockup {
+  --mockup-bg: var(--background);
+  --mockup-card: var(--card);
+  --mockup-border: var(--border);
+  --mockup-muted: var(--muted);
+  --mockup-muted-fg: var(--muted-foreground);
+  --mockup-fg: var(--foreground);
+  --mockup-fg-sub: var(--muted-foreground);
+  --mockup-accent: var(--primary);
+  --mockup-accent-light: var(--primary);
+  --mockup-bar-inactive: var(--border);
+  --mockup-frame-bg: var(--muted);
+  --mockup-url-bg: var(--background);
+  --mockup-url-text: #a1a1aa; /* zinc-400 — no matching semantic token */
+  --mockup-dot-close: #fc5f57; /* macOS close — OS brand, stays literal */
+  --mockup-dot-min: #fdbc2c; /* macOS minimize — OS brand, stays literal */
+  --mockup-dot-max: #33c748; /* macOS maximize — OS brand, stays literal */
+}
+
+:global(.dark) .mockup {
+  --mockup-border: oklch(0.269 0 0); /* neutral-800 — --border is transparent in dark */
+  --mockup-muted: #1c1c1f; /* between neutral-900/800 — no precise semantic token */
+  --mockup-fg-sub: #a1a1aa; /* zinc-400 — diverges from muted-foreground in dark */
+  --mockup-accent-light: oklch(0.7 0.2 293); /* purple-400 — lighter than dark --primary */
+  --mockup-bar-inactive: oklch(0.371 0 0); /* neutral-700 — --border is transparent in dark */
+  --mockup-frame-bg: var(--card); /* dark: neutral-900 */
+  --mockup-url-text: #52525b; /* zinc-600 — no matching semantic token */
+  --mockup-dot-close: oklch(0.371 0 0); /* neutral-700 — dimmed in dark mode */
+  --mockup-dot-min: oklch(0.371 0 0);
+  --mockup-dot-max: oklch(0.371 0 0);
+}

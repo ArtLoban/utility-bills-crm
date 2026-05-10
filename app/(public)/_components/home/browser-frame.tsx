@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
 
+import styles from "./mockup.module.css";
+
 type TProps = {
   url: string;
   children: ReactNode;
@@ -8,7 +10,7 @@ type TProps = {
 export const BrowserFrame = ({ url, children }: TProps) => {
   return (
     <div
-      className="overflow-hidden rounded-[10px]"
+      className={`overflow-hidden rounded-[10px] ${styles.mockup}`}
       style={{
         border: "1px solid var(--mockup-border)",
         boxShadow: "0 4px 24px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.06)",
@@ -23,9 +25,12 @@ export const BrowserFrame = ({ url, children }: TProps) => {
         }}
       >
         <div className="flex gap-[5px]">
-          <div className="size-2.5 rounded-full" style={{ background: "var(--mockup-dot-1)" }} />
-          <div className="size-2.5 rounded-full" style={{ background: "var(--mockup-dot-2)" }} />
-          <div className="size-2.5 rounded-full" style={{ background: "var(--mockup-dot-3)" }} />
+          <div
+            className="size-2.5 rounded-full"
+            style={{ background: "var(--mockup-dot-close)" }}
+          />
+          <div className="size-2.5 rounded-full" style={{ background: "var(--mockup-dot-min)" }} />
+          <div className="size-2.5 rounded-full" style={{ background: "var(--mockup-dot-max)" }} />
         </div>
         <div
           className="mx-auto flex h-5 max-w-[340px] flex-1 items-center rounded-md px-2"
