@@ -12,6 +12,7 @@ import {
 import { SERVICE_COLORS, SERVICE_LABELS } from "@/lib/constants/service-colors";
 import { SERVICE_ICONS } from "@/lib/constants/service-icons";
 import type { TGlobalMeter } from "../../../_data/mock";
+import { IconBadge } from "@/components/icon-badge";
 
 type TProps = {
   meter: TGlobalMeter;
@@ -76,20 +77,7 @@ const MeterRow = ({ meter, showHistoricalBadge, onSubmitReading, isLast }: TProp
 
       <td className={tdBaseClass} style={tdStyle}>
         <span className="inline-flex items-center gap-1.5">
-          <span
-            style={{
-              width: 20,
-              height: 20,
-              borderRadius: 4,
-              background: `${color}1A`,
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center",
-              flexShrink: 0,
-            }}
-          >
-            <Icon size={12} style={{ color }} strokeWidth={1.75} />
-          </span>
+          <IconBadge icon={Icon} color={color} size="xs" />
           <span style={{ fontSize: 13.5 }}>{SERVICE_LABELS[meter.serviceKey]}</span>
         </span>
       </td>
