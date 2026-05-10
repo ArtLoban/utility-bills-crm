@@ -139,13 +139,8 @@
     --sidebar-border: oklch(1 0 0 / 10%);
     --sidebar-ring: var(--neutral-500);
 
-    /* devnote: --field-tint-bg intentionally changed from #1e1338 (near-black) to
-       oklch(0.25 0.08 292) (dark purple tint) — per task spec as the single allowed visual change.
-       Verify on property form in dark mode before shipping. */
     --field-tint-bg: oklch(0.25 0.08 292);
     --field-tint-border: var(--purple-600);
-    /* devnote: original #a78bfa ≈ oklch(0.702 0.183 293); --purple-400 is oklch(0.700 0.200 293) —
-       minimal difference (ΔL=0.002, ΔC=0.017). Verify visually in dark mode. */
     --field-tint-fg: var(--purple-400);
 
     --type-card-bg: var(--neutral-900);
