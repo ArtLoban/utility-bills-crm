@@ -17,6 +17,7 @@ const NAV_LINKS = [
   { key: "meters", href: ROUTES.meters },
   { key: "bills", href: ROUTES.bills },
   { key: "payments", href: ROUTES.payments },
+  { key: "payments-new", href: "/payments-new" },
 ];
 
 type TProps = {

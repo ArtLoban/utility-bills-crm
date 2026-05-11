@@ -212,6 +212,7 @@
         "clear": "Скинути фільтри",
         "allProperties": "Всі об'єкти",
         "allServices": "Всі послуги",
+        "allPeriods": "Всі періоди",
         "periodLast12": "Останні 12 місяців",
         "periodLast6": "Останні 6 місяців",
         "periodLast3": "Останні 3 місяці"
@@ -228,8 +229,13 @@
       },
       "footer": {
         "totalPaid": "Всього сплачено",
+        "totalFiltered": "Всього сплачено (з фільтром)",
         "perPage25": "25 на сторінку",
-        "perPage50": "50 на сторінку"
+        "perPage50": "50 на сторінку",
+        "perPage": "{count} на сторінку",
+        "page": "Сторінка {page} з {total}",
+        "prev": "Назад",
+        "next": "Далі"
       },
       "mobile": {
         "filters": "Фільтри",

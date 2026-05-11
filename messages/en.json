@@ -9,6 +9,7 @@
     "meters": "Meters",
     "bills": "Bills",
     "payments": "Payments",
+    "payments-new": "Payments New",
     "settings": "Settings",
     "adminDashboard": "Dashboard",
     "adminProperties": "Properties",
@@ -212,6 +213,7 @@
         "clear": "Clear filters",
         "allProperties": "All properties",
         "allServices": "All services",
+        "allPeriods": "All periods",
         "periodLast12": "Last 12 months",
         "periodLast6": "Last 6 months",
         "periodLast3": "Last 3 months"
@@ -228,8 +230,13 @@
       },
       "footer": {
         "totalPaid": "Total paid",
+        "totalFiltered": "Total paid (filtered)",
         "perPage25": "25 per page",
-        "perPage50": "50 per page"
+        "perPage50": "50 per page",
+        "perPage": "{count} per page",
+        "page": "Page {page} of {total}",
+        "prev": "Previous",
+        "next": "Next"
       },
       "mobile": {
         "filters": "Filters",
