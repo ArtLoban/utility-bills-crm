@@ -1,24 +1,25 @@
 import { formatUAH } from "@/lib/format/currency";
 import { useTranslations } from "next-intl";
-import type { Table } from "@tanstack/react-table";
 import { TPayment } from "@/app/(app)/payments/_data/mock";
 
 type TProps = {
-  table: Table<TPayment>;
+  filteredData?: TPayment[];
 };
 
-export const FooterMeta = ({ table }: TProps) => {
+export const FooterMeta = ({ filteredData }: TProps) => {
   const t = useTranslations("payments.list");
 
-  const filteredTotal = table
-    .getFilteredRowModel()
-    .rows.reduce((sum, row) => sum + row.original.amount, 0);
+  if (!filteredData) return;
+
+  const total = filteredData.reduce((sum, item) => {
+    return sum + item.amount;
+  }, 0);
 
   return (
     <span className="text-muted-foreground text-sm">
       {t("footer.totalPaid")}:{" "}
       <span className="font-bold text-green-600 tabular-nums dark:text-green-500">
-        {formatUAH(filteredTotal)}
+        {formatUAH(total)}
       </span>
     </span>
   );

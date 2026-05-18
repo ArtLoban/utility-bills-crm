@@ -10,17 +10,19 @@ import { TableFilters } from "@/components/feature/data-table/table-filters";
 import { FiltersBar } from "./components/filters-bar";
 import { useQueryStates } from "nuqs";
 import { URL_FIELDS } from "@/app/(app)/test/_components/payments-client/payments-table/constants";
-import { useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { ColumnFiltersState } from "@tanstack/react-table";
 import { FiltersFormField } from "@/app/(app)/test/_components/payments-client/payments-table/types";
-import { SortOrder } from "@/components/feature/data-table/data-table/types";
 import { useDataTableFilters } from "@/components/feature/data-table/data-table/hooks/use-data-table-filters";
+import { FooterMeta } from "@/app/(app)/test/_components/payments-client/payments-table/components/footer-meta";
 
 type TProps = {
   data: TPayment[];
+  filteredData: TPayment[];
+  setFilteredData: (data: TPayment[]) => void;
 };
 
-export const PaymentsTable = ({ data }: TProps) => {
+export const PaymentsTable = ({ data, filteredData, setFilteredData }: TProps) => {
   const [query] = useQueryStates(URL_FIELDS);
   const t = useTranslations("payments.list");
   const columns = getPaymentsColumns(t);
@@ -37,7 +39,8 @@ export const PaymentsTable = ({ data }: TProps) => {
         // filteredEmptyState={<PaymentsFilteredEmptyState />}
         // isFiltered={isFiltered}
         defaultSorting={{ sortBy: FiltersFormField.PAID_AT }}
-        footerMeta={"TODO footerMeta"}
+        footerMeta={<FooterMeta filteredData={filteredData} />}
+        onRowsChange={setFilteredData}
       />
     </>
   );

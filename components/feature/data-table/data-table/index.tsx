@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 import {
   type ColumnDef,
   type SortingState,
@@ -22,22 +22,20 @@ import { Footer } from "./components/footer";
 import { useDataTablePagination } from "./hooks/use-data-table-pagination";
 import { useDataTableSorting } from "./hooks/use-data-table-sorting";
 import { TDefaultSorting } from "@/components/feature/data-table/data-table/types";
+import type { Table as TodoNameTable } from "@tanstack/react-table";
 
 type TDataTableProps<T> = {
   data: T[];
   columns: ColumnDef<T>[];
   columnFilters?: ColumnFiltersState;
-
   emptyState: ReactNode;
   filteredEmptyState?: ReactNode;
   isFiltered?: boolean;
-
   isLoading?: boolean;
-
   footerMeta?: ReactNode;
-
   defaultPageSize?: number;
   defaultSorting?: TDefaultSorting;
+  onRowsChange?: (filteredRows: T[]) => void;
 };
 
 export const DataTable = <T,>(props: TDataTableProps<T>) => {
@@ -50,14 +48,12 @@ export const DataTable = <T,>(props: TDataTableProps<T>) => {
     isFiltered = false,
     isLoading = false,
     footerMeta,
-    defaultPageSize = DEFAULT_PAGE_SIZE,
     defaultSorting,
+    onRowsChange,
   } = props;
 
   const { pagination } = useDataTablePagination();
   const { sorting, setSorting } = useDataTableSorting(defaultSorting);
-
-  console.log("sorting", sorting);
 
   const table = useReactTable<T>({
     data,
@@ -70,6 +66,15 @@ export const DataTable = <T,>(props: TDataTableProps<T>) => {
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   });
+
+  const filteredRows = table.getFilteredRowModel().rows;
+
+  useEffect(() => {
+    if (!onRowsChange) return;
+
+    const rows = filteredRows.map((row) => row.original);
+    onRowsChange(rows);
+  }, [filteredRows, onRowsChange]);
 
   const rowCount = table.getRowModel().rows.length;
   const showEmpty = !isLoading && rowCount === 0;
