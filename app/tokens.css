@@ -23,6 +23,9 @@
       0.659 0.262 292.7
     ); /* exact dark-mode primary/ring — no standard step matches */
     --purple-700: oklch(0.42 0.23 292);
+    --purple-800: oklch(0.36 0.18 292);
+    --purple-900: oklch(0.25 0.08 292);
+    --purple-950: oklch(0.18 0.04 292);
 
     /* Service palette — oklch conversions of original hex values; verify visually before shipping */
     --amber-500: oklch(0.77 0.17 70); /* was #f59e0b (electricity) */
@@ -94,10 +97,10 @@
     --service-heating: var(--violet-500);
     --service-internet: var(--teal-500);
 
-    /* Domain: field tint (selected state — property type selector, property card) */
-    --field-tint-bg: var(--purple-50);
-    --field-tint-border: var(--purple-100);
-    --field-tint-fg: var(--purple-600);
+    /* Brand: DevNote. Custom */
+    --brand: var(--purple-600);
+    --brand-bg: var(--purple-50);
+    --brand-border: var(--purple-100);
 
     /* Domain: type card (unselected state — property type selector) */
     --type-card-bg: var(--neutral-0);
@@ -139,9 +142,10 @@
     --sidebar-border: oklch(1 0 0 / 10%);
     --sidebar-ring: var(--neutral-500);
 
-    --field-tint-bg: oklch(0.25 0.08 292);
-    --field-tint-border: var(--purple-600);
-    --field-tint-fg: var(--purple-400);
+    /* Brand: DevNote. Custom */
+    --brand: var(--purple-400);
+    --brand-bg: var(--purple-900);
+    --brand-border: var(--purple-600);
 
     --type-card-bg: var(--neutral-900);
     --type-card-border: var(--neutral-700); /* #3f3f46 ≈ oklch(0.371 0 0) */

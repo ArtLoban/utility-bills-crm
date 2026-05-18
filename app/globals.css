@@ -59,6 +59,11 @@
   --color-service-hot-water: var(--service-hot-water);
   --color-service-heating: var(--service-heating);
   --color-service-internet: var(--service-internet);
+
+  /* DevNote. Custom */
+  --color-brand: var(--brand);
+  --color-brand-bg: var(--brand-bg);
+  --color-brand-border: var(--brand-border);
 }
 
 @layer base {

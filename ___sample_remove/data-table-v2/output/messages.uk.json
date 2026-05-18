@@ -1,0 +1,25 @@
+{
+  "dataTable": {
+    "pagination": {
+      "perPage": "{count} на сторінці",
+      "perPageLabel": "Рядків на сторінці",
+      "previous": "Попередня",
+      "next": "Наступна"
+    }
+  },
+  "services": {
+    "types": {
+      "electricity": "Електроенергія",
+      "gas": "Газ",
+      "gas_delivery": "Доставка газу",
+      "cold_water": "Холодна вода",
+      "hot_water": "Гаряча вода",
+      "heating": "Опалення",
+      "building_maintenance": "Утримання будинку",
+      "garbage": "Вивіз сміття",
+      "internet": "Інтернет",
+      "intercom": "Домофон",
+      "hoa": "Внески ОСББ"
+    }
+  }
+}

@@ -184,6 +184,7 @@ const RecordPaymentModal = ({ open, onOpenChange, payment, properties, services 
         {/* Body */}
         <div style={{ padding: "20px 24px", display: "flex", flexDirection: "column", gap: 16 }}>
           {/* Property */}
+          AAAAA
           <div>
             <label style={{ fontSize: 13.5, fontWeight: 500, display: "block", marginBottom: 6 }}>
               Property
@@ -203,7 +204,6 @@ const RecordPaymentModal = ({ open, onOpenChange, payment, properties, services 
               ))}
             </ModalSelect>
           </div>
-
           {/* Service */}
           <div>
             <label style={{ fontSize: 13.5, fontWeight: 500, display: "block", marginBottom: 6 }}>
@@ -224,7 +224,6 @@ const RecordPaymentModal = ({ open, onOpenChange, payment, properties, services 
               ))}
             </ModalSelect>
           </div>
-
           {/* Date */}
           <div>
             <label style={{ fontSize: 13.5, fontWeight: 500, display: "block", marginBottom: 6 }}>
@@ -241,7 +240,6 @@ const RecordPaymentModal = ({ open, onOpenChange, payment, properties, services 
               className="h-9"
             />
           </div>
-
           {/* Amount */}
           <div>
             <label style={{ fontSize: 13.5, fontWeight: 500, display: "block", marginBottom: 6 }}>
@@ -261,7 +259,6 @@ const RecordPaymentModal = ({ open, onOpenChange, payment, properties, services 
               className="h-9"
             />
           </div>
-
           {/* Notes */}
           <div>
             <label style={{ fontSize: 13.5, fontWeight: 500, display: "block", marginBottom: 6 }}>

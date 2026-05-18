@@ -319,5 +319,29 @@
         "tooLong": "Примечания слишком длинные (макс. 1000 символов)"
       }
     }
+  },
+  "dataTable": {
+    "rowActions": "todo",
+    "pagination": {
+      "perPage": "{count} на странице",
+      "perPageLabel": "Строк на странице",
+      "previous": "Предыдущая",
+      "next": "Следующая"
+    }
+  },
+  "services": {
+    "types": {
+      "electricity": "Электричество",
+      "gas": "Газ",
+      "gas_delivery": "Доставка газа",
+      "cold_water": "Холодная вода",
+      "hot_water": "Горячая вода",
+      "heating": "Отопление",
+      "building_maintenance": "Содержание дома",
+      "garbage": "Вывоз мусора",
+      "internet": "Интернет",
+      "intercom": "Домофон",
+      "hoa": "Взносы ТСЖ"
+    }
   }
 }

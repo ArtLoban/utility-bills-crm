@@ -41,11 +41,11 @@ export const PropertyCard = ({ property }: TProps) => {
       <div
         className="flex h-10 w-10 items-center justify-center rounded-lg border"
         style={{
-          background: "var(--field-tint-bg)",
-          borderColor: "var(--field-tint-border)",
+          background: "var(--brand-bg)",
+          borderColor: "var(--brand-border)",
         }}
       >
-        <Icon size={20} style={{ color: "var(--field-tint-fg)" }} strokeWidth={1.75} />
+        <Icon size={20} style={{ color: "var(--brand-fg)" }} strokeWidth={1.75} />
       </div>
 
       <div className="mt-4">

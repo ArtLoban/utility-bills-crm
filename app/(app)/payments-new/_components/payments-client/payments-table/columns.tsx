@@ -10,6 +10,7 @@ export const paymentColumns: ColumnDef<TPayment>[] = [
     accessorFn: (row) => row.sortTs,
     header: "columns.date",
     cell: ({ row }) => <span className="tabular-nums">{formatDateShort(row.original.sortTs)}</span>,
+    enableSorting: false,
   },
   {
     id: "property",
@@ -33,5 +34,11 @@ export const paymentColumns: ColumnDef<TPayment>[] = [
       </span>
     ),
     meta: { align: "right" },
+  },
+  {
+    id: "actions",
+    accessorFn: (row) => row.actions.name,
+    header: "columns.actions",
+    cell: ({ row }) => <span className="text-muted-foreground">{row.original.actions?.name}</span>,
   },
 ];

@@ -122,11 +122,7 @@ export const PaymentsClientNew = () => {
           />
         )}
 
-        {filteredRows.length > 0 && (
-          <div className="border-border overflow-hidden rounded-lg border shadow-sm dark:shadow-none">
-            <PaymentsTable rows={filteredRows} onEditPayment={openEdit} />
-          </div>
-        )}
+        {filteredRows.length > 0 && <PaymentsTable rows={filteredRows} onEditPayment={openEdit} />}
       </div>
 
       <RecordPaymentModal

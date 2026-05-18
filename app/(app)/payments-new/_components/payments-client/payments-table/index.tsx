@@ -64,85 +64,88 @@ const PaymentsTable = ({ rows, onEditPayment }: TProps) => {
 
   return (
     <>
-      <Table>
-        <TableHeader>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header) => {
-                const align = header.column.columnDef.meta?.align ?? "left";
-                const colId = header.column.id as TSortColumn;
-                const isSorted = state.sortCol === header.column.id;
-                const SortIcon = !isSorted
-                  ? ArrowUpDown
-                  : state.sortDir === "asc"
-                    ? ArrowUp
-                    : ArrowDown;
+      <div className="border-border overflow-hidden rounded-lg border">
+        <Table>
+          <TableHeader>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id}>
+                {headerGroup.headers.map((header) => {
+                  const align = header.column.columnDef.meta?.align ?? "left";
+                  const colId = header.column.id as TSortColumn;
+                  const isSorted = state.sortCol === header.column.id;
+                  const SortIcon = !isSorted
+                    ? ArrowUpDown
+                    : state.sortDir === "asc"
+                      ? ArrowUp
+                      : ArrowDown;
 
-                return (
-                  <TableHead
-                    key={header.id}
-                    className="cursor-pointer select-none"
-                    onClick={() => toggleSort(colId)}
-                  >
-                    <span
-                      className="inline-flex items-center gap-1.5"
-                      style={{
-                        justifyContent: align === "right" ? "flex-end" : "flex-start",
-                        width: "100%",
-                      }}
+                  return (
+                    <TableHead
+                      key={header.id}
+                      className="cursor-pointer select-none"
+                      onClick={() => toggleSort(colId)}
                     >
-                      {t(header.column.columnDef.header as string)}
-                      <SortIcon
-                        size={12}
-                        className={isSorted ? "text-primary" : "text-muted-foreground/40"}
-                      />
-                    </span>
-                  </TableHead>
-                );
-              })}
-              <TableHead className="w-12" />
-            </TableRow>
-          ))}
-        </TableHeader>
+                      <span
+                        className="inline-flex items-center gap-1.5"
+                        style={{
+                          justifyContent: align === "right" ? "flex-end" : "flex-start",
+                          width: "100%",
+                        }}
+                      >
+                        {t(header.column.columnDef.header as string)}
+                        <SortIcon
+                          size={12}
+                          className={isSorted ? "text-primary" : "text-muted-foreground/40"}
+                        />
+                      </span>
+                    </TableHead>
+                  );
+                })}
+                <TableHead className="w-12" />
+              </TableRow>
+            ))}
+          </TableHeader>
 
-        <TableBody>
-          {table.getRowModel().rows.map((row) => (
-            <TableRow
-              key={row.id}
-              className="cursor-pointer"
-              onClick={() => onEditPayment(row.original)}
-            >
-              {row.getVisibleCells().map((cell) => {
-                const align = cell.column.columnDef.meta?.align ?? "left";
-                return (
-                  <TableCell key={cell.id}>
-                    <div style={{ textAlign: align }}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </div>
-                  </TableCell>
-                );
-              })}
-              <TableCell className="w-12" onClick={(e) => e.stopPropagation()}>
-                <DropdownMenu>
-                  <DropdownMenuTrigger className="hover:bg-accent data-popup-open:bg-accent flex h-8 w-8 cursor-pointer items-center justify-center rounded-md border border-transparent bg-transparent transition-colors">
-                    <MoreHorizontal size={16} className="text-muted-foreground" />
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-40">
-                    <DropdownMenuItem onClick={() => onEditPayment(row.original)}>
-                      {t("actions.edit")}
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    {/* devnote: wire Delete when deletePayment server action is implemented */}
-                    <DropdownMenuItem variant="destructive">{t("actions.delete")}</DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-
-      <PaymentsFooter table={table} />
+          <TableBody>
+            {table.getRowModel().rows.map((row) => (
+              <TableRow
+                key={row.id}
+                className="cursor-pointer"
+                onClick={() => onEditPayment(row.original)}
+              >
+                {row.getVisibleCells().map((cell) => {
+                  const align = cell.column.columnDef.meta?.align ?? "left";
+                  return (
+                    <TableCell key={cell.id}>
+                      <div style={{ textAlign: align }}>
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </div>
+                    </TableCell>
+                  );
+                })}
+                <TableCell className="w-12" onClick={(e) => e.stopPropagation()}>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger className="hover:bg-accent data-popup-open:bg-accent flex h-8 w-8 cursor-pointer items-center justify-center rounded-md border border-transparent bg-transparent transition-colors">
+                      <MoreHorizontal size={16} className="text-muted-foreground" />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-40">
+                      <DropdownMenuItem onClick={() => onEditPayment(row.original)}>
+                        {t("actions.edit")}
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      {/* devnote: wire Delete when deletePayment server action is implemented */}
+                      <DropdownMenuItem variant="destructive">
+                        {t("actions.delete")}
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+        <PaymentsFooter table={table} />
+      </div>
     </>
   );
 };
