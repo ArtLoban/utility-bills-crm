@@ -16,21 +16,17 @@ import { Table } from "@/components/ui/table";
 
 import { Body } from "./components/body";
 import { Header } from "./components/header";
-import { SkeletonRows } from "./components/skeleton-rows";
 import { DEFAULT_PAGE_SIZE } from "./constants";
 import { Footer } from "./components/footer";
 import { useDataTablePagination } from "./hooks/use-data-table-pagination";
 import { useDataTableSorting } from "./hooks/use-data-table-sorting";
 import { TDefaultSorting } from "@/components/feature/data-table/data-table/types";
-import type { Table as TodoNameTable } from "@tanstack/react-table";
+import { EmptyStateCard } from "./components/empty-state-card";
 
 type TDataTableProps<T> = {
   data: T[];
   columns: ColumnDef<T>[];
   columnFilters?: ColumnFiltersState;
-  emptyState: ReactNode;
-  filteredEmptyState?: ReactNode;
-  isFiltered?: boolean;
   isLoading?: boolean;
   footerMeta?: ReactNode;
   defaultPageSize?: number;
@@ -43,9 +39,6 @@ export const DataTable = <T,>(props: TDataTableProps<T>) => {
     data,
     columns,
     columnFilters,
-    emptyState,
-    filteredEmptyState,
-    isFiltered = false,
     isLoading = false,
     footerMeta,
     defaultSorting,
@@ -76,9 +69,13 @@ export const DataTable = <T,>(props: TDataTableProps<T>) => {
     onRowsChange(rows);
   }, [filteredRows, onRowsChange]);
 
-  const rowCount = table.getRowModel().rows.length;
-  const showEmpty = !isLoading && rowCount === 0;
-  const emptyToRender = isFiltered && filteredEmptyState ? filteredEmptyState : emptyState;
+  const isFiltered = (columnFilters?.length ?? 0) > 0;
+  const showEmpty = !isLoading && filteredRows.length === 0;
+  const emptyKind = data.length > 0 && isFiltered ? "noResults" : "empty";
+
+  if (showEmpty) {
+    return <EmptyStateCard kind={emptyKind} />;
+  }
 
   return (
     <div className="border-border overflow-hidden rounded-lg border">
