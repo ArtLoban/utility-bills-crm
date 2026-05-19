@@ -1,15 +1,18 @@
 "use client";
 
-import { PageContainer } from "@/components/page-container";
-import { useTranslations } from "next-intl";
-import { TPayment } from "@/app/(app)/payments/_data/mock";
-import { PaymentsTable } from "@/app/(app)/test/_components/payments-client/payments-table";
-import { Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { Plus } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
-import { getPaymentsPageMeta } from "./utils/get-payments-page-meta";
+
+import { Button } from "@/components/ui/button";
+import { PageContainer } from "@/components/page-container";
 import { PageMeta } from "@/components/page-meta";
+import { TPayment } from "@/app/(app)/payments/_data/mock";
+
+import { PaymentsMobile } from "./payments-mobile";
+import { PaymentsTable } from "./payments-table";
+import { getPaymentsPageMeta } from "./utils/get-payments-page-meta";
 
 type TProps = {
   payments: TPayment[];
@@ -33,6 +36,10 @@ export const PaymentsClient = ({ payments }: TProps) => {
       }
     >
       <PaymentsTable data={payments} filteredData={rows} setFilteredData={setRows} />
+
+      <div className="-mx-8 md:hidden">
+        <PaymentsMobile payments={payments} />
+      </div>
     </PageContainer>
   );
 };
