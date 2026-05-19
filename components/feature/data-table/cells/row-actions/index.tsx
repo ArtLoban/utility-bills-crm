@@ -9,7 +9,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 import { TRowAction } from "./types";
 import Link from "next/link";
@@ -36,37 +35,19 @@ export const RowActions = ({ items, triggerLabel }: TProps) => {
             return <DropdownMenuSeparator key={`sep-${idx}`} />;
           }
 
-          // devnote TODO make con color proper when destructive
-          const sharedClassName = cn(
-            "cursor-pointer",
-            item.destructive && "text-destructive focus:text-destructive focus:bg-destructive/10",
-          );
-
-          if (item.kind === "link") {
-            return (
-              <DropdownMenuItem
-                key={`${item.label}-${idx}`}
-                disabled={item.disabled}
-                className={sharedClassName}
-                // asChild
-              >
-                {/* devnote: need to make full width for link */}
-                <Link href={item.href}>
-                  {item.icon && <span className="mr-2 inline-flex">{item.icon}</span>}
-                  {item.label}
-                </Link>
-              </DropdownMenuItem>
-            );
-          }
+          const variant = item.destructive ? "destructive" : "default";
 
           return (
             <DropdownMenuItem
               key={`${item.label}-${idx}`}
               disabled={item.disabled}
-              onClick={item.onSelect}
-              className={sharedClassName}
+              variant={variant}
+              className="cursor-pointer"
+              {...(item.kind === "link"
+                ? { render: <Link href={item.href} /> }
+                : { onClick: item.onSelect })}
             >
-              {item.icon && <span className="mr-2 inline-flex">{item.icon}</span>}
+              {item.icon && <span className="mr-1 inline-flex">{item.icon}</span>}
               {item.label}
             </DropdownMenuItem>
           );
