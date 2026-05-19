@@ -55,7 +55,7 @@ export const PaymentsClient = () => {
       actions={
         <Button onClick={openCreate}>
           <Plus size={14} />
-          {t("cta.recordPayment")}
+          {t("cta.addPayment")}
         </Button>
       }
     >

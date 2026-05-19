@@ -204,6 +204,7 @@
         "records": "{count, plural, one {# payment} other {# payments}}"
       },
       "cta": {
+        "addPayment": "Add Payment",
         "recordPayment": "Record payment"
       },
       "filters": {
@@ -327,6 +328,15 @@
     "filters": {
       "label": "Filter",
       "clear": "Clear filters"
+    },
+    "list": {
+      "empty": {
+        "title": "Nothing here yet",
+        "body": "There is no data to display"
+      },
+      "noResults": {
+        "title": "No records match your filters"
+      }
     },
     "rowActions": {
       "edit": "Edit",

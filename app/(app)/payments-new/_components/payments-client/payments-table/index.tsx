@@ -41,7 +41,7 @@ type TProps = {
   onEditPayment: (payment: TPayment) => void;
 };
 
-const PaymentsTable = ({ rows, onEditPayment }: TProps) => {
+export const PaymentsTable = ({ rows, onEditPayment }: TProps) => {
   "use no memo"; // useReactTable returns mutable functions — React Compiler must not memoize this component
   const t = useTranslations("payments.list");
   const { state, toggleSort } = usePaymentsFilters();
@@ -149,5 +149,3 @@ const PaymentsTable = ({ rows, onEditPayment }: TProps) => {
     </>
   );
 };
-
-export { PaymentsTable };
