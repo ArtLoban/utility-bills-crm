@@ -7,7 +7,7 @@ import { PaymentsTable } from "@/app/(app)/test/_components/payments-client/paym
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { getPaymentsPageMeta } from "./utils/get-payments-page-meta";
 import { PageMeta } from "@/components/page-meta";
 
@@ -17,14 +17,14 @@ type TProps = {
 
 export const PaymentsClient = ({ payments }: TProps) => {
   const t = useTranslations("payments.list");
-  const [rows, setRows] = useState<TPayment[]>(payments);
+  const [rows, setRows] = useState<TPayment[] | null>(null);
 
-  const meta = useMemo(() => getPaymentsPageMeta(rows, t), [rows]);
+  const metaItems = rows !== null ? getPaymentsPageMeta(rows, t) : null;
 
   return (
     <PageContainer
       title={t("title")}
-      meta={<PageMeta items={meta} />}
+      meta={<PageMeta items={metaItems} />}
       actions={
         <Button render={<Link href={`/test/new`} />} nativeButton={false}>
           <Plus size={14} />

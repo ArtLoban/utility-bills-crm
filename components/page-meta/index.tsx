@@ -1,10 +1,14 @@
 import { Fragment, ReactNode } from "react";
 
+import { PageMetaSkeleton } from "./components/page-meta-skeleton";
+
 type TProps = {
-  items: ReactNode[];
+  items: ReactNode[] | null;
 };
 
 export const PageMeta = ({ items }: TProps) => {
+  if (items === null) return <PageMetaSkeleton />;
+
   const filtered = items.filter(Boolean);
 
   return (

@@ -15,7 +15,7 @@ import { FooterMeta } from "./components/footer-meta";
 
 type TProps = {
   data: TPayment[];
-  filteredData: TPayment[];
+  filteredData: TPayment[] | null;
   setFilteredData: (data: TPayment[]) => void;
 };
 
@@ -33,7 +33,7 @@ export const PaymentsTable = ({ data, filteredData, setFilteredData }: TProps) =
         columns={columns}
         columnFilters={columnFilters}
         defaultSorting={{ sortBy: FiltersFormField.PAID_AT }}
-        footerMeta={<FooterMeta filteredData={filteredData} />}
+        footerMeta={<FooterMeta filteredData={filteredData ?? undefined} />}
         onRowsChange={setFilteredData}
       />
     </div>
