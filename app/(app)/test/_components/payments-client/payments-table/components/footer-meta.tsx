@@ -18,7 +18,7 @@ export const FooterMeta = ({ filteredData }: TProps) => {
   return (
     <span className="text-muted-foreground text-sm">
       {t("footer.totalPaid")}:{" "}
-      <span className="font-bold text-green-600 tabular-nums dark:text-green-500">
+      <span className="font-semibold text-green-600 tabular-nums dark:text-green-500">
         {formatUAH(total)}
       </span>
     </span>

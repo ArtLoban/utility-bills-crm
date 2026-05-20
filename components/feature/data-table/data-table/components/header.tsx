@@ -35,7 +35,7 @@ export const Header = <T,>({ table }: TProps<T>) => {
               >
                 <span
                   className={cn(
-                    "inline-flex items-center gap-1.5",
+                    "inline-flex items-center gap-1.5 text-sm font-normal text-zinc-600 dark:text-zinc-400",
                     align === "right" && "w-full justify-end",
                     align === "center" && "w-full justify-center",
                   )}

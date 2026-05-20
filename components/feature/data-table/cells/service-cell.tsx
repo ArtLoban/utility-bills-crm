@@ -13,6 +13,7 @@ import {
 
 import { cn } from "@/lib/utils";
 
+/* TODO: Refactor */
 /**
  * Mirrors the `service_types` catalog seeded in the DB.
  * Keep in sync with `lib/db/seed/service-types.ts` (TBD in scaffolding).
@@ -51,14 +52,18 @@ type TProps = {
   className?: string;
 };
 
+// TODO: fix t.has(type) ? t(type) : type
 export const ServiceCell = ({ type, showLabel = true, className }: TProps) => {
   const t = useTranslations("services.types");
-  const Icon = SERVICE_ICONS[type];
+  const Icon = SERVICE_ICONS[type] || null;
 
   return (
-    <span className={cn("inline-flex items-center gap-2", className)} aria-label={t(type)}>
-      <Icon size={16} className="text-muted-foreground shrink-0" aria-hidden />
-      {showLabel && <span>{t(type)}</span>}
+    <span
+      className={cn("inline-flex items-center gap-2", className)}
+      aria-label={t.has(type) ? t(type) : type}
+    >
+      {Icon && <Icon size={16} className="text-muted-foreground shrink-0" aria-hidden />}
+      {showLabel && <span>{t.has(type) ? t(type) : type}</span>}
     </span>
   );
 };
