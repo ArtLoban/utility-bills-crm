@@ -184,7 +184,6 @@ const RecordPaymentModal = ({ open, onOpenChange, payment, properties, services 
         {/* Body */}
         <div style={{ padding: "20px 24px", display: "flex", flexDirection: "column", gap: 16 }}>
           {/* Property */}
-          AAAAA
           <div>
             <label style={{ fontSize: 13.5, fontWeight: 500, display: "block", marginBottom: 6 }}>
               Property

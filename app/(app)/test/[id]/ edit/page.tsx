@@ -1,5 +1,6 @@
 // app/(app)/payments/[id]/page.tsx
-import { EditPaymentModal } from "@/app/(app)/test/_components/edit-payment-modal";
+
+import { redirect } from "next/navigation";
 
 type TProps = {
   params: Promise<{ id: string }>;
@@ -7,6 +8,5 @@ type TProps = {
 
 export default async function EditPaymentPage({ params }: TProps) {
   const { id } = await params;
-
-  return <EditPaymentModal payment={{ id }} />;
+  redirect(`/test/${id}`);
 }
