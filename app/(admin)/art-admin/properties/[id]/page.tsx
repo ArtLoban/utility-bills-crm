@@ -1,10 +1,25 @@
-export default function AdminPropertyPage() {
-  return (
-    <div className="flex flex-1 flex-col items-center justify-center gap-4 p-8">
-      <h1 className="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
-        Admin — Property
-      </h1>
-      <p className="text-zinc-500 dark:text-zinc-400">Property detail — admin view.</p>
-    </div>
-  );
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+
+import { DETAIL_MOCK } from "./_data/mock";
+import { PropertyDetail } from "./_components/property-detail";
+
+type TProps = {
+  params: Promise<{ id: string }>;
+};
+
+export async function generateMetadata({ params }: TProps): Promise<Metadata> {
+  const { id } = await params;
+  const property = DETAIL_MOCK[id];
+  if (!property) return { title: "Not Found — Admin" };
+
+  return { title: `${property.name} — Admin` };
+}
+
+export default async function AdminPropertyDetailPage({ params }: TProps) {
+  const { id } = await params;
+  const property = DETAIL_MOCK[12]; // devnote. late switch to id
+  if (!property) notFound();
+
+  return <PropertyDetail property={property} />;
 }
