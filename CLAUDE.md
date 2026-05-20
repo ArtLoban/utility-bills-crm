@@ -59,6 +59,21 @@ If tsc passes without it, don't add it.
 Do not introduce libraries or patterns that are not already in the project.
 If a new dependency seems necessary, propose it with trade-offs first.
 
+### 1.8 Existing code is not a source of truth
+
+The codebase may contain tech debt, temporary solutions, or patterns that diverge
+from best practices. Treat existing code as _what was done_, not _what should be done_.
+
+When you encounter a divergence — in structure, naming, or approach:
+
+- Flag it explicitly before proceeding: _"This follows an existing pattern, but it
+  contradicts X because…"_
+- Propose a correction.
+- Never silently copy a suboptimal pattern. Doing so spreads the problem.
+
+If the fix is out of scope for the current task — note it as tech debt and move on.
+But always name it.
+
 ## 2. DevNote convention
 
 The author marks questions and concerns in generated code with

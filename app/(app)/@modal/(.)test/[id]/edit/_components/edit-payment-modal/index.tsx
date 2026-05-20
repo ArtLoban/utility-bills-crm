@@ -3,8 +3,8 @@
 import { useRouter } from "next/navigation";
 
 import { Modal } from "@/components/modal";
-import { PaymentForm } from "@/components/feature/payments/payment-form";
-import { usePaymentForm } from "@/components/feature/payments/hooks/use-payment-form";
+import { PaymentForm } from "@/features/payments/components/payment-form";
+import { usePaymentForm } from "@/features/payments/hooks/use-payment-form";
 
 type TProps = {
   payment: { id: string };

@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 
-import { paymentSchema } from "@/lib/validation/payment";
+import { paymentSchema } from "../schema";
 import type { TPaymentFormValues, TPaymentRecord, TPropertyOption, TServiceOption } from "../types";
 
 const MOCK_PROPERTIES: TPropertyOption[] = [

@@ -20,7 +20,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import type { TPaymentFormValues, TPropertyOption, TServiceOption } from "../types";
+import type { TPaymentFormValues, TPropertyOption, TServiceOption } from "../../types";
 
 const FILLED_STYLE: React.CSSProperties = {
   borderColor: "var(--field-tint-border)",

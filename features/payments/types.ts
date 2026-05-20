@@ -1,5 +1,5 @@
 import type { z } from "zod";
-import type { paymentSchema } from "@/lib/validation/payment";
+import type { paymentSchema } from "./schema";
 
 export type TPaymentFormValues = z.infer<typeof paymentSchema>;
 
