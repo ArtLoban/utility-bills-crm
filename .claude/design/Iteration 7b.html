@@ -1,0 +1,634 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Utility Bills CRM — Iteration 7b · Meter detail</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; padding: 0; height: 100%; background: #ffffff; }
+  body { font-family: 'Inter', system-ui, -apple-system, sans-serif; -webkit-font-smoothing: antialiased; }
+  * { box-sizing: border-box; }
+  button, input, textarea, select { font-family: inherit; }
+  @media (max-width: 700px) {
+    .readings-table-wrap { display: none !important; }
+    .readings-cards-wrap { display: flex !important; }
+    .meta-grid { grid-template-columns: 1fr !important; }
+    .page-pad { padding: 20px 16px 80px !important; }
+    .breadcrumb-nav { display: none !important; }
+    .page-header-row { flex-wrap: wrap; gap: 12px !important; }
+    .page-actions-right { flex-wrap: wrap; }
+  }
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" data-presets="react">
+const { useState, useRef, useEffect, Fragment } = React;
+
+// ─── Design tokens ───────────────────────────────────────────────────────────
+const Z = {
+  background:  '#ffffff',
+  foreground:  '#09090b',
+  card:        '#ffffff',
+  muted:       '#f4f4f5',
+  mutedFg:     '#71717a',
+  border:      '#e4e4e7',
+  subtle:      '#fafafa',
+  destructive: '#dc2626',
+  success:     '#16a34a',
+};
+const ACCENT = {
+  solid:       '#7c3aed',
+  solidHover:  '#6d28d9',
+  tintBg:      '#f5f3ff',
+  tintBorder:  '#ede9fe',
+  foreground:  '#ffffff',
+};
+
+// ─── Icons (lucide-style, stroke 1.75) ──────────────────────────────────────
+const Ico = ({ size = 16, children, stroke = 'currentColor', fill = 'none' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24"
+    fill={fill} stroke={stroke} strokeWidth="1.75"
+    strokeLinecap="round" strokeLinejoin="round">
+    {children}
+  </svg>
+);
+const IcoZap = ({ size = 16, stroke = 'currentColor' }) => (
+  <Ico size={size} stroke={stroke}>
+    <path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/>
+  </Ico>
+);
+const IcoLayoutDashboard = ({ size = 15 }) => (
+  <Ico size={size}>
+    <rect width="7" height="9" x="3" y="3" rx="1"/>
+    <rect width="7" height="5" x="14" y="3" rx="1"/>
+    <rect width="7" height="9" x="14" y="12" rx="1"/>
+    <rect width="7" height="5" x="3" y="16" rx="1"/>
+  </Ico>
+);
+const IcoGlobe = ({ size = 16 }) => (
+  <Ico size={size}>
+    <circle cx="12" cy="12" r="10"/>
+    <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/>
+    <path d="M2 12h20"/>
+  </Ico>
+);
+const IcoMoon = ({ size = 16 }) => (
+  <Ico size={size}><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></Ico>
+);
+const IcoChevronRight = ({ size = 14, stroke = 'currentColor' }) => (
+  <Ico size={size} stroke={stroke}><path d="m9 18 6-6-6-6"/></Ico>
+);
+const IcoChevronDown = ({ size = 14 }) => (
+  <Ico size={size}><path d="m6 9 6 6 6-6"/></Ico>
+);
+const IcoMoreVertical = ({ size = 16 }) => (
+  <Ico size={size} fill="currentColor" stroke="none">
+    <circle cx="12" cy="5" r="1.2"/>
+    <circle cx="12" cy="12" r="1.2"/>
+    <circle cx="12" cy="19" r="1.2"/>
+  </Ico>
+);
+const IcoPlus = ({ size = 14 }) => (
+  <Ico size={size}><path d="M5 12h14M12 5v14"/></Ico>
+);
+const IcoPencil = ({ size = 13 }) => (
+  <Ico size={size}>
+    <path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/>
+    <path d="m15 5 4 4"/>
+  </Ico>
+);
+
+// ─── Top bar ─────────────────────────────────────────────────────────────────
+function TopBar({ activeNav = 'Properties' }) {
+  const navItems = ['Dashboard', 'Properties', 'Bills', 'Payments', 'Settings'];
+  const iconBtn = {
+    width: 32, height: 32, borderRadius: 6,
+    display: 'flex', alignItems: 'center', justifyContent: 'center',
+    background: 'transparent', border: 'none', cursor: 'pointer',
+  };
+  return (
+    <div style={{
+      height: 56, background: 'rgba(255,255,255,0.85)',
+      backdropFilter: 'blur(8px)',
+      borderBottom: `1px solid ${Z.border}`,
+      display: 'flex', alignItems: 'center',
+      padding: '0 32px', position: 'sticky', top: 0, zIndex: 20,
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginRight: 36 }}>
+        <div style={{
+          width: 26, height: 26, borderRadius: 6, background: ACCENT.solid,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>
+          <IcoLayoutDashboard size={15} />
+        </div>
+        <span style={{ fontSize: 14.5, fontWeight: 600, letterSpacing: -0.1, color: Z.foreground }}>
+          UtilityBills
+        </span>
+      </div>
+      <nav style={{ display: 'flex', alignItems: 'center', gap: 2, flex: 1 }}>
+        {navItems.map(item => {
+          const active = item === activeNav;
+          return (
+            <a key={item} href="#" style={{
+              position: 'relative', padding: '8px 12px',
+              fontSize: 13.5, fontWeight: active ? 500 : 400,
+              color: active ? Z.foreground : Z.mutedFg,
+              textDecoration: 'none', borderRadius: 6,
+            }}>
+              {item}
+              {active && (
+                <span style={{
+                  position: 'absolute', left: 12, right: 12, bottom: -2,
+                  height: 2, background: ACCENT.solid, borderRadius: 2,
+                }} />
+              )}
+            </a>
+          );
+        })}
+      </nav>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+        <button style={iconBtn}><IcoGlobe size={16} /></button>
+        <button style={iconBtn}><IcoMoon size={16} /></button>
+        <div style={{ width: 1, height: 20, background: Z.border, margin: '0 8px' }} />
+        <button style={{
+          display: 'flex', alignItems: 'center', gap: 8,
+          height: 36, padding: '0 4px 0 8px',
+          background: 'transparent', border: 'none', borderRadius: 18, cursor: 'pointer',
+        }}>
+          <span style={{ fontSize: 13, color: Z.foreground, fontWeight: 500 }}>Anna</span>
+          <div style={{
+            width: 28, height: 28, borderRadius: '50%',
+            background: ACCENT.tintBg, color: ACCENT.solid,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: 11, fontWeight: 600, border: `1px solid ${ACCENT.tintBorder}`,
+          }}>AL</div>
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ─── Card shell ───────────────────────────────────────────────────────────────
+function Card({ children, style }) {
+  return (
+    <div style={{
+      background: Z.card, border: `1px solid ${Z.border}`,
+      borderRadius: 8, boxShadow: '0 1px 2px rgba(24,24,27,0.05)',
+      ...style,
+    }}>{children}</div>
+  );
+}
+
+// ─── Data ────────────────────────────────────────────────────────────────────
+const READINGS = [
+  { date: 'Apr 15, 2026', t1: 24847, t2: 8142, d1: 312,  d2: 98,  note: '' },
+  { date: 'Mar 15, 2026', t1: 24535, t2: 8044, d1: 287,  d2: 101, note: '' },
+  { date: 'Feb 15, 2026', t1: 24248, t2: 7943, d1: 298,  d2: 95,  note: 'Took during cold spell' },
+  { date: 'Jan 15, 2026', t1: 23950, t2: 7848, d1: 321,  d2: 112, note: '' },
+  { date: 'Dec 15, 2025', t1: 23629, t2: 7736, d1: 275,  d2: 89,  note: '' },
+  { date: 'Nov 15, 2025', t1: 23354, t2: 7647, d1: 268,  d2: 92,  note: '' },
+  { date: 'Oct 15, 2025', t1: 23086, t2: 7555, d1: 245,  d2: 84,  note: '' },
+  { date: 'Sep 15, 2025', t1: 22841, t2: 7471, d1: 231,  d2: 78,  note: '' },
+  { date: 'Aug 15, 2025', t1: 22610, t2: 7393, d1: null, d2: null, note: '' },
+];
+
+const CHART_DATA = READINGS.slice().reverse().map(r => ({
+  label: r.date.replace(' 15,', '').replace(/, \d{4}/, ''),
+  t1: r.t1, t2: r.t2,
+}));
+
+const fmt = n => n.toLocaleString('en-US');
+
+// ─── Breadcrumb ──────────────────────────────────────────────────────────────
+function Breadcrumb({ items }) {
+  return (
+    <nav className="breadcrumb-nav" style={{
+      display: 'flex', alignItems: 'center', gap: 4,
+      fontSize: 13, color: Z.mutedFg, marginBottom: 16, flexWrap: 'wrap',
+    }}>
+      {items.map((item, i) => (
+        <span key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+          {i > 0 && <IcoChevronRight size={12} stroke={Z.border} />}
+          {i < items.length - 1
+            ? <a href="#" style={{ color: Z.mutedFg, textDecoration: 'none' }}
+                onMouseEnter={e => e.target.style.color = Z.foreground}
+                onMouseLeave={e => e.target.style.color = Z.mutedFg}>{item}</a>
+            : <span style={{ color: Z.foreground, fontWeight: 500 }}>{item}</span>
+          }
+        </span>
+      ))}
+    </nav>
+  );
+}
+
+// ─── Overflow menu ───────────────────────────────────────────────────────────
+function OverflowMenu() {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+  useEffect(() => {
+    if (!open) return;
+    const close = e => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    document.addEventListener('mousedown', close);
+    return () => document.removeEventListener('mousedown', close);
+  }, [open]);
+  return (
+    <div ref={ref} style={{ position: 'relative' }}>
+      <button onClick={() => setOpen(v => !v)} style={{
+        width: 32, height: 32, borderRadius: 6,
+        border: `1px solid ${Z.border}`,
+        background: Z.background, color: Z.mutedFg,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        cursor: 'pointer',
+      }}>
+        <IcoMoreVertical size={15} />
+      </button>
+      {open && (
+        <div style={{
+          position: 'absolute', top: 36, right: 0,
+          background: Z.card, border: `1px solid ${Z.border}`,
+          borderRadius: 8, boxShadow: '0 8px 24px rgba(9,9,11,0.12)',
+          zIndex: 50, minWidth: 164, padding: 4,
+        }}>
+          {[['Edit details', Z.foreground], ['Remove meter', Z.destructive]].map(([label, color]) => (
+            <button key={label} style={{
+              display: 'block', width: '100%', textAlign: 'left',
+              padding: '8px 12px', fontSize: 13.5, fontFamily: 'inherit',
+              background: 'none', border: 'none', cursor: 'pointer',
+              borderRadius: 6, color,
+            }}
+            onMouseEnter={e => e.currentTarget.style.background = Z.muted}
+            onMouseLeave={e => e.currentTarget.style.background = 'none'}
+            >{label}</button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Section heading ─────────────────────────────────────────────────────────
+function SectionHeader({ title, action }) {
+  return (
+    <div style={{
+      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+      marginBottom: 12,
+    }}>
+      <h2 style={{ margin: 0, fontSize: 15, fontWeight: 600, letterSpacing: -0.2, color: Z.foreground }}>
+        {title}
+      </h2>
+      {action}
+    </div>
+  );
+}
+
+// ─── Metadata card ───────────────────────────────────────────────────────────
+function MetadataCard() {
+  const rows = [
+    { label: 'Service type',  value: <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}><IcoZap size={14} stroke={ACCENT.solid} />Electricity</span> },
+    { label: 'Property',      value: 'Main apartment' },
+    { label: 'Serial number', value: <span style={{ fontFamily: 'monospace', fontSize: 13 }}>NIK-12345</span> },
+    { label: 'Zones',         value: '2 (T1 day, T2 night)' },
+    { label: 'Installed at',  value: 'March 15, 2024' },
+    { label: 'Active since',  value: 'March 15, 2024' },
+    { label: 'Notes',         value: 'Located in the entrance hall, behind the door panel.', span: true },
+  ];
+  return (
+    <Card style={{ padding: '20px 24px' }}>
+      <div className="meta-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px 40px' }}>
+        {rows.map(({ label, value, span }) => (
+          <div key={label} style={span ? { gridColumn: '1 / -1' } : {}}>
+            <div style={{ fontSize: 12, color: Z.mutedFg, marginBottom: 3, fontWeight: 500, letterSpacing: 0.1, textTransform: 'uppercase' }}>{label}</div>
+            <div style={{ fontSize: 13.5, color: Z.foreground, lineHeight: 1.4 }}>{value}</div>
+          </div>
+        ))}
+      </div>
+    </Card>
+  );
+}
+
+// ─── Readings table (desktop) ────────────────────────────────────────────────
+function ReadingRow({ row, isLast }) {
+  const [hover, setHover] = useState(false);
+  return (
+    <tr
+      style={{ borderBottom: isLast ? 'none' : `1px solid ${Z.border}`, background: hover ? Z.subtle : 'transparent', transition: 'background 100ms' }}
+      onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
+    >
+      <td style={{ padding: '11px 16px', fontSize: 13.5, color: Z.foreground, whiteSpace: 'nowrap' }}>{row.date}</td>
+      <td style={{ padding: '11px 16px', textAlign: 'right', fontVariantNumeric: 'tabular-nums', fontWeight: 500, color: Z.foreground }}>
+        {fmt(row.t1)}<span style={{ fontSize: 11.5, color: Z.mutedFg, fontWeight: 400 }}> kWh</span>
+      </td>
+      <td style={{ padding: '11px 16px', textAlign: 'right', fontVariantNumeric: 'tabular-nums', fontWeight: 500, color: Z.foreground }}>
+        {fmt(row.t2)}<span style={{ fontSize: 11.5, color: Z.mutedFg, fontWeight: 400 }}> kWh</span>
+      </td>
+      <td style={{ padding: '11px 16px', textAlign: 'right', fontVariantNumeric: 'tabular-nums', fontSize: 13, color: Z.mutedFg }}>
+        {row.d1 !== null ? `+${fmt(row.d1)}` : <span style={{ color: Z.border }}>—</span>}
+      </td>
+      <td style={{ padding: '11px 16px', textAlign: 'right', fontVariantNumeric: 'tabular-nums', fontSize: 13, color: Z.mutedFg }}>
+        {row.d2 !== null ? `+${fmt(row.d2)}` : <span style={{ color: Z.border }}>—</span>}
+      </td>
+      <td style={{ padding: '11px 16px', fontSize: 13, color: Z.mutedFg, maxWidth: 180, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+        {row.note || <span style={{ color: Z.border }}>—</span>}
+      </td>
+      <td style={{ padding: '11px 12px 11px 4px', width: 36 }}>
+        <button style={{
+          width: 26, height: 26, borderRadius: 5, border: 'none', background: 'none',
+          cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+          color: hover ? Z.foreground : Z.mutedFg, transition: 'color 120ms',
+        }}><IcoPencil size={13} /></button>
+      </td>
+    </tr>
+  );
+}
+
+function ReadingsTable() {
+  const cols = ['Date', 'T1 (day)', 'T2 (night)', 'Δ T1', 'Δ T2', 'Notes', ''];
+  return (
+    <Card style={{ overflow: 'hidden' }} className="readings-table-wrap">
+      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13.5 }}>
+        <thead>
+          <tr style={{ borderBottom: `1px solid ${Z.border}` }}>
+            {cols.map((h, i) => (
+              <th key={i} style={{
+                padding: '10px 16px',
+                textAlign: i >= 1 && i <= 4 ? 'right' : 'left',
+                fontSize: 11.5, fontWeight: 500,
+                color: Z.mutedFg, letterSpacing: 0.2,
+                background: Z.subtle, whiteSpace: 'nowrap',
+              }}>{h}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {READINGS.map((row, i) => (
+            <ReadingRow key={i} row={row} isLast={i === READINGS.length - 1} />
+          ))}
+        </tbody>
+      </table>
+    </Card>
+  );
+}
+
+// ─── Readings cards (mobile) ─────────────────────────────────────────────────
+function ReadingsCards() {
+  return (
+    <div className="readings-cards-wrap" style={{ display: 'none', flexDirection: 'column', gap: 8 }}>
+      {READINGS.map((row, i) => (
+        <Card key={i} style={{ padding: '14px 16px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+            <span style={{ fontSize: 13, fontWeight: 600, color: Z.foreground }}>{row.date}</span>
+            <button style={{ width: 26, height: 26, border: 'none', background: 'none', cursor: 'pointer', color: Z.mutedFg, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 5 }}>
+              <IcoPencil size={13} />
+            </button>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+            {[{ label: 'T1 (day)', value: row.t1, delta: row.d1 }, { label: 'T2 (night)', value: row.t2, delta: row.d2 }].map(({ label, value, delta }) => (
+              <div key={label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                <span style={{ fontSize: 12.5, color: Z.mutedFg }}>{label}</span>
+                <span style={{ fontSize: 13.5, fontVariantNumeric: 'tabular-nums', fontWeight: 500, color: Z.foreground }}>
+                  {fmt(value)} kWh
+                  {delta !== null && <span style={{ fontSize: 12, color: Z.mutedFg, fontWeight: 400, marginLeft: 5 }}>+{fmt(delta)}</span>}
+                </span>
+              </div>
+            ))}
+            {row.note && <div style={{ fontSize: 12.5, color: Z.mutedFg, marginTop: 2 }}>{row.note}</div>}
+          </div>
+        </Card>
+      ))}
+    </div>
+  );
+}
+
+// ─── Consumption chart (pure SVG) ────────────────────────────────────────────
+function ConsumptionChart() {
+  const [hoverIdx, setHoverIdx] = useState(null);
+  const containerRef = useRef(null);
+
+  // viewBox dimensions
+  const VW = 800, VH = 220;
+  const pad = { top: 10, right: 48, bottom: 32, left: 10 };
+  const iW = VW - pad.left - pad.right;
+  const iH = VH - pad.top - pad.bottom;
+
+  const n = CHART_DATA.length;
+  const xStep = iW / (n - 1);
+  const toX = i => pad.left + i * xStep;
+
+  const allVals = CHART_DATA.flatMap(d => [d.t1, d.t2]);
+  const minV = Math.floor(Math.min(...allVals) / 500) * 500;
+  const maxV = Math.ceil(Math.max(...allVals) / 1000) * 1000;
+  const toY = v => pad.top + iH - ((v - minV) / (maxV - minV)) * iH;
+
+  const pts = key => CHART_DATA.map((d, i) => `${toX(i).toFixed(1)},${toY(d[key]).toFixed(1)}`).join(' ');
+
+  const yTicks = 4;
+  const yTickVals = Array.from({ length: yTicks + 1 }, (_, i) => minV + (maxV - minV) * (i / yTicks));
+
+  const T1_COLOR = ACCENT.solid;
+  const T2_COLOR = '#71717a';
+
+  return (
+    <Card style={{ padding: '20px 24px 16px' }}>
+      {/* Legend */}
+      <div style={{ display: 'flex', gap: 20, marginBottom: 14 }}>
+        {[[T1_COLOR, 'T1 (day)', false], [T2_COLOR, 'T2 (night)', true]].map(([color, label, dash]) => (
+          <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <svg width="22" height="10" style={{ flexShrink: 0 }}>
+              <line x1="0" y1="5" x2="22" y2="5" stroke={color} strokeWidth="2" strokeDasharray={dash ? '4 2' : 'none'} />
+              <circle cx="11" cy="5" r="3" fill={color} />
+            </svg>
+            <span style={{ fontSize: 12.5, color: Z.mutedFg }}>{label}</span>
+          </div>
+        ))}
+      </div>
+
+      <div ref={containerRef} style={{ position: 'relative' }}>
+        <svg
+          viewBox={`0 0 ${VW} ${VH}`}
+          style={{ width: '100%', display: 'block', overflow: 'visible' }}
+          onMouseLeave={() => setHoverIdx(null)}
+        >
+          {/* Grid lines + Y labels */}
+          {yTickVals.map((v, i) => (
+            <g key={i}>
+              <line x1={pad.left} y1={toY(v).toFixed(1)} x2={VW - pad.right} y2={toY(v).toFixed(1)}
+                stroke={Z.border} strokeWidth="1" />
+              <text x={VW - pad.right + 6} y={toY(v) + 4}
+                fontSize="10.5" fill={Z.mutedFg} fontFamily="Inter,system-ui,sans-serif">
+                {v >= 1000 ? `${(v / 1000).toFixed(0)}k` : v}
+              </text>
+            </g>
+          ))}
+
+          {/* T2 line (dashed) */}
+          <polyline points={pts('t2')} fill="none"
+            stroke={T2_COLOR} strokeWidth="2" strokeDasharray="4 2"
+            strokeLinecap="round" strokeLinejoin="round" />
+
+          {/* T1 line (solid) */}
+          <polyline points={pts('t1')} fill="none"
+            stroke={T1_COLOR} strokeWidth="2"
+            strokeLinecap="round" strokeLinejoin="round" />
+
+          {/* Dots */}
+          {CHART_DATA.map((d, i) => (
+            <g key={i}>
+              <circle cx={toX(i)} cy={toY(d.t1)} r={hoverIdx === i ? 5 : 3.5}
+                fill={T1_COLOR} style={{ transition: 'r 100ms' }} />
+              <circle cx={toX(i)} cy={toY(d.t2)} r={hoverIdx === i ? 5 : 3.5}
+                fill={T2_COLOR} style={{ transition: 'r 100ms' }} />
+            </g>
+          ))}
+
+          {/* Tooltip guide line */}
+          {hoverIdx !== null && (
+            <line x1={toX(hoverIdx)} y1={pad.top} x2={toX(hoverIdx)} y2={pad.top + iH}
+              stroke={Z.border} strokeWidth="1" strokeDasharray="3 2" />
+          )}
+
+          {/* Hit strips */}
+          {CHART_DATA.map((d, i) => (
+            <rect key={i}
+              x={i === 0 ? toX(i) - xStep * 0.4 : toX(i) - xStep / 2}
+              y={pad.top} width={xStep} height={iH + 24}
+              fill="transparent" style={{ cursor: 'default' }}
+              onMouseEnter={() => setHoverIdx(i)}
+            />
+          ))}
+
+          {/* X-axis labels */}
+          {CHART_DATA.map((d, i) => (
+            <text key={i} x={toX(i)} y={VH - 4}
+              textAnchor="middle" fontSize="10.5"
+              fill={hoverIdx === i ? Z.foreground : Z.mutedFg}
+              fontWeight={hoverIdx === i ? '500' : '400'}
+              fontFamily="Inter,system-ui,sans-serif">
+              {d.label}
+            </text>
+          ))}
+        </svg>
+
+        {/* Floating tooltip */}
+        {hoverIdx !== null && (() => {
+          const d = CHART_DATA[hoverIdx];
+          const xPct = (toX(hoverIdx) / VW) * 100;
+          const right = hoverIdx > n / 2;
+          return (
+            <div style={{
+              position: 'absolute', top: 0,
+              left: right ? 'auto' : `calc(${xPct}% + 14px)`,
+              right: right ? `calc(${100 - xPct}% + 14px)` : 'auto',
+              background: Z.card, border: `1px solid ${Z.border}`,
+              borderRadius: 8, padding: '10px 14px', fontSize: 13,
+              boxShadow: '0 4px 16px rgba(9,9,11,0.1)',
+              pointerEvents: 'none', whiteSpace: 'nowrap', zIndex: 10,
+            }}>
+              <div style={{ fontWeight: 600, marginBottom: 7, color: Z.foreground }}>{d.label}</div>
+              {[[T1_COLOR, 'T1 (day)', d.t1], [T2_COLOR, 'T2 (night)', d.t2]].map(([color, label, val]) => (
+                <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                  <span style={{ width: 8, height: 8, borderRadius: '50%', background: color, flexShrink: 0, display: 'inline-block' }} />
+                  <span style={{ color: Z.mutedFg }}>{label}:</span>
+                  <span style={{ fontVariantNumeric: 'tabular-nums', fontWeight: 500, color: Z.foreground }}>{fmt(val)} kWh</span>
+                </div>
+              ))}
+            </div>
+          );
+        })()}
+      </div>
+    </Card>
+  );
+}
+
+// ─── Page ────────────────────────────────────────────────────────────────────
+function MeterDetailPage() {
+  return (
+    <div style={{ background: Z.background, minHeight: '100vh', color: Z.foreground }}>
+      <TopBar activeNav="Properties" />
+
+      <div className="page-pad" style={{ maxWidth: 920, margin: '0 auto', padding: '28px 32px 80px' }}>
+
+        <Breadcrumb items={['Properties', 'Main apartment', 'Meters', 'Electricity meter']} />
+
+        {/* Page header */}
+        <div className="page-header-row" style={{
+          display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between',
+          marginBottom: 28, gap: 16,
+        }}>
+          <div>
+            <h1 style={{ margin: 0, fontSize: 26, fontWeight: 600, letterSpacing: -0.5, color: Z.foreground, lineHeight: 1.1 }}>
+              Electricity meter
+            </h1>
+            <p style={{ margin: '7px 0 0', fontSize: 13.5, color: Z.mutedFg, display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+              <span>Two-zone</span>
+              <span style={{ color: Z.border }}>·</span>
+              <span style={{ fontFamily: 'monospace', fontSize: 12.5, letterSpacing: 0 }}>Serial NIK-12345</span>
+              <span style={{ color: Z.border }}>·</span>
+              <span>Installed Mar 15, 2024</span>
+            </p>
+          </div>
+          <div className="page-actions-right" style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+            <button style={{
+              display: 'inline-flex', alignItems: 'center', gap: 6,
+              height: 32, padding: '0 14px',
+              fontSize: 13, fontWeight: 500,
+              background: Z.background, color: Z.foreground,
+              border: `1px solid ${Z.border}`, borderRadius: 6, cursor: 'pointer',
+            }}>
+              Replace meter
+            </button>
+            <OverflowMenu />
+          </div>
+        </div>
+
+        {/* Metadata */}
+        <div style={{ marginBottom: 28 }}>
+          <SectionHeader title="Details" />
+          <MetadataCard />
+        </div>
+
+        {/* Readings */}
+        <div style={{ marginBottom: 28 }}>
+          <SectionHeader
+            title="Readings"
+            action={
+              <button style={{
+                display: 'inline-flex', alignItems: 'center', gap: 6,
+                height: 32, padding: '0 14px',
+                fontSize: 13, fontWeight: 500,
+                background: ACCENT.solid, color: '#fff',
+                border: 'none', borderRadius: 6, cursor: 'pointer',
+                boxShadow: '0 1px 3px rgba(124,58,237,0.2)',
+              }}>
+                <IcoPlus size={13} /> Submit reading
+              </button>
+            }
+          />
+          <ReadingsTable />
+          <ReadingsCards />
+        </div>
+
+        {/* Chart */}
+        <div>
+          <SectionHeader title="Consumption" />
+          <ConsumptionChart />
+          <p style={{ fontSize: 12, color: Z.mutedFg, margin: '8px 0 0', textAlign: 'right' }}>
+            Raw meter readings over time · kWh
+          </p>
+        </div>
+
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<MeterDetailPage />);
+</script>
+</body>
+</html>

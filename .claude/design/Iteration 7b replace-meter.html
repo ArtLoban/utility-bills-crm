@@ -1,0 +1,541 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Utility Bills CRM — Iteration 7b · Replace meter modal</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; padding: 0; height: 100%; background: #ffffff; }
+  body { font-family: 'Inter', system-ui, -apple-system, sans-serif; -webkit-font-smoothing: antialiased; }
+  * { box-sizing: border-box; }
+  button, input, textarea, select { font-family: inherit; }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(8px) scale(0.98); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" data-presets="react">
+const { useState, useRef, useEffect } = React;
+
+// ─── Tokens ──────────────────────────────────────────────────────────────────
+const Z = {
+  background: '#ffffff',
+  foreground: '#09090b',
+  card:       '#ffffff',
+  muted:      '#f4f4f5',
+  mutedFg:    '#71717a',
+  border:     '#e4e4e7',
+  subtle:     '#fafafa',
+};
+const ACCENT = {
+  solid:      '#7c3aed',
+  tintBg:     '#f5f3ff',
+  tintBorder: '#ede9fe',
+  foreground: '#ffffff',
+};
+
+// ─── Icons ───────────────────────────────────────────────────────────────────
+const Ico = ({ size = 16, children, stroke = 'currentColor' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
+    stroke={stroke} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+    {children}
+  </svg>
+);
+const IcoX = ({ size = 15 }) => (
+  <Ico size={size}><path d="M18 6 6 18M6 6l12 12"/></Ico>
+);
+const IcoChevronDown = ({ size = 14 }) => (
+  <Ico size={size}><path d="m6 9 6 6 6-6"/></Ico>
+);
+const IcoCalendar = ({ size = 14 }) => (
+  <Ico size={size}>
+    <path d="M8 2v4M16 2v4"/>
+    <rect width="18" height="18" x="3" y="4" rx="2"/>
+    <path d="M3 10h18"/>
+  </Ico>
+);
+const IcoInfo = ({ size = 15 }) => (
+  <Ico size={size}>
+    <circle cx="12" cy="12" r="10"/>
+    <path d="M12 16v-4M12 8h.01"/>
+  </Ico>
+);
+const IcoZap = ({ size = 14 }) => (
+  <Ico size={size}>
+    <path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/>
+  </Ico>
+);
+const IcoLayoutDashboard = ({ size = 15 }) => (
+  <Ico size={size}>
+    <rect width="7" height="9" x="3" y="3" rx="1"/>
+    <rect width="7" height="5" x="14" y="3" rx="1"/>
+    <rect width="7" height="9" x="14" y="12" rx="1"/>
+    <rect width="7" height="5" x="3" y="16" rx="1"/>
+  </Ico>
+);
+
+// ─── Form primitives ─────────────────────────────────────────────────────────
+function FieldLabel({ children, required }) {
+  return (
+    <label style={{ display: 'block', fontSize: 13, fontWeight: 500, color: Z.foreground, marginBottom: 6 }}>
+      {children}
+      {required && <span style={{ color: Z.mutedFg, fontWeight: 400, marginLeft: 2 }}>*</span>}
+    </label>
+  );
+}
+
+function FieldHint({ children }) {
+  return (
+    <p style={{ margin: '5px 0 0', fontSize: 12, color: Z.mutedFg, lineHeight: 1.55 }}>{children}</p>
+  );
+}
+
+function useFocusStyle() {
+  const [focused, setFocused] = useState(false);
+  const border = `1px solid ${focused ? ACCENT.solid : Z.border}`;
+  const shadow = focused ? `0 0 0 3px ${ACCENT.tintBg}` : 'none';
+  const handlers = {
+    onFocus: () => setFocused(true),
+    onBlur:  () => setFocused(false),
+  };
+  return { border, shadow, handlers };
+}
+
+function SelectField({ options, value, onChange }) {
+  const { border, shadow, handlers } = useFocusStyle();
+  return (
+    <div style={{ position: 'relative' }}>
+      <select
+        value={value}
+        onChange={e => onChange(e.target.value)}
+        {...handlers}
+        style={{
+          width: '100%', height: 36, padding: '0 32px 0 12px',
+          appearance: 'none', WebkitAppearance: 'none',
+          fontSize: 13.5, color: Z.foreground,
+          background: Z.background, border, borderRadius: 6,
+          outline: 'none', cursor: 'pointer',
+          boxShadow: shadow, transition: 'border-color 120ms, box-shadow 120ms',
+        }}
+      >
+        {options.map(o => (
+          <option key={o.value} value={o.value}>{o.label}</option>
+        ))}
+      </select>
+      <span style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: Z.mutedFg }}>
+        <IcoChevronDown size={14} />
+      </span>
+    </div>
+  );
+}
+
+function InputField({ placeholder, value, onChange, type = 'text', textAlign = 'left' }) {
+  const { border, shadow, handlers } = useFocusStyle();
+  return (
+    <input
+      type={type}
+      placeholder={placeholder}
+      value={value}
+      onChange={e => onChange(e.target.value)}
+      {...handlers}
+      style={{
+        width: '100%', height: 36, padding: '0 12px',
+        fontSize: 13.5, color: Z.foreground,
+        background: Z.background, border, borderRadius: 6,
+        outline: 'none', textAlign,
+        boxShadow: shadow, transition: 'border-color 120ms, box-shadow 120ms',
+        fontVariantNumeric: type === 'number' ? 'tabular-nums' : 'normal',
+      }}
+    />
+  );
+}
+
+function DateField({ value, onChange }) {
+  const { border, shadow, handlers } = useFocusStyle();
+  return (
+    <div style={{ position: 'relative' }}>
+      <span style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: Z.mutedFg, pointerEvents: 'none' }}>
+        <IcoCalendar size={14} />
+      </span>
+      <input
+        type="date"
+        value={value}
+        onChange={e => onChange(e.target.value)}
+        {...handlers}
+        style={{
+          width: '100%', height: 36, padding: '0 12px 0 32px',
+          fontSize: 13.5, color: Z.foreground,
+          background: Z.background, border, borderRadius: 6,
+          outline: 'none', fontFamily: 'inherit',
+          boxShadow: shadow, transition: 'border-color 120ms, box-shadow 120ms',
+        }}
+      />
+    </div>
+  );
+}
+
+function TextareaField({ placeholder, value, onChange, rows = 3 }) {
+  const { border, shadow, handlers } = useFocusStyle();
+  return (
+    <textarea
+      placeholder={placeholder}
+      value={value}
+      onChange={e => onChange(e.target.value)}
+      rows={rows}
+      {...handlers}
+      style={{
+        width: '100%', padding: '8px 12px',
+        fontSize: 13.5, color: Z.foreground,
+        background: Z.background, border, borderRadius: 6,
+        outline: 'none', resize: 'vertical', lineHeight: 1.5,
+        boxShadow: shadow, transition: 'border-color 120ms, box-shadow 120ms',
+      }}
+    />
+  );
+}
+
+// ─── Background page (Meter detail context) ──────────────────────────────────
+function PageBackground() {
+  return (
+    <div>
+      {/* Top bar */}
+      <div style={{
+        height: 56, background: Z.background,
+        borderBottom: `1px solid ${Z.border}`,
+        display: 'flex', alignItems: 'center', padding: '0 32px', gap: 8,
+      }}>
+        <div style={{ width: 26, height: 26, borderRadius: 6, background: ACCENT.solid, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <IcoLayoutDashboard size={15} />
+        </div>
+        <span style={{ fontSize: 14.5, fontWeight: 600, letterSpacing: -0.1, color: Z.foreground, marginRight: 28 }}>UtilityBills</span>
+        {['Dashboard','Properties','Bills','Payments','Settings'].map((item, i) => (
+          <a key={item} href="#" style={{
+            padding: '8px 12px', fontSize: 13.5, fontWeight: i === 1 ? 500 : 400,
+            color: i === 1 ? Z.foreground : Z.mutedFg, textDecoration: 'none',
+            borderRadius: 6, position: 'relative',
+          }}>
+            {item}
+            {i === 1 && <span style={{ position: 'absolute', left: 12, right: 12, bottom: -2, height: 2, background: ACCENT.solid, borderRadius: 2 }} />}
+          </a>
+        ))}
+      </div>
+
+      {/* Page content */}
+      <div style={{ maxWidth: 920, margin: '0 auto', padding: '28px 32px' }}>
+        {/* Breadcrumb */}
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 16, fontSize: 13, color: Z.mutedFg }}>
+          {['Properties', 'Main apartment', 'Meters', 'Electricity meter'].map((s, i, arr) => (
+            <span key={s} style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+              <span style={{ color: i === arr.length - 1 ? Z.foreground : Z.mutedFg, fontWeight: i === arr.length - 1 ? 500 : 400 }}>{s}</span>
+              {i < arr.length - 1 && <span style={{ color: Z.border, fontSize: 12 }}>›</span>}
+            </span>
+          ))}
+        </div>
+
+        {/* Page header */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 28 }}>
+          <div>
+            <h1 style={{ margin: 0, fontSize: 26, fontWeight: 600, letterSpacing: -0.5, color: Z.foreground }}>Electricity meter</h1>
+            <p style={{ margin: '7px 0 0', fontSize: 13.5, color: Z.mutedFg, display: 'flex', gap: 6, alignItems: 'center' }}>
+              <span>Two-zone</span><span style={{ color: Z.border }}>·</span>
+              <span style={{ fontFamily: 'monospace', fontSize: 12.5 }}>Serial NIK-12345</span><span style={{ color: Z.border }}>·</span>
+              <span>Installed Mar 15, 2024</span>
+            </p>
+          </div>
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <button style={{
+              height: 32, padding: '0 14px', fontSize: 13, fontWeight: 500,
+              background: ACCENT.tintBg, color: ACCENT.solid,
+              border: `1px solid ${ACCENT.tintBorder}`, borderRadius: 6, cursor: 'pointer',
+            }}>Replace meter</button>
+            <div style={{ width: 32, height: 32, border: `1px solid ${Z.border}`, borderRadius: 6, background: Z.background }} />
+          </div>
+        </div>
+
+        {/* Ghost metadata card */}
+        <div style={{ background: Z.card, border: `1px solid ${Z.border}`, borderRadius: 8, padding: '20px 24px', marginBottom: 28 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px 40px' }}>
+            {[
+              ['Service type', <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}><IcoZap size={14} stroke={ACCENT.solid} />Electricity</span>],
+              ['Property', 'Main apartment'],
+              ['Serial number', <span style={{ fontFamily: 'monospace', fontSize: 13 }}>NIK-12345</span>],
+              ['Zones', '2 (T1 day, T2 night)'],
+              ['Installed at', 'March 15, 2024'],
+              ['Active since', 'March 15, 2024'],
+            ].map(([label, value]) => (
+              <div key={label}>
+                <div style={{ fontSize: 11.5, color: Z.mutedFg, marginBottom: 3, fontWeight: 500, textTransform: 'uppercase', letterSpacing: 0.2 }}>{label}</div>
+                <div style={{ fontSize: 13.5, color: Z.foreground }}>{value}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Ghost readings header */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+          <h2 style={{ margin: 0, fontSize: 15, fontWeight: 600, color: Z.foreground }}>Readings</h2>
+          <div style={{ height: 32, width: 140, background: ACCENT.solid, borderRadius: 6, opacity: 0.25 }} />
+        </div>
+        <div style={{ background: Z.card, border: `1px solid ${Z.border}`, borderRadius: 8, height: 120, opacity: 0.4 }} />
+      </div>
+    </div>
+  );
+}
+
+// ─── Replace meter modal ──────────────────────────────────────────────────────
+function ReplaceMeterModal({ onClose }) {
+  const [replacementDate, setReplacementDate] = useState('2026-05-01');
+  const [newSerial, setNewSerial]             = useState('');
+  const [zones, setZones]                     = useState('two');     // same as current meter
+  const [t1Init, setT1Init]                   = useState('0');
+  const [t2Init, setT2Init]                   = useState('0');
+  const [notes, setNotes]                     = useState('');
+
+  const backdropRef = useRef(null);
+  const handleBackdrop = e => { if (e.target === backdropRef.current) onClose(); };
+  useEffect(() => {
+    const h = e => { if (e.key === 'Escape') onClose(); };
+    document.addEventListener('keydown', h);
+    return () => document.removeEventListener('keydown', h);
+  }, []);
+
+  const zoneOptions = [
+    { value: 'single', label: 'Single zone' },
+    { value: 'two',    label: 'Two zones (day / night)' },
+    { value: 'three',  label: 'Three zones (peak / shoulder / off-peak)' },
+  ];
+
+  return (
+    <div
+      ref={backdropRef}
+      onClick={handleBackdrop}
+      style={{
+        position: 'fixed', inset: 0, zIndex: 50,
+        background: 'rgba(9,9,11,0.5)',
+        backdropFilter: 'blur(2px)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        padding: 16,
+      }}
+    >
+      <div style={{
+        width: '100%', maxWidth: 448,
+        background: Z.card,
+        border: `1px solid ${Z.border}`,
+        borderRadius: 12,
+        boxShadow: '0 20px 60px rgba(9,9,11,0.18), 0 4px 16px rgba(9,9,11,0.1)',
+        animation: 'slideUp 160ms cubic-bezier(0.16,1,0.3,1)',
+        maxHeight: 'calc(100vh - 48px)',
+        display: 'flex', flexDirection: 'column',
+        overflow: 'hidden',
+      }}>
+
+        {/* Header */}
+        <div style={{ padding: '20px 24px 0', flexShrink: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+            <div>
+              <h2 style={{ margin: 0, fontSize: 17, fontWeight: 600, letterSpacing: -0.3, color: Z.foreground }}>
+                Replace meter
+              </h2>
+              <p style={{ margin: '4px 0 0', fontSize: 13, color: Z.mutedFg }}>
+                Electricity meter · NIK-12345
+              </p>
+            </div>
+            <button
+              onClick={onClose}
+              style={{
+                width: 28, height: 28, borderRadius: 6,
+                border: 'none', background: 'transparent',
+                color: Z.mutedFg, cursor: 'pointer', flexShrink: 0,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.background = Z.muted; e.currentTarget.style.color = Z.foreground; }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = Z.mutedFg; }}
+            >
+              <IcoX size={15} />
+            </button>
+          </div>
+          <div style={{ height: 1, background: Z.border, marginTop: 20 }} />
+        </div>
+
+        {/* Scrollable body */}
+        <div style={{ padding: '20px 24px', display: 'flex', flexDirection: 'column', gap: 18, overflowY: 'auto' }}>
+
+          {/* Replacement date */}
+          <div>
+            <FieldLabel required>Replacement date</FieldLabel>
+            <DateField value={replacementDate} onChange={setReplacementDate} />
+            <FieldHint>When the new meter takes over.</FieldHint>
+          </div>
+
+          {/* Divider — new meter group */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div style={{ flex: 1, height: 1, background: Z.border }} />
+            <span style={{ fontSize: 11.5, fontWeight: 500, color: Z.mutedFg, letterSpacing: 0.3, textTransform: 'uppercase', whiteSpace: 'nowrap' }}>
+              New meter
+            </span>
+            <div style={{ flex: 1, height: 1, background: Z.border }} />
+          </div>
+
+          {/* Serial number */}
+          <div>
+            <FieldLabel required>Serial number</FieldLabel>
+            <InputField
+              placeholder="e.g. NIK-67890"
+              value={newSerial}
+              onChange={setNewSerial}
+            />
+          </div>
+
+          {/* Zones */}
+          <div>
+            <FieldLabel required>Zones</FieldLabel>
+            <SelectField
+              options={zoneOptions}
+              value={zones}
+              onChange={setZones}
+            />
+          </div>
+
+          {/* Initial readings — two zones */}
+          <div>
+            <FieldLabel required>Initial readings</FieldLabel>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+              <div>
+                <div style={{ fontSize: 12, color: Z.mutedFg, marginBottom: 5 }}>T1 (day)</div>
+                <InputField
+                  type="number"
+                  placeholder="0"
+                  value={t1Init}
+                  onChange={setT1Init}
+                  textAlign="right"
+                />
+              </div>
+              <div>
+                <div style={{ fontSize: 12, color: Z.mutedFg, marginBottom: 5 }}>T2 (night)</div>
+                <InputField
+                  type="number"
+                  placeholder="0"
+                  value={t2Init}
+                  onChange={setT2Init}
+                  textAlign="right"
+                />
+              </div>
+            </div>
+            <FieldHint>Starting values shown on the new meter when installed. Usually 0.</FieldHint>
+          </div>
+
+          {/* Notes */}
+          <div>
+            <FieldLabel>Notes</FieldLabel>
+            <TextareaField
+              placeholder="Anything worth noting about this replacement…"
+              value={notes}
+              onChange={setNotes}
+              rows={3}
+            />
+          </div>
+
+          {/* Info alert */}
+          <div style={{
+            border: `1px solid ${Z.border}`,
+            borderRadius: 8,
+            padding: '14px 16px',
+            display: 'flex', gap: 12, alignItems: 'flex-start',
+          }}>
+            <div style={{ color: Z.mutedFg, flexShrink: 0, marginTop: 1 }}>
+              <IcoInfo size={15} />
+            </div>
+            <div>
+              <div style={{ fontSize: 13, fontWeight: 600, color: Z.foreground, marginBottom: 6 }}>
+                What happens when you replace a meter
+              </div>
+              <div style={{ fontSize: 12.5, color: Z.mutedFg, lineHeight: 1.6, display: 'flex', flexDirection: 'column', gap: 4 }}>
+                <span>The current meter will be marked as removed on the replacement date.</span>
+                <span>All its readings stay attached to it for history.</span>
+                <span>The new meter starts fresh from this date forward.</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        {/* Footer */}
+        <div style={{ flexShrink: 0 }}>
+          <div style={{ height: 1, background: Z.border }} />
+          <div style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'flex-end',
+            gap: 8, padding: '16px 24px',
+          }}>
+            <button
+              onClick={onClose}
+              style={{
+                height: 36, padding: '0 16px',
+                fontSize: 13.5, fontWeight: 500,
+                background: Z.background, color: Z.foreground,
+                border: `1px solid ${Z.border}`, borderRadius: 6, cursor: 'pointer',
+                display: 'inline-flex', alignItems: 'center',
+              }}
+              onMouseEnter={e => e.currentTarget.style.background = Z.muted}
+              onMouseLeave={e => e.currentTarget.style.background = Z.background}
+            >
+              Cancel
+            </button>
+            <button
+              style={{
+                height: 36, padding: '0 18px',
+                fontSize: 13.5, fontWeight: 500,
+                background: ACCENT.solid, color: ACCENT.foreground,
+                border: 'none', borderRadius: 6, cursor: 'pointer',
+                display: 'inline-flex', alignItems: 'center',
+                boxShadow: '0 1px 3px rgba(124,58,237,0.2)',
+              }}
+              onMouseEnter={e => e.currentTarget.style.background = '#6d28d9'}
+              onMouseLeave={e => e.currentTarget.style.background = ACCENT.solid}
+            >
+              Replace
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── App ─────────────────────────────────────────────────────────────────────
+function App() {
+  const [open, setOpen] = useState(true);
+  return (
+    <div style={{ minHeight: '100vh', background: Z.background }}>
+      <PageBackground />
+      {!open && (
+        <div style={{ display: 'flex', justifyContent: 'center', paddingTop: 40 }}>
+          <button
+            onClick={() => setOpen(true)}
+            style={{
+              height: 36, padding: '0 20px', fontSize: 13.5, fontWeight: 500,
+              background: ACCENT.solid, color: '#fff',
+              border: 'none', borderRadius: 6, cursor: 'pointer',
+            }}
+          >
+            Replace meter (reopen)
+          </button>
+        </div>
+      )}
+      {open && <ReplaceMeterModal onClose={() => setOpen(false)} />}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

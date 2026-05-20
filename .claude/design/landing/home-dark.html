@@ -1,0 +1,486 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Utility Bills CRM</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Inter', system-ui, sans-serif; background: #09090b; color: #fafafa; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; text-decoration: none; }
+
+  .container { width: 100%; max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+  /* Header */
+  .pub-header { position: sticky; top: 0; z-index: 50; border-bottom: 1px solid transparent; transition: border-color 200ms, background 200ms, backdrop-filter 200ms; background: #09090b; }
+  .pub-header.scrolled { background: rgba(9,9,11,0.88); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-color: #27272a; }
+  .pub-header-inner { display: flex; align-items: center; height: 56px; gap: 32px; }
+  .pub-logo { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+  .pub-logo-mark { width: 22px; height: 22px; background: #7c3aed; border-radius: 4px; display: flex; align-items: center; justify-content: center; }
+  .pub-logo-text { font-size: 14px; font-weight: 600; color: #fafafa; }
+  .pub-nav { display: flex; align-items: center; gap: 4px; flex: 1; justify-content: center; }
+  .pub-nav-link { font-size: 14px; color: #a1a1aa; padding: 4px 10px; border-radius: 6px; transition: color 120ms; }
+  .pub-nav-link:hover { color: #fafafa; }
+  .pub-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+  .btn-ghost { font-size: 14px; font-weight: 500; color: #fafafa; padding: 6px 14px; border-radius: 6px; border: 1px solid #3f3f46; background: transparent; cursor: pointer; font-family: inherit; transition: background 120ms; }
+  .btn-ghost:hover { background: #27272a; }
+  .theme-btn { width: 32px; height: 32px; border-radius: 6px; border: 1px solid #3f3f46; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #a1a1aa; transition: background 120ms; }
+  .theme-btn:hover { background: #27272a; }
+  .hamburger { display: none; width: 32px; height: 32px; border-radius: 6px; border: 1px solid #3f3f46; background: transparent; cursor: pointer; align-items: center; justify-content: center; color: #a1a1aa; }
+
+  /* Sections */
+  .section-bg { background: #09090b; }
+  .section-muted { background: rgba(24,24,27,0.80); }
+  .section-py { padding: 96px 0; }
+
+  /* Hero */
+  .hero-glow { position: absolute; top: -80px; right: -60px; width: 650px; height: 560px; background: radial-gradient(ellipse at 70% 30%, rgba(124,58,237,0.18) 0%, transparent 65%); pointer-events: none; }
+  .hero-wrap { position: relative; overflow: hidden; }
+  .hero-eyebrow { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; color: #a78bfa; background: rgba(124,58,237,0.12); border: 1px solid rgba(124,58,237,0.28); padding: 4px 10px; border-radius: 999px; margin-bottom: 24px; }
+  .hero-h1 { font-size: clamp(36px, 5vw, 56px); font-weight: 600; line-height: 1.12; letter-spacing: -0.03em; color: #fafafa; margin-bottom: 20px; max-width: 720px; text-wrap: pretty; }
+  .hero-sub { font-size: 18px; line-height: 1.65; color: #71717a; max-width: 580px; text-wrap: pretty; }
+
+  /* Screenshot section */
+  .mockup-wrap { position: relative; width: 90%; max-width: 900px; margin: 0 auto; }
+  .mockup-inner { border-radius: 10px; overflow: hidden; box-shadow: 0 0 0 1px #27272a, 0 8px 32px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.4); }
+  .browser-chrome { background: #18181b; border-bottom: 1px solid #27272a; padding: 0 12px; height: 34px; display: flex; align-items: center; gap: 12px; }
+  .browser-dots { display: flex; gap: 5px; }
+  .browser-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .browser-url { flex: 1; background: #09090b; border: 1px solid #27272a; border-radius: 6px; height: 20px; display: flex; align-items: center; padding: 0 8px; max-width: 340px; margin: 0 auto; }
+  .browser-url-text { font-size: 10px; color: #52525b; font-family: inherit; }
+  .mockup-caption { text-align: center; margin-top: 20px; max-width: 560px; margin-left: auto; margin-right: auto; }
+  .mockup-caption strong { color: #e4e4e7; }
+  .mockup-caption p { font-size: 14px; line-height: 1.6; color: #71717a; }
+
+  /* Feature cards */
+  .feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .feature-card { background: #18181b; border: 1px solid #27272a; border-radius: 8px; padding: 24px; }
+  .feature-icon { width: 32px; height: 32px; color: #a78bfa; margin-bottom: 14px; }
+  .feature-title { font-size: 15px; font-weight: 600; color: #fafafa; margin-bottom: 8px; }
+  .feature-body { font-size: 14px; line-height: 1.65; color: #71717a; text-wrap: pretty; }
+
+  /* Tech section */
+  .tech-center { max-width: 600px; margin: 0 auto; text-align: center; }
+  .tech-center p { font-size: 16px; line-height: 1.75; color: #71717a; }
+  .tech-center strong { color: #e4e4e7; font-weight: 500; }
+  .tech-link { color: #a78bfa; font-weight: 500; display: inline-flex; align-items: center; gap: 4px; margin-top: 20px; font-size: 15px; transition: opacity 120ms; }
+  .tech-link:hover { opacity: 0.75; }
+
+  /* Footer */
+  .footer-inner { display: flex; align-items: center; justify-content: center; gap: 28px; flex-wrap: wrap; padding: 36px 0; }
+  .footer-link { font-size: 14px; color: #71717a; transition: color 120ms; }
+  .footer-link:hover { color: #a1a1aa; }
+  .footer-sep { width: 1px; height: 14px; background: #27272a; }
+  .footer-copy { font-size: 13px; color: #3f3f46; }
+
+  /* Section heading */
+  .section-label { font-size: 12px; font-weight: 500; color: #a78bfa; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; }
+  .section-h2 { font-size: clamp(26px, 3vw, 36px); font-weight: 600; letter-spacing: -0.02em; color: #fafafa; margin-bottom: 12px; }
+
+  @media (max-width: 680px) {
+    .pub-nav { display: none; }
+    .hamburger { display: flex; }
+    .section-py { padding: 64px 0; }
+    .feature-grid { grid-template-columns: 1fr; }
+    .mockup-wrap { width: 100%; }
+    .footer-inner { flex-direction: column; gap: 16px; }
+    .footer-sep { display: none; }
+  }
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" data-presets="react">
+const { useState, useEffect } = React;
+
+// ── Icons ──────────────────────────────────────────────────────────────────
+function Ico({ size = 20, children }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      {children}
+    </svg>
+  );
+}
+const IcoUsers   = ({ size }) => <Ico size={size}><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></Ico>;
+const IcoHistory = ({ size }) => <Ico size={size}><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></Ico>;
+const IcoWallet  = ({ size }) => <Ico size={size}><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></Ico>;
+const IcoTrend   = ({ size }) => <Ico size={size}><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></Ico>;
+const IcoMoon    = ({ size }) => <Ico size={size}><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></Ico>;
+const IcoMenu    = ({ size }) => <Ico size={size}><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></Ico>;
+
+// ── Public Header ─────────────────────────────────────────────────────────
+function Header() {
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const fn = () => setScrolled(window.scrollY > 8);
+    window.addEventListener('scroll', fn, { passive: true });
+    return () => window.removeEventListener('scroll', fn);
+  }, []);
+  return (
+    <header className={`pub-header${scrolled ? ' scrolled' : ''}`}>
+      <div className="container">
+        <div className="pub-header-inner">
+          <a href="/" className="pub-logo">
+            <div className="pub-logo-mark">
+              <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+                <rect x="1" y="1" width="4.5" height="4.5" rx="1" fill="white" opacity="0.9"/>
+                <rect x="7.5" y="1" width="4.5" height="4.5" rx="1" fill="white" opacity="0.6"/>
+                <rect x="1" y="7.5" width="4.5" height="4.5" rx="1" fill="white" opacity="0.6"/>
+                <rect x="7.5" y="7.5" width="4.5" height="4.5" rx="1" fill="white" opacity="0.4"/>
+              </svg>
+            </div>
+            <span className="pub-logo-text">Utility Bills CRM</span>
+          </a>
+          <nav className="pub-nav">
+            <a href="/about" className="pub-nav-link">About</a>
+            <a href="/project" className="pub-nav-link">Project</a>
+          </nav>
+          <div className="pub-actions">
+            <button className="theme-btn"><IcoMoon size={15} /></button>
+            <button className="btn-ghost">Sign in</button>
+            <button className="hamburger"><IcoMenu size={16} /></button>
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+}
+
+// ── Browser frame ─────────────────────────────────────────────────────────
+function BrowserFrame({ url, children }) {
+  return (
+    <div className="mockup-inner">
+      <div className="browser-chrome">
+        <div className="browser-dots">
+          <div className="browser-dot" style={{ background: '#3f3f46' }}></div>
+          <div className="browser-dot" style={{ background: '#3f3f46' }}></div>
+          <div className="browser-dot" style={{ background: '#3f3f46' }}></div>
+        </div>
+        <div className="browser-url">
+          <span className="browser-url-text">{url}</span>
+        </div>
+      </div>
+      {children}
+    </div>
+  );
+}
+
+// ── Dark tokens for mockups ───────────────────────────────────────────────
+const DZ = {
+  bg: '#09090b', card: '#18181b', border: '#27272a',
+  muted: '#1c1c1f', mutedFg: '#71717a', fg: '#fafafa',
+  fgSub: '#a1a1aa', accent: '#7c3aed', accentLight: '#a78bfa',
+};
+
+// ── Stylized Dashboard Mockup (dark) ──────────────────────────────────────
+function DashboardMockup() {
+  const bars = [52, 38, 61, 48, 75, 58, 80];
+  const months = ['N','D','J','F','M','A','M'];
+  return (
+    <div style={{ fontFamily: 'Inter, sans-serif', background: DZ.bg, userSelect: 'none' }}>
+      {/* Top bar */}
+      <div style={{ height: 44, borderBottom: `1px solid ${DZ.border}`, display: 'flex', alignItems: 'center', padding: '0 18px', gap: 20 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <div style={{ width: 18, height: 18, background: DZ.accent, borderRadius: 3, flexShrink: 0 }}></div>
+          <span style={{ fontSize: 12, fontWeight: 600, color: DZ.fg }}>Utility Bills CRM</span>
+        </div>
+        <div style={{ flex: 1 }}></div>
+        {['Dashboard','Properties','Bills'].map((l, i) => (
+          <span key={l} style={{ fontSize: 11, color: i === 0 ? DZ.fg : DZ.mutedFg, fontWeight: i === 0 ? 600 : 400, padding: '3px 6px', borderRadius: 4, background: i === 0 ? DZ.muted : 'transparent' }}>{l}</span>
+        ))}
+        <div style={{ width: 24, height: 24, borderRadius: '50%', background: DZ.muted, border: `1px solid ${DZ.border}` }}></div>
+      </div>
+      {/* Layout */}
+      <div style={{ display: 'flex' }}>
+        {/* Sidebar */}
+        <div style={{ width: 180, borderRight: `1px solid ${DZ.border}`, padding: '14px 10px', minHeight: 420 }}>
+          <div style={{ fontSize: 9, fontWeight: 600, color: DZ.mutedFg, textTransform: 'uppercase', letterSpacing: '0.06em', padding: '0 6px', marginBottom: 8 }}>Menu</div>
+          {[['Dashboard', true], ['Properties', false], ['Bills', false], ['Reports', false]].map(([l, a]) => (
+            <div key={l} style={{ padding: '6px 8px', borderRadius: 5, background: a ? DZ.muted : 'transparent', color: a ? DZ.fg : DZ.mutedFg, fontSize: 11, fontWeight: a ? 500 : 400, marginBottom: 2 }}>{l}</div>
+          ))}
+        </div>
+        {/* Main */}
+        <div style={{ flex: 1, padding: '18px 20px', overflow: 'hidden' }}>
+          <div style={{ fontSize: 16, fontWeight: 600, color: DZ.fg, marginBottom: 14 }}>Dashboard</div>
+          {/* Stat cards */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10, marginBottom: 14 }}>
+            {[['Balance','−€312','3 props'],['This month','€128','Bills'],['Paid','€94','Payments'],['Properties','3','Active']].map(([l,v,s]) => (
+              <div key={l} style={{ background: DZ.card, border: `1px solid ${DZ.border}`, borderRadius: 7, padding: '10px 12px' }}>
+                <div style={{ fontSize: 9, color: DZ.mutedFg, marginBottom: 5 }}>{l}</div>
+                <div style={{ fontSize: 18, fontWeight: 600, color: DZ.fg, lineHeight: 1 }}>{v}</div>
+                <div style={{ fontSize: 9, color: DZ.mutedFg, marginTop: 4 }}>{s}</div>
+              </div>
+            ))}
+          </div>
+          {/* Charts row */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 10 }}>
+            {/* Pie */}
+            <div style={{ background: DZ.card, border: `1px solid ${DZ.border}`, borderRadius: 7, padding: '12px 14px' }}>
+              <div style={{ fontSize: 10, fontWeight: 500, color: DZ.fg, marginBottom: 10 }}>Expense breakdown</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                <svg width={72} height={72} viewBox="0 0 72 72">
+                  <circle cx="36" cy="36" r="26" fill="none" stroke={DZ.accent} strokeWidth="16" strokeDasharray="81 82" strokeDashoffset="0"/>
+                  <circle cx="36" cy="36" r="26" fill="none" stroke="#f59e0b" strokeWidth="16" strokeDasharray="49 114" strokeDashoffset="-81"/>
+                  <circle cx="36" cy="36" r="26" fill="none" stroke="#0d9488" strokeWidth="16" strokeDasharray="32 130" strokeDashoffset="-130"/>
+                  <circle cx="36" cy="36" r="16" fill={DZ.card}/>
+                </svg>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                  {[['Electricity', DZ.accent],['Gas','#f59e0b'],['Water','#0d9488']].map(([lbl, col]) => (
+                    <div key={lbl} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                      <div style={{ width: 7, height: 7, borderRadius: 2, background: col, flexShrink: 0 }}></div>
+                      <span style={{ fontSize: 9, color: DZ.mutedFg }}>{lbl}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+            {/* Bar */}
+            <div style={{ background: DZ.card, border: `1px solid ${DZ.border}`, borderRadius: 7, padding: '12px 14px' }}>
+              <div style={{ fontSize: 10, fontWeight: 500, color: DZ.fg, marginBottom: 10 }}>Monthly spend</div>
+              <div style={{ display: 'flex', alignItems: 'flex-end', gap: 5, height: 60 }}>
+                {bars.map((h, i) => (
+                  <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <div style={{ width: '100%', height: h * 0.75, background: i === 6 ? DZ.accent : '#3f3f46', borderRadius: '2px 2px 0 0' }}></div>
+                  </div>
+                ))}
+              </div>
+              <div style={{ display: 'flex', gap: 5, marginTop: 5 }}>
+                {months.map((m, i) => <div key={i} style={{ flex: 1, textAlign: 'center', fontSize: 8, color: DZ.mutedFg }}>{m}</div>)}
+              </div>
+            </div>
+          </div>
+          {/* Line chart */}
+          <div style={{ background: DZ.card, border: `1px solid ${DZ.border}`, borderRadius: 7, padding: '12px 14px' }}>
+            <div style={{ fontSize: 10, fontWeight: 500, color: DZ.fg, marginBottom: 8 }}>Consumption trend — kWh</div>
+            <svg width="100%" height={68} viewBox="0 0 600 68" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="lgd" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#7c3aed" stopOpacity="0.25"/>
+                  <stop offset="100%" stopColor="#7c3aed" stopOpacity="0"/>
+                </linearGradient>
+              </defs>
+              <polygon points="0,58 85,48 170,52 255,34 340,38 425,22 510,28 600,14 600,68 0,68" fill="url(#lgd)"/>
+              <polyline points="0,58 85,48 170,52 255,34 340,38 425,22 510,28 600,14"
+                fill="none" stroke={DZ.accentLight} strokeWidth="1.8" strokeLinejoin="round" strokeLinecap="round"/>
+              {[0,85,170,255,340,425,510,600].map((x, i) => {
+                const ys = [58,48,52,34,38,22,28,14];
+                return <circle key={i} cx={x} cy={ys[i]} r="2.5" fill={DZ.accentLight}/>;
+              })}
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Stylized Property Detail Mockup (dark) ────────────────────────────────
+function PropertyDetailMockup() {
+  const services = [
+    { name: 'Electricity', provider: 'YASNO',         color: DZ.accent,  balance: '−€148', due: 'Due 3 days' },
+    { name: 'Gas',         provider: 'Naftogaz',       color: '#f59e0b',  balance: '−€62',  due: 'Due 12 days' },
+    { name: 'Water',       provider: 'Kyivvodokanal',  color: '#0d9488',  balance: '+€14',  due: 'Overpaid' },
+    { name: 'Internet',    provider: 'Kyivstar',       color: '#3b82f6',  balance: '€0',    due: 'Clear' },
+  ];
+  return (
+    <div style={{ fontFamily: 'Inter, sans-serif', background: DZ.bg, userSelect: 'none' }}>
+      {/* Top bar */}
+      <div style={{ height: 44, borderBottom: `1px solid ${DZ.border}`, display: 'flex', alignItems: 'center', padding: '0 18px', gap: 20 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <div style={{ width: 18, height: 18, background: DZ.accent, borderRadius: 3 }}></div>
+          <span style={{ fontSize: 12, fontWeight: 600, color: DZ.fg }}>Utility Bills CRM</span>
+        </div>
+        <div style={{ flex: 1 }}></div>
+        {['Dashboard','Properties','Bills'].map((l) => (
+          <span key={l} style={{ fontSize: 11, color: DZ.mutedFg, padding: '3px 6px' }}>{l}</span>
+        ))}
+        <div style={{ width: 24, height: 24, borderRadius: '50%', background: DZ.muted, border: `1px solid ${DZ.border}` }}></div>
+      </div>
+      {/* Layout */}
+      <div style={{ display: 'flex' }}>
+        {/* Sidebar */}
+        <div style={{ width: 180, borderRight: `1px solid ${DZ.border}`, padding: '14px 10px', minHeight: 360 }}>
+          {[['Dashboard',false],['Properties',true],['Bills',false],['Reports',false]].map(([l, a]) => (
+            <div key={l} style={{ padding: '6px 8px', borderRadius: 5, background: a ? DZ.muted : 'transparent', color: a ? DZ.fg : DZ.mutedFg, fontSize: 11, fontWeight: a ? 500 : 400, marginBottom: 2 }}>{l}</div>
+          ))}
+        </div>
+        {/* Main */}
+        <div style={{ flex: 1, padding: '18px 20px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 10, color: DZ.mutedFg, marginBottom: 12 }}>
+            <span>Properties</span><span>/</span><span style={{ color: DZ.fgSub, fontWeight: 500 }}>Apartment · Kyiv</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 14 }}>
+            <div>
+              <div style={{ fontSize: 18, fontWeight: 600, color: DZ.fg, marginBottom: 4 }}>Apartment · Kyiv</div>
+              <div style={{ fontSize: 10, color: DZ.mutedFg }}>Shevchenko St 14, Kyiv · Owner</div>
+            </div>
+            <div style={{ display: 'flex', gap: 6 }}>
+              <div style={{ padding: '5px 10px', background: DZ.muted, border: `1px solid ${DZ.border}`, borderRadius: 5, fontSize: 10, color: DZ.fg }}>Share</div>
+              <div style={{ padding: '5px 10px', background: DZ.accent, borderRadius: 5, fontSize: 10, color: '#fff', fontWeight: 500 }}>Add service</div>
+            </div>
+          </div>
+          {/* Tabs */}
+          <div style={{ display: 'flex', borderBottom: `1px solid ${DZ.border}`, marginBottom: 14 }}>
+            {['Overview','Bills','Readings','Sharing'].map((t, i) => (
+              <div key={t} style={{
+                fontSize: 11, fontWeight: i === 0 ? 500 : 400,
+                color: i === 0 ? DZ.fg : DZ.mutedFg,
+                padding: '6px 12px',
+                borderBottom: i === 0 ? `2px solid ${DZ.accent}` : '2px solid transparent',
+                marginBottom: -1,
+              }}>{t}</div>
+            ))}
+          </div>
+          {/* Services */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {services.map(({ name, provider, color, balance, due }) => (
+              <div key={name} style={{ background: DZ.card, border: `1px solid ${DZ.border}`, borderRadius: 7, padding: '10px 14px', display: 'flex', alignItems: 'center', gap: 10 }}>
+                <div style={{ width: 28, height: 28, borderRadius: 6, background: color + '20', border: `1px solid ${color}40`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <div style={{ width: 10, height: 10, borderRadius: 2, background: color, opacity: 0.85 }}></div>
+                </div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: 12, fontWeight: 500, color: DZ.fg }}>{name}</div>
+                  <div style={{ fontSize: 9, color: DZ.mutedFg }}>{provider}</div>
+                </div>
+                <div style={{ textAlign: 'right' }}>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: balance.startsWith('−') ? '#f87171' : balance.startsWith('+') ? '#4ade80' : DZ.fgSub }}>{balance}</div>
+                  <div style={{ fontSize: 9, color: DZ.mutedFg, marginTop: 1 }}>{due}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Feature cards ─────────────────────────────────────────────────────────
+const features = [
+  { icon: <IcoUsers size={24}/>, title: 'Properties and people', body: 'Track multiple properties — apartments, houses, summer homes — and share access with family at owner, editor, or viewer level.' },
+  { icon: <IcoHistory size={24}/>, title: 'Tariffs change. History stays.', body: 'Every tariff, account number, and payment detail is stored with its validity period. Recompute past months correctly even after rates change.' },
+  { icon: <IcoWallet size={24}/>, title: 'Bills and payments as a ledger', body: 'Bills and payments are independent records. Balance is derived. No forced "this payment pays that bill" links — just the math, the way real households do it.' },
+  { icon: <IcoTrend size={24}/>, title: 'From numbers to trends', body: 'Pie, stacked bar, and line charts show where money goes, how consumption shifts month to month, and whether things are getting better or worse.' },
+];
+
+// ── Main page ─────────────────────────────────────────────────────────────
+function App() {
+  return (
+    <div>
+      <Header />
+
+      {/* § 1 Hero */}
+      <section className="section-bg section-py hero-wrap">
+        <div className="hero-glow"></div>
+        <div className="container" style={{ position: 'relative' }}>
+          <div className="hero-eyebrow">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+              <rect x="0.5" y="0.5" width="4" height="4" rx="0.75" fill="#a78bfa"/>
+              <rect x="7.5" y="0.5" width="4" height="4" rx="0.75" fill="#a78bfa" opacity="0.5"/>
+              <rect x="0.5" y="7.5" width="4" height="4" rx="0.75" fill="#a78bfa" opacity="0.5"/>
+              <rect x="7.5" y="7.5" width="4" height="4" rx="0.75" fill="#a78bfa" opacity="0.3"/>
+            </svg>
+            Portfolio project · v1 in progress
+          </div>
+          <h1 className="hero-h1">Utility Bills CRM</h1>
+          <p className="hero-sub">
+            A multi-tenant web application for tracking utility bills across multiple properties — apartments, houses, summer homes. Log meter readings, record bills and payments, see balances and consumption analytics over time.
+          </p>
+          <p className="hero-sub" style={{ marginTop: 16, fontSize: 15 }}>
+            Built as a portfolio piece and a real product. The first user is the author's wife, who's been tracking two apartments in a paper notebook for years.
+          </p>
+        </div>
+      </section>
+
+      {/* § 2 Dashboard screenshot */}
+      <section className="section-muted section-py">
+        <div className="container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <div className="mockup-wrap">
+            <BrowserFrame url="app.utilitybills.dev/dashboard">
+              <DashboardMockup />
+            </BrowserFrame>
+          </div>
+          <div className="mockup-caption" style={{ marginTop: 20 }}>
+            <p><strong>Dashboard.</strong> Balance summary across all properties, expense breakdown by service, monthly trends, and consumption analytics with switchable money/units view.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* § 3 Feature highlights */}
+      <section className="section-bg section-py">
+        <div className="container">
+          <div style={{ marginBottom: 40 }}>
+            <div className="section-label">Features</div>
+            <h2 className="section-h2">Built around how households actually work</h2>
+          </div>
+          <div className="feature-grid">
+            {features.map(({ icon, title, body }) => (
+              <div key={title} className="feature-card">
+                <div className="feature-icon">{icon}</div>
+                <div className="feature-title">{title}</div>
+                <p className="feature-body">{body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* § 4 Property detail screenshot */}
+      <section className="section-muted section-py">
+        <div className="container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <div className="mockup-wrap">
+            <BrowserFrame url="app.utilitybills.dev/properties/1">
+              <PropertyDetailMockup />
+            </BrowserFrame>
+          </div>
+          <div className="mockup-caption" style={{ marginTop: 20 }}>
+            <p><strong>Property detail.</strong> Each property holds its own services with full contract history — provider changes, tariff changes, account number changes, all preserved.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* § 5 Tech */}
+      <section className="section-bg section-py">
+        <div className="container">
+          <div className="tech-center">
+            <div className="section-label" style={{ textAlign: 'center' }}>Stack</div>
+            <h2 className="section-h2" style={{ textAlign: 'center', marginBottom: 20 }}>How it's built</h2>
+            <p>
+              Built with <strong>Next.js</strong>, <strong>TypeScript</strong>, <strong>PostgreSQL</strong>, <strong>Drizzle ORM</strong>, <strong>Auth.js</strong>, <strong>shadcn/ui</strong>, and <strong>Tailwind</strong>.
+            </p>
+            <a href="/project" className="tech-link">
+              Architecture deep-dive
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* § 6 Footer */}
+      <footer className="section-muted">
+        <div className="container">
+          <div className="footer-inner">
+            <a href="/about" className="footer-link">About the developer</a>
+            <div className="footer-sep"></div>
+            <a href="/project" className="footer-link">Architecture &amp; code</a>
+            <div className="footer-sep"></div>
+            <span className="footer-copy">© 2026 · Utility Bills CRM</span>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

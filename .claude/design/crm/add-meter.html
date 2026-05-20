@@ -1,0 +1,489 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Utility Bills CRM — Iteration 7b · Add meter modal</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; padding: 0; height: 100%; background: #ffffff; }
+  body { font-family: 'Inter', system-ui, -apple-system, sans-serif; -webkit-font-smoothing: antialiased; }
+  * { box-sizing: border-box; }
+  button, input, textarea, select { font-family: inherit; }
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#7c3aed"/><g transform="translate(50,50)" fill="#fff" font-family="Inter,system-ui,sans-serif" font-weight="700" font-size="28" text-anchor="middle"><text y="10">UB</text></g></svg></template>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" data-presets="react">
+const { useState, useRef, useEffect } = React;
+
+// ─── Tokens ──────────────────────────────────────────────────────────────────
+const Z = {
+  background: '#ffffff',
+  foreground: '#09090b',
+  card:       '#ffffff',
+  muted:      '#f4f4f5',
+  mutedFg:    '#71717a',
+  border:     '#e4e4e7',
+  subtle:     '#fafafa',
+  input:      '#e4e4e7',
+};
+const ACCENT = {
+  solid:      '#7c3aed',
+  tintBg:     '#f5f3ff',
+  tintBorder: '#ede9fe',
+  foreground: '#ffffff',
+};
+
+// ─── Icons ───────────────────────────────────────────────────────────────────
+const Ico = ({ size = 16, children, stroke = 'currentColor' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
+    stroke={stroke} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+    {children}
+  </svg>
+);
+const IcoX = ({ size = 16 }) => (
+  <Ico size={size}><path d="M18 6 6 18M6 6l12 12"/></Ico>
+);
+const IcoChevronDown = ({ size = 14 }) => (
+  <Ico size={size}><path d="m6 9 6 6 6-6"/></Ico>
+);
+const IcoCalendar = ({ size = 14 }) => (
+  <Ico size={size}>
+    <path d="M8 2v4M16 2v4"/>
+    <rect width="18" height="18" x="3" y="4" rx="2"/>
+    <path d="M3 10h18"/>
+  </Ico>
+);
+const IcoLayoutDashboard = ({ size = 15 }) => (
+  <Ico size={size}>
+    <rect width="7" height="9" x="3" y="3" rx="1"/>
+    <rect width="7" height="5" x="14" y="3" rx="1"/>
+    <rect width="7" height="9" x="14" y="12" rx="1"/>
+    <rect width="7" height="5" x="3" y="16" rx="1"/>
+  </Ico>
+);
+
+// ─── Shared form field components ────────────────────────────────────────────
+function FieldLabel({ children, required }) {
+  return (
+    <label style={{ display: 'block', fontSize: 13, fontWeight: 500, color: Z.foreground, marginBottom: 6 }}>
+      {children}
+      {required && <span style={{ color: Z.mutedFg, fontWeight: 400, marginLeft: 2 }}>*</span>}
+    </label>
+  );
+}
+
+function FieldHint({ children }) {
+  return (
+    <p style={{ margin: '5px 0 0', fontSize: 12, color: Z.mutedFg, lineHeight: 1.5 }}>{children}</p>
+  );
+}
+
+// Styled native select
+function SelectField({ options, value, onChange, placeholder }) {
+  const [focused, setFocused] = useState(false);
+  return (
+    <div style={{ position: 'relative' }}>
+      <select
+        value={value}
+        onChange={e => onChange(e.target.value)}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
+        style={{
+          width: '100%', height: 36, padding: '0 32px 0 12px',
+          appearance: 'none', WebkitAppearance: 'none',
+          fontSize: 13.5, color: Z.foreground,
+          background: Z.background,
+          border: `1px solid ${focused ? ACCENT.solid : Z.border}`,
+          borderRadius: 6, cursor: 'pointer',
+          outline: 'none',
+          boxShadow: focused ? `0 0 0 3px ${ACCENT.tintBg}` : 'none',
+          transition: 'border-color 120ms, box-shadow 120ms',
+        }}
+      >
+        {placeholder && <option value="" disabled>{placeholder}</option>}
+        {options.map(o => (
+          <option key={o.value} value={o.value}>{o.label}</option>
+        ))}
+      </select>
+      <span style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: Z.mutedFg }}>
+        <IcoChevronDown size={14} />
+      </span>
+    </div>
+  );
+}
+
+// Text input
+function InputField({ placeholder, value, onChange, type = 'text', style: s }) {
+  const [focused, setFocused] = useState(false);
+  return (
+    <input
+      type={type}
+      placeholder={placeholder}
+      value={value}
+      onChange={e => onChange(e.target.value)}
+      onFocus={() => setFocused(true)}
+      onBlur={() => setFocused(false)}
+      style={{
+        width: '100%', height: 36, padding: '0 12px',
+        fontSize: 13.5, color: Z.foreground,
+        background: Z.background,
+        border: `1px solid ${focused ? ACCENT.solid : Z.border}`,
+        borderRadius: 6, outline: 'none',
+        boxShadow: focused ? `0 0 0 3px ${ACCENT.tintBg}` : 'none',
+        transition: 'border-color 120ms, box-shadow 120ms',
+        ...s,
+      }}
+    />
+  );
+}
+
+// Date input (styled like shadcn date picker trigger)
+function DateField({ value, onChange }) {
+  const [focused, setFocused] = useState(false);
+  return (
+    <div style={{ position: 'relative' }}>
+      <span style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: Z.mutedFg, pointerEvents: 'none' }}>
+        <IcoCalendar size={14} />
+      </span>
+      <input
+        type="date"
+        value={value}
+        onChange={e => onChange(e.target.value)}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
+        style={{
+          width: '100%', height: 36, padding: '0 12px 0 32px',
+          fontSize: 13.5, color: Z.foreground,
+          background: Z.background,
+          border: `1px solid ${focused ? ACCENT.solid : Z.border}`,
+          borderRadius: 6, outline: 'none',
+          boxShadow: focused ? `0 0 0 3px ${ACCENT.tintBg}` : 'none',
+          transition: 'border-color 120ms, box-shadow 120ms',
+          fontFamily: 'inherit',
+        }}
+      />
+    </div>
+  );
+}
+
+// Textarea
+function TextareaField({ placeholder, value, onChange, rows = 3 }) {
+  const [focused, setFocused] = useState(false);
+  return (
+    <textarea
+      placeholder={placeholder}
+      value={value}
+      onChange={e => onChange(e.target.value)}
+      rows={rows}
+      onFocus={() => setFocused(true)}
+      onBlur={() => setFocused(false)}
+      style={{
+        width: '100%', padding: '8px 12px',
+        fontSize: 13.5, color: Z.foreground,
+        background: Z.background,
+        border: `1px solid ${focused ? ACCENT.solid : Z.border}`,
+        borderRadius: 6, outline: 'none', resize: 'vertical',
+        boxShadow: focused ? `0 0 0 3px ${ACCENT.tintBg}` : 'none',
+        transition: 'border-color 120ms, box-shadow 120ms',
+        lineHeight: 1.5,
+      }}
+    />
+  );
+}
+
+// ─── Background page (context) ───────────────────────────────────────────────
+function PageBackground() {
+  return (
+    <div style={{ fontFamily: 'inherit' }}>
+      {/* Top bar */}
+      <div style={{
+        height: 56, background: 'rgba(255,255,255,0.85)',
+        borderBottom: `1px solid ${Z.border}`,
+        display: 'flex', alignItems: 'center', padding: '0 32px', gap: 8,
+      }}>
+        <div style={{ width: 26, height: 26, borderRadius: 6, background: ACCENT.solid, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <IcoLayoutDashboard size={15} />
+        </div>
+        <span style={{ fontSize: 14.5, fontWeight: 600, letterSpacing: -0.1, color: Z.foreground, marginRight: 28 }}>UtilityBills</span>
+        {['Dashboard','Properties','Bills','Payments','Settings'].map((item, i) => (
+          <a key={item} href="#" style={{
+            padding: '8px 12px', fontSize: 13.5, fontWeight: i === 1 ? 500 : 400,
+            color: i === 1 ? Z.foreground : Z.mutedFg, textDecoration: 'none', borderRadius: 6,
+            position: 'relative',
+          }}>
+            {item}
+            {i === 1 && <span style={{ position: 'absolute', left: 12, right: 12, bottom: -2, height: 2, background: ACCENT.solid, borderRadius: 2 }} />}
+          </a>
+        ))}
+      </div>
+
+      {/* Page content (blurred behind modal) */}
+      <div style={{ maxWidth: 920, margin: '0 auto', padding: '28px 32px' }}>
+        <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginBottom: 20 }}>
+          <div style={{ fontSize: 13, color: Z.mutedFg }}>Properties</div>
+          <div style={{ fontSize: 13, color: Z.border }}>›</div>
+          <div style={{ fontSize: 13, color: Z.mutedFg }}>Main apartment</div>
+          <div style={{ fontSize: 13, color: Z.border }}>›</div>
+          <div style={{ fontSize: 13, fontWeight: 500, color: Z.foreground }}>Meters</div>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 20 }}>
+          <h1 style={{ margin: 0, fontSize: 26, fontWeight: 600, letterSpacing: -0.5, color: Z.foreground }}>Meters</h1>
+          <div style={{ width: 120, height: 32, borderRadius: 6, background: ACCENT.solid, opacity: 0.4 }} />
+        </div>
+        {/* Ghost meter rows */}
+        {[
+          { label: 'Electricity meter', sub: 'Two-zone · NIK-12345', color: '#f59e0b' },
+          { label: 'Gas meter',         sub: 'Single zone · G-98765', color: '#ef4444' },
+        ].map(m => (
+          <div key={m.label} style={{
+            display: 'flex', alignItems: 'center', gap: 14,
+            padding: '16px 20px', background: Z.card,
+            border: `1px solid ${Z.border}`, borderRadius: 8, marginBottom: 8,
+          }}>
+            <div style={{ width: 36, height: 36, borderRadius: 8, background: Z.muted, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div style={{ width: 16, height: 16, borderRadius: '50%', background: m.color, opacity: 0.5 }} />
+            </div>
+            <div>
+              <div style={{ fontSize: 13.5, fontWeight: 500, color: Z.foreground }}>{m.label}</div>
+              <div style={{ fontSize: 12, color: Z.mutedFg, marginTop: 2 }}>{m.sub}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ─── Add meter modal ──────────────────────────────────────────────────────────
+function AddMeterModal({ onClose }) {
+  const [serviceType, setServiceType] = useState('cold-water');
+  const [serial, setSerial] = useState('');
+  const [zones, setZones] = useState('single');
+  const [installedAt, setInstalledAt] = useState('2026-05-01');
+  const [activeSince, setActiveSince] = useState('2026-05-01');
+  const [notes, setNotes] = useState('');
+
+  // Close on backdrop click
+  const backdropRef = useRef(null);
+  const handleBackdrop = e => { if (e.target === backdropRef.current) onClose(); };
+
+  // Close on Escape
+  useEffect(() => {
+    const handler = e => { if (e.key === 'Escape') onClose(); };
+    document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
+  }, []);
+
+  const serviceOptions = [
+    { value: 'cold-water', label: 'Cold water' },
+    { value: 'gas',        label: 'Gas' },
+  ];
+  const zoneOptions = [
+    { value: 'single',   label: 'Single zone' },
+    { value: 'two',      label: 'Two zones (day / night)' },
+    { value: 'three',    label: 'Three zones (peak / shoulder / off-peak)' },
+  ];
+
+  return (
+    <div
+      ref={backdropRef}
+      onClick={handleBackdrop}
+      style={{
+        position: 'fixed', inset: 0, zIndex: 50,
+        background: 'rgba(9,9,11,0.5)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        padding: '16px',
+        backdropFilter: 'blur(2px)',
+      }}
+    >
+      <div style={{
+        width: '100%', maxWidth: 448,
+        background: Z.card,
+        border: `1px solid ${Z.border}`,
+        borderRadius: 12,
+        boxShadow: '0 20px 60px rgba(9,9,11,0.18), 0 4px 16px rgba(9,9,11,0.1)',
+        overflow: 'hidden',
+        animation: 'slideUp 160ms cubic-bezier(0.16,1,0.3,1)',
+      }}>
+        {/* Header */}
+        <div style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          padding: '20px 24px 0',
+        }}>
+          <div>
+            <h2 style={{ margin: 0, fontSize: 17, fontWeight: 600, letterSpacing: -0.3, color: Z.foreground }}>
+              Add meter
+            </h2>
+            <p style={{ margin: '4px 0 0', fontSize: 13, color: Z.mutedFg }}>
+              Register a new meter for a service on this property.
+            </p>
+          </div>
+          <button
+            onClick={onClose}
+            style={{
+              width: 28, height: 28, borderRadius: 6,
+              border: 'none', background: 'transparent',
+              color: Z.mutedFg, cursor: 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              flexShrink: 0, marginTop: -2,
+            }}
+            onMouseEnter={e => { e.currentTarget.style.background = Z.muted; e.currentTarget.style.color = Z.foreground; }}
+            onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = Z.mutedFg; }}
+          >
+            <IcoX size={15} />
+          </button>
+        </div>
+
+        {/* Divider */}
+        <div style={{ height: 1, background: Z.border, margin: '20px 0 0' }} />
+
+        {/* Body — form */}
+        <div style={{ padding: '20px 24px', display: 'flex', flexDirection: 'column', gap: 18 }}>
+
+          {/* Service type */}
+          <div>
+            <FieldLabel required>Service type</FieldLabel>
+            <SelectField
+              options={serviceOptions}
+              value={serviceType}
+              onChange={setServiceType}
+            />
+            <FieldHint>Only services without an active meter are shown.</FieldHint>
+          </div>
+
+          {/* Serial number */}
+          <div>
+            <FieldLabel required>Serial number</FieldLabel>
+            <InputField
+              placeholder="e.g. NIK-12345"
+              value={serial}
+              onChange={setSerial}
+            />
+          </div>
+
+          {/* Zones */}
+          <div>
+            <FieldLabel required>Zones</FieldLabel>
+            <SelectField
+              options={zoneOptions}
+              value={zones}
+              onChange={setZones}
+            />
+          </div>
+
+          {/* Installed at / Active since — side by side */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+            <div>
+              <FieldLabel required>Installed at</FieldLabel>
+              <DateField value={installedAt} onChange={setInstalledAt} />
+            </div>
+            <div>
+              <FieldLabel required>Active since</FieldLabel>
+              <DateField value={activeSince} onChange={setActiveSince} />
+            </div>
+          </div>
+          <FieldHint>
+            Active since: when this meter started being used. Often the same as installation date.
+          </FieldHint>
+
+          {/* Notes */}
+          <div>
+            <FieldLabel>Notes</FieldLabel>
+            <TextareaField
+              placeholder="Where it's located, anything worth remembering…"
+              value={notes}
+              onChange={setNotes}
+              rows={3}
+            />
+          </div>
+
+        </div>
+
+        {/* Divider */}
+        <div style={{ height: 1, background: Z.border }} />
+
+        {/* Footer */}
+        <div style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'flex-end',
+          gap: 8, padding: '16px 24px',
+        }}>
+          <button
+            onClick={onClose}
+            style={{
+              height: 36, padding: '0 16px',
+              fontSize: 13.5, fontWeight: 500,
+              background: Z.background, color: Z.foreground,
+              border: `1px solid ${Z.border}`,
+              borderRadius: 6, cursor: 'pointer',
+              display: 'inline-flex', alignItems: 'center',
+            }}
+            onMouseEnter={e => e.currentTarget.style.background = Z.muted}
+            onMouseLeave={e => e.currentTarget.style.background = Z.background}
+          >
+            Cancel
+          </button>
+          <button
+            style={{
+              height: 36, padding: '0 18px',
+              fontSize: 13.5, fontWeight: 500,
+              background: ACCENT.solid, color: ACCENT.foreground,
+              border: 'none', borderRadius: 6, cursor: 'pointer',
+              display: 'inline-flex', alignItems: 'center',
+              boxShadow: '0 1px 3px rgba(124,58,237,0.2)',
+            }}
+            onMouseEnter={e => e.currentTarget.style.background = '#6d28d9'}
+            onMouseLeave={e => e.currentTarget.style.background = ACCENT.solid}
+          >
+            Add meter
+          </button>
+        </div>
+      </div>
+
+      <style>{`
+        @keyframes slideUp {
+          from { opacity: 0; transform: translateY(8px) scale(0.98); }
+          to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+      `}</style>
+    </div>
+  );
+}
+
+// ─── App ─────────────────────────────────────────────────────────────────────
+function App() {
+  const [open, setOpen] = useState(true);
+  return (
+    <div style={{ minHeight: '100vh', background: Z.background }}>
+      <PageBackground />
+      {!open && (
+        <div style={{ display: 'flex', justifyContent: 'center', paddingTop: 40 }}>
+          <button
+            onClick={() => setOpen(true)}
+            style={{
+              height: 36, padding: '0 20px',
+              fontSize: 13.5, fontWeight: 500,
+              background: ACCENT.solid, color: '#fff',
+              border: 'none', borderRadius: 6, cursor: 'pointer',
+            }}
+          >
+            + Add meter (reopen)
+          </button>
+        </div>
+      )}
+      {open && <AddMeterModal onClose={() => setOpen(false)} />}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

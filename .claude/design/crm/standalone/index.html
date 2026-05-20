@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>CRM — Standalone bundles</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: #fafafa; color: #09090b; font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 64px 32px 80px; }
+  h1 { margin: 0 0 8px; font-size: 32px; font-weight: 600; letter-spacing: -0.6px; }
+  .sub { color: #71717a; margin: 0 0 8px; font-size: 15px; max-width: 640px; }
+  .note { color: #71717a; margin: 0 0 32px; font-size: 13px; padding: 12px 14px; background: #fff; border: 1px solid #e4e4e7; border-radius: 8px; max-width: 640px; }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; background: #f4f4f5; padding: 1px 5px; border-radius: 4px; font-size: 12.5px; }
+  ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 8px; }
+  a.card { display: block; padding: 14px 16px; background: #fff; border: 1px solid #e4e4e7; border-radius: 8px; text-decoration: none; color: #09090b; transition: border-color .15s, box-shadow .15s; }
+  a.card:hover { border-color: #7c3aed; box-shadow: 0 1px 2px rgba(24,24,27,0.05); }
+  .name { font-weight: 500; font-size: 14px; }
+  .path { font-size: 12px; color: #71717a; margin-top: 2px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .topnav { display: flex; gap: 16px; margin-bottom: 28px; font-size: 13px; }
+  .topnav a { color: #71717a; text-decoration: none; padding: 6px 0; }
+  .topnav a:hover { color: #09090b; }
+  .topnav a.active { color: #7c3aed; font-weight: 500; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topnav">
+    <a href="../../landing/index.html">Landing</a>
+    <a href="../index.html">CRM (source)</a>
+    <a href="index.html" class="active">CRM (standalone)</a>
+    <a href="../../admin/index.html">Admin</a>
+  </div>
+  <h1>CRM — Standalone bundles</h1>
+  <p class="sub">Self-contained <code>.html</code> files. All JSX components, fonts and JS dependencies are inlined.</p>
+  <p class="note">✓ Open by <strong>double-clicking</strong> — works via <code>file://</code> without any HTTP server. Each file is ~1.5MB.</p>
+  <ul>
+    <li><a class="card" href="dashboard-light.html"><div class="name">Dashboard · Light</div><div class="path">dashboard-light.html</div></a></li><li><a class="card" href="dashboard-dark.html"><div class="name">Dashboard · Dark</div><div class="path">dashboard-dark.html</div></a></li><li><a class="card" href="dashboard-empty.html"><div class="name">Dashboard · Empty</div><div class="path">dashboard-empty.html</div></a></li><li><a class="card" href="dashboard-print.html"><div class="name">Dashboard · Print</div><div class="path">dashboard-print.html</div></a></li><li><a class="card" href="properties.html"><div class="name">Properties list</div><div class="path">properties.html</div></a></li><li><a class="card" href="property-detail.html"><div class="name">Property detail</div><div class="path">property-detail.html</div></a></li><li><a class="card" href="bills.html"><div class="name">Bills list</div><div class="path">bills.html</div></a></li><li><a class="card" href="bills-mobile.html"><div class="name">Bills · Mobile</div><div class="path">bills-mobile.html</div></a></li><li><a class="card" href="add-bill.html"><div class="name">Add bill</div><div class="path">add-bill.html</div></a></li><li><a class="card" href="submit-reading.html"><div class="name">Submit reading</div><div class="path">submit-reading.html</div></a></li><li><a class="card" href="service-detail-light.html"><div class="name">Service detail · Light</div><div class="path">service-detail-light.html</div></a></li><li><a class="card" href="service-detail-dark.html"><div class="name">Service detail · Dark</div><div class="path">service-detail-dark.html</div></a></li><li><a class="card" href="contract-update.html"><div class="name">Update contract modal</div><div class="path">contract-update.html</div></a></li><li><a class="card" href="contract-history.html"><div class="name">Contract history drawer</div><div class="path">contract-history.html</div></a></li><li><a class="card" href="sharing.html"><div class="name">Sharing tab</div><div class="path">sharing.html</div></a></li><li><a class="card" href="add-meter.html"><div class="name">Add meter</div><div class="path">add-meter.html</div></a></li><li><a class="card" href="replace-meter.html"><div class="name">Replace meter</div><div class="path">replace-meter.html</div></a></li><li><a class="card" href="settings-light.html"><div class="name">Settings</div><div class="path">settings-light.html</div></a></li>
+  </ul>
+</div>
+</body>
+</html>

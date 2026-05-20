@@ -1,0 +1,561 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Utility Bills CRM — Iteration 7c · Settings (light)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; padding: 0; min-height: 100%; background: #fafafa; }
+  body { font-family: 'Inter', system-ui, -apple-system, sans-serif; -webkit-font-smoothing: antialiased; }
+  * { box-sizing: border-box; }
+  button, input, textarea, select { font-family: inherit; }
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" data-presets="react">
+const { useState, useEffect } = React;
+
+// ─── Tokens ───────────────────────────────────────────────────────────────────
+const Z = {
+  background: '#ffffff',
+  page:       '#fafafa',
+  foreground: '#09090b',
+  card:       '#ffffff',
+  muted:      '#f4f4f5',
+  mutedFg:    '#71717a',
+  border:     '#e4e4e7',
+};
+const ACCENT = {
+  solid:      '#7c3aed',
+  tintBg:     '#f5f3ff',
+  tintBorder: '#ede9fe',
+  foreground: '#ffffff',
+  hover:      '#6d28d9',
+};
+const DESTRUCTIVE = {
+  solid:   '#dc2626',
+  tintBg:  '#fef2f2',
+  tintBorder: '#fecaca',
+  hover:   '#b91c1c',
+};
+
+// ─── Icons ────────────────────────────────────────────────────────────────────
+const Ico = ({ size = 16, children, stroke = 'currentColor' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
+    stroke={stroke} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+    {children}
+  </svg>
+);
+const IcoLayoutDashboard = ({ size = 15 }) => (
+  <Ico size={size}>
+    <rect width="7" height="9" x="3" y="3" rx="1"/>
+    <rect width="7" height="5" x="14" y="3" rx="1"/>
+    <rect width="7" height="9" x="14" y="12" rx="1"/>
+    <rect width="7" height="5" x="3" y="16" rx="1"/>
+  </Ico>
+);
+const IcoChevronDown = ({ size = 14 }) => (
+  <Ico size={size}><path d="m6 9 6 6 6-6"/></Ico>
+);
+const IcoSun = ({ size = 14 }) => (
+  <Ico size={size}>
+    <circle cx="12" cy="12" r="4"/>
+    <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+  </Ico>
+);
+const IcoMoon = ({ size = 14 }) => (
+  <Ico size={size}><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></Ico>
+);
+const IcoMonitor = ({ size = 14 }) => (
+  <Ico size={size}>
+    <rect width="20" height="14" x="2" y="3" rx="2"/>
+    <path d="M8 21h8M12 17v4"/>
+  </Ico>
+);
+const IcoChevronRight = ({ size = 13 }) => (
+  <Ico size={size}><path d="m9 18 6-6-6-6"/></Ico>
+);
+
+// ─── Google G icon (brand-colored, not inverted) ──────────────────────────────
+function GoogleG({ size = 18 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+      <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+      <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+      <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+    </svg>
+  );
+}
+
+// ─── Form primitives ──────────────────────────────────────────────────────────
+function FieldLabel({ children }) {
+  return (
+    <label style={{ display: 'block', fontSize: 13.5, fontWeight: 500, color: Z.foreground, marginBottom: 6 }}>
+      {children}
+    </label>
+  );
+}
+
+function FieldHint({ children }) {
+  return (
+    <p style={{ margin: '5px 0 0', fontSize: 12.5, color: Z.mutedFg, lineHeight: 1.55 }}>{children}</p>
+  );
+}
+
+function useFocusStyle(disabled) {
+  const [focused, setFocused] = useState(false);
+  const border = `1px solid ${disabled ? Z.border : focused ? ACCENT.solid : Z.border}`;
+  const shadow = (!disabled && focused) ? `0 0 0 3px ${ACCENT.tintBg}` : 'none';
+  const handlers = disabled ? {} : {
+    onFocus: () => setFocused(true),
+    onBlur:  () => setFocused(false),
+  };
+  return { border, shadow, handlers };
+}
+
+function InputField({ value, onChange, disabled, type = 'text' }) {
+  const { border, shadow, handlers } = useFocusStyle(disabled);
+  return (
+    <input
+      type={type}
+      value={value}
+      onChange={onChange ? e => onChange(e.target.value) : undefined}
+      disabled={disabled}
+      readOnly={!onChange}
+      {...handlers}
+      style={{
+        width: '100%', height: 36, padding: '0 12px',
+        fontSize: 13.5, color: disabled ? Z.mutedFg : Z.foreground,
+        background: disabled ? Z.muted : Z.background,
+        border, borderRadius: 6, outline: 'none',
+        boxShadow: shadow, transition: 'border-color 120ms, box-shadow 120ms',
+        cursor: disabled ? 'default' : 'text',
+      }}
+    />
+  );
+}
+
+function SelectField({ options, value, onChange, disabled }) {
+  const { border, shadow, handlers } = useFocusStyle(disabled);
+  return (
+    <div style={{ position: 'relative' }}>
+      <select
+        value={value}
+        onChange={onChange ? e => onChange(e.target.value) : undefined}
+        disabled={disabled}
+        {...handlers}
+        style={{
+          width: '100%', height: 36, padding: '0 32px 0 12px',
+          appearance: 'none', WebkitAppearance: 'none',
+          fontSize: 13.5, color: disabled ? Z.mutedFg : Z.foreground,
+          background: disabled ? Z.muted : Z.background,
+          border, borderRadius: 6, outline: 'none',
+          cursor: disabled ? 'default' : 'pointer',
+          boxShadow: shadow, transition: 'border-color 120ms, box-shadow 120ms',
+        }}
+      >
+        {options.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+      </select>
+      <span style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: Z.mutedFg }}>
+        <IcoChevronDown size={14} />
+      </span>
+    </div>
+  );
+}
+
+// ─── Separator ────────────────────────────────────────────────────────────────
+function Separator() {
+  return <div style={{ height: 1, background: Z.border, margin: '4px 0' }} />;
+}
+
+// ─── Card ─────────────────────────────────────────────────────────────────────
+function Card({ children }) {
+  return (
+    <div style={{
+      background: Z.card,
+      border: `1px solid ${Z.border}`,
+      borderRadius: 10,
+      overflow: 'hidden',
+    }}>
+      {children}
+    </div>
+  );
+}
+
+function CardHeader({ title, description }) {
+  return (
+    <div style={{ padding: '22px 24px', borderBottom: `1px solid ${Z.border}` }}>
+      <div style={{ fontSize: 16, fontWeight: 600, color: Z.foreground, letterSpacing: -0.2 }}>{title}</div>
+      {description && (
+        <div style={{ fontSize: 13, color: Z.mutedFg, marginTop: 3 }}>{description}</div>
+      )}
+    </div>
+  );
+}
+
+function CardBody({ children }) {
+  return (
+    <div style={{ padding: '24px' }}>
+      {children}
+    </div>
+  );
+}
+
+function CardFooter({ children }) {
+  return (
+    <div style={{
+      padding: '14px 24px',
+      borderTop: `1px solid ${Z.border}`,
+      display: 'flex', justifyContent: 'flex-end',
+      background: Z.page,
+    }}>
+      {children}
+    </div>
+  );
+}
+
+// ─── Buttons ──────────────────────────────────────────────────────────────────
+function Btn({ children, disabled, variant = 'default', onClick }) {
+  const [hovered, setHovered] = useState(false);
+
+  const styles = {
+    default: {
+      bg: hovered && !disabled ? '#18181b' : Z.foreground,
+      color: '#ffffff',
+      border: 'none',
+      shadow: '0 1px 2px rgba(9,9,11,0.12)',
+    },
+    outline: {
+      bg: hovered && !disabled ? Z.muted : Z.background,
+      color: disabled ? Z.mutedFg : Z.foreground,
+      border: `1px solid ${Z.border}`,
+      shadow: 'none',
+    },
+    destructive: {
+      bg: hovered ? DESTRUCTIVE.hover : DESTRUCTIVE.solid,
+      color: '#ffffff',
+      border: 'none',
+      shadow: 'none',
+    },
+  }[variant];
+
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        height: 36, padding: '0 16px',
+        fontSize: 13.5, fontWeight: 500,
+        background: styles.bg,
+        color: styles.color,
+        border: styles.border,
+        borderRadius: 6, cursor: disabled ? 'default' : 'pointer',
+        display: 'inline-flex', alignItems: 'center', gap: 6,
+        boxShadow: styles.shadow,
+        opacity: disabled ? 0.45 : 1,
+        transition: 'background 120ms',
+        outline: 'none',
+        whiteSpace: 'nowrap',
+      }}
+    >
+      {children}
+    </button>
+  );
+}
+
+// ─── Theme Radio Group ────────────────────────────────────────────────────────
+function ThemeRadio({ value, onChange }) {
+  const options = [
+    { value: 'light',  label: 'Light',  icon: <IcoSun size={14} /> },
+    { value: 'dark',   label: 'Dark',   icon: <IcoMoon size={14} /> },
+    { value: 'system', label: 'System', icon: <IcoMonitor size={14} /> },
+  ];
+  return (
+    <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+      {options.map(opt => {
+        const active = value === opt.value;
+        return (
+          <button
+            key={opt.value}
+            onClick={() => onChange(opt.value)}
+            style={{
+              height: 36, padding: '0 14px',
+              display: 'inline-flex', alignItems: 'center', gap: 6,
+              fontSize: 13.5, fontWeight: active ? 500 : 400,
+              background: active ? Z.foreground : Z.background,
+              color: active ? '#ffffff' : Z.mutedFg,
+              border: `1px solid ${active ? Z.foreground : Z.border}`,
+              borderRadius: 6, cursor: 'pointer',
+              transition: 'all 120ms',
+              outline: 'none',
+            }}
+          >
+            {opt.icon}
+            {opt.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+// ─── Nav ──────────────────────────────────────────────────────────────────────
+function TopNav() {
+  const navItems = ['Dashboard', 'Properties', 'Bills', 'Payments', 'Settings'];
+  return (
+    <div style={{
+      height: 56, background: Z.background,
+      borderBottom: `1px solid ${Z.border}`,
+      display: 'flex', alignItems: 'center',
+      padding: '0 32px', gap: 0,
+      position: 'sticky', top: 0, zIndex: 10,
+    }}>
+      {/* Logo */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginRight: 28 }}>
+        <div style={{
+          width: 26, height: 26, borderRadius: 6,
+          background: ACCENT.solid,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>
+          <IcoLayoutDashboard size={15} />
+        </div>
+        <span style={{ fontSize: 14.5, fontWeight: 600, letterSpacing: -0.1, color: Z.foreground }}>UtilityBills</span>
+      </div>
+
+      {/* Nav links */}
+      <nav style={{ display: 'flex', alignItems: 'center', flex: 1 }}>
+        {navItems.map((item) => {
+          const active = item === 'Settings';
+          return (
+            <a key={item} href="#" style={{
+              padding: '8px 12px', fontSize: 13.5,
+              fontWeight: active ? 500 : 400,
+              color: active ? Z.foreground : Z.mutedFg,
+              textDecoration: 'none',
+              borderRadius: 6, position: 'relative',
+              display: 'inline-flex', alignItems: 'center',
+            }}>
+              {item}
+              {active && (
+                <span style={{
+                  position: 'absolute', left: 12, right: 12, bottom: -2,
+                  height: 2, background: ACCENT.solid, borderRadius: 2,
+                }} />
+              )}
+            </a>
+          );
+        })}
+      </nav>
+
+      {/* Avatar */}
+      <div style={{
+        width: 32, height: 32, borderRadius: '50%',
+        background: '#ddd6fe',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        fontSize: 13, fontWeight: 600, color: ACCENT.solid,
+        cursor: 'pointer', flexShrink: 0,
+      }}>
+        A
+      </div>
+    </div>
+  );
+}
+
+// ─── Section 1: Profile ───────────────────────────────────────────────────────
+function ProfileSection() {
+  const [name, setName] = useState('Art Loban');
+  const [savedName] = useState('Art Loban');
+  const dirty = name !== savedName;
+
+  return (
+    <Card>
+      <CardHeader title="Profile" description="Your basic information." />
+      <CardBody>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+
+          {/* Avatar row */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+            <div style={{
+              width: 64, height: 64, borderRadius: '50%', flexShrink: 0,
+              background: '#ddd6fe',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: 24, fontWeight: 600, color: ACCENT.solid,
+              border: `2px solid ${ACCENT.tintBorder}`,
+            }}>
+              A
+            </div>
+            <p style={{ margin: 0, fontSize: 13, color: Z.mutedFg, lineHeight: 1.6, maxWidth: 340 }}>
+              Your avatar comes from Google. Sign in with a different Google account to change it.
+            </p>
+          </div>
+
+          {/* Name */}
+          <div>
+            <FieldLabel>Name</FieldLabel>
+            <InputField value={name} onChange={setName} />
+          </div>
+
+          {/* Email */}
+          <div>
+            <FieldLabel>Email</FieldLabel>
+            <InputField value="art.loban@example.com" disabled />
+            <FieldHint>Managed by Google. Sign in with a different account to change.</FieldHint>
+          </div>
+
+        </div>
+      </CardBody>
+      <CardFooter>
+        <Btn disabled={!dirty}>Save changes</Btn>
+      </CardFooter>
+    </Card>
+  );
+}
+
+// ─── Section 2: Preferences ───────────────────────────────────────────────────
+function PreferencesSection() {
+  const [language, setLanguage] = useState('en');
+  const [theme, setTheme]       = useState('system');
+  const savedLanguage = 'en';
+  const savedTheme    = 'system';
+  const dirty = language !== savedLanguage || theme !== savedTheme;
+
+  const langOptions = [
+    { value: 'en', label: 'English' },
+    { value: 'uk', label: 'Українська' },
+    { value: 'ru', label: 'Русский' },
+  ];
+
+  return (
+    <Card>
+      <CardHeader title="Preferences" description="How the app looks and behaves for you." />
+      <CardBody>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+
+          {/* Language */}
+          <div>
+            <FieldLabel>Language</FieldLabel>
+            <SelectField options={langOptions} value={language} onChange={setLanguage} />
+            <FieldHint>The language of the app interface.</FieldHint>
+          </div>
+
+          {/* Theme */}
+          <div>
+            <FieldLabel>Theme</FieldLabel>
+            <ThemeRadio value={theme} onChange={setTheme} />
+          </div>
+
+          {/* Timezone */}
+          <div>
+            <FieldLabel>Timezone</FieldLabel>
+            <SelectField
+              options={[{ value: 'kyiv', label: 'Europe/Kyiv (UTC+2)' }]}
+              value="kyiv"
+              disabled
+            />
+            <FieldHint>Timezone selection comes in a future release. Times are shown in Europe/Kyiv for now.</FieldHint>
+          </div>
+
+        </div>
+      </CardBody>
+      <CardFooter>
+        <Btn disabled={!dirty}>Save changes</Btn>
+      </CardFooter>
+    </Card>
+  );
+}
+
+// ─── Section 3: Account ───────────────────────────────────────────────────────
+function AccountSection() {
+  return (
+    <Card>
+      <CardHeader title="Account" description="Sign-in and session management." />
+      <CardBody>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+
+          {/* Signed in with Google */}
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: 12,
+            padding: '12px 14px',
+            background: Z.page,
+            border: `1px solid ${Z.border}`,
+            borderRadius: 8,
+          }}>
+            <GoogleG size={18} />
+            <div>
+              <div style={{ fontSize: 12, color: Z.mutedFg, marginBottom: 1 }}>Signed in with Google</div>
+              <div style={{ fontSize: 13.5, color: Z.foreground, fontWeight: 500 }}>art.loban@example.com</div>
+            </div>
+          </div>
+
+          {/* Active sessions */}
+          <div>
+            <div style={{ fontSize: 13.5, fontWeight: 500, color: Z.foreground, marginBottom: 4 }}>Active sessions</div>
+            <p style={{ margin: 0, fontSize: 13, color: Z.mutedFg, lineHeight: 1.6 }}>
+              Per-device session management is coming in a future release.
+            </p>
+          </div>
+
+          {/* Separator */}
+          <Separator />
+
+          {/* Sign out of all devices */}
+          <div>
+            <div style={{ fontSize: 13.5, fontWeight: 600, color: Z.foreground, marginBottom: 6 }}>Sign out everywhere</div>
+            <p style={{ margin: '0 0 14px', fontSize: 13, color: Z.mutedFg, lineHeight: 1.65 }}>
+              This signs you out on all browsers and devices, including this one. You'll need to sign in again.
+            </p>
+            <Btn variant="destructive">Sign out of all devices</Btn>
+          </div>
+
+        </div>
+      </CardBody>
+    </Card>
+  );
+}
+
+// ─── App ──────────────────────────────────────────────────────────────────────
+function App() {
+  return (
+    <div style={{ minHeight: '100vh', background: Z.page }}>
+      <TopNav />
+
+      <div style={{
+        maxWidth: 1536, margin: '0 auto',
+        padding: '36px 32px 64px',
+      }}>
+        {/* Page header */}
+        <h1 style={{
+          margin: '0 0 28px',
+          fontSize: 26, fontWeight: 600, letterSpacing: -0.5, color: Z.foreground,
+        }}>
+          Settings
+        </h1>
+
+        {/* Cards, constrained width */}
+        <div style={{
+          maxWidth: 640,
+          display: 'flex', flexDirection: 'column', gap: 28,
+        }}>
+          <ProfileSection />
+          <PreferencesSection />
+          <AccountSection />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

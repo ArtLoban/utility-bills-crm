@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>About — Utility Bills CRM</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', system-ui, sans-serif; background: #ffffff; color: #09090b; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; text-decoration: none; }
+  .container { width: 100%; max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+  .content-col { max-width: 640px; }
+
+  /* Header — identical to home */
+  .pub-header { position: sticky; top: 0; z-index: 50; background: #ffffff; border-bottom: 1px solid transparent; transition: border-color 200ms, background 200ms, backdrop-filter 200ms; }
+  .pub-header.scrolled { background: rgba(255,255,255,0.88); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-color: #e4e4e7; }
+  .pub-header-inner { display: flex; align-items: center; height: 56px; gap: 32px; }
+  .pub-logo { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+  .pub-logo-mark { width: 22px; height: 22px; background: #7c3aed; border-radius: 4px; display: flex; align-items: center; justify-content: center; }
+  .pub-logo-text { font-size: 14px; font-weight: 600; color: #09090b; }
+  .pub-nav { display: flex; align-items: center; gap: 4px; flex: 1; justify-content: center; }
+  .pub-nav-link { font-size: 14px; color: #71717a; padding: 4px 10px; border-radius: 6px; transition: color 120ms; }
+  .pub-nav-link:hover { color: #09090b; }
+  .pub-nav-link.active { color: #09090b; font-weight: 500; }
+  .pub-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+  .btn-ghost { font-size: 14px; font-weight: 500; color: #09090b; padding: 6px 14px; border-radius: 6px; border: 1px solid #e4e4e7; background: transparent; cursor: pointer; font-family: inherit; transition: background 120ms; }
+  .btn-ghost:hover { background: #f4f4f5; }
+  .theme-btn { width: 32px; height: 32px; border-radius: 6px; border: 1px solid #e4e4e7; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #71717a; transition: background 120ms; }
+  .theme-btn:hover { background: #f4f4f5; }
+  .hamburger { display: none; width: 32px; height: 32px; border-radius: 6px; border: 1px solid #e4e4e7; background: transparent; cursor: pointer; align-items: center; justify-content: center; color: #71717a; }
+
+  /* Sections */
+  .section-bg   { background: #ffffff; }
+  .section-muted { background: rgba(244,244,245,0.45); }
+  .section-py   { padding: 96px 0; }
+
+  /* Hero */
+  .hero-h1 { font-size: clamp(34px, 4.5vw, 52px); font-weight: 600; letter-spacing: -0.03em; line-height: 1.12; color: #09090b; margin-bottom: 20px; }
+  .hero-role { font-size: 18px; color: #09090b; font-weight: 400; line-height: 1.5; margin-bottom: 6px; }
+  .hero-location { font-size: 16px; color: #71717a; }
+
+  /* What I work with */
+  .prose { display: flex; flex-direction: column; gap: 20px; }
+  .prose p { font-size: 16px; line-height: 1.75; color: #52525b; text-wrap: pretty; }
+
+  /* Links section */
+  .link-list { display: flex; flex-direction: column; gap: 24px; }
+  .link-item { display: flex; flex-direction: column; gap: 3px; }
+  .link-item a { font-size: 16px; font-weight: 500; color: #7c3aed; display: inline-flex; align-items: center; gap: 6px; transition: opacity 120ms; }
+  .link-item a:hover { opacity: 0.75; }
+  .link-item .caption { font-size: 14px; color: #71717a; }
+  .em-dash { color: #d4d4d8; margin: 0 2px; }
+
+  /* Footer */
+  .footer-inner { display: flex; align-items: center; justify-content: center; gap: 28px; flex-wrap: wrap; padding: 36px 0; }
+  .footer-link { font-size: 14px; color: #71717a; transition: color 120ms; }
+  .footer-link:hover { color: #09090b; }
+  .footer-sep { width: 1px; height: 14px; background: #e4e4e7; }
+  .footer-copy { font-size: 13px; color: #a1a1aa; }
+
+  @media (max-width: 680px) {
+    .pub-nav { display: none; }
+    .hamburger { display: flex; }
+    .section-py { padding: 64px 0; }
+    .footer-inner { flex-direction: column; gap: 16px; }
+    .footer-sep { display: none; }
+  }
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" data-presets="react">
+
+const { useState, useEffect } = React;
+
+function Ico({ size = 20, children }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
+    stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      {children}
+    </svg>);
+
+}
+const IcoSun = ({ size }) => <Ico size={size}><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" /></Ico>;
+const IcoMenu = ({ size }) => <Ico size={size}><line x1="4" y1="6" x2="20" y2="6" /><line x1="4" y1="12" x2="20" y2="12" /><line x1="4" y1="18" x2="20" y2="18" /></Ico>;
+const IcoArrow = ({ size = 14 }) =>
+<svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M5 12h14M12 5l7 7-7 7" />
+  </svg>;
+
+
+function Header() {
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const fn = () => setScrolled(window.scrollY > 8);
+    window.addEventListener('scroll', fn, { passive: true });
+    return () => window.removeEventListener('scroll', fn);
+  }, []);
+  return (
+    <header className={`pub-header${scrolled ? ' scrolled' : ''}`}>
+      <div className="container">
+        <div className="pub-header-inner">
+          <a href="/" className="pub-logo">
+            <div className="pub-logo-mark">
+              <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+                <rect x="1" y="1" width="4.5" height="4.5" rx="1" fill="white" opacity="0.9" />
+                <rect x="7.5" y="1" width="4.5" height="4.5" rx="1" fill="white" opacity="0.6" />
+                <rect x="1" y="7.5" width="4.5" height="4.5" rx="1" fill="white" opacity="0.6" />
+                <rect x="7.5" y="7.5" width="4.5" height="4.5" rx="1" fill="white" opacity="0.4" />
+              </svg>
+            </div>
+            <span className="pub-logo-text">Utility Bills CRM</span>
+          </a>
+          <nav className="pub-nav">
+            <a href="/" className="pub-nav-link">Home</a>
+            <a href="/about" className="pub-nav-link active">About</a>
+            <a href="/project" className="pub-nav-link">Project</a>
+          </nav>
+          <div className="pub-actions">
+            <button className="theme-btn"><IcoSun size={15} /></button>
+            <button className="btn-ghost">Sign in</button>
+            <button className="hamburger"><IcoMenu size={16} /></button>
+          </div>
+        </div>
+      </div>
+    </header>);
+
+}
+
+function App() {
+  return (
+    <div>
+      <Header />
+
+      {/* § 1 Hero */}
+      <section className="section-bg section-py">
+        <div className="container">
+          <div className="content-col">
+            <h1 className="hero-h1" style={{ fontSize: "4px" }}>Hi, I'm Art.</h1>
+            <p className="hero-role">Frontend developer. React, TypeScript, complex UIs.</p>
+            <p className="hero-location">Working remotely, based in Ukraine.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* § 2 What I work with */}
+      <section className="section-muted section-py">
+        <div className="container">
+          <div className="content-col prose">
+            <p>
+              Day-to-day: React with TypeScript, Next.js, modern data tables and visualizations, design systems.
+            </p>
+            <p>
+              Comfortable with: state management at scale (Redux Toolkit, RTK Query), forms and validation, authentication, role-based access.
+            </p>
+            <p>
+              Most of the last few years went into building a payment orchestration platform — a large back-office admin panel that grew to 50+ pages and a few thousand TypeScript files. This CRM is the next thing I'm building.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* § 3 See more */}
+      <section className="section-bg section-py">
+        <div className="container">
+          <div className="content-col">
+            <div className="link-list">
+              <div className="link-item">
+                <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer">
+                  LinkedIn <IcoArrow size={13} />
+                </a>
+                <span className="caption"><span className="em-dash">—</span> full background, recommendations, work history.</span>
+              </div>
+              <div className="link-item">
+                <a href="https://github.com" target="_blank" rel="noopener noreferrer">
+                  GitHub <IcoArrow size={13} />
+                </a>
+                <span className="caption"><span className="em-dash">—</span> code lives here.</span>
+              </div>
+              <div className="link-item">
+                <a href="/project">
+                  About this project <IcoArrow size={13} />
+                </a>
+                <span className="caption"><span className="em-dash">—</span> architecture, decisions, stack rationale.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="section-muted">
+        <div className="container">
+          <div className="footer-inner">
+            <a href="/about" className="footer-link">About the developer</a>
+            <div className="footer-sep"></div>
+            <a href="/project" className="footer-link">Architecture &amp; code</a>
+            <div className="footer-sep"></div>
+            <span className="footer-copy">© 2026 · Utility Bills CRM</span>
+          </div>
+        </div>
+      </footer>
+    </div>);
+
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

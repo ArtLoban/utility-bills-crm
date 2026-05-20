@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Utility Bills CRM — Admin: Olena Petrenko (light)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; padding: 0; min-height: 100%; background: #fafafa; }
+  body { font-family: 'Inter', system-ui, -apple-system, sans-serif; -webkit-font-smoothing: antialiased; }
+  * { box-sizing: border-box; }
+  button { font-family: inherit; }
+  a { text-decoration: none; }
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" data-presets="react">
+
+const useLocalState = React.useState;
+
+// ── Tokens ─────────────────────────────────────────────────────
+const Zk = {
+  background:'#ffffff', foreground:'#09090b', card:'#ffffff',
+  muted:'#f4f4f5', mutedFg:'#71717a', mutedFg2:'#a1a1aa', border:'#e4e4e7',
+  subtle:'#fafafa', destructive:'#dc2626', success:'#16a34a',
+};
+const AMBER  = { line:'#f59e0b', solid:'#d97706', tintBg:'#fef3c7', tintBorder:'#fde68a' };
+const VIOLET = { solid:'#7c3aed', tintBg:'#f5f3ff', tintBorder:'#ede9fe' };
+const GREEN  = { solid:'#059669', tintBg:'#ecfdf5' };
+
+function Ico({ size=16, stroke='currentColor', d, fill='none', children }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill={fill}
+      stroke={stroke} strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round">
+      {d ? <path d={d}/> : children}
+    </svg>
+  );
+}
+function Kard({ children, style }) {
+  return <div style={{ background:Zk.card, border:`1px solid ${Zk.border}`, borderRadius:8, boxShadow:'0 1px 2px 0 rgba(24,24,27,0.05)', ...style }}>{children}</div>;
+}
+
+// ── Icons ──────────────────────────────────────────────────────
+const IcoLayoutDash = (p) => <Ico size={p.size||16} stroke={p.stroke||'currentColor'}><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></Ico>;
+const IcoChevR    = (p) => <Ico size={p.size||13} stroke={p.stroke||Zk.mutedFg} d="m9 18 6-6-6-6"/>;
+const IcoPine     = (p) => <Ico size={p.size||16} stroke={p.stroke||'currentColor'}><path d="m17 14 3 3.3a1 1 0 0 1-.7 1.7H4.7a1 1 0 0 1-.7-1.7L7 14h-.3a1 1 0 0 1-.7-1.7L9 9h-.2A1 1 0 0 1 8 7.3L12 3l4 4.3a1 1 0 0 1-.8 1.7H15l3 3.3a1 1 0 0 1-.7 1.7H17Z"/><path d="M12 22v-3"/></Ico>;
+const IcoBuilding = (p) => <Ico size={p.size||16} stroke={p.stroke||'currentColor'}><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4M8 6h.01M16 6h.01M12 6h.01M12 10h.01M12 14h.01M16 10h.01M16 14h.01M8 10h.01M8 14h.01"/></Ico>;
+
+// "G" mark for Google avatar source — drawn as a faint colored ring with letter
+function GoogleMark({ size=14 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 18 18" aria-hidden="true">
+      <path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.17-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.92c1.7-1.57 2.68-3.88 2.68-6.62z"/>
+      <path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.92-2.26c-.81.54-1.84.86-3.04.86-2.34 0-4.32-1.58-5.03-3.7H.96v2.32A9 9 0 0 0 9 18z"/>
+      <path fill="#FBBC05" d="M3.97 10.72A5.4 5.4 0 0 1 3.68 9c0-.6.1-1.18.29-1.72V4.96H.96A9 9 0 0 0 0 9c0 1.45.35 2.83.96 4.04l3.01-2.32z"/>
+      <path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .96 4.96L3.97 7.28C4.68 5.16 6.66 3.58 9 3.58z"/>
+    </svg>
+  );
+}
+
+// ── Admin TopBar ───────────────────────────────────────────────
+function AdminTopBar({ activeNav='Users' }) {
+  const navItems = ['Dashboard','Properties','Users','Landing'];
+  return (
+    <div style={{ position:'sticky', top:0, zIndex:10 }}>
+      <div style={{ height:3, background:AMBER.line }}/>
+      <div style={{ height:64, background:'rgba(255,255,255,0.85)', backdropFilter:'blur(8px)', WebkitBackdropFilter:'blur(8px)', borderBottom:`1px solid ${Zk.border}`, display:'flex', alignItems:'center', padding:'0 32px' }}>
+        <div style={{ display:'flex', alignItems:'center', gap:8, marginRight:12 }}>
+          <div style={{ width:26, height:26, borderRadius:6, background:Zk.foreground, display:'flex', alignItems:'center', justifyContent:'center' }}><IcoLayoutDash size={15} stroke="#fff"/></div>
+          <span style={{ fontSize:14.5, fontWeight:600, letterSpacing:-0.1, color:Zk.foreground }}>UtilityBills</span>
+        </div>
+        <div style={{ display:'inline-flex', alignItems:'center', padding:'2px 8px', borderRadius:9999, border:`1.5px solid ${AMBER.line}`, color:AMBER.solid, fontSize:11, fontWeight:600, letterSpacing:'0.04em', marginRight:28, lineHeight:1 }}>Admin</div>
+        <nav style={{ display:'flex', alignItems:'center', gap:4, flex:1 }}>
+          {navItems.map(item => {
+            const active = item === activeNav;
+            return (
+              <a key={item} href="#" style={{ position:'relative', padding:'8px 12px', fontSize:13.5, fontWeight:active?500:400, color:active?Zk.foreground:Zk.mutedFg, borderRadius:6 }}>
+                {item}
+                {active && <span style={{ position:'absolute', left:12, right:12, bottom:-1, height:2, background:AMBER.solid, borderRadius:2 }}/>}
+              </a>
+            );
+          })}
+        </nav>
+        <button style={{ display:'flex', alignItems:'center', gap:8, height:36, padding:'0 4px 0 8px', background:'transparent', border:'none', cursor:'pointer' }}>
+          <span style={{ fontSize:13, color:Zk.foreground, fontWeight:500 }}>Art Loban</span>
+          <div style={{ width:28, height:28, borderRadius:'50%', background:AMBER.tintBg, color:AMBER.solid, display:'flex', alignItems:'center', justifyContent:'center', fontSize:11, fontWeight:600, border:`1px solid ${AMBER.tintBorder}` }}>AL</div>
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ── InfoGrid (matches admin property detail) ───────────────────
+// Supports a `wide` row that spans both columns.
+function InfoGrid({ rows }) {
+  // Group into rows, respecting `wide` rows that consume a full line
+  const lines = [];
+  let buf = [];
+  rows.forEach(r => {
+    if (r.wide) {
+      if (buf.length) { lines.push(buf); buf = []; }
+      lines.push([r]);
+    } else {
+      buf.push(r);
+      if (buf.length === 2) { lines.push(buf); buf = []; }
+    }
+  });
+  if (buf.length) lines.push(buf);
+
+  return (
+    <div>
+      {lines.map((pair, pi) => (
+        <div key={pi} style={{ display:'grid', gridTemplateColumns: pair[0].wide ? '1fr' : '1fr 1fr', borderBottom: pi === lines.length-1 ? 'none' : `1px solid ${Zk.border}` }}>
+          {pair.map((row, ri) => (
+            <div key={ri} style={{ padding:'14px 0', paddingRight: (!row.wide && ri===0) ? 32 : 0, paddingLeft: (!row.wide && ri===1) ? 24 : 0, borderLeft: (!row.wide && ri===1) ? `1px solid ${Zk.border}` : 'none' }}>
+              <div style={{ fontSize:11, fontWeight:600, color:Zk.mutedFg, letterSpacing:'0.04em', textTransform:'uppercase', marginBottom:4 }}>{row.label}</div>
+              <div style={{ fontSize:13.5, color:Zk.foreground, lineHeight:1.5 }}>{row.value}</div>
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ── Badges ─────────────────────────────────────────────────────
+function UserBadge() {
+  return (
+    <span style={{ display:'inline-flex', alignItems:'center', padding:'1px 7px', borderRadius:9999, border:`1px solid ${Zk.border}`, fontSize:11, fontWeight:500, color:Zk.mutedFg, lineHeight:1.4, verticalAlign:'middle' }}>User</span>
+  );
+}
+
+function PropRoleBadge({ role }) {
+  if (role === 'Owner') {
+    return (
+      <span style={{ display:'inline-flex', alignItems:'center', padding:'2px 8px', borderRadius:9999, background:VIOLET.tintBg, border:`1px solid ${VIOLET.tintBorder}`, fontSize:11.5, fontWeight:500, color:VIOLET.solid, lineHeight:1.4 }}>
+        Owner
+      </span>
+    );
+  }
+  return (
+    <span style={{ display:'inline-flex', alignItems:'center', padding:'2px 8px', borderRadius:9999, border:`1px solid ${Zk.border}`, fontSize:11.5, fontWeight:500, color:Zk.mutedFg, lineHeight:1.4 }}>
+      {role}
+    </span>
+  );
+}
+
+// ── Property row ───────────────────────────────────────────────
+function PropertyRow({ IcoComp, name, role, services, status, isLast }) {
+  const [hover, setHover] = useLocalState(false);
+  const statusClr = status === 'Active' ? GREEN.solid : Zk.mutedFg;
+  return (
+    <a href="#" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
+      style={{ display:'flex', alignItems:'center', gap:14, padding:'14px 24px', borderBottom: isLast ? 'none' : `1px solid ${Zk.border}`, background: hover ? Zk.subtle : 'transparent', transition:'background 120ms' }}>
+      <div style={{ width:36, height:36, borderRadius:8, background:VIOLET.tintBg, border:`1px solid ${VIOLET.tintBorder}`, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+        <IcoComp size={18} stroke={VIOLET.solid}/>
+      </div>
+      <div style={{ flex:1, minWidth:0 }}>
+        <div style={{ fontSize:14, fontWeight:500, color: hover ? VIOLET.solid : Zk.foreground, letterSpacing:-0.1, transition:'color 120ms' }}>{name}</div>
+        <div style={{ fontSize:12.5, color:Zk.mutedFg, marginTop:2 }}>
+          {services} services
+          <span style={{ color:Zk.border, margin:'0 6px' }}>·</span>
+          <span style={{ color:statusClr, fontWeight:500 }}>{status}</span>
+        </div>
+      </div>
+      <PropRoleBadge role={role}/>
+      <IcoChevR size={14} stroke={hover ? VIOLET.solid : Zk.mutedFg2}/>
+    </a>
+  );
+}
+
+// ── User avatar (32px, neutral) ────────────────────────────────
+function UserAvatar({ size=32, initials='OP' }) {
+  const fs = size <= 32 ? 12 : 14;
+  return (
+    <div style={{ width:size, height:size, borderRadius:'50%', background:VIOLET.tintBg, border:`1px solid ${VIOLET.tintBorder}`, color:VIOLET.solid, display:'inline-flex', alignItems:'center', justifyContent:'center', fontSize:fs, fontWeight:600, flexShrink:0 }}>
+      {initials}
+    </div>
+  );
+}
+
+// ── Page ───────────────────────────────────────────────────────
+function Page() {
+  return (
+    <div style={{ fontFamily:"'Inter',system-ui,sans-serif", fontFeatureSettings:'"cv11" 1,"ss01" 1', color:Zk.foreground, background:Zk.subtle, minHeight:'100vh', WebkitFontSmoothing:'antialiased' }}>
+      <AdminTopBar activeNav="Users"/>
+      <div style={{ maxWidth:900, margin:'0 auto', padding:'32px 32px 64px' }}>
+
+        {/* Breadcrumbs */}
+        <div style={{ display:'flex', alignItems:'center', gap:6, fontSize:13, color:Zk.mutedFg, marginBottom:20 }}>
+          <a href="#" style={{ color:Zk.mutedFg }}>art-admin</a>
+          <IcoChevR/>
+          <a href="#" style={{ color:Zk.mutedFg }}>users</a>
+          <IcoChevR/>
+          <span style={{ color:Zk.foreground }}>Olena Petrenko</span>
+        </div>
+
+        {/* Page header */}
+        <div style={{ marginBottom:28 }}>
+          <h1 style={{ margin:0, fontSize:28, fontWeight:600, letterSpacing:-0.6, color:Zk.foreground }}>Olena Petrenko</h1>
+          <p style={{ margin:'6px 0 0', fontSize:13.5, color:Zk.mutedFg, display:'flex', alignItems:'center', gap:8, flexWrap:'wrap' }}>
+            <span>olena.petrenko@example.com</span>
+            <span style={{ color:Zk.border }}>·</span>
+            <UserBadge/>
+            <span style={{ color:Zk.border }}>·</span>
+            <span>Joined April 2024</span>
+          </p>
+        </div>
+
+        {/* Card 1 — User info */}
+        <Kard style={{ padding:0, overflow:'hidden', marginBottom:16 }}>
+          <div style={{ padding:'16px 24px', borderBottom:`1px solid ${Zk.border}` }}>
+            <h3 style={{ margin:0, fontSize:14, fontWeight:600, color:Zk.foreground, letterSpacing:-0.1 }}>User info</h3>
+          </div>
+          <div style={{ padding:'0 24px' }}>
+            <InfoGrid rows={[
+              { label:'Email',         value:'olena.petrenko@example.com' },
+              { label:'Name',          value:'Olena Petrenko' },
+              { label:'System role',   value:'User' },
+              { label:'Created',       value:'April 12, 2024' },
+              { label:'Last login',    value:'1 hour ago' },
+              { label:'Auth provider', value:(
+                <span style={{ display:'inline-flex', alignItems:'center', gap:6 }}>
+                  <GoogleMark size={13}/> Google
+                </span>
+              ) },
+              { wide:true, label:'Avatar', value:(
+                <div style={{ display:'flex', alignItems:'center', gap:12, marginTop:2 }}>
+                  <UserAvatar size={32} initials="OP"/>
+                  <span style={{ fontSize:12.5, color:Zk.mutedFg }}>From Google</span>
+                </div>
+              )},
+            ]}/>
+          </div>
+        </Kard>
+
+        {/* Card 2 — Properties */}
+        <Kard style={{ padding:0, overflow:'hidden', marginBottom:16 }}>
+          <div style={{ padding:'16px 24px', borderBottom:`1px solid ${Zk.border}` }}>
+            <h3 style={{ margin:0, fontSize:14, fontWeight:600, color:Zk.foreground, letterSpacing:-0.1 }}>Properties</h3>
+            <p style={{ margin:'3px 0 0', fontSize:12.5, color:Zk.mutedFg }}>2 properties accessible to this user.</p>
+          </div>
+          <PropertyRow IcoComp={IcoPine}     name="Summer cottage" role="Owner" services={2} status="Active" isLast={false}/>
+          <PropertyRow IcoComp={IcoBuilding} name="Sea-view condo" role="Owner" services={3} status="Active" isLast={true}/>
+        </Kard>
+
+        {/* Card 3 — Audit info */}
+        <div style={{ paddingTop:24, marginTop:8, borderTop:`1px solid ${Zk.border}` }}>
+          <div style={{ fontFamily:"'SF Mono','Fira Mono','Courier New',monospace", fontSize:12, color:Zk.mutedFg, marginBottom:3 }}>User ID: usr_8nQpL3kMtYx2vBcZdR5h</div>
+          <div style={{ fontSize:12, color:Zk.mutedFg }}>Internal record. For support reference only.</div>
+        </div>
+
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<Page/>);
+</script>
+</body>
+</html>

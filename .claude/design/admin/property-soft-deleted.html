@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Utility Bills CRM — Admin: Old apartment (soft-deleted)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; padding: 0; min-height: 100%; background: #fafafa; }
+  body { font-family: 'Inter', system-ui, -apple-system, sans-serif; -webkit-font-smoothing: antialiased; }
+  * { box-sizing: border-box; }
+  button { font-family: inherit; }
+  a { text-decoration: none; }
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" data-presets="react">
+
+const Zk = {
+  background:'#ffffff', foreground:'#09090b', card:'#ffffff',
+  muted:'#f4f4f5', mutedFg:'#71717a', border:'#e4e4e7',
+  subtle:'#fafafa', destructive:'#dc2626',
+};
+const AMBER = { line:'#f59e0b', solid:'#d97706', tintBg:'#fef3c7', tintBorder:'#fde68a' };
+
+function Ico({ size=16, stroke='currentColor', d, fill='none', children }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill={fill}
+      stroke={stroke} strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round">
+      {d ? <path d={d}/> : children}
+    </svg>
+  );
+}
+function Kard({ children, style }) {
+  return <div style={{ background:Zk.card, border:`1px solid ${Zk.border}`, borderRadius:8, boxShadow:'0 1px 2px 0 rgba(24,24,27,0.05)', ...style }}>{children}</div>;
+}
+
+const IcoLayoutDash = (p) => <Ico size={p.size||16} stroke={p.stroke||'currentColor'}><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></Ico>;
+const IcoTrash  = (p) => <Ico size={p.size||16} stroke={p.stroke||'currentColor'}><path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></Ico>;
+const IcoRotate = (p) => <Ico size={p.size||16} stroke={p.stroke||'currentColor'}><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></Ico>;
+const IcoChevR  = (p) => <Ico size={p.size||13} stroke={p.stroke||Zk.border} d="m9 18 6-6-6-6"/>;
+
+// ── Admin TopBar ───────────────────────────────────────────────
+function AdminTopBar({ activeNav='Properties' }) {
+  return (
+    <div style={{ position:'sticky', top:0, zIndex:10 }}>
+      <div style={{ height:3, background:AMBER.line }}/>
+      <div style={{ height:64, background:'rgba(255,255,255,0.8)', backdropFilter:'blur(8px)', WebkitBackdropFilter:'blur(8px)', borderBottom:`1px solid ${Zk.border}`, display:'flex', alignItems:'center', padding:'0 32px' }}>
+        <div style={{ display:'flex', alignItems:'center', gap:8, marginRight:12 }}>
+          <div style={{ width:26, height:26, borderRadius:6, background:Zk.foreground, display:'flex', alignItems:'center', justifyContent:'center' }}><IcoLayoutDash size={15} stroke="#fff"/></div>
+          <span style={{ fontSize:14.5, fontWeight:600, letterSpacing:-0.1, color:Zk.foreground }}>UtilityBills</span>
+        </div>
+        <div style={{ display:'inline-flex', alignItems:'center', padding:'2px 8px', borderRadius:9999, border:`1.5px solid ${AMBER.line}`, color:AMBER.solid, fontSize:11, fontWeight:600, letterSpacing:'0.04em', marginRight:28, lineHeight:1 }}>Admin</div>
+        <nav style={{ display:'flex', alignItems:'center', gap:4, flex:1 }}>
+          {['Dashboard','Properties','Users','Landing'].map(item => {
+            const active = item === activeNav;
+            return <a key={item} href="#" style={{ position:'relative', padding:'8px 12px', fontSize:13.5, fontWeight:active?500:400, color:active?Zk.foreground:Zk.mutedFg, borderRadius:6 }}>{item}{active && <span style={{ position:'absolute', left:12, right:12, bottom:-1, height:2, background:AMBER.solid, borderRadius:2 }}/>}</a>;
+          })}
+        </nav>
+        <button style={{ display:'flex', alignItems:'center', gap:8, height:36, padding:'0 4px 0 8px', background:'transparent', border:'none', cursor:'pointer' }}>
+          <span style={{ fontSize:13, color:Zk.foreground, fontWeight:500 }}>Art Loban</span>
+          <div style={{ width:28, height:28, borderRadius:'50%', background:AMBER.tintBg, color:AMBER.solid, display:'flex', alignItems:'center', justifyContent:'center', fontSize:11, fontWeight:600, border:`1px solid ${AMBER.tintBorder}` }}>AL</div>
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ── Info grid ──────────────────────────────────────────────────
+function InfoGrid({ rows }) {
+  const pairs = [];
+  for (let i = 0; i < rows.length; i += 2) pairs.push(rows.slice(i, i+2));
+  return (
+    <div>
+      {pairs.map((pair, pi) => (
+        <div key={pi} style={{ display:'grid', gridTemplateColumns:'1fr 1fr', borderBottom: pi === pairs.length-1 ? 'none' : `1px solid ${Zk.border}` }}>
+          {pair.map((row, ri) => (
+            <div key={ri} style={{ padding:'14px 0', paddingRight:ri===0?32:0, paddingLeft:ri===1?24:0, borderLeft:ri===1?`1px solid ${Zk.border}`:'none' }}>
+              <div style={{ fontSize:11, fontWeight:600, color:Zk.mutedFg, letterSpacing:'0.04em', textTransform:'uppercase', marginBottom:4 }}>{row.label}</div>
+              <div style={{ fontSize:13.5, color:Zk.foreground }}>{row.value}</div>
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function SharingRow({ initials, name, role, isLast }) {
+  return (
+    <div style={{ display:'flex', alignItems:'center', gap:12, padding:'12px 0', borderBottom:isLast?'none':`1px solid ${Zk.border}` }}>
+      <div style={{ width:30, height:30, borderRadius:'50%', background:Zk.muted, display:'flex', alignItems:'center', justifyContent:'center', fontSize:10.5, fontWeight:600, color:Zk.mutedFg, flexShrink:0 }}>{initials}</div>
+      <span style={{ flex:1, fontSize:13.5, fontWeight:500, color:Zk.foreground }}>{name}</span>
+      <span style={{ fontSize:13, color:Zk.mutedFg }}>{role}</span>
+    </div>
+  );
+}
+
+// ── Page ───────────────────────────────────────────────────────
+function Page() {
+  return (
+    <div style={{ fontFamily:"'Inter',system-ui,sans-serif", fontFeatureSettings:'"cv11" 1,"ss01" 1', color:Zk.foreground, background:Zk.subtle, minHeight:'100vh', WebkitFontSmoothing:'antialiased' }}>
+      <AdminTopBar/>
+      <div style={{ maxWidth:900, margin:'0 auto', padding:'32px 32px 64px' }}>
+
+        {/* Breadcrumbs */}
+        <div style={{ display:'flex', alignItems:'center', gap:6, fontSize:13, color:Zk.mutedFg, marginBottom:20 }}>
+          <a href="#" style={{ color:Zk.mutedFg }}>art-admin</a><IcoChevR/><a href="#" style={{ color:Zk.mutedFg }}>properties</a><IcoChevR/><span style={{ color:Zk.foreground }}>Old apartment</span>
+        </div>
+
+        {/* Destructive banner */}
+        <div style={{ display:'flex', alignItems:'flex-start', gap:14, padding:'16px 20px', background:'#fef2f2', border:'1px solid #fecaca', borderLeft:`4px solid ${Zk.destructive}`, borderRadius:8, marginBottom:24 }}>
+          <div style={{ color:Zk.destructive, flexShrink:0, marginTop:1 }}><IcoTrash size={18} stroke={Zk.destructive}/></div>
+          <div style={{ flex:1 }}>
+            <div style={{ fontSize:14, fontWeight:600, color:'#7f1d1d', marginBottom:3 }}>This property is soft-deleted</div>
+            <p style={{ margin:0, fontSize:13, color:'#991b1b', lineHeight:1.55 }}>Soft-deleted on March 12, 2026. The owner sees this property as gone. You can restore it or delete it permanently.</p>
+          </div>
+          <div style={{ display:'flex', alignItems:'center', gap:8, flexShrink:0 }}>
+            <button style={{ display:'inline-flex', alignItems:'center', gap:6, height:32, padding:'0 12px', background:Zk.background, border:`1px solid ${Zk.border}`, borderRadius:6, fontSize:13, fontWeight:500, color:Zk.foreground, cursor:'pointer' }}>
+              <IcoRotate size={13} stroke={Zk.foreground}/> Restore
+            </button>
+            <button style={{ display:'inline-flex', alignItems:'center', gap:6, height:32, padding:'0 12px', background:Zk.destructive, border:'none', borderRadius:6, fontSize:13, fontWeight:500, color:'#fff', cursor:'pointer' }}>
+              <IcoTrash size={13} stroke="#fff"/> Delete permanently
+            </button>
+          </div>
+        </div>
+
+        {/* Page header */}
+        <div style={{ marginBottom:24 }}>
+          <h1 style={{ margin:0, fontSize:28, fontWeight:600, letterSpacing:-0.6, color:Zk.foreground, opacity:0.65, textDecoration:'line-through', textDecorationColor:Zk.mutedFg }}>Old apartment</h1>
+          <p style={{ margin:'6px 0 0', fontSize:13.5, color:Zk.mutedFg }}>Apartment · Kyiv, Velyka Vasylkivska 142, apt 7 · 3 services</p>
+        </div>
+
+        {/* Card 1 */}
+        <Kard style={{ padding:0, overflow:'hidden', marginBottom:16 }}>
+          <div style={{ padding:'16px 24px', borderBottom:`1px solid ${Zk.border}` }}>
+            <h3 style={{ margin:0, fontSize:14, fontWeight:600, color:Zk.foreground, letterSpacing:-0.1 }}>Property info</h3>
+          </div>
+          <div style={{ padding:'0 24px' }}>
+            <InfoGrid rows={[
+              { label:'Owner(s)',       value:'Mykhailo Tkachenko' },
+              { label:'Type',           value:'Apartment' },
+              { label:'Address',        value:'Kyiv, Velyka Vasylkivska 142, apt 7' },
+              { label:'Services',       value:'3 — Electricity, Cold water, Internet' },
+              { label:'Created',        value:'January 8, 2024' },
+              { label:'Last activity',  value:'February 28, 2026' },
+              { label:'Soft-deleted at',value:'March 12, 2026' },
+              { label:'Soft-deleted by',value:'Mykhailo Tkachenko (owner)' },
+            ]}/>
+          </div>
+        </Kard>
+
+        {/* Card 2 */}
+        <Kard style={{ padding:0, overflow:'hidden', marginBottom:24 }}>
+          <div style={{ padding:'16px 24px', borderBottom:`1px solid ${Zk.border}` }}>
+            <h3 style={{ margin:0, fontSize:14, fontWeight:600, color:Zk.foreground, letterSpacing:-0.1 }}>Sharing snapshot</h3>
+          </div>
+          <div style={{ padding:'0 24px' }}>
+            <SharingRow initials="MT" name="Mykhailo Tkachenko" role="Owner"  isLast={false}/>
+            <SharingRow initials="TT" name="Tetiana Tkachenko"  role="Editor" isLast={true}/>
+          </div>
+          <div style={{ margin:'0 24px 20px', padding:'10px 14px', background:Zk.subtle, border:`1px solid ${Zk.border}`, borderRadius:6, fontSize:12.5, color:Zk.mutedFg, lineHeight:1.55 }}>
+            These users no longer see this property. Restoring it brings access back.
+          </div>
+        </Kard>
+
+        {/* Admin metadata */}
+        <div style={{ paddingTop:16, borderTop:`1px solid ${Zk.border}` }}>
+          <div style={{ fontFamily:"'SF Mono','Fira Mono','Courier New',monospace", fontSize:12, color:Zk.mutedFg, marginBottom:3 }}>Property ID: prop_2hX9kL3mNqRtY7vBcZ</div>
+          <div style={{ fontSize:12, color:Zk.mutedFg }}>Internal record. For support reference only.</div>
+        </div>
+
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<Page/>);
+</script>
+</body>
+</html>

@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Utility Bills CRM — Admin: All users (light)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; padding: 0; min-height: 100%; background: #f4f4f5; }
+  body { font-family: 'Inter', system-ui, -apple-system, sans-serif; -webkit-font-smoothing: antialiased; }
+  * { box-sizing: border-box; }
+  button { font-family: inherit; }
+  a { text-decoration: none; }
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" data-presets="react">
+
+const useLocalState = React.useState;
+
+// ── Zinc tokens ────────────────────────────────────────────────
+const Zk = {
+  background:'#ffffff', foreground:'#09090b', card:'#ffffff',
+  muted:'#f4f4f5', mutedFg:'#71717a', mutedFg2:'#a1a1aa', border:'#e4e4e7',
+  subtle:'#fafafa', destructive:'#dc2626',
+};
+const AMBER = { line:'#f59e0b', solid:'#d97706', tintBg:'#fef3c7', tintBorder:'#fde68a' };
+
+// ── SVG icon wrapper ───────────────────────────────────────────
+function Ico({ size=16, stroke='currentColor', d, fill='none', children }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill={fill}
+      stroke={stroke} strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round">
+      {d ? <path d={d}/> : children}
+    </svg>
+  );
+}
+function Kard({ children, style }) {
+  return <div style={{ background:Zk.card, border:`1px solid ${Zk.border}`, borderRadius:8, boxShadow:'0 1px 2px 0 rgba(24,24,27,0.05)', ...style }}>{children}</div>;
+}
+
+// ── Icons ──────────────────────────────────────────────────────
+const IcoLayoutDash = (p) => <Ico size={p.size||16} stroke={p.stroke||'currentColor'}><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></Ico>;
+const IcoChevD     = (p) => <Ico size={p.size||14} stroke={p.stroke||Zk.mutedFg} d="m6 9 6 6 6-6"/>;
+const IcoChevL     = (p) => <Ico size={p.size||13} stroke={p.stroke||'currentColor'} d="m15 18-6-6 6-6"/>;
+const IcoChevR     = (p) => <Ico size={p.size||13} stroke={p.stroke||'currentColor'} d="m9 18 6-6-6-6"/>;
+const IcoArrowDown = (p) => <Ico size={p.size||11} stroke={p.stroke||'currentColor'}><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></Ico>;
+const IcoMoreV     = (p) => <Ico size={p.size||14} stroke={p.stroke||'currentColor'}><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></Ico>;
+
+// ── Panel label / frame ────────────────────────────────────────
+function PanelLabel({ view, url, extra }) {
+  return (
+    <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:8, paddingLeft:2 }}>
+      <span style={{ fontSize:11, fontWeight:600, letterSpacing:'0.07em', textTransform:'uppercase', color:'#a1a1aa' }}>{view}</span>
+      <code style={{ fontSize:11, background:'#e4e4e7', padding:'1px 6px', borderRadius:4, color:'#52525b', fontFamily:"'SF Mono','Fira Mono',monospace" }}>{url}</code>
+      {extra && <span style={{ fontSize:11, color:'#a1a1aa' }}>· {extra}</span>}
+    </div>
+  );
+}
+function PanelFrame({ children, style }) {
+  return <div style={{ background:Zk.background, borderRadius:12, overflow:'hidden', boxShadow:'0 2px 16px -4px rgba(0,0,0,0.1), 0 1px 4px -2px rgba(0,0,0,0.06)', ...style }}>{children}</div>;
+}
+
+// ── Admin TopBar ───────────────────────────────────────────────
+function AdminTopBar({ activeNav='Users' }) {
+  const navItems = ['Dashboard','Properties','Users','Landing'];
+  return (
+    <div>
+      <div style={{ height:3, background:AMBER.line }}/>
+      <div style={{ height:64, background:'rgba(255,255,255,0.95)', borderBottom:`1px solid ${Zk.border}`, display:'flex', alignItems:'center', padding:'0 32px' }}>
+        <div style={{ display:'flex', alignItems:'center', gap:8, marginRight:12 }}>
+          <div style={{ width:26, height:26, borderRadius:6, background:Zk.foreground, display:'flex', alignItems:'center', justifyContent:'center' }}><IcoLayoutDash size={15} stroke="#fff"/></div>
+          <span style={{ fontSize:14.5, fontWeight:600, letterSpacing:-0.1, color:Zk.foreground }}>UtilityBills</span>
+        </div>
+        <div style={{ display:'inline-flex', alignItems:'center', padding:'2px 8px', borderRadius:9999, border:`1.5px solid ${AMBER.line}`, color:AMBER.solid, fontSize:11, fontWeight:600, letterSpacing:'0.04em', marginRight:28, lineHeight:1 }}>Admin</div>
+        <nav style={{ display:'flex', alignItems:'center', gap:4, flex:1 }}>
+          {navItems.map(item => {
+            const active = item === activeNav;
+            return (
+              <a key={item} href="#" style={{ position:'relative', padding:'8px 12px', fontSize:13.5, fontWeight:active?500:400, color:active?Zk.foreground:Zk.mutedFg, borderRadius:6 }}>
+                {item}
+                {active && <span style={{ position:'absolute', left:12, right:12, bottom:-1, height:2, background:AMBER.solid, borderRadius:2 }}/>}
+              </a>
+            );
+          })}
+        </nav>
+        <button style={{ display:'flex', alignItems:'center', gap:8, height:36, padding:'0 4px 0 8px', background:'transparent', border:'none', cursor:'pointer' }}>
+          <span style={{ fontSize:13, color:Zk.foreground, fontWeight:500 }}>Art Loban</span>
+          <div style={{ width:28, height:28, borderRadius:'50%', background:AMBER.tintBg, color:AMBER.solid, display:'flex', alignItems:'center', justifyContent:'center', fontSize:11, fontWeight:600, border:`1px solid ${AMBER.tintBorder}` }}>AL</div>
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ── Admin TopBar (compact, for mobile frame) ───────────────────
+function AdminTopBarMobile({ activeNav='Users' }) {
+  return (
+    <div>
+      <div style={{ height:3, background:AMBER.line }}/>
+      <div style={{ height:52, background:'rgba(255,255,255,0.95)', borderBottom:`1px solid ${Zk.border}`, display:'flex', alignItems:'center', padding:'0 16px', gap:8 }}>
+        <div style={{ width:24, height:24, borderRadius:6, background:Zk.foreground, display:'flex', alignItems:'center', justifyContent:'center' }}><IcoLayoutDash size={14} stroke="#fff"/></div>
+        <span style={{ fontSize:14, fontWeight:600, letterSpacing:-0.1 }}>UtilityBills</span>
+        <div style={{ display:'inline-flex', alignItems:'center', padding:'1px 7px', borderRadius:9999, border:`1.25px solid ${AMBER.line}`, color:AMBER.solid, fontSize:10, fontWeight:600, letterSpacing:'0.04em', lineHeight:1 }}>Admin</div>
+        <div style={{ flex:1 }}/>
+        <div style={{ width:26, height:26, borderRadius:'50%', background:AMBER.tintBg, color:AMBER.solid, display:'flex', alignItems:'center', justifyContent:'center', fontSize:10.5, fontWeight:600, border:`1px solid ${AMBER.tintBorder}` }}>AL</div>
+      </div>
+      <div style={{ display:'flex', borderBottom:`1px solid ${Zk.border}`, padding:'0 8px', background:'#fff', overflowX:'auto' }}>
+        {['Dashboard','Properties','Users','Landing'].map(item => {
+          const active = item === activeNav;
+          return (
+            <a key={item} href="#" style={{ position:'relative', padding:'10px 12px', fontSize:13, fontWeight:active?500:400, color:active?Zk.foreground:Zk.mutedFg, whiteSpace:'nowrap' }}>
+              {item}
+              {active && <span style={{ position:'absolute', left:12, right:12, bottom:-1, height:2, background:AMBER.solid, borderRadius:2 }}/>}
+            </a>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ── Data ───────────────────────────────────────────────────────
+const USERS = [
+  { email:'art.loban@example.com',           name:'Art Loban',           role:'Admin', props:3, created:'Mar 2024',         last:'2 minutes ago'  },
+  { email:'olena.loban@example.com',         name:'Olena Loban',         role:'User',  props:1, created:'Mar 2024',         last:'12 minutes ago' },
+  { email:'olena.petrenko@example.com',      name:'Olena Petrenko',      role:'User',  props:2, created:'Apr 2024',         last:'1 hour ago'     },
+  { email:'mykhailo.tkachenko@example.com',  name:'Mykhailo Tkachenko',  role:'User',  props:2, created:'Jan 2024',         last:'3 hours ago'    },
+  { email:'iryna.shevchenko@example.com',    name:'Iryna Shevchenko',    role:'User',  props:1, created:'Jun 2024',         last:'yesterday'      },
+  { email:'bohdan.kovalenko@example.com',    name:'Bohdan Kovalenko',    role:'User',  props:1, created:'Aug 2025',         last:'yesterday'      },
+  { email:'iryna.petrenko@example.com',      name:'Iryna Petrenko',      role:'User',  props:1, created:'Apr 2024',         last:'2 days ago'     },
+  { email:'tetiana.tkachenko@example.com',   name:'Tetiana Tkachenko',   role:'User',  props:1, created:'Jan 2024',         last:'1 week ago'     },
+  { email:'kateryna.lysenko@example.com',    name:'Kateryna Lysenko',    role:'User',  props:0, created:'Feb 2024',         last:'4 days ago'     },
+  { email:'nataliia.boyko@example.com',      name:'Nataliia Boyko',      role:'User',  props:0, created:'Nov 2025',         last:'3 weeks ago'    },
+  { email:'dmytro.savchenko@example.com',    name:'Dmytro Savchenko',    role:'User',  props:0, created:'Sep 2025',         last:'1 month ago'    },
+  { email:'alex.kovalenko@example.com',      name:'Alex Kovalenko',      role:'User',  props:0, created:'12 minutes ago',   last:'12 minutes ago' },
+];
+
+// ── Badges ─────────────────────────────────────────────────────
+function RoleBadge({ role }) {
+  if (role === 'Admin') {
+    return (
+      <span style={{ display:'inline-flex', alignItems:'center', padding:'2px 8px', borderRadius:9999, border:`1px solid ${AMBER.line}`, fontSize:11.5, fontWeight:500, color:AMBER.solid, lineHeight:1.4 }}>
+        Admin
+      </span>
+    );
+  }
+  return (
+    <span style={{ display:'inline-flex', alignItems:'center', padding:'2px 8px', borderRadius:9999, border:`1px solid ${Zk.border}`, fontSize:11.5, fontWeight:500, color:Zk.mutedFg, lineHeight:1.4 }}>
+      User
+    </span>
+  );
+}
+
+function FilterPill({ label }) {
+  return (
+    <button style={{ display:'inline-flex', alignItems:'center', gap:6, height:32, padding:'0 10px 0 12px', background:Zk.background, border:`1px solid ${Zk.border}`, borderRadius:6, fontSize:13, color:Zk.foreground, cursor:'pointer' }}>
+      {label} <IcoChevD size={14} stroke={Zk.mutedFg}/>
+    </button>
+  );
+}
+
+// ── Sortable column header (for active sort col) ───────────────
+function SortHeader({ label, active, align='left' }) {
+  return (
+    <span style={{ display:'inline-flex', alignItems:'center', gap:4, color: active ? Zk.foreground : Zk.mutedFg, cursor:'pointer' }}>
+      {label}
+      {active && <IcoArrowDown size={10} stroke={Zk.foreground}/>}
+    </span>
+  );
+}
+
+// ── Table row ──────────────────────────────────────────────────
+function UserRow({ row, isLast }) {
+  const [hover, setHover] = useLocalState(false);
+  const cell = { padding:'12px 16px', borderBottom: isLast ? 'none' : `1px solid ${Zk.border}`, fontSize:13, verticalAlign:'middle' };
+  return (
+    <tr onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
+      style={{ background: hover ? Zk.subtle : 'transparent', transition:'background 120ms', cursor:'pointer' }}>
+      <td style={{ ...cell, fontWeight:500, color:Zk.foreground }}>{row.email}</td>
+      <td style={{ ...cell, color:Zk.mutedFg }}>{row.name}</td>
+      <td style={cell}><RoleBadge role={row.role}/></td>
+      <td style={{ ...cell, textAlign:'right', color: row.props === 0 ? Zk.mutedFg2 : Zk.foreground, fontFeatureSettings:'"tnum" 1' }}>{row.props}</td>
+      <td style={{ ...cell, color:Zk.mutedFg, fontSize:12.5, whiteSpace:'nowrap' }}>{row.created}</td>
+      <td style={{ ...cell, color:Zk.mutedFg, fontSize:12.5, whiteSpace:'nowrap' }}>{row.last}</td>
+      <td style={{ ...cell, width:1 }}>
+        <button onClick={(e) => e.stopPropagation()} style={{ display:'flex', alignItems:'center', justifyContent:'center', width:28, height:28, borderRadius:6, border:`1px solid ${Zk.border}`, background:Zk.background, cursor:'pointer' }}>
+          <IcoMoreV size={14} stroke={Zk.mutedFg}/>
+        </button>
+      </td>
+    </tr>
+  );
+}
+
+// ── Desktop view ───────────────────────────────────────────────
+function DesktopView() {
+  const headers = [
+    { label:'Email',      align:'left',  active:false },
+    { label:'Name',       align:'left',  active:false },
+    { label:'Role',       align:'left',  active:false },
+    { label:'Properties', align:'right', active:false },
+    { label:'Created',    align:'left',  active:false },
+    { label:'Last login', align:'left',  active:true  },
+    { label:'',           align:'left',  active:false },
+  ];
+  return (
+    <>
+      <AdminTopBar activeNav="Users"/>
+      <div style={{ maxWidth:1100, margin:'0 auto', padding:'32px 32px 40px' }}>
+        <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', marginBottom:24, gap:16 }}>
+          <div>
+            <h1 style={{ margin:0, fontSize:28, fontWeight:600, letterSpacing:-0.6, color:Zk.foreground }}>All users</h1>
+            <p style={{ margin:'5px 0 0', fontSize:13, color:Zk.mutedFg }}>12 users · 1 admin</p>
+          </div>
+          <div style={{ display:'flex', alignItems:'center', gap:8 }}>
+            <FilterPill label="Role: All"/>
+            <FilterPill label="Status: All"/>
+          </div>
+        </div>
+
+        <Kard style={{ padding:0, overflow:'hidden' }}>
+          <table style={{ width:'100%', borderCollapse:'collapse' }}>
+            <thead>
+              <tr style={{ background:Zk.muted }}>
+                {headers.map((h,i) => (
+                  <th key={i} style={{ padding:'10px 16px', textAlign:h.align, fontSize:11.5, fontWeight:600, color:Zk.mutedFg, letterSpacing:'0.03em', borderBottom:`1px solid ${Zk.border}`, whiteSpace:'nowrap' }}>
+                    <SortHeader label={h.label} active={h.active} align={h.align}/>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {USERS.map((row,i) => <UserRow key={i} row={row} isLast={i===USERS.length-1}/>)}
+            </tbody>
+          </table>
+
+          {/* Footer */}
+          <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'12px 16px', borderTop:`1px solid ${Zk.border}`, background:Zk.subtle }}>
+            <span style={{ fontSize:12.5, color:Zk.mutedFg }}>12 users</span>
+            <div style={{ display:'flex', alignItems:'center', gap:8 }}>
+              <button disabled style={{ display:'flex', alignItems:'center', justifyContent:'center', width:28, height:28, borderRadius:6, border:`1px solid ${Zk.border}`, background:Zk.background, color:Zk.mutedFg2, cursor:'not-allowed' }}>
+                <IcoChevL size={13} stroke={Zk.mutedFg2}/>
+              </button>
+              <span style={{ fontSize:12.5, color:Zk.mutedFg, fontFeatureSettings:'"tnum" 1' }}>1 / 1</span>
+              <button disabled style={{ display:'flex', alignItems:'center', justifyContent:'center', width:28, height:28, borderRadius:6, border:`1px solid ${Zk.border}`, background:Zk.background, color:Zk.mutedFg2, cursor:'not-allowed' }}>
+                <IcoChevR size={13} stroke={Zk.mutedFg2}/>
+              </button>
+            </div>
+          </div>
+        </Kard>
+      </div>
+    </>
+  );
+}
+
+// ── Mobile card ────────────────────────────────────────────────
+function MobileUserCard({ row, isLast }) {
+  const propText = row.props === 0
+    ? 'no properties'
+    : (row.props === 1 ? '1 property' : `${row.props} properties`);
+  return (
+    <div style={{ padding:'14px 16px', borderBottom: isLast ? 'none' : `1px solid ${Zk.border}`, display:'flex', alignItems:'flex-start', gap:10 }}>
+      <div style={{ flex:1, minWidth:0 }}>
+        <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:2 }}>
+          <span style={{ fontSize:13.5, fontWeight:500, color:Zk.foreground, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{row.email}</span>
+        </div>
+        <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:8 }}>
+          <span style={{ fontSize:13, color:Zk.mutedFg }}>{row.name}</span>
+          <RoleBadge role={row.role}/>
+        </div>
+        <div style={{ fontSize:12, color:Zk.mutedFg, lineHeight:1.5 }}>
+          <span style={{ color: row.props === 0 ? Zk.mutedFg2 : Zk.mutedFg }}>{propText}</span>
+          <span style={{ color:Zk.border, margin:'0 6px' }}>·</span>
+          <span>joined {row.created}</span>
+          <span style={{ color:Zk.border, margin:'0 6px' }}>·</span>
+          <span>last seen {row.last}</span>
+        </div>
+      </div>
+      <button style={{ display:'flex', alignItems:'center', justifyContent:'center', width:28, height:28, borderRadius:6, border:`1px solid ${Zk.border}`, background:Zk.background, cursor:'pointer', flexShrink:0 }}>
+        <IcoMoreV size={14} stroke={Zk.mutedFg}/>
+      </button>
+    </div>
+  );
+}
+
+function MobileView() {
+  return (
+    <div style={{ background:Zk.subtle, minHeight:'100%' }}>
+      <AdminTopBarMobile activeNav="Users"/>
+      <div style={{ padding:'20px 16px 24px' }}>
+        <div style={{ marginBottom:16 }}>
+          <h1 style={{ margin:0, fontSize:22, fontWeight:600, letterSpacing:-0.4, color:Zk.foreground }}>All users</h1>
+          <p style={{ margin:'4px 0 0', fontSize:12.5, color:Zk.mutedFg }}>12 users · 1 admin</p>
+        </div>
+        <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:16 }}>
+          <FilterPill label="Role: All"/>
+          <FilterPill label="Status: All"/>
+        </div>
+        <Kard style={{ padding:0, overflow:'hidden' }}>
+          {USERS.map((row,i) => <MobileUserCard key={i} row={row} isLast={i===USERS.length-1}/>)}
+          <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'12px 16px', borderTop:`1px solid ${Zk.border}`, background:Zk.subtle }}>
+            <span style={{ fontSize:12, color:Zk.mutedFg }}>12 users</span>
+            <span style={{ fontSize:12, color:Zk.mutedFg, fontFeatureSettings:'"tnum" 1' }}>1 / 1</span>
+          </div>
+        </Kard>
+      </div>
+    </div>
+  );
+}
+
+// ── Root ───────────────────────────────────────────────────────
+function Screen() {
+  return (
+    <div style={{ fontFamily:"'Inter',system-ui,sans-serif", fontFeatureSettings:'"cv11" 1,"ss01" 1', WebkitFontSmoothing:'antialiased', color:Zk.foreground, padding:'40px 40px 56px' }}>
+
+      <PanelLabel view="Admin view · desktop" url="/art-admin/users"/>
+      <PanelFrame>
+        <DesktopView/>
+      </PanelFrame>
+
+      <div style={{ display:'flex', alignItems:'center', gap:16, margin:'32px 0 20px' }}>
+        <div style={{ flex:1, height:1, background:'#d4d4d8' }}/>
+        <span style={{ fontSize:11, fontWeight:600, letterSpacing:'0.07em', textTransform:'uppercase', color:'#a1a1aa' }}>mobile · table collapses to cards</span>
+        <div style={{ flex:1, height:1, background:'#d4d4d8' }}/>
+      </div>
+
+      <div style={{ display:'flex', justifyContent:'center' }}>
+        <div>
+          <PanelLabel view="Admin view · mobile" url="/art-admin/users" extra="390 × auto"/>
+          <PanelFrame style={{ width:390, borderRadius:24, border:`1px solid ${Zk.border}` }}>
+            <MobileView/>
+          </PanelFrame>
+        </div>
+      </div>
+
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<Screen/>);
+</script>
+</body>
+</html>

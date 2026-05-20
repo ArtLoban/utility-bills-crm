@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Utility Bills CRM — Iteration 1</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; padding: 0; height: 100%; background: #18181b; }
+  body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+  * { box-sizing: border-box; }
+  button { font-family: inherit; }
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script type="text/babel" src="dashboard.jsx"></script>
+<script type="text/babel" src="screens.jsx"></script>
+<script type="text/babel" src="header-states.jsx"></script>
+<script type="text/babel" data-presets="react">
+  function Frame({ children, height = 1760 }) {
+    return (
+      <div style={{ width: '100%', height: '100%', overflow: 'hidden', background: '#fff' }}>
+        {children}
+      </div>
+    );
+  }
+
+  function App() {
+    const W = 1440;
+    return (
+      <window.DesignCanvas
+        title="Utility Bills CRM — Iteration 1"
+        subtitle="shadcn/ui New York · Zinc + Violet · Inter · Light mode"
+      >
+        <window.DCSection id="header" title="Header · Light" subtitle="Authenticated user — default, user menu, language switcher, mobile drawer">
+          <window.DCArtboard id="hdr-desktop-default" label="Desktop · Default" width={W} height={240}>
+            <window.HeaderStates.HeaderArtboard>
+              <window.HeaderStates.DesktopHeader activeNav="Dashboard" />
+              <window.HeaderStates.HeaderContext />
+            </window.HeaderStates.HeaderArtboard>
+          </window.DCArtboard>
+
+          <window.DCArtboard id="hdr-desktop-user" label="Desktop · User menu open" width={W} height={520}>
+            <window.HeaderStates.HeaderArtboard>
+              <window.HeaderStates.DesktopHeader activeNav="Dashboard" openMenu="user" />
+              <window.HeaderStates.HeaderContext />
+            </window.HeaderStates.HeaderArtboard>
+          </window.DCArtboard>
+
+          <window.DCArtboard id="hdr-desktop-user-hover" label="Desktop · User menu · Settings hovered" width={W} height={520}>
+            <window.HeaderStates.HeaderArtboard>
+              <window.HeaderStates.DesktopHeader activeNav="Dashboard" openMenu="user" hoveredUserItem="settings" />
+              <window.HeaderStates.HeaderContext />
+            </window.HeaderStates.HeaderArtboard>
+          </window.DCArtboard>
+
+          <window.DCArtboard id="hdr-desktop-lang" label="Desktop · Language switcher open" width={W} height={420}>
+            <window.HeaderStates.HeaderArtboard>
+              <window.HeaderStates.DesktopHeader activeNav="Dashboard" openMenu="lang" hoveredLang="UA" />
+              <window.HeaderStates.HeaderContext />
+            </window.HeaderStates.HeaderArtboard>
+          </window.DCArtboard>
+
+          <window.DCArtboard id="hdr-mobile-closed" label="Mobile · Closed" width={390} height={780}>
+            <window.HeaderStates.MobileHeader state="closed" />
+          </window.DCArtboard>
+
+          <window.DCArtboard id="hdr-mobile-open" label="Mobile · Drawer open" width={390} height={780}>
+            <window.HeaderStates.MobileHeader state="open" />
+          </window.DCArtboard>
+
+          <window.DCArtboard id="hdr-mobile-user" label="Mobile · Drawer · Account focused" width={390} height={780}>
+            <window.HeaderStates.MobileHeader state="user" />
+          </window.DCArtboard>
+
+          <window.DCArtboard id="hdr-mobile-lang" label="Mobile · Drawer · Language picker" width={390} height={780}>
+            <window.HeaderStates.MobileHeader state="lang" />
+          </window.DCArtboard>
+        </window.DCSection>
+
+        <window.DCSection id="header-dark" title="Header · Dark" subtitle="Same states in dark mode">
+          <window.DCArtboard id="hdr-d-desktop-default" label="Desktop · Default · Dark" width={W} height={240}>
+            <window.HeaderStates.HeaderArtboard theme="dark">
+              <window.HeaderStates.DesktopHeader theme="dark" activeNav="Dashboard" />
+              <window.HeaderStates.HeaderContext theme="dark" />
+            </window.HeaderStates.HeaderArtboard>
+          </window.DCArtboard>
+
+          <window.DCArtboard id="hdr-d-desktop-user" label="Desktop · User menu · Dark" width={W} height={520}>
+            <window.HeaderStates.HeaderArtboard theme="dark">
+              <window.HeaderStates.DesktopHeader theme="dark" activeNav="Dashboard" openMenu="user" hoveredUserItem="settings" />
+              <window.HeaderStates.HeaderContext theme="dark" />
+            </window.HeaderStates.HeaderArtboard>
+          </window.DCArtboard>
+
+          <window.DCArtboard id="hdr-d-desktop-lang" label="Desktop · Language switcher · Dark" width={W} height={420}>
+            <window.HeaderStates.HeaderArtboard theme="dark">
+              <window.HeaderStates.DesktopHeader theme="dark" activeNav="Dashboard" openMenu="lang" hoveredLang="UA" />
+              <window.HeaderStates.HeaderContext theme="dark" />
+            </window.HeaderStates.HeaderArtboard>
+          </window.DCArtboard>
+
+          <window.DCArtboard id="hdr-d-mobile-closed" label="Mobile · Closed · Dark" width={390} height={780}>
+            <window.HeaderStates.MobileHeader theme="dark" state="closed" />
+          </window.DCArtboard>
+
+          <window.DCArtboard id="hdr-d-mobile-open" label="Mobile · Drawer open · Dark" width={390} height={780}>
+            <window.HeaderStates.MobileHeader theme="dark" state="open" />
+          </window.DCArtboard>
+
+          <window.DCArtboard id="hdr-d-mobile-lang" label="Mobile · Language picker · Dark" width={390} height={780}>
+            <window.HeaderStates.MobileHeader theme="dark" state="lang" />
+          </window.DCArtboard>
+        </window.DCSection>
+
+        <window.DCSection id="header-guest" title="Header · Guest (unauthenticated)" subtitle="No avatar — Sign in / Sign up CTAs, marketing nav">
+          <window.DCArtboard id="hdr-g-desktop" label="Desktop · Guest" width={W} height={420}>
+            <window.HeaderStates.HeaderArtboard>
+              <window.HeaderStates.DesktopHeader guest activeNav="Home" />
+              <window.HeaderStates.HeaderContext guest />
+            </window.HeaderStates.HeaderArtboard>
+          </window.DCArtboard>
+
+          <window.DCArtboard id="hdr-g-desktop-lang" label="Desktop · Guest · Language open" width={W} height={420}>
+            <window.HeaderStates.HeaderArtboard>
+              <window.HeaderStates.DesktopHeader guest activeNav="Home" openMenu="lang" />
+              <window.HeaderStates.HeaderContext guest />
+            </window.HeaderStates.HeaderArtboard>
+          </window.DCArtboard>
+
+          <window.DCArtboard id="hdr-g-desktop-dark" label="Desktop · Guest · Dark" width={W} height={420}>
+            <window.HeaderStates.HeaderArtboard theme="dark">
+              <window.HeaderStates.DesktopHeader theme="dark" guest activeNav="Home" />
+              <window.HeaderStates.HeaderContext theme="dark" guest />
+            </window.HeaderStates.HeaderArtboard>
+          </window.DCArtboard>
+
+          <window.DCArtboard id="hdr-g-mobile-closed" label="Mobile · Guest · Closed" width={390} height={780}>
+            <window.HeaderStates.MobileHeader guest state="closed" />
+          </window.DCArtboard>
+
+          <window.DCArtboard id="hdr-g-mobile-open" label="Mobile · Guest · Drawer open" width={390} height={780}>
+            <window.HeaderStates.MobileHeader guest state="open" />
+          </window.DCArtboard>
+
+          <window.DCArtboard id="hdr-g-mobile-dark" label="Mobile · Guest · Drawer · Dark" width={390} height={780}>
+            <window.HeaderStates.MobileHeader theme="dark" guest state="open" />
+          </window.DCArtboard>
+        </window.DCSection>
+
+        <window.DCSection id="dashboard" title="Dashboard" subtitle="Full-data state (accent locked to Violet) and empty state">
+          <window.DCArtboard id="dash-full" label="Dashboard · Full data" width={W} height={1760}>
+            <Frame><Dashboard accentKey="violet"/></Frame>
+          </window.DCArtboard>
+          <window.DCArtboard id="dash-empty" label="Dashboard · Empty (first-time user)" width={W} height={900}>
+            <Frame><EmptyDashboard/></Frame>
+          </window.DCArtboard>
+        </window.DCSection>
+
+        <window.DCSection id="properties" title="Properties" subtitle="List view — with data and empty">
+          <window.DCArtboard id="props-full" label="Properties list · With data" width={W} height={720}>
+            <Frame><PropertiesList/></Frame>
+          </window.DCArtboard>
+          <window.DCArtboard id="props-empty" label="Properties list · Empty" width={W} height={720}>
+            <Frame><PropertiesList empty/></Frame>
+          </window.DCArtboard>
+        </window.DCSection>
+
+        <window.DCSection id="detail" title="Property detail" subtitle="Overview tab — with services and empty">
+          <window.DCArtboard id="detail-full" label="Property detail · Overview with services" width={W} height={860}>
+            <Frame><PropertyDetail/></Frame>
+          </window.DCArtboard>
+          <window.DCArtboard id="detail-empty" label="Property detail · No services yet" width={W} height={780}>
+            <Frame><PropertyDetail empty/></Frame>
+          </window.DCArtboard>
+        </window.DCSection>
+      </window.DesignCanvas>
+    );
+  }
+
+  ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Utility Bills CRM — Property Detail Comparison</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; padding: 0; min-height: 100%; background: #f4f4f5; }
+  body { font-family: 'Inter', system-ui, -apple-system, sans-serif; -webkit-font-smoothing: antialiased; }
+  * { box-sizing: border-box; }
+  button { font-family: inherit; }
+  a { text-decoration: none; }
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" data-presets="react">
+
+const useLocalState = React.useState;
+
+const Zk = {
+  background:'#ffffff', foreground:'#09090b', card:'#ffffff',
+  muted:'#f4f4f5', mutedFg:'#71717a', border:'#e4e4e7',
+  subtle:'#fafafa', destructive:'#dc2626', success:'#16a34a',
+};
+const VIOLET = { solid:'#7c3aed', tintBg:'#f5f3ff', tintBorder:'#ede9fe' };
+const AMBER  = { line:'#f59e0b', solid:'#d97706', tintBg:'#fef3c7', tintBorder:'#fde68a' };
+
+function Ico({ size=16, stroke='currentColor', d, fill='none', children }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill={fill}
+      stroke={stroke} strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round">
+      {d ? <path d={d}/> : children}
+    </svg>
+  );
+}
+function Kard({ children, style }) {
+  return <div style={{ background:Zk.card, border:`1px solid ${Zk.border}`, borderRadius:8, boxShadow:'0 1px 2px 0 rgba(24,24,27,0.05)', ...style }}>{children}</div>;
+}
+
+// Icons
+const IcoLayoutDash = (p) => <Ico size={p.size||16} stroke={p.stroke||'currentColor'}><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></Ico>;
+const IcoGlobe  = (p) => <Ico size={p.size||16} stroke={p.stroke||'currentColor'}><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></Ico>;
+const IcoMoon   = (p) => <Ico size={p.size||16} stroke={p.stroke||'currentColor'} d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>;
+const IcoChevR  = (p) => <Ico size={p.size||13} stroke={p.stroke||Zk.border} d="m9 18 6-6-6-6"/>;
+const IcoPencil = (p) => <Ico size={p.size||14} stroke={p.stroke||'currentColor'}><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></Ico>;
+const IcoShare  = (p) => <Ico size={p.size||14} stroke={p.stroke||'currentColor'}><path d="M12 2v13"/><path d="m16 6-4-4-4 4"/><path d="M20 13v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-6"/></Ico>;
+const IcoMoreH  = (p) => <Ico size={p.size||15} stroke={p.stroke||'currentColor'}><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></Ico>;
+const IcoZap    = (p) => <Ico size={p.size||16} stroke={p.stroke||'currentColor'} d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/>;
+const IcoDroplet= (p) => <Ico size={p.size||16} stroke={p.stroke||'currentColor'}><path d="M7 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S7.29 6.75 7 5.3c-.29 1.45-1.14 2.84-2.29 3.76S3 11.1 3 12.25c0 2.22 1.8 4.05 4 4.05z"/><path d="M12.56 6.6A10.97 10.97 0 0 0 14 3.02c.5 2.5 2 4.9 4 6.5s3 3.5 3 5.5a6.98 6.98 0 0 1-11.91 4.97"/></Ico>;
+const IcoFlame  = (p) => <Ico size={p.size||16} stroke={p.stroke||'currentColor'}><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></Ico>;
+const IcoWifi   = (p) => <Ico size={p.size||16} stroke={p.stroke||'currentColor'}><path d="M12 20h.01"/><path d="M2 8.82a15 15 0 0 1 20 0"/><path d="M5 12.859a10 10 0 0 1 14 0"/><path d="M8.5 16.429a5 5 0 0 1 7 0"/></Ico>;
+
+// Service config
+const SVC_CFG = {
+  electricity: { IcoC: IcoZap,     color:'#f59e0b', name:'Electricity', provider:'DTEK Kyiv Electric Networks', lastReading:'Apr 15', balance:-1210 },
+  coldWater:   { IcoC: IcoDroplet, color:'#3b82f6', name:'Cold water',  provider:'Kyivvodokanal',               lastReading:'Apr 15', balance:0     },
+  gas:         { IcoC: IcoFlame,   color:'#ef4444', name:'Gas',         provider:'Kyivgaz',                     lastReading:'Apr 15', balance:-974  },
+  internet:    { IcoC: IcoWifi,    color:'#14b8a6', name:'Internet',    provider:'Kyivstar',                    lastReading:null,     balance:0     },
+};
+const SVC_KEYS = ['electricity','coldWater','gas','internet'];
+
+const iconBtn = { width:32, height:32, borderRadius:6, display:'flex', alignItems:'center', justifyContent:'center', background:'transparent', border:'none', cursor:'pointer' };
+
+// ── Shared TopBar helper ───────────────────────────────────────
+function UserTopBar() {
+  return (
+    <div style={{ height:64, background:'rgba(255,255,255,0.95)', borderBottom:`1px solid ${Zk.border}`, display:'flex', alignItems:'center', padding:'0 32px' }}>
+      <div style={{ display:'flex', alignItems:'center', gap:8, marginRight:40 }}>
+        <div style={{ width:26, height:26, borderRadius:6, background:VIOLET.solid, display:'flex', alignItems:'center', justifyContent:'center' }}><IcoLayoutDash size={15} stroke="#fff"/></div>
+        <span style={{ fontSize:14.5, fontWeight:600, letterSpacing:-0.1, color:Zk.foreground }}>UtilityBills</span>
+      </div>
+      <nav style={{ display:'flex', alignItems:'center', gap:4, flex:1 }}>
+        {['Dashboard','Properties','Bills','Payments','Settings'].map(item => {
+          const active = item==='Properties';
+          return <a key={item} href="#" style={{ position:'relative', padding:'8px 12px', fontSize:13.5, fontWeight:active?500:400, color:active?Zk.foreground:Zk.mutedFg, borderRadius:6 }}>{item}{active&&<span style={{ position:'absolute', left:12, right:12, bottom:-1, height:2, background:VIOLET.solid, borderRadius:2 }}/>}</a>;
+        })}
+      </nav>
+      <div style={{ display:'flex', alignItems:'center', gap:4 }}>
+        <button style={iconBtn}><IcoGlobe size={16} stroke={Zk.mutedFg}/></button>
+        <button style={iconBtn}><IcoMoon size={16} stroke={Zk.mutedFg}/></button>
+        <div style={{ width:1, height:20, background:Zk.border, margin:'0 8px' }}/>
+        <button style={{ display:'flex', alignItems:'center', gap:8, height:36, padding:'0 4px 0 8px', background:'transparent', border:'none', cursor:'pointer' }}>
+          <span style={{ fontSize:13, color:Zk.foreground, fontWeight:500 }}>Art Loban</span>
+          <div style={{ width:28, height:28, borderRadius:'50%', background:VIOLET.tintBg, color:VIOLET.solid, display:'flex', alignItems:'center', justifyContent:'center', fontSize:11, fontWeight:600, border:`1px solid ${VIOLET.tintBorder}` }}>AL</div>
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function AdminTopBar() {
+  return (
+    <>
+      <div style={{ height:3, background:AMBER.line }}/>
+      <div style={{ height:64, background:'rgba(255,255,255,0.95)', borderBottom:`1px solid ${Zk.border}`, display:'flex', alignItems:'center', padding:'0 32px' }}>
+        <div style={{ display:'flex', alignItems:'center', gap:8, marginRight:12 }}>
+          <div style={{ width:26, height:26, borderRadius:6, background:Zk.foreground, display:'flex', alignItems:'center', justifyContent:'center' }}><IcoLayoutDash size={15} stroke="#fff"/></div>
+          <span style={{ fontSize:14.5, fontWeight:600, letterSpacing:-0.1, color:Zk.foreground }}>UtilityBills</span>
+        </div>
+        <div style={{ display:'inline-flex', alignItems:'center', padding:'2px 8px', borderRadius:9999, border:`1.5px solid ${AMBER.line}`, color:AMBER.solid, fontSize:11, fontWeight:600, letterSpacing:'0.04em', marginRight:28, lineHeight:1 }}>Admin</div>
+        <nav style={{ display:'flex', alignItems:'center', gap:4, flex:1 }}>
+          {['Dashboard','Properties','Users','Landing'].map(item => {
+            const active = item==='Properties';
+            return <a key={item} href="#" style={{ position:'relative', padding:'8px 12px', fontSize:13.5, fontWeight:active?500:400, color:active?Zk.foreground:Zk.mutedFg, borderRadius:6 }}>{item}{active&&<span style={{ position:'absolute', left:12, right:12, bottom:-1, height:2, background:AMBER.solid, borderRadius:2 }}/>}</a>;
+          })}
+        </nav>
+        <button style={{ display:'flex', alignItems:'center', gap:8, height:36, padding:'0 4px 0 8px', background:'transparent', border:'none', cursor:'pointer' }}>
+          <span style={{ fontSize:13, color:Zk.foreground, fontWeight:500 }}>Art Loban</span>
+          <div style={{ width:28, height:28, borderRadius:'50%', background:AMBER.tintBg, color:AMBER.solid, display:'flex', alignItems:'center', justifyContent:'center', fontSize:11, fontWeight:600, border:`1px solid ${AMBER.tintBorder}` }}>AL</div>
+        </button>
+      </div>
+    </>
+  );
+}
+
+// ── Service rows ───────────────────────────────────────────────
+function UserSvcRow({ svcKey, isLast }) {
+  const [hover, setHover] = useLocalState(false);
+  const s = SVC_CFG[svcKey];
+  const balColor = s.balance < 0 ? Zk.destructive : s.balance > 0 ? Zk.success : Zk.mutedFg;
+  const balText = s.balance === 0 ? '0 UAH' : `${s.balance<0?'−':'+'}${Math.abs(s.balance).toLocaleString()} UAH`;
+  return (
+    <a href="#" onMouseEnter={()=>setHover(true)} onMouseLeave={()=>setHover(false)}
+      style={{ display:'flex', alignItems:'center', gap:16, padding:'18px 24px', borderBottom:isLast?'none':`1px solid ${Zk.border}`, background:hover?Zk.subtle:'transparent', transition:'background 120ms' }}>
+      <div style={{ width:36, height:36, borderRadius:8, background:s.color+'1A', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+        <s.IcoC size={18} stroke={s.color}/>
+      </div>
+      <div style={{ flex:1, minWidth:0 }}>
+        <div style={{ fontSize:14.5, fontWeight:600, color:Zk.foreground, letterSpacing:-0.1, marginBottom:2 }}>{s.name}</div>
+        <div style={{ fontSize:12.5, color:Zk.mutedFg }}>{s.provider}{s.lastReading?` · Last reading: ${s.lastReading}`:''}</div>
+      </div>
+      <div style={{ fontSize:15, fontWeight:600, color:balColor, fontFeatureSettings:'"tnum" 1' }}>{balText}</div>
+      <IcoChevR size={16} stroke={hover?VIOLET.solid:Zk.mutedFg}/>
+    </a>
+  );
+}
+
+function AdminSvcRow({ svcKey, isLast }) {
+  const s = SVC_CFG[svcKey];
+  const balColor = s.balance < 0 ? Zk.destructive : s.balance > 0 ? Zk.success : Zk.mutedFg;
+  const balText = s.balance === 0 ? '0 UAH' : `${s.balance<0?'−':'+'}${Math.abs(s.balance).toLocaleString()} UAH`;
+  return (
+    <div style={{ display:'flex', alignItems:'center', gap:16, padding:'16px 24px', borderBottom:isLast?'none':`1px solid ${Zk.border}` }}>
+      <div style={{ width:36, height:36, borderRadius:8, background:s.color+'1A', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+        <s.IcoC size={18} stroke={s.color}/>
+      </div>
+      <div style={{ flex:1, minWidth:0 }}>
+        <div style={{ fontSize:14, fontWeight:600, color:Zk.foreground, letterSpacing:-0.1, marginBottom:2 }}>{s.name}</div>
+        <div style={{ fontSize:12.5, color:Zk.mutedFg }}>{s.provider}{s.lastReading?` · Last reading ${s.lastReading}`:''}</div>
+      </div>
+      <div style={{ fontSize:14.5, fontWeight:600, color:balColor, fontFeatureSettings:'"tnum" 1' }}>{balText}</div>
+    </div>
+  );
+}
+
+// ── Info grid & Sharing ────────────────────────────────────────
+function InfoGrid({ rows }) {
+  const pairs = [];
+  for (let i = 0; i < rows.length; i += 2) pairs.push(rows.slice(i, i+2));
+  return (
+    <div>
+      {pairs.map((pair, pi) => (
+        <div key={pi} style={{ display:'grid', gridTemplateColumns:'1fr 1fr', borderBottom:pi===pairs.length-1?'none':`1px solid ${Zk.border}` }}>
+          {pair.map((row, ri) => (
+            <div key={ri} style={{ padding:'12px 0', paddingRight:ri===0?32:0, paddingLeft:ri===1?24:0, borderLeft:ri===1?`1px solid ${Zk.border}`:'none' }}>
+              <div style={{ fontSize:11, fontWeight:600, color:Zk.mutedFg, letterSpacing:'0.04em', textTransform:'uppercase', marginBottom:3 }}>{row.label}</div>
+              <div style={{ fontSize:13.5, color:Zk.foreground }}>{row.value}</div>
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function SharingRow({ initials, name, role, isLast }) {
+  return (
+    <div style={{ display:'flex', alignItems:'center', gap:12, padding:'12px 0', borderBottom:isLast?'none':`1px solid ${Zk.border}` }}>
+      <div style={{ width:30, height:30, borderRadius:'50%', background:Zk.muted, display:'flex', alignItems:'center', justifyContent:'center', fontSize:10.5, fontWeight:600, color:Zk.mutedFg, flexShrink:0 }}>{initials}</div>
+      <span style={{ flex:1, fontSize:13.5, fontWeight:500, color:Zk.foreground }}>{name}</span>
+      <span style={{ fontSize:13, color:Zk.mutedFg }}>{role}</span>
+    </div>
+  );
+}
+
+// ── Tabs ───────────────────────────────────────────────────────
+function Tabs({ value, items }) {
+  return (
+    <div style={{ display:'inline-flex', padding:3, background:Zk.muted, border:`1px solid ${Zk.border}`, borderRadius:8, marginBottom:20 }}>
+      {items.map(t => {
+        const active = t===value;
+        return <button key={t} style={{ padding:'6px 14px', fontSize:13, fontWeight:active?500:400, border:'none', borderRadius:5, cursor:'pointer', background:active?Zk.background:'transparent', color:active?Zk.foreground:Zk.mutedFg, boxShadow:active?'0 1px 2px rgba(0,0,0,0.06)':'none', fontFamily:'inherit', transition:'background 120ms' }}>{t}</button>;
+      })}
+    </div>
+  );
+}
+
+// ── Panel helpers ──────────────────────────────────────────────
+function PanelLabel({ view, url }) {
+  return (
+    <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:8, paddingLeft:2 }}>
+      <span style={{ fontSize:11, fontWeight:600, letterSpacing:'0.07em', textTransform:'uppercase', color:'#a1a1aa' }}>{view}</span>
+      <code style={{ fontSize:11, background:'#e4e4e7', padding:'1px 6px', borderRadius:4, color:'#52525b', fontFamily:"'SF Mono','Fira Mono',monospace" }}>{url}</code>
+    </div>
+  );
+}
+function PanelFrame({ children }) {
+  return <div style={{ background:Zk.background, borderRadius:12, overflow:'hidden', boxShadow:'0 2px 16px -4px rgba(0,0,0,0.1), 0 1px 4px -2px rgba(0,0,0,0.06)' }}>{children}</div>;
+}
+
+// ── Root ───────────────────────────────────────────────────────
+function Comparison() {
+  return (
+    <div style={{ fontFamily:"'Inter',system-ui,sans-serif", fontFeatureSettings:'"cv11" 1,"ss01" 1', WebkitFontSmoothing:'antialiased', background:'#f4f4f5', minHeight:'100vh', padding:'40px 40px 56px', color:Zk.foreground }}>
+
+      {/* ── User panel ── */}
+      <PanelLabel view="User view" url="/properties/main-apartment"/>
+      <PanelFrame>
+        <UserTopBar/>
+        <div style={{ maxWidth:1360, margin:'0 auto', padding:'32px 32px 40px' }}>
+          <div style={{ display:'flex', alignItems:'center', gap:6, fontSize:13, color:Zk.mutedFg, marginBottom:10 }}>
+            <a href="#" style={{ color:Zk.mutedFg }}>Properties</a><IcoChevR/><span style={{ color:Zk.foreground }}>Main apartment</span>
+          </div>
+          <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', marginBottom:24 }}>
+            <div>
+              <h1 style={{ margin:0, fontSize:28, fontWeight:600, letterSpacing:-0.6, color:Zk.foreground }}>Main apartment</h1>
+              <div style={{ marginTop:6, fontSize:13.5, color:Zk.mutedFg, display:'flex', alignItems:'center', gap:8 }}><span>Velyka Vasylkivska 142, apt 7</span><span>·</span><span>4 services</span><span>·</span><span>Created Mar 2024</span></div>
+            </div>
+            <div style={{ display:'flex', gap:8, flexShrink:0 }}>
+              <button style={{ display:'inline-flex', alignItems:'center', gap:6, height:32, padding:'0 12px', background:Zk.background, border:`1px solid ${Zk.border}`, borderRadius:6, fontSize:13, fontWeight:500, color:Zk.foreground, cursor:'pointer' }}><IcoPencil size={13} stroke={Zk.foreground}/> Edit</button>
+              <button style={{ display:'inline-flex', alignItems:'center', gap:6, height:32, padding:'0 12px', background:Zk.background, border:`1px solid ${Zk.border}`, borderRadius:6, fontSize:13, fontWeight:500, color:Zk.foreground, cursor:'pointer' }}><IcoShare size={13} stroke={Zk.foreground}/> Share</button>
+              <button style={{ width:32, height:32, borderRadius:6, border:`1px solid ${Zk.border}`, background:Zk.background, display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer' }}><IcoMoreH size={15} stroke={Zk.foreground}/></button>
+            </div>
+          </div>
+          <Tabs value="Overview" items={['Overview','Meters','Sharing']}/>
+          <Kard style={{ padding:0, overflow:'hidden' }}>
+            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'18px 24px', borderBottom:`1px solid ${Zk.border}` }}>
+              <div><h3 style={{ margin:0, fontSize:14, fontWeight:600, color:Zk.foreground, letterSpacing:-0.1 }}>Services on this property</h3><p style={{ margin:'2px 0 0', fontSize:12, color:Zk.mutedFg }}>4 services · Tap a row to open</p></div>
+              <button style={{ display:'inline-flex', alignItems:'center', gap:6, height:32, padding:'0 12px', background:Zk.background, border:`1px solid ${Zk.border}`, borderRadius:6, fontSize:13, fontWeight:500, color:Zk.foreground, cursor:'pointer' }}>+ Add service</button>
+            </div>
+            {SVC_KEYS.map((k,i) => <UserSvcRow key={k} svcKey={k} isLast={i===SVC_KEYS.length-1}/>)}
+          </Kard>
+        </div>
+      </PanelFrame>
+
+      <div style={{ display:'flex', alignItems:'center', gap:16, margin:'28px 0' }}>
+        <div style={{ flex:1, height:1, background:'#d4d4d8' }}/>
+        <span style={{ fontSize:11, fontWeight:600, letterSpacing:'0.07em', textTransform:'uppercase', color:'#a1a1aa' }}>same property · different product</span>
+        <div style={{ flex:1, height:1, background:'#d4d4d8' }}/>
+      </div>
+
+      {/* ── Admin panel ── */}
+      <PanelLabel view="Admin view" url="/art-admin/properties/main-apartment"/>
+      <PanelFrame>
+        <AdminTopBar/>
+        <div style={{ maxWidth:1360, margin:'0 auto', padding:'32px 32px 40px' }}>
+          <div style={{ display:'flex', alignItems:'center', gap:6, fontSize:13, color:Zk.mutedFg, marginBottom:20 }}>
+            <a href="#" style={{ color:Zk.mutedFg }}>art-admin</a><IcoChevR/><a href="#" style={{ color:Zk.mutedFg }}>properties</a><IcoChevR/><span style={{ color:Zk.foreground }}>Main apartment</span>
+          </div>
+          <div style={{ marginBottom:24 }}>
+            <h1 style={{ margin:0, fontSize:28, fontWeight:600, letterSpacing:-0.6, color:Zk.foreground }}>Main apartment</h1>
+            <p style={{ margin:'6px 0 0', fontSize:13.5, color:Zk.mutedFg }}>Apartment · Kyiv, Velyka Vasylkivska 142, apt 7 · 4 services · Active</p>
+          </div>
+
+          <Kard style={{ padding:0, overflow:'hidden', marginBottom:16 }}>
+            <div style={{ padding:'16px 24px', borderBottom:`1px solid ${Zk.border}` }}><h3 style={{ margin:0, fontSize:14, fontWeight:600, color:Zk.foreground, letterSpacing:-0.1 }}>Property info</h3></div>
+            <div style={{ padding:'0 24px' }}>
+              <InfoGrid rows={[
+                { label:'Owner(s)',      value:'Art Loban' },
+                { label:'Type',          value:'Apartment' },
+                { label:'Address',       value:'Kyiv, Velyka Vasylkivska 142, apt 7' },
+                { label:'Services',      value:'4' },
+                { label:'Created',       value:'March 8, 2024 by Art Loban' },
+                { label:'Last activity', value:'April 18, 2026' },
+                { label:'Status',        value:'● Active' },
+              ]}/>
+            </div>
+          </Kard>
+
+          <Kard style={{ padding:0, overflow:'hidden', marginBottom:16 }}>
+            <div style={{ padding:'16px 24px', borderBottom:`1px solid ${Zk.border}` }}><h3 style={{ margin:0, fontSize:14, fontWeight:600, color:Zk.foreground, letterSpacing:-0.1 }}>Services</h3></div>
+            {SVC_KEYS.map((k,i) => <AdminSvcRow key={k} svcKey={k} isLast={i===SVC_KEYS.length-1}/>)}
+          </Kard>
+
+          <Kard style={{ padding:0, overflow:'hidden', marginBottom:16 }}>
+            <div style={{ padding:'16px 24px', borderBottom:`1px solid ${Zk.border}` }}><h3 style={{ margin:0, fontSize:14, fontWeight:600, color:Zk.foreground, letterSpacing:-0.1 }}>Sharing snapshot</h3></div>
+            <div style={{ padding:'0 24px' }}>
+              <SharingRow initials="AL" name="Art Loban"   role="Owner"  isLast={false}/>
+              <SharingRow initials="OL" name="Olena Loban" role="Editor" isLast={true}/>
+            </div>
+            <div style={{ margin:'0 24px 20px', padding:'10px 14px', background:Zk.subtle, border:`1px solid ${Zk.border}`, borderRadius:6, fontSize:12.5, color:Zk.mutedFg }}>Sharing changes are made by the owner, not by admin.</div>
+          </Kard>
+
+          <Kard style={{ padding:'16px 24px' }}>
+            <h3 style={{ margin:'0 0 12px', fontSize:14, fontWeight:600, color:Zk.foreground, letterSpacing:-0.1 }}>Audit info</h3>
+            <div style={{ fontFamily:"'SF Mono','Fira Mono','Courier New',monospace", fontSize:12, color:Zk.mutedFg, marginBottom:3 }}>Property ID: prop_4kP2nQ8tBxYwM5vZdR</div>
+            <div style={{ fontSize:12, color:Zk.mutedFg }}>Internal record. For support reference only.</div>
+          </Kard>
+        </div>
+      </PanelFrame>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<Comparison/>);
+</script>
+</body>
+</html>

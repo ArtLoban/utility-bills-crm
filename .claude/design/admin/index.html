@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Admin pages</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: #fafafa; color: #09090b; font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 64px 32px 80px; }
+  h1 { margin: 0 0 8px; font-size: 32px; font-weight: 600; letter-spacing: -0.6px; }
+  .sub { color: #71717a; margin: 0 0 40px; font-size: 15px; }
+  h2 { margin: 36px 0 14px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; color: #71717a; font-weight: 600; }
+  ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 8px; }
+  a.card { display: block; padding: 14px 16px; background: #fff; border: 1px solid #e4e4e7; border-radius: 8px; text-decoration: none; color: #09090b; transition: border-color .15s, box-shadow .15s; }
+  a.card:hover { border-color: #7c3aed; box-shadow: 0 1px 2px rgba(24,24,27,0.05); }
+  .name { font-weight: 500; font-size: 14px; }
+  .path { font-size: 12px; color: #71717a; margin-top: 2px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .topnav { display: flex; gap: 16px; margin-bottom: 28px; font-size: 13px; }
+  .topnav a { color: #71717a; text-decoration: none; padding: 6px 0; }
+  .topnav a:hover { color: #09090b; }
+  .topnav a.active { color: #7c3aed; font-weight: 500; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topnav">
+    <a href="../landing/index.html">Landing</a>
+    <a href="../crm/index.html">CRM</a>
+    <a href="index.html" class="active">Admin</a>
+    <a href="../design-system/Design System.html">Design System</a>
+  </div>
+  <h1>Admin pages</h1>
+  <p class="sub">Click any page to open it standalone.</p>
+  
+  <h2>Dashboard</h2>
+  <ul>
+    <li><a class="card" href="dashboard.html"><div class="name">Admin dashboard</div><div class="path">dashboard.html</div></a></li>
+  </ul>
+
+  <h2>Properties</h2>
+  <ul>
+    <li><a class="card" href="properties-comparison.html"><div class="name">Properties comparison</div><div class="path">properties-comparison.html</div></a></li><li><a class="card" href="property-soft-deleted.html"><div class="name">Property · soft-deleted</div><div class="path">property-soft-deleted.html</div></a></li><li><a class="card" href="property-detail-comparison.html"><div class="name">Property detail comparison</div><div class="path">property-detail-comparison.html</div></a></li><li><a class="card" href="hard-delete-modal.html"><div class="name">Hard delete modal</div><div class="path">hard-delete-modal.html</div></a></li>
+  </ul>
+
+  <h2>Users</h2>
+  <ul>
+    <li><a class="card" href="users-list-light.html"><div class="name">Users list · Light</div><div class="path">users-list-light.html</div></a></li><li><a class="card" href="users-list-dark.html"><div class="name">Users list · Dark</div><div class="path">users-list-dark.html</div></a></li><li><a class="card" href="user-detail-light.html"><div class="name">User detail · Light</div><div class="path">user-detail-light.html</div></a></li><li><a class="card" href="user-detail-dark.html"><div class="name">User detail · Dark</div><div class="path">user-detail-dark.html</div></a></li><li><a class="card" href="user-detail-mobile.html"><div class="name">User detail · Mobile</div><div class="path">user-detail-mobile.html</div></a></li>
+  </ul>
+
+</div>
+</body>
+</html>

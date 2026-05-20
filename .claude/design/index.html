@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Utility Bills CRM — Project map</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: #fafafa; color: #09090b; font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 80px 32px; }
+  h1 { margin: 0 0 8px; font-size: 36px; font-weight: 600; letter-spacing: -0.8px; }
+  .sub { color: #71717a; margin: 0 0 48px; font-size: 16px; max-width: 560px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+  a.tile { display: block; padding: 24px; background: #fff; border: 1px solid #e4e4e7; border-radius: 10px; text-decoration: none; color: #09090b; transition: border-color .15s, box-shadow .15s, transform .15s; }
+  a.tile:hover { border-color: #7c3aed; box-shadow: 0 8px 24px rgba(9,9,11,0.06); transform: translateY(-1px); }
+  .tile-name { font-weight: 600; font-size: 18px; margin: 0 0 6px; }
+  .tile-desc { font-size: 14px; color: #71717a; margin: 0 0 12px; }
+  .tile-count { font-size: 12px; color: #7c3aed; font-weight: 500; }
+  .note { margin-top: 48px; font-size: 13px; color: #71717a; }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; background: #f4f4f5; padding: 1px 6px; border-radius: 4px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Utility Bills CRM</h1>
+  <p class="sub">Standalone pages organized by area. Originals in the project root are preserved untouched.</p>
+  <div class="grid">
+    <a class="tile" href="landing/index.html">
+      <p class="tile-name">Landing</p>
+      <p class="tile-desc">Marketing site — Home, About, Project (light & dark)</p>
+      <span class="tile-count">5 pages →</span>
+    </a>
+    <a class="tile" href="crm/index.html">
+      <p class="tile-name">CRM</p>
+      <p class="tile-desc">User-facing app — dashboard, properties, bills, services, sharing, settings</p>
+      <span class="tile-count">18 pages →</span>
+    </a>
+    <a class="tile" href="crm/standalone/index.html">
+      <p class="tile-name">CRM · Offline bundles</p>
+      <p class="tile-desc">Same 18 pages, self-contained — open via <code>file://</code> without a server</p>
+      <span class="tile-count">18 bundles →</span>
+    </a>
+    <a class="tile" href="admin/index.html">
+      <p class="tile-name">Admin</p>
+      <p class="tile-desc">Internal back-office — properties comparison, soft-deletes, users management</p>
+      <span class="tile-count">10 pages →</span>
+    </a>
+    <a class="tile" href="design-system/Design System.html">
+      <p class="tile-name">Design system</p>
+      <p class="tile-desc">shadcn/ui · New York · Zinc + Violet — tokens, components, examples</p>
+      <span class="tile-count">Open →</span>
+    </a>
+  </div>
+  <p class="note">CRM pages share JSX components from <code>crm/components/</code>. Each HTML in <code>crm/</code> is runnable standalone.</p>
+</div>
+</body>
+</html>

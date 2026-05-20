@@ -47,5 +47,3 @@ next-env.d.ts
 
 # Local Claude working files (not for repo)
 .claude/instructions/
-.claude/design/*
-!.claude/design/OBSERVATIONS.md

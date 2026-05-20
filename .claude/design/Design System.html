@@ -1,0 +1,1381 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Utility Bills CRM — Design System</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="design-system.css">
+</head>
+<body>
+
+<!-- ─────────────── Layout: sidebar + main ─────────────── -->
+<div class="layout">
+
+  <!-- Sticky sidebar -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg></div>
+      <div>
+        <div class="brand-name">UtilityBills</div>
+        <div class="brand-sub">Design System · v1</div>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <div class="nav-group">Overview</div>
+      <a href="#intro" class="nav-link">Introduction</a>
+      <a href="#sections" class="nav-link">Three sections</a>
+
+      <div class="nav-group">Foundations</div>
+      <a href="#typography" class="nav-link">Typography</a>
+      <a href="#colors-zinc" class="nav-link">Zinc — neutrals</a>
+      <a href="#colors-accent" class="nav-link">Accents (Violet · Amber)</a>
+      <a href="#colors-semantic" class="nav-link">Semantic</a>
+      <a href="#colors-services" class="nav-link">Service palette</a>
+      <a href="#spacing" class="nav-link">Spacing &amp; layout</a>
+      <a href="#radii" class="nav-link">Radii</a>
+      <a href="#shadows" class="nav-link">Shadows &amp; borders</a>
+      <a href="#icons" class="nav-link">Icons</a>
+
+      <div class="nav-group">Components</div>
+      <a href="#buttons" class="nav-link">Buttons</a>
+      <a href="#inputs" class="nav-link">Inputs</a>
+      <a href="#select" class="nav-link">Select</a>
+      <a href="#radio" class="nav-link">Radio · Checkbox · Toggle</a>
+      <a href="#cards" class="nav-link">Cards</a>
+      <a href="#badges" class="nav-link">Badges &amp; chips</a>
+      <a href="#header" class="nav-link">Header / nav</a>
+      <a href="#tables" class="nav-link">Tables</a>
+      <a href="#tooltip" class="nav-link">Tooltips &amp; toasts</a>
+
+      <div class="nav-group">Sections</div>
+      <a href="#section-landing" class="nav-link">Landing chrome</a>
+      <a href="#section-crm" class="nav-link">CRM chrome</a>
+      <a href="#section-admin" class="nav-link">Admin chrome</a>
+
+      <div class="nav-group">Drift</div>
+      <a href="#drift" class="nav-link">Evolution &amp; deviations</a>
+    </nav>
+
+    <div class="nav-footer">
+      <span>Source of truth: Iterations 1–6</span>
+    </div>
+  </aside>
+
+  <!-- ─────────────── Main content ─────────────── -->
+  <main class="main">
+
+    <!-- INTRO -->
+    <section id="intro" class="hero">
+      <div class="hero-eyebrow">Design System · UI Kit</div>
+      <h1 class="hero-h1">Utility Bills CRM</h1>
+      <p class="hero-lead">
+        Single source of truth for type, color, spacing and components across
+        <strong>Landing</strong>, <strong>CRM</strong> and <strong>Admin</strong> surfaces.
+        Built on <em>shadcn/ui · New&nbsp;York</em> with <em>Zinc</em> as base, <em>Violet</em> as primary
+        accent and <em>Amber</em> as the admin accent. Inter throughout.
+      </p>
+
+      <div class="hero-meta">
+        <div class="meta-row">
+          <span class="meta-k">Base</span>
+          <span class="meta-v">shadcn/ui · New York style</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-k">Palette</span>
+          <span class="meta-v">Zinc + Violet (user) · Amber (admin)</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-k">Type</span>
+          <span class="meta-v">Inter 400 / 500 / 600 / 700</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-k">Icons</span>
+          <span class="meta-v">Lucide style · 1.75 stroke</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-k">Themes</span>
+          <span class="meta-v">Light + Dark (shown side-by-side)</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- THREE SECTIONS -->
+    <section id="sections" class="sec">
+      <header class="sec-head">
+        <h2 class="sec-h2">Three surfaces, one system</h2>
+        <p class="sec-sub">The same tokens power three different audiences. Chrome and accent shift; foundations stay identical.</p>
+      </header>
+
+      <div class="grid-3">
+        <div class="surface-card">
+          <div class="surface-badge surface-badge-landing">Landing</div>
+          <div class="surface-title">Marketing / Public</div>
+          <p class="surface-body">Public site: Home, About, Project. Slightly more editorial: larger type, hero glow, generous whitespace. Same Violet accent, no app chrome.</p>
+          <ul class="surface-list">
+            <li>Container max-width <code>1100px</code></li>
+            <li>Hero h1 up to <code>56px</code></li>
+            <li>Header height <code>56px</code></li>
+          </ul>
+        </div>
+
+        <div class="surface-card">
+          <div class="surface-badge surface-badge-crm">CRM</div>
+          <div class="surface-title">User app (default)</div>
+          <p class="surface-body">Authenticated user dashboard, properties, bills, services, settings. Violet accent, dense data, charts. The bulk of the system.</p>
+          <ul class="surface-list">
+            <li>Container max-width <code>1360px</code></li>
+            <li>Top bar height <code>64px</code></li>
+            <li>Card radius <code>8</code></li>
+          </ul>
+        </div>
+
+        <div class="surface-card">
+          <div class="surface-badge surface-badge-admin">Admin</div>
+          <div class="surface-title">Admin / Staff</div>
+          <p class="surface-body">Same building blocks. Amber accent line above top bar + outlined <code>[Admin]</code> badge. Adds extra nav item (<em>Users</em>, <em>Landing</em>).</p>
+          <ul class="surface-list">
+            <li>Top accent line <code>3px</code></li>
+            <li>Logo mark switches to <code>foreground</code> (black)</li>
+            <li>Page background <code>#fafafa</code></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- TYPOGRAPHY -->
+    <section id="typography" class="sec">
+      <header class="sec-head">
+        <h2 class="sec-h2">Typography</h2>
+        <p class="sec-sub">Inter for everything. Weights 400 / 500 / 600 (700 reserved for marketing emphasis). Tabular numerals for any money / readings.</p>
+      </header>
+
+      <div class="type-stack">
+        <div class="type-row">
+          <div class="type-meta">
+            <div class="type-name">Display</div>
+            <div class="type-tok">56 / 600 / -3% LS · marketing hero only</div>
+          </div>
+          <div class="type-sample" style="font-size:56px; font-weight:600; letter-spacing:-0.03em; line-height:1.12;">Manage utility bills</div>
+        </div>
+
+        <div class="type-row">
+          <div class="type-meta">
+            <div class="type-name">H1 · Page</div>
+            <div class="type-tok">28 / 600 / -0.6 LS · CRM page header</div>
+          </div>
+          <div class="type-sample" style="font-size:28px; font-weight:600; letter-spacing:-0.6px;">Hi, Anna</div>
+        </div>
+
+        <div class="type-row">
+          <div class="type-meta">
+            <div class="type-name">H2 · Section</div>
+            <div class="type-tok">26 / 600 / -0.5 LS · service / property detail</div>
+          </div>
+          <div class="type-sample" style="font-size:26px; font-weight:600; letter-spacing:-0.5px;">Electricity meter</div>
+        </div>
+
+        <div class="type-row">
+          <div class="type-meta">
+            <div class="type-name">H3 · Card title</div>
+            <div class="type-tok">14 / 600 / -0.1 LS</div>
+          </div>
+          <div class="type-sample" style="font-size:14px; font-weight:600; letter-spacing:-0.1px;">Expenses by service</div>
+        </div>
+
+        <div class="type-row">
+          <div class="type-meta">
+            <div class="type-name">Body</div>
+            <div class="type-tok">14 / 400 · default paragraph</div>
+          </div>
+          <div class="type-sample" style="font-size:14px; line-height:1.6;">Track meters, record bills, share access with family — across every property you manage.</div>
+        </div>
+
+        <div class="type-row">
+          <div class="type-meta">
+            <div class="type-name">Small</div>
+            <div class="type-tok">13.5 / 400 · table cell · field hint</div>
+          </div>
+          <div class="type-sample" style="font-size:13.5px;">Filtered by selected property</div>
+        </div>
+
+        <div class="type-row">
+          <div class="type-meta">
+            <div class="type-name">Caption</div>
+            <div class="type-tok">12 / 400 · muted · meta info</div>
+          </div>
+          <div class="type-sample muted" style="font-size:12px;">Last 12 months · May 2025 – Apr 2026</div>
+        </div>
+
+        <div class="type-row">
+          <div class="type-meta">
+            <div class="type-name">Overline</div>
+            <div class="type-tok">11.5 / 500 / UPPERCASE / 0.2 tracking · table header · section label</div>
+          </div>
+          <div class="type-sample muted" style="font-size:11.5px; font-weight:500; text-transform:uppercase; letter-spacing:0.2px;">By property</div>
+        </div>
+
+        <div class="type-row">
+          <div class="type-meta">
+            <div class="type-name">Numeric · big</div>
+            <div class="type-tok">30 / 600 / -0.8 LS / tnum · balance</div>
+          </div>
+          <div class="type-sample" style="font-size:30px; font-weight:600; letter-spacing:-0.8px; font-feature-settings: 'tnum' 1; color:#dc2626;">−1,240 <span style="font-size:15px;font-weight:500;letter-spacing:-0.2px;">UAH</span></div>
+        </div>
+
+        <div class="type-row">
+          <div class="type-meta">
+            <div class="type-name">Mono</div>
+            <div class="type-tok">Serial numbers / IDs only · JetBrains Mono fallback to monospace</div>
+          </div>
+          <div class="type-sample" style="font-family:'JetBrains Mono', monospace; font-size:13px;">Serial NIK-12345</div>
+        </div>
+      </div>
+
+      <div class="code" data-code='font-family: "Inter", system-ui, -apple-system, sans-serif;
+font-feature-settings: "cv11" 1, "ss01" 1;
+-webkit-font-smoothing: antialiased;'><div class="code-head"><span>Base font stack</span><button class="copy-btn" type="button">Copy</button></div><pre>font-family: "Inter", system-ui, -apple-system, sans-serif;
+font-feature-settings: "cv11" 1, "ss01" 1;
+-webkit-font-smoothing: antialiased;</pre></div>
+    </section>
+
+    <!-- COLORS — ZINC -->
+    <section id="colors-zinc" class="sec">
+      <header class="sec-head">
+        <h2 class="sec-h2">Color · Zinc neutrals</h2>
+        <p class="sec-sub">Light and dark are shown side-by-side. These are the only neutrals — no grays from outside the Zinc family.</p>
+      </header>
+
+      <div class="theme-pair">
+        <!-- LIGHT -->
+        <div class="theme-block theme-light">
+          <div class="theme-label">Light</div>
+          <div class="swatch-grid">
+            <div class="swatch" style="background:#ffffff;color:#09090b;border:1px solid #e4e4e7;">
+              <div class="sw-name">background</div>
+              <div class="sw-hex">#ffffff</div>
+            </div>
+            <div class="swatch" style="background:#fafafa;color:#09090b;border:1px solid #e4e4e7;">
+              <div class="sw-name">page / subtle <span class="sw-flag">zinc-50</span></div>
+              <div class="sw-hex">#fafafa</div>
+            </div>
+            <div class="swatch" style="background:#f4f4f5;color:#09090b;border:1px solid #e4e4e7;">
+              <div class="sw-name">muted <span class="sw-flag">zinc-100</span></div>
+              <div class="sw-hex">#f4f4f5</div>
+            </div>
+            <div class="swatch" style="background:#e4e4e7;color:#09090b;border:1px solid #d4d4d8;">
+              <div class="sw-name">border <span class="sw-flag">zinc-200</span></div>
+              <div class="sw-hex">#e4e4e7</div>
+            </div>
+            <div class="swatch" style="background:#71717a;color:#fafafa;">
+              <div class="sw-name">muted-fg <span class="sw-flag">zinc-500</span></div>
+              <div class="sw-hex">#71717a</div>
+            </div>
+            <div class="swatch" style="background:#52525b;color:#fafafa;">
+              <div class="sw-name">muted-fg-2 <span class="sw-flag">zinc-600</span></div>
+              <div class="sw-hex">#52525b</div>
+            </div>
+            <div class="swatch" style="background:#09090b;color:#fafafa;">
+              <div class="sw-name">foreground <span class="sw-flag">zinc-950</span></div>
+              <div class="sw-hex">#09090b</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DARK -->
+        <div class="theme-block theme-dark">
+          <div class="theme-label">Dark</div>
+          <div class="swatch-grid">
+            <div class="swatch" style="background:#09090b;color:#fafafa;border:1px solid #27272a;">
+              <div class="sw-name">background <span class="sw-flag">zinc-950</span></div>
+              <div class="sw-hex">#09090b</div>
+            </div>
+            <div class="swatch" style="background:#0b0b0e;color:#fafafa;border:1px solid #27272a;">
+              <div class="sw-name">page (header)</div>
+              <div class="sw-hex">#0b0b0e</div>
+            </div>
+            <div class="swatch" style="background:#18181b;color:#fafafa;border:1px solid #27272a;">
+              <div class="sw-name">card <span class="sw-flag">zinc-900</span></div>
+              <div class="sw-hex">#18181b</div>
+            </div>
+            <div class="swatch" style="background:#1f1f23;color:#fafafa;border:1px solid #27272a;">
+              <div class="sw-name">subtle (hover)</div>
+              <div class="sw-hex">#1f1f23</div>
+            </div>
+            <div class="swatch" style="background:#27272a;color:#fafafa;">
+              <div class="sw-name">muted / border <span class="sw-flag">zinc-800</span></div>
+              <div class="sw-hex">#27272a</div>
+            </div>
+            <div class="swatch" style="background:#52525b;color:#fafafa;">
+              <div class="sw-name">muted-fg-2 <span class="sw-flag">zinc-600</span></div>
+              <div class="sw-hex">#52525b</div>
+            </div>
+            <div class="swatch" style="background:#a1a1aa;color:#09090b;">
+              <div class="sw-name">muted-fg <span class="sw-flag">zinc-400</span></div>
+              <div class="sw-hex">#a1a1aa</div>
+            </div>
+            <div class="swatch" style="background:#fafafa;color:#09090b;">
+              <div class="sw-name">foreground <span class="sw-flag">zinc-50</span></div>
+              <div class="sw-hex">#fafafa</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="code" data-code="const Z_LIGHT = {
+  background: '#ffffff', foreground: '#09090b',
+  card:       '#ffffff', cardFg:     '#09090b',
+  muted:      '#f4f4f5', mutedFg:    '#71717a',
+  border:     '#e4e4e7', input:      '#e4e4e7',
+  subtle:     '#fafafa',
+};
+const Z_DARK = {
+  background: '#09090b', foreground: '#fafafa',
+  card:       '#18181b', cardFg:     '#fafafa',
+  muted:      '#27272a', mutedFg:    '#a1a1aa',
+  border:     '#27272a', input:      '#27272a',
+  subtle:     '#1f1f23',
+};"><div class="code-head"><span>Zinc tokens (JS)</span><button class="copy-btn" type="button">Copy</button></div><pre>const Z_LIGHT = {
+  background: '#ffffff', foreground: '#09090b',
+  card:       '#ffffff', cardFg:     '#09090b',
+  muted:      '#f4f4f5', mutedFg:    '#71717a',
+  border:     '#e4e4e7', input:      '#e4e4e7',
+  subtle:     '#fafafa',
+};
+const Z_DARK = {
+  background: '#09090b', foreground: '#fafafa',
+  card:       '#18181b', cardFg:     '#fafafa',
+  muted:      '#27272a', mutedFg:    '#a1a1aa',
+  border:     '#27272a', input:      '#27272a',
+  subtle:     '#1f1f23',
+};</pre></div>
+    </section>
+
+    <!-- COLORS — ACCENTS -->
+    <section id="colors-accent" class="sec">
+      <header class="sec-head">
+        <h2 class="sec-h2">Color · Accents</h2>
+        <p class="sec-sub">Violet for everything the end-user touches. Amber strictly for admin chrome (top line, badge, role indicator) — never for primary CTAs.</p>
+      </header>
+
+      <div class="accent-row">
+        <div class="accent-block">
+          <div class="accent-head">
+            <div class="accent-name">Violet · primary</div>
+            <div class="accent-meta">CRM &amp; Landing · all primary CTAs</div>
+          </div>
+
+          <div class="accent-grid">
+            <div class="accent-tile" style="background:#7c3aed;color:#fff;">
+              <div class="ac-role">solid</div>
+              <div class="ac-hex">#7c3aed</div>
+            </div>
+            <div class="accent-tile" style="background:#6d28d9;color:#fff;">
+              <div class="ac-role">hover</div>
+              <div class="ac-hex">#6d28d9</div>
+            </div>
+            <div class="accent-tile" style="background:#a78bfa;color:#1e1b4b;">
+              <div class="ac-role">underline · dark</div>
+              <div class="ac-hex">#a78bfa</div>
+            </div>
+            <div class="accent-tile" style="background:#8b5cf6;color:#fff;">
+              <div class="ac-role">solid · dark</div>
+              <div class="ac-hex">#8b5cf6</div>
+            </div>
+            <div class="accent-tile" style="background:#f5f3ff;color:#7c3aed;border:1px solid #ede9fe;">
+              <div class="ac-role">tint-bg</div>
+              <div class="ac-hex">#f5f3ff</div>
+            </div>
+            <div class="accent-tile" style="background:#ede9fe;color:#7c3aed;">
+              <div class="ac-role">tint-border</div>
+              <div class="ac-hex">#ede9fe</div>
+            </div>
+            <div class="accent-tile" style="background:#ddd6fe;color:#5b21b6;">
+              <div class="ac-role">avatar (7c+)</div>
+              <div class="ac-hex">#ddd6fe</div>
+            </div>
+            <div class="accent-tile" style="background:rgba(124,58,237,0.16);color:#a78bfa;border:1px solid rgba(124,58,237,0.32);">
+              <div class="ac-role">tint · dark</div>
+              <div class="ac-hex">rgba(124,58,237,.16)</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="accent-block">
+          <div class="accent-head">
+            <div class="accent-name">Amber · admin chrome</div>
+            <div class="accent-meta">Admin top line · Admin badge · role badge</div>
+          </div>
+
+          <div class="accent-grid">
+            <div class="accent-tile" style="background:#f59e0b;color:#fff;">
+              <div class="ac-role">line</div>
+              <div class="ac-hex">#f59e0b</div>
+            </div>
+            <div class="accent-tile" style="background:#d97706;color:#fff;">
+              <div class="ac-role">solid (light)</div>
+              <div class="ac-hex">#d97706</div>
+            </div>
+            <div class="accent-tile" style="background:#fbbf24;color:#1c1917;">
+              <div class="ac-role">solid · dark</div>
+              <div class="ac-hex">#fbbf24</div>
+            </div>
+            <div class="accent-tile" style="background:#fef3c7;color:#92400e;">
+              <div class="ac-role">tint-bg</div>
+              <div class="ac-hex">#fef3c7</div>
+            </div>
+            <div class="accent-tile" style="background:#fde68a;color:#92400e;">
+              <div class="ac-role">tint-border</div>
+              <div class="ac-hex">#fde68a</div>
+            </div>
+            <div class="accent-tile" style="background:rgba(245,158,11,0.14);color:#fbbf24;border:1px solid rgba(245,158,11,0.4);">
+              <div class="ac-role">tint · dark</div>
+              <div class="ac-hex">rgba(245,158,11,.14)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <strong>Rule of thumb.</strong> Amber never appears on CTAs — it is purely a chrome / warning hue.
+        Inside the admin, Violet is still used for role/owner badges and links; Amber lives on the top accent line
+        and the <code>[Admin]</code> pill only.
+      </div>
+    </section>
+
+    <!-- COLORS — SEMANTIC -->
+    <section id="colors-semantic" class="sec">
+      <header class="sec-head">
+        <h2 class="sec-h2">Color · Semantic</h2>
+        <p class="sec-sub">Status colors. Reuse — do not invent new reds, greens, or warnings.</p>
+      </header>
+
+      <div class="semantic-grid">
+        <div class="semantic-card">
+          <div class="sem-strip" style="background:#dc2626;"></div>
+          <div class="sem-body">
+            <div class="sem-title">Destructive</div>
+            <div class="sem-row"><span>solid</span><code>#dc2626</code></div>
+            <div class="sem-row"><span>hover</span><code>#b91c1c</code></div>
+            <div class="sem-row"><span>tint-bg</span><code>#fef2f2</code></div>
+            <div class="sem-row"><span>tint-border</span><code>#fecaca</code></div>
+            <div class="sem-row"><span>dark · text</span><code>#f87171</code></div>
+            <div class="sem-row"><span>dark · tint</span><code>rgba(248,113,113,.12)</code></div>
+          </div>
+        </div>
+
+        <div class="semantic-card">
+          <div class="sem-strip" style="background:#16a34a;"></div>
+          <div class="sem-body">
+            <div class="sem-title">Success / Positive balance</div>
+            <div class="sem-row"><span>solid</span><code>#16a34a</code></div>
+            <div class="sem-row"><span>used on</span><span class="sem-hint">overpayment, paid status</span></div>
+          </div>
+        </div>
+
+        <div class="semantic-card">
+          <div class="sem-strip" style="background:#f59e0b;"></div>
+          <div class="sem-body">
+            <div class="sem-title">Warning</div>
+            <div class="sem-row"><span>solid</span><code>#f59e0b</code></div>
+            <div class="sem-row"><span>tint-bg</span><code>#fffbeb</code></div>
+            <div class="sem-row"><span>tint-border</span><code>#fde68a</code></div>
+            <div class="sem-row"><span>dark</span><code>#fbbf24</code></div>
+          </div>
+        </div>
+
+        <div class="semantic-card">
+          <div class="sem-strip" style="background:#0284c7;"></div>
+          <div class="sem-body">
+            <div class="sem-title">Info (activity feed only)</div>
+            <div class="sem-row"><span>icon</span><code>#0284c7</code></div>
+            <div class="sem-row"><span>tint-bg</span><code>#e0f2fe</code></div>
+            <div class="sem-row"><span>used on</span><span class="sem-hint">admin activity log icons</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- COLORS — SERVICES -->
+    <section id="colors-services" class="sec">
+      <header class="sec-head">
+        <h2 class="sec-h2">Color · Service palette</h2>
+        <p class="sec-sub">Six fixed hues — picked for distinguishability next to any accent. Reuse across charts, badges, icons. Heating is violet by design (sits cleanly inside the Violet accent).</p>
+      </header>
+
+      <div class="services-grid">
+        <div class="service-tile" style="--c:#f59e0b">
+          <div class="svc-dot"></div>
+          <div class="svc-name">Electricity</div>
+          <div class="svc-hex">#f59e0b</div>
+          <div class="svc-meta">amber-500 · unit kWh</div>
+        </div>
+        <div class="service-tile" style="--c:#ef4444">
+          <div class="svc-dot"></div>
+          <div class="svc-name">Gas</div>
+          <div class="svc-hex">#ef4444</div>
+          <div class="svc-meta">red-500 · unit m³</div>
+        </div>
+        <div class="service-tile" style="--c:#3b82f6">
+          <div class="svc-dot"></div>
+          <div class="svc-name">Cold water</div>
+          <div class="svc-hex">#3b82f6</div>
+          <div class="svc-meta">blue-500 · unit m³</div>
+        </div>
+        <div class="service-tile" style="--c:#ec4899">
+          <div class="svc-dot"></div>
+          <div class="svc-name">Hot water</div>
+          <div class="svc-hex">#ec4899</div>
+          <div class="svc-meta">pink-500 · unit m³</div>
+        </div>
+        <div class="service-tile" style="--c:#8b5cf6">
+          <div class="svc-dot"></div>
+          <div class="svc-name">Heating</div>
+          <div class="svc-hex">#8b5cf6</div>
+          <div class="svc-meta">violet-500 · unit m³</div>
+        </div>
+        <div class="service-tile" style="--c:#14b8a6">
+          <div class="svc-dot"></div>
+          <div class="svc-name">Internet</div>
+          <div class="svc-hex">#14b8a6</div>
+          <div class="svc-meta">teal-500 · flat</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SPACING -->
+    <section id="spacing" class="sec">
+      <header class="sec-head">
+        <h2 class="sec-h2">Spacing &amp; layout</h2>
+        <p class="sec-sub">Multiples of 4. Component padding tends to <code>12</code> / <code>16</code> / <code>20</code> / <code>24</code>. Container gutters fixed at <code>32</code> on desktop.</p>
+      </header>
+
+      <div class="space-scale">
+        <div class="space-row"><div class="space-bar" style="width:4px;"></div><div class="space-label"><code>1</code> · 4px <span class="muted">hairline gap</span></div></div>
+        <div class="space-row"><div class="space-bar" style="width:8px;"></div><div class="space-label"><code>2</code> · 8px <span class="muted">icon ↔ text · chip gap</span></div></div>
+        <div class="space-row"><div class="space-bar" style="width:12px;"></div><div class="space-label"><code>3</code> · 12px <span class="muted">small card padding · row gap</span></div></div>
+        <div class="space-row"><div class="space-bar" style="width:16px;"></div><div class="space-label"><code>4</code> · 16px <span class="muted">default grid gap</span></div></div>
+        <div class="space-row"><div class="space-bar" style="width:20px;"></div><div class="space-label"><code>5</code> · 20px <span class="muted">card padding (compact)</span></div></div>
+        <div class="space-row"><div class="space-bar" style="width:24px;"></div><div class="space-label"><code>6</code> · 24px <span class="muted">card padding (default)</span></div></div>
+        <div class="space-row"><div class="space-bar" style="width:32px;"></div><div class="space-label"><code>8</code> · 32px <span class="muted">page gutter · column gap</span></div></div>
+        <div class="space-row"><div class="space-bar" style="width:48px;"></div><div class="space-label"><code>12</code> · 48px <span class="muted">section spacing (app)</span></div></div>
+        <div class="space-row"><div class="space-bar" style="width:96px;"></div><div class="space-label"><code>24</code> · 96px <span class="muted">section spacing (landing)</span></div></div>
+      </div>
+
+      <div class="layout-grid">
+        <div class="layout-card">
+          <div class="layout-title">App container</div>
+          <div class="layout-spec">max-width <code>1360px</code> · padding <code>32px</code></div>
+        </div>
+        <div class="layout-card">
+          <div class="layout-title">Landing container</div>
+          <div class="layout-spec">max-width <code>1100px</code> · padding <code>24px</code></div>
+        </div>
+        <div class="layout-card">
+          <div class="layout-title">Top bar / Header</div>
+          <div class="layout-spec">App <code>64px</code> · Landing <code>56px</code></div>
+        </div>
+        <div class="layout-card">
+          <div class="layout-title">Mobile</div>
+          <div class="layout-spec">Designed at 390 / 360 · cards stack · same paddings</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RADII -->
+    <section id="radii" class="sec">
+      <header class="sec-head">
+        <h2 class="sec-h2">Radii</h2>
+        <p class="sec-sub">Small for controls, larger for containers, full for pills. <span class="warn-inline">Iteration 7c drift</span>: cards moved 8 → 10 in Settings. Mainline stays 8.</p>
+      </header>
+
+      <div class="radii-grid">
+        <div class="radii-tile"><div class="rad-box" style="border-radius:4px;"></div><code>4</code><span class="muted">small chip</span></div>
+        <div class="radii-tile"><div class="rad-box" style="border-radius:6px;"></div><code>6</code><span class="muted">buttons · inputs · selects</span></div>
+        <div class="radii-tile"><div class="rad-box" style="border-radius:8px;"></div><code>8</code><span class="muted">cards · modals (canonical)</span></div>
+        <div class="radii-tile"><div class="rad-box" style="border-radius:10px;"></div><code>10</code><span class="muted">drawers · cards (7c drift)</span></div>
+        <div class="radii-tile"><div class="rad-box" style="border-radius:12px;"></div><code>12</code><span class="muted">large overlays</span></div>
+        <div class="radii-tile"><div class="rad-box" style="border-radius:9999px;"></div><code>9999</code><span class="muted">badges · avatars · pills</span></div>
+      </div>
+    </section>
+
+    <!-- SHADOWS -->
+    <section id="shadows" class="sec">
+      <header class="sec-head">
+        <h2 class="sec-h2">Shadows &amp; borders</h2>
+        <p class="sec-sub">Borders do most of the work. Shadows are intentionally light — they wake up on hover and stack for floating surfaces.</p>
+      </header>
+
+      <div class="shadow-grid">
+        <div class="shadow-tile">
+          <div class="sh-demo" style="box-shadow:none;"></div>
+          <div class="sh-name">none</div>
+          <div class="sh-spec muted">flat — relies on border only</div>
+        </div>
+        <div class="shadow-tile">
+          <div class="sh-demo" style="box-shadow:0 1px 2px 0 rgba(24,24,27,0.05);"></div>
+          <div class="sh-name">card</div>
+          <div class="sh-spec muted">0 1px 2px rgba(24,24,27,.05)</div>
+        </div>
+        <div class="shadow-tile">
+          <div class="sh-demo" style="box-shadow:0 4px 8px -2px rgba(24,24,27,0.08), 0 2px 4px -2px rgba(24,24,27,0.05);"></div>
+          <div class="sh-name">card · hover</div>
+          <div class="sh-spec muted">4/8/-2 + 2/4/-2</div>
+        </div>
+        <div class="shadow-tile">
+          <div class="sh-demo" style="box-shadow:0 8px 24px rgba(9,9,11,0.12);"></div>
+          <div class="sh-name">popover</div>
+          <div class="sh-spec muted">menus · dropdowns</div>
+        </div>
+        <div class="shadow-tile">
+          <div class="sh-demo" style="box-shadow:0 12px 32px -8px rgba(24,24,27,0.18), 0 4px 8px -4px rgba(24,24,27,0.08);"></div>
+          <div class="sh-name">modal</div>
+          <div class="sh-spec muted">overlay / dialog</div>
+        </div>
+        <div class="shadow-tile">
+          <div class="sh-demo" style="box-shadow:0 1px 3px rgba(124,58,237,0.18);"></div>
+          <div class="sh-name">primary · CTA</div>
+          <div class="sh-spec muted">accent-tinted lift</div>
+        </div>
+      </div>
+
+      <div class="border-row">
+        <div class="border-card">
+          <div class="brd-title">Border (light)</div>
+          <div class="brd-sample" style="border:1px solid #e4e4e7;"></div>
+          <code>1px solid #e4e4e7</code>
+        </div>
+        <div class="border-card">
+          <div class="brd-title">Border (dark)</div>
+          <div class="brd-sample" style="background:#18181b;border:1px solid #27272a;"></div>
+          <code>1px solid #27272a</code>
+        </div>
+        <div class="border-card">
+          <div class="brd-title">Divider (table row)</div>
+          <div class="brd-sample" style="border-top:1px solid #e4e4e7;"></div>
+          <code>1px solid #e4e4e7</code>
+        </div>
+        <div class="border-card">
+          <div class="brd-title">Focus ring · violet</div>
+          <div class="brd-sample" style="box-shadow:0 0 0 3px rgba(124,58,237,0.35);"></div>
+          <code>0 0 0 3px rgba(124,58,237,.35)</code>
+        </div>
+      </div>
+    </section>
+
+    <!-- ICONS -->
+    <section id="icons" class="sec">
+      <header class="sec-head">
+        <h2 class="sec-h2">Icons</h2>
+        <p class="sec-sub">Lucide-style. Stroke <code>1.75</code>, round joins &amp; caps. Default 16px in tables/UI, 18–20px in headers, 14px inline with labels.</p>
+      </header>
+
+      <div class="icons-grid">
+        <!-- 24 representative icons inline -->
+        <div class="ic-tile"><svg class="ic" viewBox="0 0 24 24"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg><span>LayoutDashboard</span></div>
+        <div class="ic-tile"><svg class="ic" viewBox="0 0 24 24"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span>Home</span></div>
+        <div class="ic-tile"><svg class="ic" viewBox="0 0 24 24"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1-2-1Z"/><path d="M16 8H8M16 12H8M12 16H8"/></svg><span>Receipt</span></div>
+        <div class="ic-tile"><svg class="ic" viewBox="0 0 24 24"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></svg><span>Zap</span></div>
+        <div class="ic-tile"><svg class="ic" viewBox="0 0 24 24"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg><span>Flame</span></div>
+        <div class="ic-tile"><svg class="ic" viewBox="0 0 24 24"><path d="M7 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S7.29 6.75 7 5.3c-.29 1.45-1.14 2.84-2.29 3.76S3 11.1 3 12.25c0 2.22 1.8 4.05 4 4.05z"/><path d="M12.56 6.6A10.97 10.97 0 0 0 14 3.02c.5 2.5 2 4.9 4 6.5s3 3.5 3 5.5a6.98 6.98 0 0 1-11.91 4.97"/></svg><span>Droplets</span></div>
+        <div class="ic-tile"><svg class="ic" viewBox="0 0 24 24"><path d="M12 20h.01"/><path d="M2 8.82a15 15 0 0 1 20 0"/><path d="M5 12.859a10 10 0 0 1 14 0"/><path d="M8.5 16.429a5 5 0 0 1 7 0"/></svg><span>Wifi</span></div>
+        <div class="ic-tile"><svg class="ic" viewBox="0 0 24 24"><path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z"/></svg><span>Thermometer</span></div>
+        <div class="ic-tile"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg><span>Globe</span></div>
+        <div class="ic-tile"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg><span>Sun</span></div>
+        <div class="ic-tile"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg><span>Moon</span></div>
+        <div class="ic-tile"><svg class="ic" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg><span>ChevronRight</span></div>
+        <div class="ic-tile"><svg class="ic" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg><span>ChevronDown</span></div>
+        <div class="ic-tile"><svg class="ic" viewBox="0 0 24 24"><path d="M5 12h14M12 5v14"/></svg><span>Plus</span></div>
+        <div class="ic-tile"><svg class="ic" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg><span>X</span></div>
+        <div class="ic-tile"><svg class="ic" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg><span>Menu</span></div>
+        <div class="ic-tile"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg><span>MoreH</span></div>
+        <div class="ic-tile"><svg class="ic" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Users</span></div>
+        <div class="ic-tile"><svg class="ic" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg><span>AlertTriangle</span></div>
+        <div class="ic-tile"><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg><span>Check</span></div>
+        <div class="ic-tile"><svg class="ic" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg><span>Trash</span></div>
+        <div class="ic-tile"><svg class="ic" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg><span>History</span></div>
+        <div class="ic-tile"><svg class="ic" viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg><span>Settings</span></div>
+        <div class="ic-tile"><svg class="ic" viewBox="0 0 24 24"><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/></svg><span>LogOut</span></div>
+      </div>
+
+      <div class="code" data-code='<svg width="16" height="16" viewBox="0 0 24 24"
+  fill="none" stroke="currentColor" stroke-width="1.75"
+  stroke-linecap="round" stroke-linejoin="round">
+  <!-- icon paths -->
+</svg>'><div class="code-head"><span>Icon wrapper</span><button class="copy-btn" type="button">Copy</button></div><pre>&lt;svg width="16" height="16" viewBox="0 0 24 24"
+  fill="none" stroke="currentColor" stroke-width="1.75"
+  stroke-linecap="round" stroke-linejoin="round"&gt;
+  &lt;!-- icon paths --&gt;
+&lt;/svg&gt;</pre></div>
+    </section>
+
+    <!-- BUTTONS -->
+    <section id="buttons" class="sec">
+      <header class="sec-head">
+        <h2 class="sec-h2">Buttons</h2>
+        <p class="sec-sub">Four variants. <code>sm</code> (32px) is default in the app; <code>md</code> (36px) is used in modal footers and marketing.</p>
+      </header>
+
+      <div class="theme-pair">
+        <div class="theme-block theme-light">
+          <div class="theme-label">Light</div>
+          <div class="comp-grid">
+            <div class="comp-cell">
+              <div class="comp-name">Default · Violet</div>
+              <button class="ub-btn ub-btn-default">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5v14"/></svg>
+                Add reading
+              </button>
+            </div>
+            <div class="comp-cell">
+              <div class="comp-name">Outline</div>
+              <button class="ub-btn ub-btn-outline">Cancel</button>
+            </div>
+            <div class="comp-cell">
+              <div class="comp-name">Ghost</div>
+              <button class="ub-btn ub-btn-ghost">View details</button>
+            </div>
+            <div class="comp-cell">
+              <div class="comp-name">Destructive</div>
+              <button class="ub-btn ub-btn-destructive">Delete property</button>
+            </div>
+            <div class="comp-cell">
+              <div class="comp-name">Icon</div>
+              <button class="ub-btn-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></button>
+            </div>
+            <div class="comp-cell">
+              <div class="comp-name">Disabled</div>
+              <button class="ub-btn ub-btn-default" disabled>Save</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="theme-block theme-dark">
+          <div class="theme-label">Dark</div>
+          <div class="comp-grid">
+            <div class="comp-cell">
+              <div class="comp-name">Default · Violet</div>
+              <button class="ub-btn ub-btn-default ub-btn-default--dark">Add reading</button>
+            </div>
+            <div class="comp-cell">
+              <div class="comp-name">Outline</div>
+              <button class="ub-btn ub-btn-outline ub-btn-outline--dark">Cancel</button>
+            </div>
+            <div class="comp-cell">
+              <div class="comp-name">Ghost</div>
+              <button class="ub-btn ub-btn-ghost ub-btn-ghost--dark">View details</button>
+            </div>
+            <div class="comp-cell">
+              <div class="comp-name">Destructive</div>
+              <button class="ub-btn ub-btn-destructive ub-btn-destructive--dark">Delete property</button>
+            </div>
+            <div class="comp-cell">
+              <div class="comp-name">Icon</div>
+              <button class="ub-btn-icon ub-btn-icon--dark"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></button>
+            </div>
+            <div class="comp-cell">
+              <div class="comp-name">Disabled</div>
+              <button class="ub-btn ub-btn-default ub-btn-default--dark" disabled>Save</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="code" data-code="/* Default · 32px / radius 6 */
+.btn-default {
+  height: 32px; padding: 0 12px;
+  background: #7c3aed; color: #fff;
+  border: 1px solid #7c3aed; border-radius: 6px;
+  font-size: 13px; font-weight: 500;
+  box-shadow: 0 1px 3px rgba(124,58,237,.18);
+}
+.btn-default:hover { background: #6d28d9; border-color: #6d28d9; }
+
+.btn-outline {
+  background: #fff; color: #09090b;
+  border: 1px solid #e4e4e7; border-radius: 6px;
+}
+.btn-outline:hover { background: #f4f4f5; }
+
+.btn-ghost   { background: transparent; border: 1px solid transparent; color: #09090b; }
+.btn-ghost:hover { background: #f4f4f5; }
+
+.btn-destructive {
+  background: #dc2626; border: 1px solid #dc2626; color: #fff;
+}
+.btn-destructive:hover { background: #b91c1c; border-color: #b91c1c; }"><div class="code-head"><span>Button styles</span><button class="copy-btn" type="button">Copy</button></div><pre>/* Default · 32px / radius 6 */
+.btn-default {
+  height: 32px; padding: 0 12px;
+  background: #7c3aed; color: #fff;
+  border: 1px solid #7c3aed; border-radius: 6px;
+  font-size: 13px; font-weight: 500;
+  box-shadow: 0 1px 3px rgba(124,58,237,.18);
+}
+.btn-default:hover { background: #6d28d9; border-color: #6d28d9; }
+
+.btn-outline {
+  background: #fff; color: #09090b;
+  border: 1px solid #e4e4e7; border-radius: 6px;
+}
+.btn-outline:hover { background: #f4f4f5; }
+
+.btn-ghost   { background: transparent; border: 1px solid transparent; color: #09090b; }
+.btn-ghost:hover { background: #f4f4f5; }
+
+.btn-destructive {
+  background: #dc2626; border: 1px solid #dc2626; color: #fff;
+}
+.btn-destructive:hover { background: #b91c1c; border-color: #b91c1c; }</pre></div>
+    </section>
+
+    <!-- INPUTS -->
+    <section id="inputs" class="sec">
+      <header class="sec-head">
+        <h2 class="sec-h2">Inputs</h2>
+        <p class="sec-sub">Text, number, textarea. Filled state uses violet tint so reviewers can scan completed fields at a glance.</p>
+      </header>
+
+      <div class="theme-pair">
+        <div class="theme-block theme-light">
+          <div class="theme-label">Light</div>
+          <div class="form-stack">
+            <div class="field">
+              <label>Email</label>
+              <input class="ub-input" placeholder="anna@example.com">
+            </div>
+            <div class="field">
+              <label>Amount (UAH)</label>
+              <input class="ub-input ub-input-filled" value="680">
+              <div class="field-hint">Filled state · violet tint</div>
+            </div>
+            <div class="field">
+              <label>Reading <span class="muted">(below last)</span></label>
+              <input class="ub-input ub-input-warn" value="2,180">
+              <div class="field-warn">⚠ Value is below the last reading (2,340 kWh)</div>
+            </div>
+            <div class="field">
+              <label>Notes</label>
+              <textarea class="ub-input ub-textarea" placeholder="Any remarks…"></textarea>
+            </div>
+            <div class="field">
+              <label>Disabled</label>
+              <input class="ub-input" value="Locked" disabled>
+            </div>
+          </div>
+        </div>
+
+        <div class="theme-block theme-dark">
+          <div class="theme-label">Dark</div>
+          <div class="form-stack">
+            <div class="field"><label>Email</label><input class="ub-input ub-input--dark" placeholder="anna@example.com"></div>
+            <div class="field"><label>Amount (UAH)</label><input class="ub-input ub-input--dark ub-input-filled--dark" value="680"><div class="field-hint">Filled state · violet tint</div></div>
+            <div class="field"><label>Notes</label><textarea class="ub-input ub-input--dark ub-textarea" placeholder="Any remarks…"></textarea></div>
+            <div class="field"><label>Disabled</label><input class="ub-input ub-input--dark" value="Locked" disabled></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SELECT -->
+    <section id="select" class="sec">
+      <header class="sec-head">
+        <h2 class="sec-h2">Select</h2>
+        <p class="sec-sub">Two flavors: form select (full-width inside fields) and inline chrome select (used in filters — has a muted label prefix).</p>
+      </header>
+
+      <div class="comp-grid">
+        <div class="comp-cell">
+          <div class="comp-name">Form select · default</div>
+          <div class="ub-select"><span>Select property…</span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></div>
+        </div>
+        <div class="comp-cell">
+          <div class="comp-name">Form select · filled</div>
+          <div class="ub-select ub-select-filled"><span>Apartment on Main St</span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></div>
+        </div>
+        <div class="comp-cell">
+          <div class="comp-name">Inline · filter</div>
+          <div class="ub-select ub-select-inline"><span class="muted">Period:</span><span>Last 12 months</span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></div>
+        </div>
+        <div class="comp-cell">
+          <div class="comp-name">Segmented tabs</div>
+          <div class="ub-tabs">
+            <button class="ub-tab ub-tab-active">Expenses (₴)</button>
+            <button class="ub-tab">Consumption</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RADIO / CHECKBOX / TOGGLE -->
+    <section id="radio" class="sec">
+      <header class="sec-head">
+        <h2 class="sec-h2">Radio · Checkbox · Toggle</h2>
+        <p class="sec-sub">For role pickers (sharing), settings, theme switcher. Radio uses the card-style "invite" pattern from the sharing modal.</p>
+      </header>
+
+      <div class="comp-grid comp-grid-2">
+        <div class="comp-cell">
+          <div class="comp-name">Radio · invite card</div>
+          <div class="invite-radio invite-radio-active">
+            <div class="ir-mark"></div>
+            <div>
+              <div class="ir-label">Editor</div>
+              <div class="ir-help">Can add readings, bills, and payments.</div>
+            </div>
+          </div>
+          <div class="invite-radio">
+            <div class="ir-mark ir-mark-empty"></div>
+            <div>
+              <div class="ir-label">Viewer</div>
+              <div class="ir-help">Can see everything, but can't make changes.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="comp-cell">
+          <div class="comp-name">Checkbox</div>
+          <label class="ub-check"><span class="ub-check-box ub-check-box-on"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>Send me monthly summary</label>
+          <label class="ub-check"><span class="ub-check-box"></span>Send tariff change alerts</label>
+          <label class="ub-check ub-check-dis"><span class="ub-check-box"></span>Use last year's data (disabled)</label>
+        </div>
+
+        <div class="comp-cell">
+          <div class="comp-name">Toggle / Switch</div>
+          <div class="row-line">
+            <div>
+              <div class="row-title">Email notifications</div>
+              <div class="row-help">Bill due reminders &amp; readings</div>
+            </div>
+            <div class="ub-switch ub-switch-on"><span class="ub-knob"></span></div>
+          </div>
+          <div class="row-line">
+            <div>
+              <div class="row-title">Marketing email</div>
+              <div class="row-help">Occasional product updates</div>
+            </div>
+            <div class="ub-switch"><span class="ub-knob"></span></div>
+          </div>
+        </div>
+
+        <div class="comp-cell">
+          <div class="comp-name">Theme picker (7c)</div>
+          <div class="ub-segment">
+            <button class="ub-seg-btn ub-seg-active">Light</button>
+            <button class="ub-seg-btn">Dark</button>
+            <button class="ub-seg-btn">System</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CARDS -->
+    <section id="cards" class="sec">
+      <header class="sec-head">
+        <h2 class="sec-h2">Cards</h2>
+        <p class="sec-sub">All containers share a single recipe: white surface, 1px zinc-200 border, 8px radius, 1px card shadow. Padding 20 or 24.</p>
+      </header>
+
+      <div class="theme-pair">
+        <div class="theme-block theme-light">
+          <div class="theme-label">Light</div>
+          <div class="card-demo">
+            <div class="cd-head">
+              <div class="cd-title">Current balance</div>
+              <button class="ub-btn-ghost-mini">View details ›</button>
+            </div>
+            <div class="cd-grid">
+              <div>
+                <div class="cd-k">Total debt</div>
+                <div class="cd-v cd-debt">−1,240 <span>UAH</span></div>
+                <div class="cd-k">across 2 services</div>
+              </div>
+              <div>
+                <div class="cd-k">Overpayment</div>
+                <div class="cd-v cd-over">+350 <span>UAH</span></div>
+                <div class="cd-k">across 1 service</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-demo card-attention">
+            <div class="ca-head"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg><strong>Attention required</strong></div>
+              <div class="ca-line">Debt: <strong style="color:#dc2626;">1,240 UAH</strong> <span class="muted">total (2 services)</span></div>
+              <div class="ca-line">Submit readings by <strong>Oct 25</strong> <span class="muted">(3 meters)</span></div>
+          </div>
+        </div>
+
+        <div class="theme-block theme-dark">
+          <div class="theme-label">Dark</div>
+          <div class="card-demo card-demo--dark">
+            <div class="cd-head">
+              <div class="cd-title">Current balance</div>
+              <button class="ub-btn-ghost-mini ub-btn-ghost-mini--dark">View details ›</button>
+            </div>
+            <div class="cd-grid">
+              <div>
+                <div class="cd-k cd-k--dark">Total debt</div>
+                <div class="cd-v" style="color:#f87171;">−1,240 <span>UAH</span></div>
+                <div class="cd-k cd-k--dark">across 2 services</div>
+              </div>
+              <div>
+                <div class="cd-k cd-k--dark">Overpayment</div>
+                <div class="cd-v" style="color:#4ade80;">+350 <span>UAH</span></div>
+                <div class="cd-k cd-k--dark">across 1 service</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BADGES -->
+    <section id="badges" class="sec">
+      <header class="sec-head">
+        <h2 class="sec-h2">Badges &amp; chips</h2>
+        <p class="sec-sub">Pill shape (radius 9999). Use sparingly — admin status, roles, service tags. Service chips use tinted background + service color stroke.</p>
+      </header>
+
+      <div class="badge-grid">
+        <div class="badge-cell">
+          <div class="comp-name">Admin chrome badge</div>
+          <span class="bdg bdg-admin-outline">Admin</span>
+          <span class="bdg bdg-admin-dark">Admin</span>
+        </div>
+
+        <div class="badge-cell">
+          <div class="comp-name">Role · Owner / Editor / Viewer</div>
+          <span class="bdg bdg-owner">Owner</span>
+          <span class="bdg bdg-neutral">Editor</span>
+          <span class="bdg bdg-neutral">Viewer</span>
+        </div>
+
+        <div class="badge-cell">
+          <div class="comp-name">Role · Admin / User (admin lists)</div>
+          <span class="bdg bdg-admin-outline">Admin</span>
+          <span class="bdg bdg-neutral">User</span>
+        </div>
+
+        <div class="badge-cell">
+          <div class="comp-name">User · joined</div>
+          <span class="bdg bdg-user-mini">User</span>
+        </div>
+
+        <div class="badge-cell">
+          <div class="comp-name">Service chips</div>
+          <span class="svc-chip" style="--c:#f59e0b"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></svg>Electricity</span>
+          <span class="svc-chip" style="--c:#ef4444"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>Gas</span>
+          <span class="svc-chip" style="--c:#3b82f6"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M7 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S7.29 6.75 7 5.3c-.29 1.45-1.14 2.84-2.29 3.76S3 11.1 3 12.25c0 2.22 1.8 4.05 4 4.05z"/><path d="M12.56 6.6A10.97 10.97 0 0 0 14 3.02c.5 2.5 2 4.9 4 6.5s3 3.5 3 5.5a6.98 6.98 0 0 1-11.91 4.97"/></svg>Cold water</span>
+          <span class="svc-chip" style="--c:#14b8a6">Internet</span>
+        </div>
+
+        <div class="badge-cell">
+          <div class="comp-name">Status (soft-deleted)</div>
+          <span class="bdg bdg-destructive">Soft-deleted</span>
+        </div>
+
+        <div class="badge-cell">
+          <div class="comp-name">Eyebrow / Marketing pill</div>
+          <span class="bdg bdg-eyebrow">✦ Live · Multi-property</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- HEADER -->
+    <section id="header" class="sec">
+      <header class="sec-head">
+        <h2 class="sec-h2">Header / navigation</h2>
+        <p class="sec-sub">Three flavors: Landing (public), CRM (authenticated user), Admin (Amber line + badge).</p>
+      </header>
+
+      <!-- Landing header -->
+      <div class="comp-name comp-name-large">Landing — 56px height · centered nav · CTA cluster</div>
+      <div class="hdr-demo hdr-landing">
+        <div class="hdr-inner">
+          <div class="hdr-logo"><div class="hdr-mark hdr-mark-violet"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.75"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg></div>UtilityBills</div>
+          <nav class="hdr-nav">
+            <a href="#" class="hdr-link">Home</a>
+            <a href="#" class="hdr-link">About</a>
+            <a href="#" class="hdr-link">Project</a>
+          </nav>
+          <div class="hdr-actions">
+            <button class="ub-btn-icon ub-btn-icon-sm"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg></button>
+            <button class="ub-btn ub-btn-outline ub-btn-sm">Sign in</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- CRM header -->
+      <div class="comp-name comp-name-large">CRM — 64px · authenticated · violet underline for active</div>
+      <div class="hdr-demo hdr-crm">
+        <div class="hdr-inner">
+          <div class="hdr-logo"><div class="hdr-mark hdr-mark-violet"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.75"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg></div>UtilityBills</div>
+          <nav class="hdr-nav-app">
+            <a class="hdr-app-link hdr-app-link-active">Dashboard<span class="hdr-underline-violet"></span></a>
+            <a class="hdr-app-link">Properties</a>
+            <a class="hdr-app-link">Bills</a>
+            <a class="hdr-app-link">Payments</a>
+            <a class="hdr-app-link">Settings</a>
+          </nav>
+          <div class="hdr-actions">
+            <button class="ub-btn-icon ub-btn-icon-sm"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg></button>
+            <button class="ub-btn-icon ub-btn-icon-sm"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg></button>
+            <div class="hdr-divider"></div>
+            <div class="hdr-user">Anna<div class="hdr-avatar">AL</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Admin header -->
+      <div class="comp-name comp-name-large">Admin — Amber 3px line · <code>[Admin]</code> outline pill · black logo mark</div>
+      <div class="hdr-demo hdr-admin">
+        <div class="hdr-amber-line"></div>
+        <div class="hdr-inner">
+          <div class="hdr-logo"><div class="hdr-mark hdr-mark-black"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.75"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg></div>UtilityBills<span class="bdg bdg-admin-outline" style="margin-left:8px;">Admin</span></div>
+          <nav class="hdr-nav-app">
+            <a class="hdr-app-link hdr-app-link-active hdr-app-link-amber">Dashboard<span class="hdr-underline-amber"></span></a>
+            <a class="hdr-app-link">Properties</a>
+            <a class="hdr-app-link">Users</a>
+            <a class="hdr-app-link">Landing</a>
+          </nav>
+          <div class="hdr-actions">
+            <div class="hdr-user">Art Loban<div class="hdr-avatar hdr-avatar-amber">AL</div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TABLES -->
+    <section id="tables" class="sec">
+      <header class="sec-head">
+        <h2 class="sec-h2">Tables</h2>
+        <p class="sec-sub">Subtle header background (<code>#fafafa</code>), 1px row dividers, tabular-nums for any numeric column. Right-aligned numbers, left-aligned text.</p>
+      </header>
+
+      <div class="tbl-card">
+        <table class="ub-tbl">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Property</th>
+              <th>Service</th>
+              <th class="ta-r">Period</th>
+              <th class="ta-r">Amount</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>15 Oct 2025</td>
+              <td>Apartment on Main St</td>
+              <td><span class="svc-chip" style="--c:#f59e0b">Electricity</span></td>
+              <td class="ta-r mono">Sep 2025</td>
+              <td class="ta-r mono"><strong>−680 UAH</strong></td>
+              <td><button class="ub-btn-icon ub-btn-icon-tiny"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></button></td>
+            </tr>
+            <tr>
+              <td>14 Oct 2025</td>
+              <td>Mom's apartment</td>
+              <td><span class="svc-chip" style="--c:#ef4444">Gas</span></td>
+              <td class="ta-r mono">Sep 2025</td>
+              <td class="ta-r mono"><strong>−320 UAH</strong></td>
+              <td><button class="ub-btn-icon ub-btn-icon-tiny"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></button></td>
+            </tr>
+            <tr>
+              <td>12 Oct 2025</td>
+              <td>Summer house</td>
+              <td><span class="svc-chip" style="--c:#3b82f6">Cold water</span></td>
+              <td class="ta-r mono">Sep 2025</td>
+              <td class="ta-r mono"><strong>−180 UAH</strong></td>
+              <td><button class="ub-btn-icon ub-btn-icon-tiny"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- TOOLTIP / TOASTS -->
+    <section id="tooltip" class="sec">
+      <header class="sec-head">
+        <h2 class="sec-h2">Tooltips &amp; toasts</h2>
+        <p class="sec-sub">Floating elements live on dark surfaces regardless of theme — high contrast against any chart or card.</p>
+      </header>
+
+      <div class="comp-grid comp-grid-2">
+        <div class="comp-cell">
+          <div class="comp-name">Chart tooltip</div>
+          <div class="toast-demo toast-tooltip">
+            <div class="tt-title">May 2025</div>
+            <div class="tt-line"><span class="tt-dot" style="background:#f59e0b"></span><span class="tt-label">Electricity</span><span class="tt-val">640 UAH</span></div>
+            <div class="tt-line"><span class="tt-dot" style="background:#ef4444"></span><span class="tt-label">Gas</span><span class="tt-val">120 UAH</span></div>
+            <div class="tt-line"><span class="tt-dot" style="background:#3b82f6"></span><span class="tt-label">Cold water</span><span class="tt-val">140 UAH</span></div>
+            <div class="tt-total"><span class="tt-label">Total</span><span class="tt-val tt-bold">900 UAH</span></div>
+          </div>
+        </div>
+
+        <div class="comp-cell">
+          <div class="comp-name">Card tooltip (light overlay)</div>
+          <div class="toast-demo toast-light">
+            <div class="tt-title-light">Sep 2025</div>
+            <div class="tt-line-l"><span class="tt-dot" style="background:#7c3aed"></span><span class="tt-label-l">T1 (day):</span><span class="tt-val-l">2,340 kWh</span></div>
+            <div class="tt-line-l"><span class="tt-dot" style="background:#71717a"></span><span class="tt-label-l">T2 (night):</span><span class="tt-val-l">820 kWh</span></div>
+          </div>
+        </div>
+
+        <div class="comp-cell">
+          <div class="comp-name">Toast · success</div>
+          <div class="toast-demo toast-success">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+            <div><strong>Reading saved</strong><div class="muted" style="font-size:12px;">Apartment on Main St · Oct 2025</div></div>
+          </div>
+        </div>
+
+        <div class="comp-cell">
+          <div class="comp-name">Toast · error</div>
+          <div class="toast-demo toast-error">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+            <div><strong>Couldn't save bill</strong><div class="muted" style="font-size:12px;">Network error. Try again.</div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION CHROME (Landing/CRM/Admin) -->
+    <section id="section-landing" class="sec">
+      <header class="sec-head">
+        <h2 class="sec-h2">Landing chrome — distinctives</h2>
+        <p class="sec-sub">What's different from the app.</p>
+      </header>
+      <ul class="diff-list">
+        <li><strong>Container.</strong> <code>1100px</code> max (vs <code>1360px</code> in CRM). Tighter, magazine-like.</li>
+        <li><strong>Header height.</strong> <code>56px</code> (vs <code>64px</code>).</li>
+        <li><strong>Hero glow.</strong> A radial violet gradient at <code>rgba(124,58,237,0.10)</code> in the top-right corner — only here.</li>
+        <li><strong>Hero eyebrow pill.</strong> Violet text on <code>rgba(124,58,237,0.08)</code> background, violet border.</li>
+        <li><strong>Section spacing.</strong> <code>72–96px</code> vertical padding between sections (vs <code>20–32px</code> stacked in app).</li>
+        <li><strong>Display type.</strong> Up to <code>56px</code> for the h1 — never used in app.</li>
+        <li><strong>Sticky header on scroll.</strong> Becomes translucent (<code>rgba(255,255,255,0.88)</code> + <code>blur(12px)</code>).</li>
+        <li><strong>Tech chips.</strong> Public Project page uses pill chips (radius 6, no fill) — Landing-only pattern.</li>
+      </ul>
+    </section>
+
+    <section id="section-crm" class="sec">
+      <header class="sec-head">
+        <h2 class="sec-h2">CRM chrome — distinctives</h2>
+        <p class="sec-sub">The canonical user app surface — everything else is a delta against this.</p>
+      </header>
+      <ul class="diff-list">
+        <li><strong>Background.</strong> <code>#ffffff</code> page, <code>#ffffff</code> cards, <code>#fafafa</code> reserved for subtle row hover.</li>
+        <li><strong>Top bar.</strong> <code>64px</code>, sticky, translucent <code>rgba(255,255,255,0.8)</code> + blur 8.</li>
+        <li><strong>Active nav.</strong> Violet underline <code>2px</code> at <code>bottom: -1</code>.</li>
+        <li><strong>Card.</strong> White, border <code>#e4e4e7</code>, radius <code>8</code>, shadow <code>0 1px 2px rgba(24,24,27,.05)</code>.</li>
+        <li><strong>Avatar.</strong> Violet tint background, violet text initials. <em>Settings 7c moved to <code>#ddd6fe</code> avatar — slight drift.</em></li>
+        <li><strong>Numbers.</strong> Always tabular (<code>font-feature-settings: "tnum" 1</code>).</li>
+        <li><strong>Empty states.</strong> Big icon (40px), title 16, body 13.5 muted, CTA below.</li>
+      </ul>
+    </section>
+
+    <section id="section-admin" class="sec">
+      <header class="sec-head">
+        <h2 class="sec-h2">Admin chrome — distinctives</h2>
+        <p class="sec-sub">A thin set of overrides on top of CRM. Same components, never duplicated.</p>
+      </header>
+      <ul class="diff-list">
+        <li><strong>Amber line.</strong> <code>3px</code> solid <code>#f59e0b</code> at the very top — the only constant signal you are in admin.</li>
+        <li><strong>Admin pill.</strong> Next to logo. Outline only (<code>1.5px</code> amber border, amber text, no fill) in light. Tinted fill in dark.</li>
+        <li><strong>Logo mark.</strong> Switches from violet to <code>foreground</code> (black/white) — so the violet brand mark doesn't compete with the amber chrome.</li>
+        <li><strong>Avatar.</strong> Amber tint (<code>#fef3c7</code> / <code>#fde68a</code>).</li>
+        <li><strong>Page background.</strong> <code>#fafafa</code> instead of pure white.</li>
+        <li><strong>Active nav underline.</strong> Amber (<code>#d97706</code>) instead of violet.</li>
+        <li><strong>Dark admin background.</strong> Deeper than user-dark — <code>#050507</code> page over <code>#18181b</code> cards.</li>
+        <li><strong>Role badges.</strong> <em>Owner</em> stays violet (it's a permission, not a chrome signal). <em>Admin</em> uses amber outline pill.</li>
+      </ul>
+    </section>
+
+    <!-- DRIFT -->
+    <section id="drift" class="sec">
+      <header class="sec-head">
+        <h2 class="sec-h2">Evolution &amp; deviations</h2>
+        <p class="sec-sub">Where later iterations drifted from the system established in Iterations 1–6. Not "wrong" — but flagged so we can decide what to reconcile.</p>
+      </header>
+
+      <div class="drift-table">
+        <div class="dft-row dft-head">
+          <div>Where</div><div>Token / pattern</div><div>Established (1–6)</div><div>Drift</div><div>Note</div>
+        </div>
+
+        <div class="dft-row">
+          <div><strong>Iteration 7a</strong><br><span class="muted">Property comparison</span></div>
+          <div>Page background</div>
+          <div><code>#ffffff</code></div>
+          <div><code>#fafafa</code> ⚠</div>
+          <div>Page bg shifted to zinc-50. Cards still white. Reads as a soft canvas — admin-like.</div>
+        </div>
+
+        <div class="dft-row">
+          <div><strong>Iteration 7b</strong><br><span class="muted">Service detail</span></div>
+          <div>Modal/drawer radius</div>
+          <div><code>8</code></div>
+          <div><code>10</code> ⚠</div>
+          <div>Drawer corner softened. Cards inside still 8.</div>
+        </div>
+
+        <div class="dft-row">
+          <div><strong>Iteration 7c</strong><br><span class="muted">Settings</span></div>
+          <div>Card radius</div>
+          <div><code>8</code></div>
+          <div><code>10</code> ⚠</div>
+          <div>Card radius nudged up. Inconsistent with all other CRM cards.</div>
+        </div>
+
+        <div class="dft-row">
+          <div><strong>Iteration 7c</strong></div>
+          <div>Button · default hover</div>
+          <div><code>#6d28d9</code> (violet hover)</div>
+          <div><code>#18181b</code> ⚠</div>
+          <div>Primary button hover became near-black. Departs from "default = violet". Strong drift.</div>
+        </div>
+
+        <div class="dft-row">
+          <div><strong>Iteration 7c</strong></div>
+          <div>Page background</div>
+          <div><code>#ffffff</code></div>
+          <div><code>#fafafa</code> ⚠</div>
+          <div>Same shift as 7a — introduced a <code>page</code> token distinct from <code>background</code>.</div>
+        </div>
+
+        <div class="dft-row">
+          <div><strong>Iteration 7c</strong></div>
+          <div>Avatar background</div>
+          <div>Violet tint <code>#f5f3ff</code></div>
+          <div><code>#ddd6fe</code></div>
+          <div>Avatar saturation jumped — reads as a different brand color at a glance.</div>
+        </div>
+
+        <div class="dft-row">
+          <div><strong>Admin dark</strong></div>
+          <div>Page background</div>
+          <div><code>#09090b</code> (CRM dark)</div>
+          <div><code>#050507</code> ✓</div>
+          <div>Intentional — deeper page so admin chrome reads "elevated". Keep as admin-only override.</div>
+        </div>
+      </div>
+
+      <div class="note">
+        <strong>Recommendation.</strong> Promote <code>page</code> as a real token (<code>#fafafa</code>) — it's clearly useful for admin and settings. Roll back the 7c <strong>card radius</strong> and <strong>button hover</strong> drifts to keep the system coherent.
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="dsfoot">
+      <div>Utility Bills CRM · Design System</div>
+      <div class="muted">Compiled from Iterations 1 – 8 · Source files in project root</div>
+    </footer>
+
+  </main>
+</div>
+
+<script src="design-system.js"></script>
+</body>
+</html>

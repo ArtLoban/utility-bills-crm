@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Project — Utility Bills CRM</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', system-ui, sans-serif; background: #09090b; color: #fafafa; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; text-decoration: none; }
+  .container { width: 100%; max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+  /* Header */
+  .pub-header { position: sticky; top: 0; z-index: 50; background: #09090b; border-bottom: 1px solid transparent; transition: border-color 200ms, background 200ms; }
+  .pub-header.scrolled { background: rgba(9,9,11,0.88); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-color: #27272a; }
+  .pub-header-inner { display: flex; align-items: center; height: 56px; gap: 32px; }
+  .pub-logo { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+  .pub-logo-mark { width: 22px; height: 22px; background: #7c3aed; border-radius: 4px; display: flex; align-items: center; justify-content: center; }
+  .pub-logo-text { font-size: 14px; font-weight: 600; color: #fafafa; }
+  .pub-nav { display: flex; align-items: center; gap: 4px; flex: 1; justify-content: center; }
+  .pub-nav-link { font-size: 14px; color: #71717a; padding: 4px 10px; border-radius: 6px; transition: color 120ms; }
+  .pub-nav-link:hover { color: #fafafa; }
+  .pub-nav-link.active { color: #fafafa; font-weight: 500; }
+  .pub-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+  .btn-ghost { font-size: 14px; font-weight: 500; color: #fafafa; padding: 6px 14px; border-radius: 6px; border: 1px solid #3f3f46; background: transparent; cursor: pointer; font-family: inherit; transition: background 120ms; }
+  .btn-ghost:hover { background: #27272a; }
+  .btn-primary { font-size: 14px; font-weight: 500; color: #fff; padding: 8px 18px; border-radius: 6px; border: none; background: #7c3aed; cursor: pointer; font-family: inherit; display: inline-flex; align-items: center; gap: 8px; transition: background 120ms; }
+  .btn-primary:hover { background: #6d28d9; }
+  .theme-btn { width: 32px; height: 32px; border-radius: 6px; border: 1px solid #3f3f46; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #71717a; transition: background 120ms; }
+  .theme-btn:hover { background: #27272a; }
+  .hamburger { display: none; width: 32px; height: 32px; border-radius: 6px; border: 1px solid #3f3f46; background: transparent; cursor: pointer; align-items: center; justify-content: center; color: #71717a; }
+
+  /* Sections */
+  .section-bg    { background: #09090b; }
+  .section-muted { background: rgba(24,24,27,0.80); }
+  .section-py    { padding: 96px 0; }
+
+  /* Hero */
+  .hero-h1  { font-size: clamp(32px, 4.5vw, 52px); font-weight: 600; letter-spacing: -0.03em; line-height: 1.12; color: #fafafa; margin-bottom: 20px; max-width: 680px; text-wrap: pretty; }
+  .hero-sub { font-size: 17px; line-height: 1.7; color: #71717a; max-width: 560px; margin-bottom: 32px; text-wrap: pretty; }
+
+  /* Stack */
+  .stack-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+  .stack-col-heading { font-size: 13px; font-weight: 600; color: #e4e4e7; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 16px; }
+  .chip-wrap { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { font-size: 13px; font-weight: 400; color: #a1a1aa; padding: 4px 11px; border-radius: 6px; border: 1px solid #3f3f46; background: transparent; cursor: pointer; font-family: inherit; transition: border-color 150ms, color 150ms; white-space: nowrap; }
+  .chip:hover { border-color: rgba(167,139,250,0.5); color: #a78bfa; }
+
+  /* Architecture cards */
+  .arch-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .arch-card { background: #18181b; border: 1px solid #27272a; border-radius: 8px; padding: 24px; }
+  .arch-icon  { color: #a78bfa; margin-bottom: 14px; }
+  .arch-title { font-size: 14px; font-weight: 600; color: #fafafa; margin-bottom: 10px; }
+  .arch-body  { font-size: 13px; line-height: 1.7; color: #71717a; text-wrap: pretty; }
+  .arch-body code { background: #27272a; padding: 1px 5px; border-radius: 4px; font-size: 12px; font-family: 'SFMono-Regular', 'Consolas', 'Liberation Mono', monospace; color: #a1a1aa; }
+
+  /* Schema */
+  .schema-wrap    { max-width: 640px; margin: 0 auto; }
+  .schema-heading { font-size: clamp(22px, 2.5vw, 30px); font-weight: 600; letter-spacing: -0.02em; color: #fafafa; margin-bottom: 24px; }
+  .schema-pre     { background: #18181b; border: 1px solid #27272a; border-radius: 8px; padding: 24px 28px; font-family: 'SFMono-Regular', 'Consolas', 'Liberation Mono', monospace; font-size: 13px; line-height: 1.8; color: #a1a1aa; overflow-x: auto; }
+
+  /* Status */
+  .status-block { max-width: 640px; }
+  .status-h2    { font-size: clamp(22px, 2.5vw, 30px); font-weight: 600; letter-spacing: -0.02em; color: #fafafa; margin-bottom: 32px; }
+  .status-paras { display: flex; flex-direction: column; gap: 20px; }
+  .status-para  { font-size: 15px; line-height: 1.75; color: #71717a; text-wrap: pretty; }
+  .status-para strong { color: #e4e4e7; font-weight: 600; }
+
+  /* Links */
+  .link-list { display: flex; flex-direction: column; gap: 24px; max-width: 640px; }
+  .link-item { display: flex; flex-direction: column; gap: 3px; }
+  .link-item a { font-size: 16px; font-weight: 500; color: #a78bfa; display: inline-flex; align-items: center; gap: 6px; transition: opacity 120ms; }
+  .link-item a:hover { opacity: 0.75; }
+  .link-item .caption { font-size: 14px; color: #71717a; }
+  .em-dash { color: #3f3f46; margin: 0 2px; }
+
+  /* Section headings */
+  .section-label { font-size: 12px; font-weight: 500; color: #a78bfa; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; }
+  .section-h2    { font-size: clamp(24px, 2.8vw, 32px); font-weight: 600; letter-spacing: -0.02em; color: #fafafa; margin-bottom: 32px; }
+
+  /* Footer */
+  .footer-inner { display: flex; align-items: center; justify-content: center; gap: 28px; flex-wrap: wrap; padding: 36px 0; }
+  .footer-link  { font-size: 14px; color: #71717a; transition: color 120ms; }
+  .footer-link:hover { color: #a1a1aa; }
+  .footer-sep   { width: 1px; height: 14px; background: #27272a; }
+  .footer-copy  { font-size: 13px; color: #3f3f46; }
+
+  @media (max-width: 720px) {
+    .pub-nav { display: none; }
+    .hamburger { display: flex; }
+    .section-py { padding: 64px 0; }
+    .stack-grid { grid-template-columns: 1fr; gap: 28px; }
+    .arch-grid  { grid-template-columns: 1fr; }
+    .footer-inner { flex-direction: column; gap: 16px; }
+    .footer-sep { display: none; }
+  }
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" data-presets="react">
+const { useState, useEffect } = React;
+
+function Ico({ size = 20, children }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      {children}
+    </svg>
+  );
+}
+const IcoMoon   = ({ size }) => <Ico size={size}><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></Ico>;
+const IcoMenu   = ({ size }) => <Ico size={size}><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></Ico>;
+const IcoGithub = ({ size }) => <Ico size={size}><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.2c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65S8.93 17.38 9 18v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></Ico>;
+const IcoArrow  = ({ size = 14 }) => <Ico size={size}><path d="M5 12h14M12 5l7 7-7 7"/></Ico>;
+const IcoLayers = ({ size }) => <Ico size={size}><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></Ico>;
+const IcoDB     = ({ size }) => <Ico size={size}><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/></Ico>;
+const IcoCode   = ({ size }) => <Ico size={size}><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></Ico>;
+const IcoShield = ({ size }) => <Ico size={size}><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></Ico>;
+const IcoScale  = ({ size }) => <Ico size={size}><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10M12 3v18M3 7h2c2 0 4-1 6-2s4-2 6-2h2"/></Ico>;
+const IcoUsers  = ({ size }) => <Ico size={size}><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></Ico>;
+
+function Header() {
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const fn = () => setScrolled(window.scrollY > 8);
+    window.addEventListener('scroll', fn, { passive: true });
+    return () => window.removeEventListener('scroll', fn);
+  }, []);
+  return (
+    <header className={`pub-header${scrolled ? ' scrolled' : ''}`}>
+      <div className="container">
+        <div className="pub-header-inner">
+          <a href="/" className="pub-logo">
+            <div className="pub-logo-mark">
+              <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+                <rect x="1" y="1" width="4.5" height="4.5" rx="1" fill="white" opacity="0.9"/>
+                <rect x="7.5" y="1" width="4.5" height="4.5" rx="1" fill="white" opacity="0.6"/>
+                <rect x="1" y="7.5" width="4.5" height="4.5" rx="1" fill="white" opacity="0.6"/>
+                <rect x="7.5" y="7.5" width="4.5" height="4.5" rx="1" fill="white" opacity="0.4"/>
+              </svg>
+            </div>
+            <span className="pub-logo-text">Utility Bills CRM</span>
+          </a>
+          <nav className="pub-nav">
+            <a href="/" className="pub-nav-link">Home</a>
+            <a href="/about" className="pub-nav-link">About</a>
+            <a href="/project" className="pub-nav-link active">Project</a>
+          </nav>
+          <div className="pub-actions">
+            <button className="theme-btn"><IcoMoon size={15} /></button>
+            <button className="btn-ghost">Sign in</button>
+            <button className="hamburger"><IcoMenu size={16} /></button>
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+}
+
+const frontendChips = ['Next.js','TypeScript','Tailwind v4','shadcn/ui','Radix','TanStack Table','React Hook Form','Zod','Recharts','next-intl','next-themes','sonner'];
+const backendChips  = ['Next.js Server Components & Actions','PostgreSQL','Drizzle ORM','drizzle-zod','Auth.js v5','pino','Sentry'];
+
+const archCards = [
+  { icon: <IcoLayers size={18}/>, title: 'Next.js full-stack with RSC',
+    body: <>One codebase, no separate API layer. Server Components fetch from the database directly; Server Actions handle mutations with typed validation. No type duplication, no CORS, no version skew between services.</> },
+  { icon: <IcoDB size={18}/>, title: 'PostgreSQL with temporal data',
+    body: <>Tariffs, account numbers, payment details — anything that changes over time — is stored with <code>validFrom</code> / <code>validTo</code> intervals using half-open semantics <code>[start, end)</code>. Past months recompute correctly using whichever rate was valid then.</> },
+  { icon: <IcoCode size={18}/>, title: 'Drizzle ORM, not Prisma',
+    body: <>Drizzle keeps SQL visible — schema-as-TypeScript, but queries that read like SQL. Better fit for the learning goal, better fit for serverless connection patterns, and <code>drizzle-zod</code> removes a whole class of schema/validation duplication.</> },
+  { icon: <IcoShield size={18}/>, title: 'Auth.js with database sessions',
+    body: <>Sliding expiration, immediate revocation, and a "Remember me" 30-day cap that forces conscious re-authentication. The OAuth flow is delegated to the library; sessions live in the database where revoking them takes one row update.</> },
+  { icon: <IcoScale size={18}/>, title: 'Ledger-style accounting',
+    body: <>Bills and payments are independent records. There is no "this payment pays that bill" relationship — balance is derived from <code>sum(bills) − sum(payments)</code>. Matches how households actually think about their utilities and stays correct when amounts don't line up perfectly.</> },
+  { icon: <IcoUsers size={18}/>, title: 'Multi-tenant from day one',
+    body: <>Every entity carries an owner reference. Every query filters by access through typed helpers like <code>accessibleProperties(userId)</code>. Multi-tenancy is in the data model, not bolted on later — and that decision shapes auth, sharing, soft-delete, and admin all at once.</> },
+];
+
+const schemaText = `User
+├── PropertyAccess (role: owner / editor / viewer)
+└── Property
+    ├── Service (electricity, gas, water, …)
+    │   ├── Contract (provider, period)
+    │   │   ├── Tariff (rates over time)
+    │   │   ├── AccountNumber (over time)
+    │   │   └── PaymentDetails (over time)
+    │   ├── Bill (period, amount)
+    │   └── Payment (date, amount)
+    └── Meter (physical device)
+        └── Reading (date, value(s))`;
+
+function App() {
+  return (
+    <div>
+      <Header />
+
+      {/* § 1 Hero */}
+      <section className="section-bg section-py">
+        <div className="container">
+          <h1 className="hero-h1">Utility Bills CRM</h1>
+          <p className="hero-sub">
+            A multi-tenant web application for utility bill tracking, built as both a real product and a senior-level engineering practice ground. The page below walks through the stack, architecture, and the decisions behind them.
+          </p>
+          <a href="https://github.com" target="_blank" rel="noopener noreferrer">
+            <button className="btn-primary">
+              <IcoGithub size={16}/>
+              View on GitHub
+            </button>
+          </a>
+        </div>
+      </section>
+
+      {/* § 2 Stack */}
+      <section className="section-muted section-py">
+        <div className="container">
+          <div className="section-label">Stack</div>
+          <h2 className="section-h2">At a glance</h2>
+          <div className="stack-grid">
+            <div>
+              <div className="stack-col-heading">Frontend</div>
+              <div className="chip-wrap">
+                {frontendChips.map(c => <button key={c} className="chip">{c}</button>)}
+              </div>
+            </div>
+            <div>
+              <div className="stack-col-heading">Backend</div>
+              <div className="chip-wrap">
+                {backendChips.map(c => <button key={c} className="chip">{c}</button>)}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* § 3 Architecture */}
+      <section className="section-bg section-py">
+        <div className="container">
+          <div className="section-label">Architecture</div>
+          <h2 className="section-h2">Six decisions worth explaining</h2>
+          <div className="arch-grid">
+            {archCards.map(({ icon, title, body }) => (
+              <div key={title} className="arch-card">
+                <div className="arch-icon">{icon}</div>
+                <div className="arch-title">{title}</div>
+                <p className="arch-body">{body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* § 4 Schema */}
+      <section className="section-muted section-py">
+        <div className="container">
+          <div className="schema-wrap">
+            <h2 className="schema-heading">Data model</h2>
+            <pre className="schema-pre">{schemaText}</pre>
+            <p style={{ fontSize: 14, color: '#52525b', marginTop: 16 }}>
+              Full schema in the GitHub repository — Drizzle definitions, exclusion constraints, indexes, the lot.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* § 5 Status */}
+      <section className="section-bg section-py">
+        <div className="container">
+          <div className="status-block">
+            <h2 className="status-h2">Status</h2>
+            <div className="status-paras">
+              <p className="status-para"><strong>Where it is now.</strong> The app is in active development. Architecture is finalized, the data model is implemented, the UI is being built screen by screen. The first real user — the author's wife — is testing flows as they ship.</p>
+              <p className="status-para"><strong>v1 (in progress).</strong> Public landing, authenticated CRM, multi-user sharing, admin section with landing CMS, three languages, light/dark theme.</p>
+              <p className="status-para"><strong>Beyond v1.</strong> File storage (Google Drive), Telegram notifications, custom services, export, OCR for scanned bills, provider integrations. Roadmap detail in the README.</p>
+              <p className="status-para"><strong>Hosted on</strong> Vercel (app) and Neon (database).</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* § 6 Links */}
+      <section className="section-muted section-py">
+        <div className="container">
+          <div className="link-list">
+            <div className="link-item">
+              <a href="https://github.com" target="_blank" rel="noopener noreferrer">GitHub <IcoArrow size={13}/></a>
+              <span className="caption"><span className="em-dash">—</span> full source, README, decision log.</span>
+            </div>
+            <div className="link-item">
+              <a href="https://demo.utilitybills.dev" target="_blank" rel="noopener noreferrer">Live demo <IcoArrow size={13}/></a>
+              <span className="caption"><span className="em-dash">—</span> view-only, with sample data.</span>
+            </div>
+            <div className="link-item">
+              <a href="/about">About me <IcoArrow size={13}/></a>
+              <span className="caption"><span className="em-dash">—</span> who built this.</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="section-bg" style={{ borderTop: '1px solid #27272a' }}>
+        <div className="container">
+          <div className="footer-inner">
+            <a href="/about" className="footer-link">About the developer</a>
+            <div className="footer-sep"></div>
+            <a href="/project" className="footer-link">Architecture &amp; code</a>
+            <div className="footer-sep"></div>
+            <span className="footer-copy">© 2026 · Utility Bills CRM</span>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
