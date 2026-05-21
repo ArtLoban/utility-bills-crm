@@ -5,7 +5,8 @@ import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
 import { propertySchema } from "@/lib/validation/property";
-import { createProperty, updateProperty } from "@/lib/actions/properties";
+import { createProperty, editProperty } from "@/lib/actions/properties";
+import type { PropertyId, TProperty } from "@/lib/db/schema/properties";
 import type { TFormState } from "../types";
 import { TPropertyDetail } from "@/app/(app)/properties/_data/mock";
 
@@ -62,17 +63,17 @@ export const usePropertyForm = ({ open, onOpenChange, property, onCreated }: TPa
     setIsSaving(true);
     try {
       const response = isEditMode
-        ? await updateProperty(property.id, result.data)
+        ? await editProperty(property.id as PropertyId, result.data)
         : await createProperty(result.data);
 
       if (!response.ok) {
-        toast.error(response.error);
+        toast.error(response.error.message);
         return;
       }
 
       toast.success(t(isEditMode ? "toast.updated" : "toast.added"));
       onOpenChange(false);
-      if (!isEditMode) onCreated?.(response.data.id);
+      if (!isEditMode) onCreated?.((response.value as TProperty).id);
     } finally {
       setIsSaving(false);
     }
