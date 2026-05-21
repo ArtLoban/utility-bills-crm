@@ -1,0 +1,613 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Utility Bills CRM — Admin: Landing CMS · Home (light)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; padding: 0; min-height: 100%; background: #fafafa; }
+  body { font-family: 'Inter', system-ui, -apple-system, sans-serif; -webkit-font-smoothing: antialiased; }
+  * { box-sizing: border-box; }
+  button, input, textarea, select { font-family: inherit; }
+  a { text-decoration: none; }
+  textarea { resize: vertical; }
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" data-presets="react">
+const { useState } = React;
+
+// ─── Tokens ───────────────────────────────────────────────────────────────────
+const Z = {
+  background: '#ffffff',
+  page:       '#fafafa',
+  foreground: '#09090b',
+  card:       '#ffffff',
+  muted:      '#f4f4f5',
+  mutedFg:    '#71717a',
+  border:     '#e4e4e7',
+  subtle:     '#fafafa',
+  inputBg:    '#ffffff',
+};
+const ACCENT = { solid: '#7c3aed', tintBg: '#f5f3ff', tintBorder: '#ede9fe' };
+const AMBER  = { line:'#f59e0b', solid:'#d97706', tintBg:'#fef3c7', tintBorder:'#fde68a' };
+
+// ─── Icons ────────────────────────────────────────────────────────────────────
+const Ico = ({ size=16, stroke='currentColor', children }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
+    stroke={stroke} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+    {children}
+  </svg>
+);
+const IcoLayout = (p) => <Ico size={p.size||15} stroke={p.stroke||'currentColor'}><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></Ico>;
+const IcoSparkle = (p) => <Ico size={p.size||14} stroke={p.stroke||'currentColor'}><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></Ico>;
+const IcoImage = (p) => <Ico size={p.size||14} stroke={p.stroke||'currentColor'}><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.5-3.5a2 2 0 0 0-2.83 0L3 22"/></Ico>;
+const IcoLayers = (p) => <Ico size={p.size||14} stroke={p.stroke||'currentColor'}><path d="m12 2 9 5-9 5-9-5z"/><path d="m3 12 9 5 9-5"/><path d="m3 17 9 5 9-5"/></Ico>;
+const IcoCode = (p) => <Ico size={p.size||14} stroke={p.stroke||'currentColor'}><path d="m16 18 6-6-6-6M8 6l-6 6 6 6"/></Ico>;
+const IcoCheck = (p) => <Ico size={p.size||14} stroke={p.stroke||'currentColor'}><path d="M20 6 9 17l-5-5"/></Ico>;
+const IcoExt = (p) => <Ico size={p.size||12} stroke={p.stroke||'currentColor'}><path d="M15 3h6v6M10 14 21 3M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5"/></Ico>;
+const IcoDot = (p) => <span style={{ display:'inline-block', width:6, height:6, borderRadius:'50%', background:p.color||Z.mutedFg }}/>;
+
+// ─── Admin TopBar ─────────────────────────────────────────────────────────────
+function AdminTopBar({ activeNav='Landing' }) {
+  const navItems = ['Dashboard','Properties','Users','Landing'];
+  return (
+    <div style={{ position:'sticky', top:0, zIndex:10 }}>
+      <div style={{ height:3, background:AMBER.line }}/>
+      <div style={{ height:64, background:'rgba(255,255,255,0.85)', backdropFilter:'blur(8px)', WebkitBackdropFilter:'blur(8px)', borderBottom:`1px solid ${Z.border}`, display:'flex', alignItems:'center', padding:'0 32px' }}>
+        <div style={{ display:'flex', alignItems:'center', gap:8, marginRight:12 }}>
+          <div style={{ width:26, height:26, borderRadius:6, background:Z.foreground, display:'flex', alignItems:'center', justifyContent:'center' }}><IcoLayout size={15} stroke="#fff"/></div>
+          <span style={{ fontSize:14.5, fontWeight:600, letterSpacing:-0.1, color:Z.foreground }}>UtilityBills</span>
+        </div>
+        <div style={{ display:'inline-flex', alignItems:'center', padding:'2px 8px', borderRadius:9999, border:`1.5px solid ${AMBER.line}`, color:AMBER.solid, fontSize:11, fontWeight:600, letterSpacing:'0.04em', marginRight:28, lineHeight:1 }}>Admin</div>
+        <nav style={{ display:'flex', alignItems:'center', gap:4, flex:1 }}>
+          {navItems.map(item => {
+            const active = item === activeNav;
+            return (
+              <a key={item} href="#" style={{ position:'relative', padding:'8px 12px', fontSize:13.5, fontWeight:active?500:400, color:active?Z.foreground:Z.mutedFg, borderRadius:6 }}>
+                {item}
+                {active && <span style={{ position:'absolute', left:12, right:12, bottom:-1, height:2, background:AMBER.solid, borderRadius:2 }}/>}
+              </a>
+            );
+          })}
+        </nav>
+        <button style={{ display:'flex', alignItems:'center', gap:8, height:36, padding:'0 4px 0 8px', background:'transparent', border:'none', borderRadius:18, cursor:'pointer' }}>
+          <span style={{ fontSize:13, color:Z.foreground, fontWeight:500 }}>Art Loban</span>
+          <div style={{ width:28, height:28, borderRadius:'50%', background:AMBER.tintBg, color:AMBER.solid, display:'flex', alignItems:'center', justifyContent:'center', fontSize:11, fontWeight:600, border:`1px solid ${AMBER.tintBorder}` }}>AL</div>
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// Mobile (compact) variant used inside the 390px frame
+function AdminTopBarMobile({ activeNav='Landing' }) {
+  return (
+    <div>
+      <div style={{ height:3, background:AMBER.line }}/>
+      <div style={{ height:52, background:'rgba(255,255,255,0.9)', borderBottom:`1px solid ${Z.border}`, display:'flex', alignItems:'center', padding:'0 16px', gap:8 }}>
+        <div style={{ width:24, height:24, borderRadius:6, background:Z.foreground, display:'flex', alignItems:'center', justifyContent:'center' }}><IcoLayout size={14} stroke="#fff"/></div>
+        <span style={{ fontSize:14, fontWeight:600, letterSpacing:-0.1 }}>UtilityBills</span>
+        <div style={{ display:'inline-flex', alignItems:'center', padding:'1px 7px', borderRadius:9999, border:`1.25px solid ${AMBER.line}`, color:AMBER.solid, fontSize:10, fontWeight:600, letterSpacing:'0.04em', lineHeight:1 }}>Admin</div>
+        <div style={{ flex:1 }}/>
+        <div style={{ width:26, height:26, borderRadius:'50%', background:AMBER.tintBg, color:AMBER.solid, display:'flex', alignItems:'center', justifyContent:'center', fontSize:10.5, fontWeight:600, border:`1px solid ${AMBER.tintBorder}` }}>AL</div>
+      </div>
+      <div style={{ display:'flex', borderBottom:`1px solid ${Z.border}`, padding:'0 8px', background:Z.background, overflowX:'auto' }}>
+        {['Dashboard','Properties','Users','Landing'].map(item => {
+          const active = item === activeNav;
+          return (
+            <a key={item} href="#" style={{ position:'relative', padding:'10px 12px', fontSize:13, fontWeight:active?500:400, color:active?Z.foreground:Z.mutedFg, whiteSpace:'nowrap' }}>
+              {item}
+              {active && <span style={{ position:'absolute', left:12, right:12, bottom:-1, height:2, background:AMBER.solid, borderRadius:2 }}/>}
+            </a>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ─── Form primitives ──────────────────────────────────────────────────────────
+function FieldLabel({ children, hint }) {
+  return (
+    <div style={{ display:'flex', alignItems:'baseline', justifyContent:'space-between', marginBottom:6 }}>
+      <label style={{ fontSize:13.5, fontWeight:500, color:Z.foreground }}>{children}</label>
+      {hint && <span style={{ fontSize:12, color:Z.mutedFg }}>{hint}</span>}
+    </div>
+  );
+}
+
+function useFocusStyle() {
+  const [focused, setFocused] = useState(false);
+  const border = `1px solid ${focused ? ACCENT.solid : Z.border}`;
+  const shadow = focused ? `0 0 0 3px ${ACCENT.tintBg}` : 'none';
+  return {
+    border, shadow,
+    onFocus: () => setFocused(true),
+    onBlur:  () => setFocused(false),
+  };
+}
+
+function TextInput({ value, onChange, placeholder, mono=false }) {
+  const f = useFocusStyle();
+  return (
+    <input
+      type="text" value={value}
+      onChange={e=>onChange(e.target.value)}
+      placeholder={placeholder}
+      onFocus={f.onFocus} onBlur={f.onBlur}
+      style={{
+        width:'100%', height:36, padding:'0 12px',
+        fontSize: mono ? 13 : 13.5,
+        fontFamily: mono ? "'JetBrains Mono', ui-monospace, monospace" : 'inherit',
+        color:Z.foreground, background:Z.inputBg,
+        border:f.border, borderRadius:6, outline:'none',
+        boxShadow:f.shadow, transition:'border-color 120ms, box-shadow 120ms',
+      }}
+    />
+  );
+}
+
+function TextArea({ value, onChange, rows=3 }) {
+  const f = useFocusStyle();
+  return (
+    <textarea
+      value={value}
+      onChange={e=>onChange(e.target.value)}
+      rows={rows}
+      onFocus={f.onFocus} onBlur={f.onBlur}
+      style={{
+        width:'100%', padding:'10px 12px',
+        fontSize:13.5, lineHeight:1.55,
+        color:Z.foreground, background:Z.inputBg,
+        border:f.border, borderRadius:6, outline:'none',
+        boxShadow:f.shadow, transition:'border-color 120ms, box-shadow 120ms',
+        fontFamily:'inherit',
+      }}
+    />
+  );
+}
+
+// ─── Card section ─────────────────────────────────────────────────────────────
+function Section({ icon, title, description, children, footer }) {
+  return (
+    <div style={{ background:Z.card, border:`1px solid ${Z.border}`, borderRadius:10, marginBottom:20, overflow:'hidden' }}>
+      <div style={{ padding:'18px 24px 16px', borderBottom:`1px solid ${Z.border}`, display:'flex', alignItems:'flex-start', gap:12 }}>
+        {icon && (
+          <div style={{ width:30, height:30, borderRadius:8, background:Z.muted, color:Z.mutedFg, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0, marginTop:1 }}>
+            {icon}
+          </div>
+        )}
+        <div style={{ flex:1, minWidth:0 }}>
+          <div style={{ fontSize:15, fontWeight:600, color:Z.foreground, letterSpacing:-0.15 }}>{title}</div>
+          {description && <div style={{ fontSize:12.5, color:Z.mutedFg, marginTop:2 }}>{description}</div>}
+        </div>
+      </div>
+      <div style={{ padding:'22px 24px' }}>
+        {children}
+      </div>
+      {footer}
+    </div>
+  );
+}
+
+// Sub-card used inside Feature cards section
+function CardSubBlock({ index, title, body, onTitle, onBody }) {
+  return (
+    <div style={{ border:`1px solid ${Z.border}`, borderRadius:8, padding:'14px 16px 16px', background:Z.subtle }}>
+      <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:12 }}>
+        <span style={{
+          width:22, height:22, borderRadius:6,
+          background:Z.background, border:`1px solid ${Z.border}`,
+          fontSize:11.5, fontWeight:600, color:Z.mutedFg,
+          fontFeatureSettings:'"tnum" 1',
+          display:'inline-flex', alignItems:'center', justifyContent:'center',
+        }}>{index}</span>
+        <span style={{ fontSize:12, fontWeight:600, color:Z.mutedFg, letterSpacing:'0.06em', textTransform:'uppercase' }}>Card {index}</span>
+      </div>
+      <div style={{ marginBottom:14 }}>
+        <FieldLabel>Title</FieldLabel>
+        <TextInput value={title} onChange={onTitle}/>
+      </div>
+      <div>
+        <FieldLabel>Body</FieldLabel>
+        <TextArea value={body} onChange={onBody} rows={3}/>
+      </div>
+    </div>
+  );
+}
+
+// ─── Tab bar ──────────────────────────────────────────────────────────────────
+function TabBar({ active, onChange, dirtyTabs }) {
+  const tabs = ['Home','About','Project','Global'];
+  return (
+    <div style={{ display:'inline-flex', padding:3, background:Z.muted, border:`1px solid ${Z.border}`, borderRadius:8 }}>
+      {tabs.map(t => {
+        const isActive = t === active;
+        const dirty = dirtyTabs?.includes(t);
+        return (
+          <button key={t}
+            onClick={()=>onChange(t)}
+            style={{
+              padding:'6px 14px', fontSize:13.5, fontWeight: isActive ? 600 : 500,
+              color: isActive ? Z.foreground : Z.mutedFg,
+              background: isActive ? Z.background : 'transparent',
+              border:'none', borderRadius:6, cursor:'pointer',
+              boxShadow: isActive ? '0 1px 2px rgba(9,9,11,0.06)' : 'none',
+              display:'inline-flex', alignItems:'center', gap:7,
+              transition:'background 120ms, color 120ms',
+            }}>
+            {t}
+            {dirty && <span style={{ width:6, height:6, borderRadius:'50%', background: isActive ? ACCENT.solid : Z.mutedFg }}/>}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+// ─── Save button ──────────────────────────────────────────────────────────────
+function SaveButton({ disabled, label='Save changes' }) {
+  const [hover, setHover] = useState(false);
+  return (
+    <button
+      disabled={disabled}
+      onMouseEnter={()=>setHover(true)} onMouseLeave={()=>setHover(false)}
+      style={{
+        height:38, padding:'0 18px',
+        fontSize:13.5, fontWeight:500,
+        background: disabled ? Z.muted : (hover ? '#18181b' : Z.foreground),
+        color: disabled ? Z.mutedFg : '#ffffff',
+        border: disabled ? `1px solid ${Z.border}` : 'none',
+        borderRadius:6,
+        cursor: disabled ? 'default' : 'pointer',
+        display:'inline-flex', alignItems:'center', gap:7,
+        boxShadow: disabled ? 'none' : '0 1px 2px rgba(9,9,11,0.12)',
+        opacity: disabled ? 0.85 : 1,
+        transition:'background 120ms',
+      }}>
+      <IcoCheck size={14}/>
+      {label}
+    </button>
+  );
+}
+
+// ─── Page header ──────────────────────────────────────────────────────────────
+function PageHeader() {
+  return (
+    <div style={{ marginBottom:24 }}>
+      <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:8 }}>
+        <span style={{ fontSize:12.5, color:Z.mutedFg, fontWeight:500 }}>Admin</span>
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={Z.mutedFg} strokeWidth="2"><path d="m9 18 6-6-6-6"/></svg>
+        <span style={{ fontSize:12.5, color:Z.foreground, fontWeight:500 }}>Landing content</span>
+      </div>
+      <h1 style={{ margin:0, fontSize:28, fontWeight:600, letterSpacing:-0.6, color:Z.foreground }}>Landing content</h1>
+      <p style={{ margin:'6px 0 0', fontSize:13.5, color:Z.mutedFg, maxWidth:560 }}>
+        Edit the public landing pages. Changes publish immediately.
+      </p>
+    </div>
+  );
+}
+
+// ─── Page-target preview banner above the tab content ────────────────────────
+function EditingBanner({ activeTab }) {
+  const map = {
+    Home:    { url:'/',         label:'home page' },
+    About:   { url:'/about',    label:'about page' },
+    Project: { url:'/project',  label:'project page' },
+    Global:  { url:null,        label:'shared across landing' },
+  };
+  const m = map[activeTab];
+  return (
+    <div style={{
+      display:'flex', alignItems:'center', gap:10,
+      padding:'10px 14px',
+      border:`1px solid ${Z.border}`,
+      background:Z.subtle, borderRadius:8,
+      marginBottom:20, fontSize:12.5, color:Z.mutedFg,
+    }}>
+      <IcoDot color={'#10b981'}/>
+      <span>Editing&nbsp;<span style={{ color:Z.foreground, fontWeight:500 }}>{m.label}</span></span>
+      {m.url && (
+        <a href="#" style={{ marginLeft:'auto', display:'inline-flex', alignItems:'center', gap:5, color:Z.mutedFg, fontSize:12, fontFamily:"'JetBrains Mono', ui-monospace, monospace" }}>
+          {m.url}
+          <IcoExt size={11}/>
+        </a>
+      )}
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+//                              HOME TAB
+// ═══════════════════════════════════════════════════════════════════════════
+function HomeTab() {
+  const [heroTitle,setHeroTitle] = useState('Utility Bills CRM');
+  const [heroDesc,setHeroDesc] = useState('A multi-tenant web application for tracking utility bills across multiple properties — apartments, houses, summer homes. Log meter readings, record bills and payments, see balances and consumption analytics over time.');
+  const [capDash,setCapDash] = useState('Dashboard. Balance summary across all properties, expense breakdown by service, monthly trends, and consumption analytics with switchable money/units view.');
+  const [capProp,setCapProp] = useState('Property detail. Each property holds its own services with full contract history — provider changes, tariff changes, account number changes, all preserved.');
+  const [c1t,setC1t] = useState('Properties and people');
+  const [c1b,setC1b] = useState('Track multiple properties — apartments, houses, summer homes — and share access with family at owner, editor, or viewer level.');
+  const [c2t,setC2t] = useState('Tariffs change. History stays.');
+  const [c2b,setC2b] = useState('Every tariff, account number, and payment detail is stored with its validity period. Recompute past months correctly even after rates change.');
+  const [c3t,setC3t] = useState('Bills and payments as a ledger');
+  const [c3b,setC3b] = useState('Bills and payments are independent records. Balance is derived. No forced "this payment pays that bill" links — just the math, the way real households do it.');
+  const [c4t,setC4t] = useState('From numbers to trends');
+  const [c4b,setC4b] = useState('Pie, stacked bar, and line charts show where money goes, how consumption shifts month to month, and whether things are getting better or worse.');
+  const [tech,setTech] = useState('Built with Next.js, TypeScript, PostgreSQL, Drizzle ORM, Auth.js, shadcn/ui, and Tailwind.');
+
+  // Faux dirty tracking: the demo state shows the form is "clean" on load,
+  // but to demonstrate the bottom bar, we'll show the disabled save button.
+  const dirty = false;
+
+  return (
+    <div>
+      <Section
+        icon={<IcoSparkle/>}
+        title="Hero"
+        description="Top of the home page — first thing visitors read."
+      >
+        <div style={{ marginBottom:18 }}>
+          <FieldLabel hint={`${heroTitle.length} chars`}>Hero title</FieldLabel>
+          <TextInput value={heroTitle} onChange={setHeroTitle}/>
+        </div>
+        <div>
+          <FieldLabel hint={`${heroDesc.length} chars`}>Hero description</FieldLabel>
+          <TextArea value={heroDesc} onChange={setHeroDesc} rows={4}/>
+        </div>
+      </Section>
+
+      <Section
+        icon={<IcoImage/>}
+        title="Screenshot captions"
+        description="Text underneath each product screenshot."
+      >
+        <div style={{ marginBottom:18 }}>
+          <FieldLabel hint="Under the dashboard mockup">Dashboard caption</FieldLabel>
+          <TextArea value={capDash} onChange={setCapDash} rows={2}/>
+        </div>
+        <div>
+          <FieldLabel hint="Under the property detail mockup">Property detail caption</FieldLabel>
+          <TextArea value={capProp} onChange={setCapProp} rows={2}/>
+        </div>
+      </Section>
+
+      <Section
+        icon={<IcoLayers/>}
+        title="Feature cards"
+        description="Four cards highlighting what the product does."
+      >
+        <div style={{ display:'grid', gridTemplateColumns:'1fr', gap:14 }}>
+          <CardSubBlock index={1} title={c1t} body={c1b} onTitle={setC1t} onBody={setC1b}/>
+          <CardSubBlock index={2} title={c2t} body={c2b} onTitle={setC2t} onBody={setC2b}/>
+          <CardSubBlock index={3} title={c3t} body={c3b} onTitle={setC3t} onBody={setC3b}/>
+          <CardSubBlock index={4} title={c4t} body={c4b} onTitle={setC4t} onBody={setC4b}/>
+        </div>
+      </Section>
+
+      <Section
+        icon={<IcoCode/>}
+        title="Tech highlights"
+        description="Single line under the feature cards. Plain text."
+      >
+        <div>
+          <FieldLabel hint={`${tech.length} chars · single line`}>Tech highlights line</FieldLabel>
+          <TextInput value={tech} onChange={setTech}/>
+        </div>
+      </Section>
+
+      {/* Save row */}
+      <div style={{
+        display:'flex', alignItems:'center', justifyContent:'space-between',
+        marginTop:8, padding:'14px 16px',
+        background:Z.subtle, border:`1px solid ${Z.border}`, borderRadius:10,
+      }}>
+        <div style={{ display:'flex', alignItems:'center', gap:10, fontSize:12.5, color:Z.mutedFg }}>
+          <IcoDot color={Z.mutedFg}/>
+          <span>No pending changes on this tab.</span>
+        </div>
+        <SaveButton disabled={!dirty}/>
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+//                              PAGE (desktop)
+// ═══════════════════════════════════════════════════════════════════════════
+function LandingCmsDesktop() {
+  const [active, setActive] = useState('Home');
+  return (
+    <div style={{ background:Z.page, minHeight:'100vh', color:Z.foreground }}>
+      <AdminTopBar activeNav="Landing"/>
+      <div style={{ maxWidth:1100, margin:'0 auto', padding:'32px 32px 64px' }}>
+        <PageHeader/>
+        <div style={{ marginBottom:20 }}>
+          <TabBar active={active} onChange={setActive}/>
+        </div>
+        <div style={{ maxWidth:672 }}>
+          <EditingBanner activeTab={active}/>
+          {active === 'Home' && <HomeTab/>}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+//                              MOBILE
+// ═══════════════════════════════════════════════════════════════════════════
+function LandingCmsMobile() {
+  const [active,setActive] = useState('Home');
+  const [heroTitle,setHeroTitle] = useState('Utility Bills CRM');
+  const [heroDesc,setHeroDesc] = useState('A multi-tenant web application for tracking utility bills across multiple properties — apartments, houses, summer homes. Log meter readings, record bills and payments, see balances and consumption analytics over time.');
+  const [capDash,setCapDash] = useState('Dashboard. Balance summary across all properties, expense breakdown by service, monthly trends, and consumption analytics with switchable money/units view.');
+  const [capProp,setCapProp] = useState('Property detail. Each property holds its own services with full contract history — provider changes, tariff changes, account number changes, all preserved.');
+
+  return (
+    <div style={{ background:Z.page, minHeight:'100%' }}>
+      <AdminTopBarMobile activeNav="Landing"/>
+
+      <div style={{ padding:'18px 16px 24px' }}>
+        <h1 style={{ margin:0, fontSize:22, fontWeight:600, letterSpacing:-0.4, color:Z.foreground }}>Landing content</h1>
+        <p style={{ margin:'4px 0 0', fontSize:13, color:Z.mutedFg }}>
+          Edit the public landing pages. Changes publish immediately.
+        </p>
+
+        {/* Tabs — horizontally scrollable on narrow screens */}
+        <div style={{ marginTop:18, marginLeft:-16, marginRight:-16, padding:'0 16px', overflowX:'auto' }}>
+          <div style={{ display:'inline-flex', padding:3, background:Z.muted, border:`1px solid ${Z.border}`, borderRadius:8 }}>
+            {['Home','About','Project','Global'].map(t => {
+              const isActive = t === active;
+              return (
+                <button key={t}
+                  onClick={()=>setActive(t)}
+                  style={{
+                    padding:'7px 14px', fontSize:13, fontWeight: isActive ? 600 : 500,
+                    color: isActive ? Z.foreground : Z.mutedFg,
+                    background: isActive ? Z.background : 'transparent',
+                    border:'none', borderRadius:6, cursor:'pointer',
+                    boxShadow: isActive ? '0 1px 2px rgba(9,9,11,0.06)' : 'none',
+                    whiteSpace:'nowrap',
+                  }}>{t}</button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Editing banner */}
+        <div style={{
+          marginTop:16,
+          display:'flex', alignItems:'center', gap:10,
+          padding:'9px 12px',
+          border:`1px solid ${Z.border}`,
+          background:Z.background, borderRadius:8,
+          fontSize:12, color:Z.mutedFg,
+        }}>
+          <IcoDot color={'#10b981'}/>
+          <span>Editing&nbsp;<span style={{ color:Z.foreground, fontWeight:500 }}>home page</span></span>
+          <span style={{ marginLeft:'auto', fontFamily:"'JetBrains Mono', ui-monospace, monospace", fontSize:11 }}>/</span>
+        </div>
+
+        {/* Hero section */}
+        <div style={{ background:Z.card, border:`1px solid ${Z.border}`, borderRadius:10, padding:'16px', marginTop:16 }}>
+          <div style={{ fontSize:14, fontWeight:600, color:Z.foreground, marginBottom:2 }}>Hero</div>
+          <div style={{ fontSize:12, color:Z.mutedFg, marginBottom:14 }}>Top of the home page.</div>
+          <div style={{ marginBottom:14 }}>
+            <FieldLabel>Hero title</FieldLabel>
+            <TextInput value={heroTitle} onChange={setHeroTitle}/>
+          </div>
+          <div>
+            <FieldLabel>Hero description</FieldLabel>
+            <TextArea value={heroDesc} onChange={setHeroDesc} rows={5}/>
+          </div>
+        </div>
+
+        {/* Captions section (collapsed-feel) */}
+        <div style={{ background:Z.card, border:`1px solid ${Z.border}`, borderRadius:10, padding:'16px', marginTop:14 }}>
+          <div style={{ fontSize:14, fontWeight:600, color:Z.foreground, marginBottom:2 }}>Screenshot captions</div>
+          <div style={{ fontSize:12, color:Z.mutedFg, marginBottom:14 }}>Under each mockup.</div>
+          <div style={{ marginBottom:14 }}>
+            <FieldLabel>Dashboard caption</FieldLabel>
+            <TextArea value={capDash} onChange={setCapDash} rows={3}/>
+          </div>
+          <div>
+            <FieldLabel>Property detail caption</FieldLabel>
+            <TextArea value={capProp} onChange={setCapProp} rows={3}/>
+          </div>
+        </div>
+
+        {/* Collapsed follow-ups for length */}
+        <div style={{ background:Z.card, border:`1px solid ${Z.border}`, borderRadius:10, padding:'14px 16px', marginTop:14, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+          <div>
+            <div style={{ fontSize:14, fontWeight:600, color:Z.foreground }}>Feature cards</div>
+            <div style={{ fontSize:12, color:Z.mutedFg, marginTop:2 }}>4 cards · expand to edit</div>
+          </div>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={Z.mutedFg} strokeWidth="1.75"><path d="m6 9 6 6 6-6"/></svg>
+        </div>
+        <div style={{ background:Z.card, border:`1px solid ${Z.border}`, borderRadius:10, padding:'14px 16px', marginTop:10, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+          <div>
+            <div style={{ fontSize:14, fontWeight:600, color:Z.foreground }}>Tech highlights</div>
+            <div style={{ fontSize:12, color:Z.mutedFg, marginTop:2 }}>1 line · expand to edit</div>
+          </div>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={Z.mutedFg} strokeWidth="1.75"><path d="m6 9 6 6 6-6"/></svg>
+        </div>
+      </div>
+
+      {/* Sticky save bar */}
+      <div style={{
+        position:'sticky', bottom:0,
+        background:'rgba(255,255,255,0.95)', backdropFilter:'blur(8px)',
+        borderTop:`1px solid ${Z.border}`,
+        padding:'12px 16px',
+      }}>
+        <button disabled
+          style={{
+            width:'100%', height:42,
+            fontSize:14, fontWeight:500,
+            background:Z.muted, color:Z.mutedFg,
+            border:`1px solid ${Z.border}`,
+            borderRadius:8, cursor:'default',
+            display:'inline-flex', alignItems:'center', justifyContent:'center', gap:7,
+          }}>
+          <IcoCheck size={14}/>
+          Save changes
+        </button>
+        <div style={{ marginTop:6, fontSize:11.5, color:Z.mutedFg, textAlign:'center' }}>
+          No pending changes on this tab.
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Panel chrome (used to label desktop + mobile renders) ────────────────────
+function PanelLabel({ view, url, extra }) {
+  return (
+    <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:10, paddingLeft:2 }}>
+      <span style={{ fontSize:11, fontWeight:600, letterSpacing:'0.07em', textTransform:'uppercase', color:'#71717a' }}>{view}</span>
+      <code style={{ fontSize:11, background:'#f4f4f5', padding:'1px 6px', borderRadius:4, color:'#52525b', fontFamily:"'JetBrains Mono','SF Mono','Fira Mono',monospace", border:'1px solid #e4e4e7' }}>{url}</code>
+      {extra && <span style={{ fontSize:11, color:'#71717a' }}>· {extra}</span>}
+    </div>
+  );
+}
+function PanelFrame({ children, style }) {
+  return <div style={{ background:Z.background, borderRadius:12, overflow:'hidden', border:`1px solid ${Z.border}`, boxShadow:'0 2px 24px -4px rgba(0,0,0,0.08), 0 1px 4px -2px rgba(0,0,0,0.06)', ...style }}>{children}</div>;
+}
+
+// ─── Page wrapper (two panels) ───────────────────────────────────────────────
+function App() {
+  return (
+    <div style={{ fontFamily:"'Inter',system-ui,sans-serif", fontFeatureSettings:'"cv11" 1,"ss01" 1', WebkitFontSmoothing:'antialiased', color:Z.foreground, background:'#f4f4f5', minHeight:'100vh', padding:'40px 40px 56px' }}>
+
+      <PanelLabel view="Admin view · desktop · light" url="/art-admin/landing"/>
+      <PanelFrame>
+        <LandingCmsDesktop/>
+      </PanelFrame>
+
+      <div style={{ height:48 }}/>
+
+      <div style={{ display:'flex', justifyContent:'center' }}>
+        <div>
+          <PanelLabel view="Admin view · mobile · light" url="/art-admin/landing" extra="390 × auto"/>
+          <PanelFrame style={{ width:390, borderRadius:24, border:`1px solid ${Z.border}` }}>
+            <LandingCmsMobile/>
+          </PanelFrame>
+        </div>
+      </div>
+
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
