@@ -132,7 +132,7 @@ const MeterRow = ({ meter, showHistoricalBadge, onSubmitReading, isLast }: TProp
               alignItems: "center",
               justifyContent: "center",
             }}
-            className="data-popup-open:border-zinc-200 data-popup-open:bg-zinc-100 dark:data-popup-open:border-zinc-700 dark:data-popup-open:bg-zinc-800"
+            className="data-[state=open]:border-zinc-200 data-[state=open]:bg-zinc-100 dark:data-[state=open]:border-zinc-700 dark:data-[state=open]:bg-zinc-800"
           >
             <MoreHorizontal
               size={15}

@@ -28,7 +28,7 @@ export const PageSizeSelector = ({ value }: TProps) => {
   return (
     <Select value={String(value)} onValueChange={handleSizeChange}>
       <SelectTrigger size="sm" className="w-auto" aria-label={t("perPageLabel")}>
-        <SelectValue>{t("perPage", { count: value })}</SelectValue>
+        <SelectValue />
       </SelectTrigger>
       <SelectContent>
         {PAGE_SIZE_OPTIONS.map((size) => (

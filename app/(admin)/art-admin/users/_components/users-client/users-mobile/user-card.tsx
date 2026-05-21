@@ -25,7 +25,7 @@ export const UserCard = ({ user }: TProps) => {
       <div className="flex items-start justify-between gap-2">
         <span className="truncate text-sm font-semibold tracking-tight">{user.email}</span>
         <DropdownMenu>
-          <DropdownMenuTrigger className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded border border-transparent data-popup-open:border-zinc-200 data-popup-open:bg-zinc-100 dark:data-popup-open:border-zinc-700 dark:data-popup-open:bg-zinc-800">
+          <DropdownMenuTrigger className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded border border-transparent data-[state=open]:border-zinc-200 data-[state=open]:bg-zinc-100 dark:data-[state=open]:border-zinc-700 dark:data-[state=open]:bg-zinc-800">
             <MoreHorizontal
               size={15}
               strokeWidth={1.75}
@@ -33,8 +33,8 @@ export const UserCard = ({ user }: TProps) => {
             />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-40">
-            <DropdownMenuItem render={<Link href={`/art-admin/users/${user.id}`} />}>
-              View details
+            <DropdownMenuItem asChild>
+              <Link href={`/art-admin/users/${user.id}`}>View details</Link>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

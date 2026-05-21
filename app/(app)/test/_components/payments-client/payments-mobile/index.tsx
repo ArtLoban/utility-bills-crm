@@ -64,9 +64,11 @@ export const PaymentsMobile = ({ payments }: TProps) => {
           <h2 className="text-[22px] font-bold tracking-tight">{t("title")}</h2>
           <p className="text-muted-foreground mt-0.5 text-xs">{filtered.length}</p>
         </div>
-        <Button render={<Link href="/test/new" />} nativeButton={false}>
-          <Plus size={14} />
-          {t("mobile.add")}
+        <Button asChild>
+          <Link href="/test/new">
+            <Plus size={14} />
+            {t("mobile.add")}
+          </Link>
         </Button>
       </div>
 

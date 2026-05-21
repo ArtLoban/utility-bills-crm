@@ -39,12 +39,12 @@ type TFilterSelectProps = {
 const FilterSelect = ({ label, value, onChange, options, placeholder }: TFilterSelectProps) => (
   <div className="flex flex-col gap-1.5">
     <label className="text-sm font-medium">{label}</label>
-    <Select value={value} onValueChange={(v) => onChange(v || null)}>
+    <Select value={value || ""} onValueChange={(v) => onChange(v === "__clear__" ? null : v)}>
       <SelectTrigger className="w-full rounded-lg">
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>
-        <SelectItem>{placeholder}</SelectItem>
+        <SelectItem value="__clear__">{placeholder}</SelectItem>
         {options.map(({ id, name }) => (
           <SelectItem key={id} value={id}>
             {name}
@@ -74,8 +74,10 @@ export const FilterSheet = ({ open, onOpenChange }: TProps) => {
         <div className="px-4 pb-6">
           <div className="flex items-center justify-between py-3">
             <SheetTitle>{t("mobile.filters")}</SheetTitle>
-            <SheetClose render={<Button variant="ghost" size="icon-sm" aria-label="Close" />}>
-              <X size={16} className="text-muted-foreground" />
+            <SheetClose asChild>
+              <Button variant="ghost" size="icon-sm" aria-label="Close">
+                <X size={16} className="text-muted-foreground" />
+              </Button>
             </SheetClose>
           </div>
 

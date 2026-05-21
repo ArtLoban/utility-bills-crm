@@ -21,23 +21,17 @@ export const SoftDeleteBanner = ({ propertyId, deletedAt }: TProps) => (
       </div>
     </div>
     <div className="flex shrink-0 items-center gap-2">
-      <Button
-        variant="outline"
-        size="sm"
-        nativeButton={false}
-        render={<Link href={`/art-admin/properties/${propertyId}/restore`} />}
-      >
-        <RotateCcw size={13} strokeWidth={1.75} />
-        Restore
+      <Button asChild variant="outline" size="sm">
+        <Link href={`/art-admin/properties/${propertyId}/restore`}>
+          <RotateCcw size={13} strokeWidth={1.75} />
+          Restore
+        </Link>
       </Button>
-      <Button
-        variant="destructive"
-        size="sm"
-        nativeButton={false}
-        render={<Link href={`/art-admin/properties/${propertyId}/hard-delete`} />}
-      >
-        <Trash2 size={13} strokeWidth={1.75} />
-        Delete permanently
+      <Button asChild variant="destructive" size="sm">
+        <Link href={`/art-admin/properties/${propertyId}/hard-delete`}>
+          <Trash2 size={13} strokeWidth={1.75} />
+          Delete permanently
+        </Link>
       </Button>
     </div>
   </div>

@@ -32,7 +32,9 @@ export const RestoreDialogContent = ({ propertyName, sharingNames }: TProps) => 
           again. {sharingNames.join(" and ")} will see it and have access restored.
         </p>
         <DialogFooter>
-          <DialogClose render={<Button variant="outline" />}>Cancel</DialogClose>
+          <DialogClose asChild>
+            <Button variant="outline">Cancel</Button>
+          </DialogClose>
           <Button onClick={dismiss}>Restore</Button>
         </DialogFooter>
       </DialogContent>

@@ -24,7 +24,7 @@ export const RowActions = ({ items, triggerLabel }: TProps) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        className="hover:bg-accent data-popup-open:bg-accent inline-flex h-8 w-8 items-center justify-center rounded-md"
+        className="hover:bg-accent data-[state=open]:bg-accent inline-flex h-8 w-8 items-center justify-center rounded-md"
         aria-label={triggerLabel ? triggerLabel : t("ariaLabel")}
       >
         <MoreHorizontal size={16} />
@@ -37,15 +37,30 @@ export const RowActions = ({ items, triggerLabel }: TProps) => {
 
           const variant = item.destructive ? "destructive" : "default";
 
+          if (item.kind === "link") {
+            return (
+              <DropdownMenuItem
+                key={`${item.label}-${idx}`}
+                asChild
+                disabled={item.disabled}
+                variant={variant}
+                className="cursor-pointer"
+              >
+                <Link href={item.href}>
+                  {item.icon && <span className="mr-1 inline-flex">{item.icon}</span>}
+                  {item.label}
+                </Link>
+              </DropdownMenuItem>
+            );
+          }
+
           return (
             <DropdownMenuItem
               key={`${item.label}-${idx}`}
               disabled={item.disabled}
               variant={variant}
               className="cursor-pointer"
-              {...(item.kind === "link"
-                ? { render: <Link href={item.href} /> }
-                : { onClick: item.onSelect })}
+              onClick={item.onSelect}
             >
               {item.icon && <span className="mr-1 inline-flex">{item.icon}</span>}
               {item.label}

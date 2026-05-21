@@ -125,7 +125,7 @@ export const PaymentsTable = ({ rows, onEditPayment }: TProps) => {
                 })}
                 <TableCell className="w-12" onClick={(e) => e.stopPropagation()}>
                   <DropdownMenu>
-                    <DropdownMenuTrigger className="hover:bg-accent data-popup-open:bg-accent flex h-8 w-8 cursor-pointer items-center justify-center rounded-md border border-transparent bg-transparent transition-colors">
+                    <DropdownMenuTrigger className="hover:bg-accent data-[state=open]:bg-accent flex h-8 w-8 cursor-pointer items-center justify-center rounded-md border border-transparent bg-transparent transition-colors">
                       <MoreHorizontal size={16} className="text-muted-foreground" />
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-40">

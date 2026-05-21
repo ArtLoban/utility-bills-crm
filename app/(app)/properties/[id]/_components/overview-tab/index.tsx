@@ -33,14 +33,12 @@ const OverviewTab = ({ services, propertyId }: TProps) => {
                 Add your first utility service to start tracking bills and readings.
               </p>
             </div>
-            <Button
-              render={
-                // devnote: link to correct route when /properties/[id]/services/new is implemented
-                <Link href="#" />
-              }
-            >
-              <Plus size={16} />
-              Add service
+            {/* devnote: link to correct route when /properties/[id]/services/new is implemented */}
+            <Button asChild>
+              <Link href="#">
+                <Plus size={16} />
+                Add service
+              </Link>
             </Button>
           </div>
         </div>
@@ -62,15 +60,12 @@ const OverviewTab = ({ services, propertyId }: TProps) => {
             {services.length} services · Tap a row to open
           </p>
         </div>
-        <Button
-          variant="outline"
-          render={
-            // devnote: link to correct route when /properties/[id]/services/new is implemented
-            <Link href="#" />
-          }
-        >
-          <Plus size={13} />
-          Add service
+        {/* devnote: link to correct route when /properties/[id]/services/new is implemented */}
+        <Button asChild variant="outline">
+          <Link href="#">
+            <Plus size={13} />
+            Add service
+          </Link>
         </Button>
       </div>
 

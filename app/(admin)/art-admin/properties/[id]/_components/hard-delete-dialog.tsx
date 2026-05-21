@@ -89,7 +89,9 @@ export const HardDeleteDialogContent = ({
         </div>
 
         <DialogFooter>
-          <DialogClose render={<Button variant="outline" />}>Cancel</DialogClose>
+          <DialogClose asChild>
+            <Button variant="outline">Cancel</Button>
+          </DialogClose>
           <Button variant="destructive" disabled={!isConfirmed} onClick={dismiss}>
             Delete permanently
           </Button>

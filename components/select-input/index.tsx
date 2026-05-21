@@ -26,10 +26,11 @@ export const SelectInput = <T extends FieldValues, E extends TSelectableEntity>(
   });
 
   const isActive = Boolean(value);
-  const optionLabel = options.find((p) => p.id === value)?.name;
 
-  const handleChange = (value: FieldPathValue<FieldValues, string>) => {
-    form.setValue(field, value, {
+  const CLEAR_VALUE = "__clear__";
+
+  const handleChange = (v: FieldPathValue<FieldValues, string>) => {
+    form.setValue(field, v === CLEAR_VALUE ? null : v, {
       shouldDirty: true,
       shouldTouch: true,
       shouldValidate: true,
@@ -37,17 +38,19 @@ export const SelectInput = <T extends FieldValues, E extends TSelectableEntity>(
   };
 
   return (
-    <Select value={value || null} onValueChange={handleChange}>
+    <Select value={value || ""} onValueChange={handleChange}>
       <SelectTrigger
         className={cn(
           "min-w-[140px] rounded-sm",
           isActive && "border-brand text-brand bg-brand-bg [&_svg]:text-inherit",
         )}
       >
-        <SelectValue placeholder={label}>{optionLabel}</SelectValue>
+        <SelectValue placeholder={label} />
       </SelectTrigger>
       <SelectContent align="start">
-        <SelectItem>All</SelectItem>
+        <SelectItem value={CLEAR_VALUE} className="text-muted-foreground">
+          {label}
+        </SelectItem>
         {options.map(({ id, name }) => (
           <SelectItem key={id} value={id}>
             {name}

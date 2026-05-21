@@ -61,7 +61,7 @@ const PropertyCard = ({ row }: TProps) => {
               justifyContent: "center",
               flexShrink: 0,
             }}
-            className="data-popup-open:border-zinc-200 data-popup-open:bg-zinc-100 dark:data-popup-open:border-zinc-700 dark:data-popup-open:bg-zinc-800"
+            className="data-[state=open]:border-zinc-200 data-[state=open]:bg-zinc-100 dark:data-[state=open]:border-zinc-700 dark:data-[state=open]:bg-zinc-800"
           >
             <MoreHorizontal
               size={15}
@@ -70,12 +70,12 @@ const PropertyCard = ({ row }: TProps) => {
             />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-44">
-            <DropdownMenuItem render={<Link href={`/art-admin/properties/${row.id}`} />}>
-              View details
+            <DropdownMenuItem asChild>
+              <Link href={`/art-admin/properties/${row.id}`}>View details</Link>
             </DropdownMenuItem>
             {!isDeleted && (
-              <DropdownMenuItem render={<Link href={`/properties/${row.id}`} />}>
-                Go to property
+              <DropdownMenuItem asChild>
+                <Link href={`/properties/${row.id}`}>Go to property</Link>
               </DropdownMenuItem>
             )}
             {isDeleted && (

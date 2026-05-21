@@ -27,7 +27,9 @@ export const Breadcrumbs = ({ items }: TProps) => (
           {i > 0 && <BreadcrumbSeparator />}
           <BreadcrumbItem>
             {item.href ? (
-              <BreadcrumbLink render={<Link href={item.href} />}>{item.label}</BreadcrumbLink>
+              <BreadcrumbLink asChild>
+                <Link href={item.href}>{item.label}</Link>
+              </BreadcrumbLink>
             ) : (
               <BreadcrumbPage>{item.label}</BreadcrumbPage>
             )}

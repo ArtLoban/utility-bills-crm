@@ -35,6 +35,7 @@ export const FiltersBar = () => {
   });
 
   useEffect(() => {
+    console.log("values", values);
     void setQuery({
       ...values,
       [DataTableField.PAGE]: FIRST_PAGE_INDEX_DEFAULT,

@@ -49,7 +49,7 @@ export const PaymentForm = ({
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="payment-property">Property</Label>
         <Select
-          value={selectedPropertyId || null}
+          value={selectedPropertyId || undefined}
           onValueChange={(val) => {
             if (val) onPropertyChange(val);
           }}
@@ -74,7 +74,7 @@ export const PaymentForm = ({
           <FormItem>
             <FormLabel>Service</FormLabel>
             <Select
-              value={field.value || null}
+              value={field.value || undefined}
               onValueChange={(val) => {
                 if (val) field.onChange(val);
               }}
