@@ -2,7 +2,7 @@ import { ColumnDef } from "@tanstack/react-table";
 
 import { Badge } from "@/components/ui/badge";
 import { TAdminUser } from "../../../../_data/mock";
-import { RoleBadge } from "../../components/role-badge";
+import { RoleBadge } from "../../../../_components/role-badge";
 import { UserRowActions } from "../components/user-row-actions";
 
 export const getUserColumns = (): ColumnDef<TAdminUser>[] => [

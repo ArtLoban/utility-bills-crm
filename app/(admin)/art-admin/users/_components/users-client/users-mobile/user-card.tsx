@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { TAdminUser } from "../../../_data/mock";
-import { RoleBadge } from "../components/role-badge";
+import { RoleBadge } from "../../../_components/role-badge";
 
 type TProps = {
   user: TAdminUser;

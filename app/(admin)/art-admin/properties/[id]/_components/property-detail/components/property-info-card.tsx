@@ -1,6 +1,6 @@
 import { DataCard } from "@/components/data-card";
+import { InfoGrid } from "@/components/info-grid";
 import { type TPropertyDetail } from "../../../_data/mock";
-import { InfoGrid } from "./info-grid";
 
 type TProps = { property: TPropertyDetail };
 

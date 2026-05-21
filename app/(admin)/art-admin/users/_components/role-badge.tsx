@@ -1,4 +1,4 @@
-import { TUserSystemRole } from "../../../_data/mock";
+import { type TUserSystemRole } from "../_data/mock";
 
 type TProps = {
   role: TUserSystemRole;
