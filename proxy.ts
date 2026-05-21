@@ -20,7 +20,8 @@ export const proxy = (req: NextRequest) => {
   // crypto.randomUUID() is available in Edge Runtime.
   // We forward the ID on the *request* headers so server components can read it
   // via headers() from next/headers, and on the *response* headers for clients.
-  const correlationId = crypto.randomUUID();
+  // Pass through an existing header from an upstream proxy when present.
+  const correlationId = req.headers.get(CORRELATION_ID_HEADER) ?? crypto.randomUUID();
 
   const requestHeaders = new Headers(req.headers);
   requestHeaders.set(CORRELATION_ID_HEADER, correlationId);
