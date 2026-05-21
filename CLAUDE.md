@@ -20,6 +20,8 @@ Before writing any code:
 
 If I realize I'm about to violate a project rule — stop, flag it, fix the approach. Do not silently produce code with a known problem inside.
 
+The backend implementation starts from scratch — there is no legacy to follow and no "we'll fix it later." New code must meet the bar on first delivery. Read the authoritative documents (section 5) before writing anything.
+
 ## 1. Core working rules
 
 ### 1.1 Plan before any file change
@@ -61,8 +63,9 @@ If a new dependency seems necessary, propose it with trade-offs first.
 
 ### 1.8 Existing code is not a source of truth
 
-The codebase may contain tech debt, temporary solutions, or patterns that diverge
-from best practices. Treat existing code as _what was done_, not _what should be done_.
+The current codebase is in an early implementation state. Most pages and components
+are initial drafts that have not been brought up to the standards defined in this document and best practices.
+Treat existing code as _what was done_, not _what should be done_.
 
 When you encounter a divergence — in structure, naming, or approach:
 
