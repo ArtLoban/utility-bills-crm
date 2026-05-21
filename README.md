@@ -15,7 +15,12 @@ Built primarily as a senior/architect-level growth playground in frontend engine
 - Phase 4 complete — architecture and stack finalized.
 - Phase 5 complete — data model designed. See `db/DATA_MODEL.md` and `db/SCHEMA_REFERENCE.md`.
 - Phase 6 complete — UI architecture designed. See `docs/UI_ARCHITECTURE.md`.
-- Phase 7 in progress — build MVP. Next.js scaffold initialized; no production code yet.
+- Phase 7 in progress — build MVP.
+  - Infrastructure complete: scaffold, DB schema + migrations, Auth.js v5 + Google OAuth, design system (shadcn/ui + Radix), i18n (next-intl), logging (pino).
+  - Public landing pages (`/`, `/about`, `/project`) — complete.
+  - Admin section — complete: dashboard, properties oversight, users, landing CMS.
+  - Authenticated CRM — UI and pages complete across all screens (dashboard with charts, properties, meters, services, bills, payments, sharing, settings); backend CRUD integration (Server Actions, business logic) in progress.
+  - Remaining: bill/reading server actions, demo mode, Sentry integration, strategic tests.
 
 ## MVP Scope
 
@@ -41,10 +46,12 @@ MVP is defined as a **minimum viable portfolio piece** — a project that demons
 - **Tables:** TanStack Table
 - **Charts:** Recharts (via shadcn/ui Charts)
 - **Notifications:** sonner
+- **URL state:** nuqs
+- **Date utilities:** date-fns
 - **i18n:** next-intl (en/uk/ru)
 - **Theming:** next-themes (light/dark)
 - **Logging:** pino
-- **Error tracking:** Sentry
+- **Error tracking:** Sentry (planned, not yet integrated)
 - **Testing:** Vitest + @testing-library/react
 - **Tooling:** ESLint (Flat Config), Prettier, Husky + lint-staged
 - **CI/CD:** GitHub Actions + Vercel auto-deploy
@@ -80,15 +87,52 @@ npm run dev
 
 Required environment variables:
 
-- `DATABASE_URL` — Neon PostgreSQL connection string
-- `AUTH_SECRET` — Auth.js secret
+- `DATABASE_URL` — PostgreSQL connection string
+- `AUTH_SECRET` — Auth.js secret (`openssl rand -base64 32`)
 - `AUTH_GOOGLE_ID` — Google OAuth client ID
 - `AUTH_GOOGLE_SECRET` — Google OAuth client secret
-- `SENTRY_DSN` — Sentry project DSN
+- `ADMIN_EMAILS` — comma-separated list of emails that receive `systemRole = 'admin'` on first sign-in
+- `SENTRY_DSN` — Sentry project DSN (optional; not yet integrated)
 
 ## Project Structure
 
-> Will be documented once the project is scaffolded.
+> `features/` is the target home for domain logic (components + hooks + schema + types per domain). Currently only `payments/` is migrated. Other domains are split across `components/feature/`, `lib/actions/`, and `lib/validation/` — migration is ongoing.
+
+```
+app/
+  (public)/             public landing pages (/, /about, /project)
+  (auth)/               login, error
+  (app)/                authenticated CRM — dashboard, properties, services,
+                        meters, bills, payments, sharing, settings
+  (admin)/              admin-only section at /art-admin
+  api/                  route handlers (auth)
+components/
+  ui/                   shadcn/ui components (Radix-based, locally owned)
+  feature/              domain-agnostic reusable components
+    data-table/         TanStack Table system with URL-synced filters
+    properties/         property form and modal
+  app-nav/              authenticated app navigation
+  admin-nav/            admin section navigation
+  ...                   shared UI primitives
+features/               vertical feature slices (logic + schema + types)
+  payments/
+lib/
+  actions/              server actions
+  auth/                 Auth.js config and helpers
+  constants/            shared constants (service colors, icons)
+  db/                   Drizzle schema, client, migrations
+  format/               currency and date formatters
+  hooks/                shared hooks
+  locale/               next-intl helpers
+  logger/               pino setup with correlation IDs
+  routes.ts             centralized route configuration
+  types/                shared TypeScript types
+  utils/                shared utilities
+  validation/           Zod validation schemas
+messages/               i18n translation files (en, uk, ru)
+db/                     database documentation and schema reference
+docs/                   project documentation
+```
 
 ## Roadmap
 

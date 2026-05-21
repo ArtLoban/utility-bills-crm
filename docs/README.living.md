@@ -112,6 +112,8 @@ The public layout reads the auth session to adapt its header (Login for anonymou
 | Tables            | TanStack Table                  |
 | Charts            | Recharts (via shadcn/ui Charts) |
 | Toasts            | sonner                          |
+| URL state         | nuqs                            |
+| Date utilities    | date-fns                        |
 | Theming           | next-themes                     |
 | i18n              | next-intl                       |
 
@@ -125,7 +127,7 @@ The public layout reads the auth session to adapt its header (Login for anonymou
 | Formatting        | Prettier + prettier-plugin-tailwindcss   |
 | Git hooks         | Husky + lint-staged                      |
 | Logging           | pino (structured)                        |
-| Error tracking    | Sentry                                   |
+| Error tracking    | Sentry (planned, not yet integrated)     |
 
 ### Infrastructure
 
@@ -441,6 +443,17 @@ What changed in scope as a result:
 
 Rationale: the "product-first" framing had begun to systematically under-scope features that serve learning and portfolio goals. Examples: sharing was pushed to v2 even though the access model was already designed to support it; admin UI was initially dismissed as "overkill for one user." Re-ordering priorities (growth → portfolio → product) resolved this tension and produced a coherent MVP scope.
 
+### 2026-05 — Phase 7: Implementation
+
+| #   | Decision                                                        | Alternatives considered                         | Outcome                         |
+| --- | --------------------------------------------------------------- | ----------------------------------------------- | ------------------------------- |
+| 111 | URL state sync: nuqs                                            | useSearchParams + manual sync                   | nuqs                            |
+| 112 | Date utilities: date-fns                                        | dayjs, Intl API only                            | date-fns                        |
+| 113 | Co-located page components: `_components/` convention per route | top-level `components/` for everything          | `_components/` per route        |
+| 114 | @base-ui/react → Radix UI (tech debt correction)                | keep @base-ui despite known issues              | Radix (aligns with decision #7) |
+| 115 | Sentry integration: deferred within Phase 7                     | integrate from scaffold                         | deferred                        |
+| 116 | Admin auth: `ADMIN_EMAILS` env var, seeded on first sign-in     | DB flag set manually; separate admin setup flow | env-based seed                  |
+
 ## Open Questions
 
 Carried forward to Phase 7 (implementation) and beyond.
@@ -451,13 +464,12 @@ Carried forward to Phase 7 (implementation) and beyond.
 - Translation workflow: author, wife, AI-assisted, review process.
 - Error code catalog structure in i18n files.
 - Cron job for expired session cleanup (timing, location).
-- Seed script for `service_types` catalog and landing CMS baseline content.
+- Seed script for `service_types` catalog and landing CMS baseline content (CMS data model is implemented; seed content is pending).
 - Demo account seed: one-time deployment pipeline, idempotent re-seed procedure.
 - Exclusion constraint specifics with `btree_gist` extension — concrete SQL for all temporal entities.
 - Indexing strategy for common dashboard queries (balance computation, monthly aggregation).
 - Cache strategy for landing visibility flags (considered: `unstable_cache` in Next.js).
-- Sentry integration specifics: which errors to alert on vs. log silently.
-- Loading skeleton implementation: CSS `animation-delay: 200ms` pattern concrete.
+- Sentry integration: deferred within Phase 7 — timing and error policy TBD when integration begins.
 
 **For Claude Design (remaining visualizations):**
 
@@ -540,14 +552,16 @@ npm install
 # 2. Configure environment
 cp .env.example .env.local
 # Fill in:
-#   DATABASE_URL=...
-#   AUTH_SECRET=...              (openssl rand -base64 32)
+#   DATABASE_URL=...             PostgreSQL connection string
+#   AUTH_SECRET=...              openssl rand -base64 32
 #   AUTH_GOOGLE_ID=...
 #   AUTH_GOOGLE_SECRET=...
-#   SENTRY_DSN=...               (optional locally)
+#   ADMIN_EMAILS=...             comma-separated, gets systemRole='admin' on first sign-in
+#   SENTRY_DSN=...               optional, not yet integrated
 
 # 3. Apply database schema
-npm run db:push
+#   Dev (push directly):   npm run db:push
+#   Prod (migrations):     npm run db:migrate
 
 # 4. Start dev server
 npm run dev
@@ -577,37 +591,58 @@ npm run db:studio     # Drizzle Studio
 
 ## Project Structure
 
-> Will be documented once the initial scaffold is in place.
-
-Rough plan:
+> `features/` is the target home for domain logic (components + hooks + schema + types per domain). Currently only `payments/` is migrated; other domains are split across `components/feature/`, `lib/actions/`, and `lib/validation/` — migration is ongoing.
 
 ```
 app/
-  (public)/             public landing, SEO pages
-  (auth)/               login, logout
+  (public)/             public landing pages (/, /about, /project)
+    _components/        co-located page components
+  (auth)/               login, error
   (app)/                authenticated CRM
-  (admin)/              admin-only section
-  api/                  route handlers if needed
+    dashboard/
+    properties/[id]/
+      meters/[mid]/
+      services/[sid]/
+      sharing/
+    bills/
+    payments/
+    meters/
+    settings/
+    _components/        co-located page components (per route)
+    _data/              data-fetching helpers (per route)
+  (admin)/art-admin/    admin-only section
+    landing/
+    properties/[id]/
+    users/[id]/
+    _components/
+    _data/
+  api/auth/             Auth.js route handler
 components/
-  ui/                   shadcn/ui components (owned locally)
-  feature/              feature-specific components
+  ui/                   shadcn/ui components (Radix-based, locally owned)
+  feature/              domain-agnostic reusable components
+    data-table/         TanStack Table system with URL-synced filters, sorting, pagination
+    properties/         property form and modal (→ will migrate to features/properties/)
+  app-nav/              authenticated app navigation
+  admin-nav/            admin section navigation
+  ...                   shared primitives (modal, form-field, icon-badge, etc.)
+features/               vertical feature slices — target for all domain logic
+  payments/             components + hooks + schema + types
 lib/
-  db/                   Drizzle schema, client, queries
+  actions/              server actions (→ will move into features/ slices)
   auth/                 Auth.js config and helpers
-  access/               access-control helpers (tenant isolation)
-  i18n/                 next-intl config and messages
-  errors/               domain error hierarchy
-  logger/               pino setup
-features/               vertical slices per domain area
-  properties/
-  services/
-  readings/
-  bills/
-  payments/
-  sharing/
-  dashboard/
-  admin/
-  landing/
+  constants/            shared constants (service colors, icons, routes)
+  db/                   Drizzle schema, client, migrations
+  format/               currency and date formatters
+  hooks/                shared hooks
+  locale/               next-intl helpers
+  logger/               pino setup with correlation IDs
+  routes.ts             centralized route configuration
+  types/                shared TypeScript types
+  utils/                shared utilities
+  validation/           Zod schemas (→ will move into features/ slices)
+messages/               i18n translation files (en, uk, ru)
+db/                     database documentation and schema reference
+docs/                   project documentation
 ```
 
 ## Development Workflow
