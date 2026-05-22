@@ -22,12 +22,6 @@ import {
 } from "@/components/ui/form";
 import type { TPaymentFormValues, TPropertyOption, TServiceOption } from "../../types";
 
-const FILLED_STYLE: React.CSSProperties = {
-  borderColor: "var(--field-tint-border)",
-  background: "var(--field-tint-bg)",
-  fontWeight: 500,
-};
-
 type TProps = {
   form: UseFormReturn<TPaymentFormValues>;
   properties: TPropertyOption[];
@@ -44,7 +38,7 @@ export const PaymentForm = ({
   onPropertyChange,
 }: TProps) => (
   <Form {...form}>
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-3.5">
       {/* Property is a UI-only filter — not saved, not validated */}
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="payment-property">Property</Label>
@@ -81,7 +75,7 @@ export const PaymentForm = ({
               disabled={!selectedPropertyId}
             >
               <FormControl>
-                <SelectTrigger className="w-full" style={field.value ? FILLED_STYLE : undefined}>
+                <SelectTrigger className="w-full">
                   <SelectValue
                     placeholder={selectedPropertyId ? "Select service" : "Select property first"}
                   />
@@ -107,12 +101,7 @@ export const PaymentForm = ({
           <FormItem>
             <FormLabel>Date</FormLabel>
             <FormControl>
-              <Input
-                type="date"
-                {...field}
-                style={field.value ? FILLED_STYLE : undefined}
-                className="h-9"
-              />
+              <Input type="date" {...field} className="h-9" />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -136,7 +125,6 @@ export const PaymentForm = ({
                 onBlur={field.onBlur}
                 name={field.name}
                 ref={field.ref}
-                style={field.value > 0 ? FILLED_STYLE : undefined}
                 className="h-9"
               />
             </FormControl>
@@ -151,7 +139,7 @@ export const PaymentForm = ({
         render={({ field }) => (
           <FormItem>
             <FormLabel>
-              Notes <span className="font-normal text-zinc-500 dark:text-zinc-400">(optional)</span>
+              Notes <span className="text-muted-foreground font-normal">(optional)</span>
             </FormLabel>
             <FormControl>
               <Textarea {...field} placeholder="Any remarks…" />

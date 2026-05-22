@@ -109,6 +109,11 @@
     --type-card-bg: var(--neutral-0);
     --type-card-border: var(--neutral-200);
 
+    /* Form: filled-field tint (filled inputs, selected type cards) */
+    --field-tint-bg: var(--purple-50);
+    --field-tint-border: var(--purple-100);
+    --field-tint-fg: var(--purple-600);
+
     /* Landing: hero glow (hero-section.tsx — one consumer, kept global) */
     --hero-glow: oklch(0.498 0.258 292.3 / 10%);
 
@@ -162,6 +167,11 @@
 
     --type-card-bg: var(--neutral-900);
     --type-card-border: var(--neutral-700); /* #3f3f46 ≈ oklch(0.371 0 0) */
+
+    /* Form: filled-field tint — semi-transparent overlay on dark backgrounds */
+    --field-tint-bg: color-mix(in oklch, var(--purple-500) 16%, transparent);
+    --field-tint-border: color-mix(in oklch, var(--purple-500) 40%, transparent);
+    --field-tint-fg: var(--purple-400);
 
     --hero-glow: oklch(0.498 0.258 292.3 / 18%);
   }
