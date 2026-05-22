@@ -6,8 +6,6 @@ export const PROPERTY_LIMITS = {
   notes: 1000,
 } as const;
 
-// tech-debt: belongs in features/properties/ per feature-slices plan (README.living.md). Migrate when features/properties/ slice is established.
-
 // Error messages are relative keys within the "properties" i18n namespace.
 // Consumed by usePropertyForm which translates them via useTranslations("properties").
 export const propertySchema = z.object({

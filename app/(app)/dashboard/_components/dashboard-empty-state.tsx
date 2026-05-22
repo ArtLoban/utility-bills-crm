@@ -6,7 +6,7 @@ import { Home, Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { EmptyStateCard } from "@/components/empty-state-card";
-import { PropertyModal } from "@/components/feature/properties/property-modal";
+import { PropertyModal } from "@/features/properties";
 
 type TProps = {
   firstName: string | null;

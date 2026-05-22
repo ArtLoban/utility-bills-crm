@@ -3,8 +3,8 @@ import { useQueryStates, parseAsInteger } from "nuqs";
 import {
   DEFAULT_PAGE_SIZE,
   FIRST_PAGE_INDEX_DEFAULT,
-} from "@/components/feature/data-table/data-table/constants";
-import { DataTableField } from "@/components/feature/data-table/data-table/types";
+} from "@/components/data-table/data-table/constants";
+import { DataTableField } from "@/components/data-table/data-table/types";
 
 const PAGE_INDEX_OFFSET = 1;
 

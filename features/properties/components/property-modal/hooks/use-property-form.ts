@@ -4,11 +4,11 @@ import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
-import { propertySchema } from "@/lib/validation/property";
-import { createProperty, editProperty } from "@/lib/actions/properties";
+import { propertySchema } from "@/features/properties/schema";
+import { createProperty, editProperty } from "@/features/properties/actions";
 import type { TProperty } from "@/lib/db/schema/properties";
 import type { TPropertyDetail } from "@/app/(app)/properties/[id]/_data/queries";
-import type { TFormState } from "../types";
+import type { TFormState } from "@/features/properties/types";
 
 type TParams = {
   open: boolean;

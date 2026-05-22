@@ -11,8 +11,8 @@ import type { UserId } from "@/lib/db/schema/auth";
 import { requirePropertyRole } from "@/lib/db/access/properties";
 import { ValidationError, err, ok } from "@/lib/errors";
 import type { NotFoundError, Result } from "@/lib/errors";
-import { propertySchema } from "@/lib/validation/property";
-import type { TPropertyInput } from "@/lib/validation/property";
+import { propertySchema } from "./schema";
+import type { TPropertyInput } from "./schema";
 
 // Throws on unauthenticated access — unexpected error, not a domain error.
 // Auth middleware prevents reaching server actions unauthenticated; if it does

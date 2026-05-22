@@ -2,8 +2,8 @@
 
 import { useTranslations } from "next-intl";
 import { Modal } from "@/components/modal";
-import { PropertyForm } from "@/components/feature/properties/property-form";
-import { usePropertyForm } from "@/components/feature/properties/hooks/use-property-form";
+import { PropertyForm } from "./components/property-form";
+import { usePropertyForm } from "./hooks/use-property-form";
 import type { TPropertyDetail } from "@/app/(app)/properties/[id]/_data/queries";
 
 type TProps = {

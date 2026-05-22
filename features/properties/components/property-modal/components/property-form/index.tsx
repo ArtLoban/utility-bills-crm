@@ -5,9 +5,9 @@ import { useTranslations } from "next-intl";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { FormField } from "@/components/form-field";
-import { PROPERTY_LIMITS } from "@/lib/validation/property";
+import { PROPERTY_LIMITS } from "@/features/properties/schema";
 import { PropertyTypeSelector } from "./components/property-type-selector";
-import type { TFormState } from "../types";
+import type { TFormState } from "@/features/properties/types";
 
 type TProps = {
   form: TFormState;

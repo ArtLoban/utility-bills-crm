@@ -1,8 +1,8 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { TYPE_OPTIONS } from "../../constants";
-import type { TPropertyType } from "../../types";
+import { TYPE_OPTIONS } from "@/features/properties/constants";
+import type { TPropertyType } from "@/features/properties/types";
 
 type TProps = {
   value: TPropertyType | "";

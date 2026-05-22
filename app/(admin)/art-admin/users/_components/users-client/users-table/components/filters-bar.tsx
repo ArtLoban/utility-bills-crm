@@ -2,11 +2,11 @@ import { useEffect } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { parseAsInteger, useQueryStates } from "nuqs";
 
-import { TableFilters } from "@/components/feature/data-table/table-filters";
+import { TableFilters } from "@/components/data-table/table-filters";
 import { SelectInput } from "@/components/select-input";
-import { FIRST_PAGE_INDEX_DEFAULT } from "@/components/feature/data-table/data-table/constants";
-import { DataTableField } from "@/components/feature/data-table/data-table/types";
-import { getInitialValuesFromUrl } from "@/components/feature/data-table/data-table/utils/get-initial-values-from-url";
+import { FIRST_PAGE_INDEX_DEFAULT } from "@/components/data-table/data-table/constants";
+import { DataTableField } from "@/components/data-table/data-table/types";
+import { getInitialValuesFromUrl } from "@/components/data-table/data-table/utils/get-initial-values-from-url";
 import { TSelectableEntity } from "@/components/select-input/types";
 
 import { INITIAL_FILTERS, URL_FIELDS } from "../constants";

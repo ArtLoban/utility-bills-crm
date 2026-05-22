@@ -20,7 +20,7 @@ import { DEFAULT_PAGE_SIZE } from "./constants";
 import { Footer } from "./components/footer";
 import { useDataTablePagination } from "./hooks/use-data-table-pagination";
 import { useDataTableSorting } from "./hooks/use-data-table-sorting";
-import { TDefaultSorting } from "@/components/feature/data-table/data-table/types";
+import { TDefaultSorting } from "@/components/data-table/data-table/types";
 import { EmptyStateCard } from "./components/empty-state-card";
 
 type TDataTableProps<T> = {

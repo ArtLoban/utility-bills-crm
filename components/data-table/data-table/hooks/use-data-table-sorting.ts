@@ -7,7 +7,7 @@ import {
   DataTableField,
   SortOrder,
   TDefaultSorting,
-} from "@/components/feature/data-table/data-table/types";
+} from "@/components/data-table/data-table/types";
 
 const DEFAULT_SORT_ORDER = SortOrder.DESC;
 

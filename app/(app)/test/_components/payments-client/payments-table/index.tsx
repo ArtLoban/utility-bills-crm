@@ -4,8 +4,8 @@ import { useTranslations } from "next-intl";
 import { useQueryStates } from "nuqs";
 
 import { TPayment } from "@/app/(app)/payments/_data/mock";
-import { DataTable } from "@/components/feature/data-table/data-table";
-import { useDataTableFilters } from "@/components/feature/data-table/data-table/hooks/use-data-table-filters";
+import { DataTable } from "@/components/data-table/data-table";
+import { useDataTableFilters } from "@/components/data-table/data-table/hooks/use-data-table-filters";
 
 import { URL_FIELDS } from "./constants";
 import { FiltersFormField } from "./types";

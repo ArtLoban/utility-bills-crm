@@ -2,8 +2,8 @@
 
 import { useTranslations } from "next-intl";
 import { Eye, Pencil, Trash2 } from "lucide-react";
-import type { TRowAction } from "@/components/feature/data-table/cells/row-actions/types";
-import { RowActions } from "@/components/feature/data-table/cells/row-actions";
+import type { TRowAction } from "@/components/data-table/cells/row-actions/types";
+import { RowActions } from "@/components/data-table/cells/row-actions";
 
 type TProps = {
   paymentId: string | number;

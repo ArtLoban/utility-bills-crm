@@ -1,11 +1,11 @@
 import { ColumnDef } from "@tanstack/react-table";
 // import { TPayment } from "@/app/(app)/payments/_data/mock";
-import { DateCell } from "@/components/feature/data-table/cells/date-cell";
-import { AmountCell } from "@/components/feature/data-table/cells/amount-cell";
+import { DateCell } from "@/components/data-table/cells/date-cell";
+import { AmountCell } from "@/components/data-table/cells/amount-cell";
 import { PaymentRowActions } from "@/app/(app)/test/_components/payments-client/payments-table/components/payment-row-actions";
 import { useTranslations } from "next-intl";
 import { PaymentField, TPayment } from "@/lib/types/models/payment";
-import { ServiceCell } from "@/components/feature/data-table/cells/service-cell";
+import { ServiceCell } from "@/components/data-table/cells/service-cell";
 
 type TTranslateFn = ReturnType<typeof useTranslations<"payments.list">>;
 

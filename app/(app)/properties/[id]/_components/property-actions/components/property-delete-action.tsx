@@ -14,7 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Modal } from "@/components/modal";
-import { softDeleteProperty } from "@/lib/actions/properties";
+import { softDeleteProperty } from "@/features/properties";
 import { ROUTES } from "@/lib/routes";
 import type { PropertyId, TPropertyRole } from "@/lib/db/schema/properties";
 

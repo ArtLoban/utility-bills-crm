@@ -1,7 +1,7 @@
 import { Eye } from "lucide-react";
 
-import { RowActions } from "@/components/feature/data-table/cells/row-actions";
-import type { TRowAction } from "@/components/feature/data-table/cells/row-actions/types";
+import { RowActions } from "@/components/data-table/cells/row-actions";
+import type { TRowAction } from "@/components/data-table/cells/row-actions/types";
 
 type TProps = {
   userId: string;

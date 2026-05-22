@@ -12,7 +12,7 @@ import {
 import { cn } from "@/lib/utils";
 import { getPaginationRange } from "./utils/get-pagination-range";
 import { ELLIPSIS } from "../../../constants";
-import { useDataTablePagination } from "@/components/feature/data-table/data-table/hooks/use-data-table-pagination";
+import { useDataTablePagination } from "@/components/data-table/data-table/hooks/use-data-table-pagination";
 
 type TProps = {
   page: number;

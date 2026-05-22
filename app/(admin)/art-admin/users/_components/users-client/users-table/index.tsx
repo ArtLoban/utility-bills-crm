@@ -2,8 +2,8 @@
 
 import { useQueryStates } from "nuqs";
 
-import { DataTable } from "@/components/feature/data-table/data-table";
-import { useDataTableFilters } from "@/components/feature/data-table/data-table/hooks/use-data-table-filters";
+import { DataTable } from "@/components/data-table/data-table";
+import { useDataTableFilters } from "@/components/data-table/data-table/hooks/use-data-table-filters";
 
 import { TAdminUser } from "../../../_data/mock";
 import { URL_FIELDS } from "./constants";

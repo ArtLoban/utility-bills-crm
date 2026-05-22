@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Pencil } from "lucide-react";
-import { PropertyModal } from "@/components/feature/properties/property-modal";
+import { PropertyModal } from "@/features/properties";
 import type { TPropertyDetail } from "@/app/(app)/properties/[id]/_data/queries";
 
 type TProps = { property: TPropertyDetail };

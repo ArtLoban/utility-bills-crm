@@ -1,4 +1,4 @@
-import { TableFilters } from "@/components/feature/data-table/table-filters";
+import { TableFilters } from "@/components/data-table/table-filters";
 import { useForm, useWatch } from "react-hook-form";
 import { SelectInput } from "@/components/select-input";
 import { useEffect } from "react";
@@ -12,9 +12,9 @@ import {
   INITIAL_FILTERS,
   URL_FIELDS,
 } from "@/app/(app)/test/_components/payments-client/payments-table/constants";
-import { getInitialValuesFromUrl } from "@/components/feature/data-table/data-table/utils/get-initial-values-from-url";
-import { FIRST_PAGE_INDEX_DEFAULT } from "@/components/feature/data-table/data-table/constants";
-import { DataTableField } from "@/components/feature/data-table/data-table/types";
+import { getInitialValuesFromUrl } from "@/components/data-table/data-table/utils/get-initial-values-from-url";
+import { FIRST_PAGE_INDEX_DEFAULT } from "@/components/data-table/data-table/constants";
+import { DataTableField } from "@/components/data-table/data-table/types";
 
 const PERIOD_OPTIONS = [
   { id: "last3", name: "Last 3 months" },
