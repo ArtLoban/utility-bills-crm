@@ -29,10 +29,18 @@ Rules:
   one file contains one component.
 - Other local types in the file are named by meaning, without the component
   name as a prefix: `TFormState`, `TLinkConfig`, `TValidationResult`.
-- If a type is reused across files inside a component's folder — extract it
-  to `types.ts` with a meaningful name (`TNavLinkConfig`, not `TProps`).
-- If a type is reused outside the component's folder — extract it to the
-  shared types layer (`lib/types/` or `types/`).
+
+Where a type lives, by reuse scope:
+
+- Used only in one file → keep it in that file.
+- Reused across files inside a component's folder → extract to that folder's
+  `types.ts` with a meaningful name (`TNavLinkConfig`, not `TProps`).
+- Reused across a feature slice → the slice's `features/<domain>/types.ts`.
+- Reused across slices, or otherwise application-wide → the shared types layer
+  `lib/types/`.
+- Ambient declarations that augment third-party modules (`.d.ts` with
+  `declare module`) → `types/` at the project root. This is not a domain-types
+  layer — only third-party augmentation lives there.
 
 Exceptions:
 
@@ -80,10 +88,10 @@ The `index.tsx` at the **root of a component folder** is the component's own
 entry point — that is a component file, not a re-export barrel. It is the
 one legitimate `index` file in a component folder.
 
-The only acceptable use of a re-export barrel is at the **public API boundary
-of a shared module** (e.g., a `features/auth/index.ts` that explicitly declares
-what is public). Even then, prefer explicit named exports over re-exporting
-everything.
+The one acceptable re-export barrel is the **public API boundary of a feature
+slice** — `features/<domain>/index.ts`, which explicitly declares what the
+slice exposes (see `project-structure.md` §4). It uses explicit named
+re-exports, never `export *`.
 
 ## 4. Inline exports
 

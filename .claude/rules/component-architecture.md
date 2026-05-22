@@ -3,27 +3,32 @@
 When and how to structure React components in this project.
 Read this before creating or refactoring any component.
 
+This document governs a component **inside its home**. Which home a component
+belongs to in the first place — `features/<domain>/`, a route's `_components/`,
+or shared `components/` — is decided by `project-structure.md`. Read that first
+when the question is _where_, this one when the question is _how_.
+
 ---
 
 ## 1. File vs folder: when does a component need its own folder?
 
-A component lives as a **single file** (`components/user-avatar.tsx`) when it
-has no own dependencies — no subcomponents, no own hooks, no own utilities,
-no own constants or types worth extracting.
+A component lives as a **single file** (`property-card.tsx`) when it has no own
+dependencies — no subcomponents, no own hooks, no own utilities, no own
+constants or types worth extracting.
 
 A component lives as a **folder with `index.tsx` entry point** when it has at
 least one own dependency:
 
 ```
-admin-nav/
+features/properties/components/property-form/
   components/
-    nav-link.tsx
-    admin-badge.tsx
+    field-row.tsx
+    type-select.tsx
   hooks/
-    use-active-path.ts
+    use-property-form.ts
   utils/
-    build-nav-links.ts
-  index.tsx       // main AdminNav component
+    build-default-values.ts
+  index.tsx       // main PropertyForm component
   types.ts        // types reused inside the folder
   constants.ts    // constants reused inside the folder
 ```
@@ -31,7 +36,7 @@ admin-nav/
 Rules:
 
 - The entry point is always `index.tsx`. Exported component name matches the
-  folder name in PascalCase: `admin-nav/` → `AdminNav`.
+  folder name in PascalCase: `property-form/` → `PropertyForm`.
 - Subfolders `components/`, `hooks/`, `utils/` are created only when the
   corresponding entities appear. No hooks → no `hooks/` folder.
 - `types.ts` and `constants.ts` are created only when there are several or
@@ -44,9 +49,13 @@ Rules:
   `styles.module.css` for CSS Modules.
 
 Subcomponents apply the same logic recursively: a subcomponent without its own
-internals lives as a file (`components/nav-link.tsx`); a subcomponent with its
+internals lives as a file (`components/field-row.tsx`); a subcomponent with its
 own hooks/utilities/types lives as a folder
-(`components/nav-link/index.tsx` + the rest).
+(`components/field-row/index.tsx` + the rest).
+
+This file-vs-folder rule is fractal: it applies identically whether the
+component lives in a feature slice, in a route's `_components/`, or in shared
+`components/`. The home does not change the rule.
 
 ## 2. One file — one component
 
@@ -57,8 +66,20 @@ separate files according to section 1.
 
 Subcomponents in a component's `components/` folder are **private to the
 parent**. If a subcomponent is needed in **2 or more places** — it stops being
-a subcomponent and moves to the shared `components/` directory at the
-appropriate level.
+a subcomponent and is promoted.
+
+Promote to the **nearest level that covers all its consumers**:
+
+- Used by several components within the same feature slice → the slice's own
+  `components/` folder (`features/<domain>/components/`).
+- Used across slices or routes, and domain-agnostic → shared `components/` at
+  the appropriate level.
+- Used across slices but still domain-specific → it likely belongs to one
+  slice's public API; reconsider which slice owns it (see `project-structure.md`
+  §4).
+
+Do not promote straight to global `components/` by reflex. The nearest
+enclosing level that sees all consumers is the correct one.
 
 ## 4. When to decompose a component
 

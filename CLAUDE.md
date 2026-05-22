@@ -77,6 +77,11 @@ When you encounter a divergence — in structure, naming, or approach:
 If the fix is out of scope for the current task — note it as tech debt and move on.
 But always name it.
 
+The target project topology is vertical feature slices — new domain logic lives in
+`features/<domain>/`. The horizontal layers `components/feature/`, `lib/actions/`,
+and `lib/validation/` are legacy: new code never goes there, and finding a domain
+still in that layout is expected, not a bug. See `.claude/rules/project-structure.md`.
+
 ## 2. DevNote convention
 
 The author marks questions and concerns in generated code with
@@ -120,6 +125,9 @@ Read the relevant document(s) when working on a related task. Do not preload.
 
 **Code:**
 
+- `.claude/rules/project-structure.md` — project topology, feature slices,
+  where new code lives. Read before creating new domain logic or deciding where
+  a file belongs.
 - `.claude/rules/component-architecture.md` — when to split, folder structure,
   decomposition triggers. Read before creating or refactoring components.
 - `.claude/rules/code-style.md` — naming, function form, file organization.
