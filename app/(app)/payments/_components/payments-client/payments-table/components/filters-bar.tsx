@@ -6,12 +6,12 @@ import { PAYMENT_PROPERTIES, PAYMENT_SERVICES } from "@/app/(app)/payments/_data
 import {
   FiltersFormField,
   TFiltersFormValues,
-} from "@/app/(app)/test/_components/payments-client/payments-table/types";
+} from "@/app/(app)/payments/_components/payments-client/payments-table/types";
 import { parseAsInteger, useQueryStates } from "nuqs";
 import {
   INITIAL_FILTERS,
   URL_FIELDS,
-} from "@/app/(app)/test/_components/payments-client/payments-table/constants";
+} from "@/app/(app)/payments/_components/payments-client/payments-table/constants";
 import { getInitialValuesFromUrl } from "@/components/data-table/data-table/utils/get-initial-values-from-url";
 import { FIRST_PAGE_INDEX_DEFAULT } from "@/components/data-table/data-table/constants";
 import { DataTableField } from "@/components/data-table/data-table/types";

@@ -38,7 +38,7 @@ export const PaymentCard = ({ payment }: TProps) => {
         gap: 12,
         cursor: "pointer",
       }}
-      onClick={() => router.push(`/test/${payment.id}/edit`)}
+      onClick={() => router.push(`/payments/${payment.id}/edit`)}
     >
       <div
         style={{
@@ -125,7 +125,7 @@ export const PaymentCard = ({ payment }: TProps) => {
           />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-40">
-          <DropdownMenuItem onClick={() => router.push(`/test/${payment.id}/edit`)}>
+          <DropdownMenuItem onClick={() => router.push(`/payments/${payment.id}/edit`)}>
             <Pencil size={14} />
             {t("edit")}
           </DropdownMenuItem>

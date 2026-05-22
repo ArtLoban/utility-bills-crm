@@ -30,7 +30,7 @@ export const PaymentsClient = ({ payments }: TProps) => {
       meta={<PageMeta items={metaItems} />}
       actions={
         <Button asChild>
-          <Link href="/test/new">
+          <Link href="/payments/new">
             <Plus size={14} />
             {t("cta.addPayment")}
           </Link>

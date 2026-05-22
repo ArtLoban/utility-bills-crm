@@ -65,7 +65,7 @@ export const PaymentsMobile = ({ payments }: TProps) => {
           <p className="text-muted-foreground mt-0.5 text-xs">{filtered.length}</p>
         </div>
         <Button asChild>
-          <Link href="/test/new">
+          <Link href="/payments/new">
             <Plus size={14} />
             {t("mobile.add")}
           </Link>
