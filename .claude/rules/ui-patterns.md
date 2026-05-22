@@ -122,12 +122,12 @@ a hardcoded color or hex value.
 
 ### Where things live
 
-| What                                            | Where                                          |
-| ----------------------------------------------- | ---------------------------------------------- |
-| Types reused across files in a component folder | `component-folder/types.ts`                    |
-| UI option lists, config arrays                  | `component-folder/constants.ts`                |
-| Business-rule limits (max lengths, thresholds)  | Validation file — e.g. `lib/validation/xxx.ts` |
-| Types reused across multiple features           | `lib/types/` or `types/`                       |
+| What                                            | Where                                                  |
+| ----------------------------------------------- | ------------------------------------------------------ |
+| Types reused across files in a component folder | `component-folder/types.ts`                            |
+| UI option lists, config arrays                  | `component-folder/constants.ts`                        |
+| Business-rule limits (max lengths, thresholds)  | Slice schema file — e.g. `features/<domain>/schema.ts` |
+| Types reused across multiple features           | `lib/types/` or `types/`                               |
 
 ### No magic numbers
 
@@ -135,7 +135,7 @@ Every hardcoded limit that appears in more than one place is a bug waiting to ha
 Define it once and import it everywhere:
 
 ```ts
-// lib/validation/property.ts — source of truth
+// features/properties/schema.ts — source of truth
 export const PROPERTY_LIMITS = { name: 100, address: 200, notes: 1000 } as const;
 
 // used in schema:
@@ -177,4 +177,4 @@ Exception: if a component has no domain knowledge from the start (e.g. `FormFiel
 `EmptyState`, `SectionHeader`) — place it in `components/` immediately.
 
 The question to ask: _"Does this component know anything about properties / bills / payments?"_
-If yes — it belongs in `components/feature/`. If no — it belongs in `components/`.
+If yes — it belongs in `features/<domain>/components/`. If no — it belongs in `components/`.

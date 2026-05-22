@@ -27,8 +27,9 @@ Co-located with the route per Next.js convention (Decision Log #113).
 primitives (`components/ui/`), the reusable data-table system, formatters, the
 DB client, auth, logging, route config. Not tied to any single domain.
 
-A legacy fourth location exists — `components/feature/`, `lib/actions/`,
-`lib/validation/`. See section 5. New code never goes there.
+A former fourth location — `components/feature/`, `lib/actions/`, `lib/validation/` —
+has been cleared. New code never goes there; if these directories reappear, flag it.
+See section 5.
 
 ## 2. What is a feature slice
 
@@ -93,25 +94,20 @@ only the public API.
 - If two slices need the same thing — it is not domain logic of either. It
   moves to shared infrastructure (`components/`, `lib/`).
 
-## 5. Legacy layout and migration
+## 5. Legacy layout
 
-`components/feature/`, `lib/actions/`, `lib/validation/` are the **legacy
+`components/feature/`, `lib/actions/`, `lib/validation/` were the **legacy
 horizontal layout** — domain code split by technical layer instead of by
-domain. This is the structure being migrated away from.
+domain. These directories have been cleared and no longer exist.
 
 Rules:
 
-- **New domain code never goes into the legacy layers.** It goes into
-  `features/<domain>/`.
-- **Migration is opportunistic, not forced.** Encountering a domain still in
-  the legacy layout is expected and is not a bug. A small task touching a
-  legacy domain does not have to migrate the whole domain — that would make
-  every bugfix unbounded.
-- When you touch legacy domain code, rule 1.8 of `CLAUDE.md` applies: flag the
-  divergence, note the migration as tech debt, but do not silently treat the
-  legacy structure as the target.
-- Full migration of a domain into a slice is its own deliberate task, scoped on
-  its own.
+- **New domain code never goes into these paths.** It goes into `features/<domain>/`.
+- If these directories reappear in the project, that is a regression — flag it
+  immediately.
+- Domains not yet in `features/` (bills, meters, payments-backend) still live
+  in their route `_components/` and `_data/` folders — see §1. Migration to
+  slices is its own deliberate task.
 
 ## 6. Decision shortcut
 

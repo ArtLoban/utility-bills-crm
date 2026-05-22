@@ -96,7 +96,7 @@ Required environment variables:
 
 ## Project Structure
 
-> `features/` is the target home for domain logic (components + hooks + schema + types per domain). Currently only `payments/` is migrated. Other domains are split across `components/feature/`, `lib/actions/`, and `lib/validation/` — migration is ongoing.
+> `features/` is the target home for domain logic (components + hooks + schema + types per domain). Currently `payments/` and `properties/` are migrated. Legacy layers (`components/feature/`, `lib/actions/`, `lib/validation/`) have been cleared.
 
 ```
 app/

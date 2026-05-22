@@ -78,9 +78,9 @@ If the fix is out of scope for the current task — note it as tech debt and mov
 But always name it.
 
 The target project topology is vertical feature slices — new domain logic lives in
-`features/<domain>/`. The horizontal layers `components/feature/`, `lib/actions/`,
-and `lib/validation/` are legacy: new code never goes there, and finding a domain
-still in that layout is expected, not a bug. See `.claude/rules/project-structure.md`.
+`features/<domain>/`. The legacy layers `components/feature/`, `lib/actions/`,
+and `lib/validation/` have been cleared. If they reappear — flag it.
+See `.claude/rules/project-structure.md`.
 
 ## 2. DevNote convention
 
