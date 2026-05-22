@@ -1,20 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
 import { propertySchema } from "@/features/properties/schema";
 import { createProperty, editProperty } from "@/features/properties/actions";
-import type { TProperty } from "@/lib/db/schema/properties";
 import type { TPropertyDetail } from "@/app/(app)/properties/[id]/_data/queries";
 import type { TFormState } from "@/features/properties/types";
 
 type TParams = {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
   property?: TPropertyDetail;
-  onCreated?: (id: string) => void;
+  onClose: () => void;
 };
 
 const makeInitialState = (property?: TPropertyDetail): TFormState => ({
@@ -24,23 +21,12 @@ const makeInitialState = (property?: TPropertyDetail): TFormState => ({
   notes: property?.notes ?? "",
 });
 
-export const usePropertyForm = ({ open, onOpenChange, property, onCreated }: TParams) => {
+export const usePropertyForm = ({ property, onClose }: TParams) => {
   const t = useTranslations("properties");
   const [form, setForm] = useState<TFormState>(() => makeInitialState(property));
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [formError, setFormError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
-
-  useEffect(() => {
-    if (!open) {
-      const timer = setTimeout(() => {
-        setForm(makeInitialState(property));
-        setErrors({});
-        setFormError(null);
-      }, 200);
-      return () => clearTimeout(timer);
-    }
-  }, [open, property]);
 
   const set = (key: keyof TFormState) => (value: string) => {
     setForm((f) => ({ ...f, [key]: value }));
@@ -78,14 +64,13 @@ export const usePropertyForm = ({ open, onOpenChange, property, onCreated }: TPa
           setFormError(t("modal.formError"));
         } else {
           toast.error(t("toast.saveError"));
-          onOpenChange(false);
+          onClose();
         }
         return;
       }
 
       toast.success(t(isEditMode ? "toast.updated" : "toast.added"));
-      onOpenChange(false);
-      if (!isEditMode) onCreated?.((response.value as TProperty).id);
+      onClose();
     } finally {
       setIsSaving(false);
     }

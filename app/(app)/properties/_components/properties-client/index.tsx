@@ -1,12 +1,9 @@
-"use client";
-
-import { useState } from "react";
+import Link from "next/link";
 import { Home, Plus } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
 import { EmptyStateCard } from "@/components/empty-state-card";
-import { PropertyModal } from "@/features/properties";
 import { PageContainer } from "@/components/page-container";
 import { Properties } from "./components/properties";
 import type { TPropertyListItem } from "../../_data/queries";
@@ -17,13 +14,14 @@ type TProps = {
 
 export const PropertiesClient = ({ properties }: TProps) => {
   const t = useTranslations("properties");
-  const [modalOpen, setModalOpen] = useState(false);
   const hasProperties = properties.length > 0;
 
   const addButton = (
-    <Button onClick={() => setModalOpen(true)}>
-      <Plus size={16} />
-      {t("list.addButton")}
+    <Button asChild>
+      <Link href="/properties/new">
+        <Plus size={16} />
+        {t("list.addButton")}
+      </Link>
     </Button>
   );
 
@@ -39,7 +37,6 @@ export const PropertiesClient = ({ properties }: TProps) => {
           cta={addButton}
         />
       )}
-      <PropertyModal open={modalOpen} onOpenChange={setModalOpen} />
     </PageContainer>
   );
 };
