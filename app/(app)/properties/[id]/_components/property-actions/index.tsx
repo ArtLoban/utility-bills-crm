@@ -21,6 +21,10 @@ export const PropertyActions = ({ property }: TProps) => (
         </Link>
       </Button>
     )}
-    <PropertyDeleteAction propertyId={property.id} role={property.role} />
+    <PropertyDeleteAction
+      propertyId={property.id}
+      propertyName={property.name}
+      role={property.role}
+    />
   </div>
 );

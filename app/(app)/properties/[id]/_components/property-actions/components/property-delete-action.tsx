@@ -13,17 +13,18 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Modal } from "@/components/modal";
+import { ConfirmDialog } from "@/components/confirm-dialog";
 import { softDeleteProperty } from "@/features/properties";
 import { ROUTES } from "@/lib/routes";
 import type { PropertyId, TPropertyRole } from "@/lib/db/schema/properties";
 
 type TProps = {
   propertyId: PropertyId;
+  propertyName: string;
   role: TPropertyRole;
 };
 
-export const PropertyDeleteAction = ({ propertyId, role }: TProps) => {
+export const PropertyDeleteAction = ({ propertyId, propertyName, role }: TProps) => {
   const t = useTranslations("properties");
   const router = useRouter();
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -66,15 +67,22 @@ export const PropertyDeleteAction = ({ propertyId, role }: TProps) => {
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <Modal
-        title={t("delete.title")}
-        description={t("delete.description")}
+      <ConfirmDialog
         open={confirmOpen}
         onOpenChange={setConfirmOpen}
-        onSubmit={handleDelete}
-        submitText={t("delete.confirm")}
-        isSaving={isDeleting}
-        size="sm"
+        title={t("delete.title")}
+        tone="destructive"
+        icon={<Trash2 size={28} />}
+        description={
+          <>
+            {t("delete.descriptionPrefix")} <strong>{propertyName}</strong>?
+          </>
+        }
+        warningText={t("delete.description")}
+        confirmLabel={t("delete.menuItem")}
+        confirmIcon={<Trash2 size={14} />}
+        isPending={isDeleting}
+        onConfirm={handleDelete}
       />
     </>
   );

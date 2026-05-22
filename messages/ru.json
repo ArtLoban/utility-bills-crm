@@ -292,7 +292,8 @@
       "menuItem": "Удалить объект",
       "title": "Удалить объект",
       "description": "Это действие нельзя отменить.",
-      "confirm": "Удалить"
+      "confirm": "Удалить",
+      "descriptionPrefix": "Удалить"
     },
     "modal": {
       "add": {

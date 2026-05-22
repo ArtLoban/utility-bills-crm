@@ -296,7 +296,8 @@
       "menuItem": "Delete property",
       "title": "Delete property",
       "description": "This action cannot be undone.",
-      "confirm": "Delete"
+      "confirm": "Delete",
+      "descriptionPrefix": "Delete"
     },
     "modal": {
       "add": {

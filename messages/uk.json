@@ -292,7 +292,8 @@
       "menuItem": "Видалити об'єкт",
       "title": "Видалити об'єкт",
       "description": "Цю дію не можна скасувати.",
-      "confirm": "Видалити"
+      "confirm": "Видалити",
+      "descriptionPrefix": "Видалити"
     },
     "modal": {
       "add": {
