@@ -22,7 +22,7 @@ const SIZE_CLASS: Record<TSize, string> = {
 export type TProps = {
   title: string;
   description?: string;
-  children: ReactNode;
+  children?: ReactNode;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSubmit?: () => void;
@@ -53,7 +53,7 @@ export const Modal = (props: TProps) => {
           <DialogTitle>{title}</DialogTitle>
           {description && <DialogDescription>{description}</DialogDescription>}
         </DialogHeader>
-        <div>{children}</div>
+        {children && <div>{children}</div>}
         <DialogFooter>
           <DialogClose>Cancel</DialogClose>
           <Button type="button" onClick={onSubmit} disabled={isSaving || !canSave}>

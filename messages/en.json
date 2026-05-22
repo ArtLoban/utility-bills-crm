@@ -273,6 +273,31 @@
     "signOut": "Sign out"
   },
   "properties": {
+    "list": {
+      "title": "My Properties",
+      "addButton": "Add property"
+    },
+    "empty": {
+      "title": "No properties yet",
+      "body": "Add your first property to start tracking utility bills."
+    },
+    "card": {
+      "servicePlaceholder": "— services",
+      "balance": "Balance",
+      "balancePlaceholder": "—",
+      "shared": "Shared",
+      "role": "Role",
+      "open": "Open"
+    },
+    "detail": {
+      "createdOn": "Created {date}"
+    },
+    "delete": {
+      "menuItem": "Delete property",
+      "title": "Delete property",
+      "description": "This action cannot be undone.",
+      "confirm": "Delete"
+    },
     "modal": {
       "add": {
         "title": "Add property",
@@ -282,7 +307,8 @@
         "title": "Edit property",
         "submit": "Save changes"
       },
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "formError": "Something went wrong. Please try again."
     },
     "fields": {
       "name": {
@@ -309,7 +335,10 @@
     },
     "toast": {
       "added": "Property added",
-      "updated": "Property updated"
+      "updated": "Property updated",
+      "deleted": "Property deleted",
+      "saveError": "Something went wrong. Please try again.",
+      "deleteError": "Failed to delete property"
     },
     "validation": {
       "name": {

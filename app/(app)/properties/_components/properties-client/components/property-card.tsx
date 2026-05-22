@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Building2, ChevronRight, Home, TreePine, Users } from "lucide-react";
-import { type TProperty } from "@/app/(app)/properties/_data/mock";
+import { useTranslations } from "next-intl";
+import type { TPropertyListItem } from "@/app/(app)/properties/_data/queries";
 
 const PROPERTY_ICONS = {
   apartment: Building2,
@@ -9,29 +10,14 @@ const PROPERTY_ICONS = {
   other: Building2,
 };
 
-const formatBalance = (balance: number): { text: string; className: string } => {
-  if (balance < 0) {
-    return {
-      text: `−${Math.abs(balance).toLocaleString()} UAH`,
-      className: "text-destructive",
-    };
-  }
-  if (balance > 0) {
-    return {
-      text: `+${balance.toLocaleString()} UAH`,
-      className: "text-green-600",
-    };
-  }
-  return { text: "0 UAH", className: "text-zinc-500" };
-};
-
 type TProps = {
-  property: TProperty;
+  property: TPropertyListItem;
 };
 
 export const PropertyCard = ({ property }: TProps) => {
+  const t = useTranslations("properties");
   const Icon = PROPERTY_ICONS[property.type];
-  const { text: balanceText, className: balanceClass } = formatBalance(property.balance);
+  const isShared = property.role !== "owner";
 
   return (
     <Link
@@ -59,19 +45,19 @@ export const PropertyCard = ({ property }: TProps) => {
       </div>
 
       <div className="mt-4 flex items-center gap-2.5 border-t border-zinc-100 pt-4 dark:border-zinc-800">
-        <span className="text-xs text-zinc-500">{property.serviceCount} services</span>
+        <span className="text-xs text-zinc-500">{t("card.servicePlaceholder")}</span>
 
-        {property.isShared && (
+        {isShared && (
           <span className="flex items-center gap-1 rounded-full bg-zinc-100 px-2 py-0.5 text-[11px] font-medium dark:bg-zinc-800">
             <Users size={11} className="text-zinc-500" />
-            Shared
+            {t("card.shared")}
           </span>
         )}
 
-        {property.isShared && (
+        {isShared && (
           <span className="text-xs text-zinc-500">
-            · Role:{" "}
-            <span className="font-medium text-zinc-950 dark:text-zinc-50">{property.myRole}</span>
+            · {t("card.role")}:{" "}
+            <span className="font-medium text-zinc-950 dark:text-zinc-50">{property.role}</span>
           </span>
         )}
       </div>
@@ -79,15 +65,15 @@ export const PropertyCard = ({ property }: TProps) => {
       <div className="mt-4 flex items-end justify-between border-t border-zinc-100 pt-4 dark:border-zinc-800">
         <div>
           <p className="mb-1 text-[11px] font-medium tracking-[0.3px] text-zinc-500 uppercase">
-            Balance
+            {t("card.balance")}
           </p>
-          <p className={`text-[22px] font-semibold tracking-[-0.4px] tabular-nums ${balanceClass}`}>
-            {balanceText}
+          <p className="text-[22px] font-semibold tracking-[-0.4px] text-zinc-400 tabular-nums dark:text-zinc-600">
+            {t("card.balancePlaceholder")}
           </p>
         </div>
 
         <div className="flex items-center gap-0.5 text-zinc-500 group-hover:text-violet-600">
-          <span className="text-[13px] font-medium">Open</span>
+          <span className="text-[13px] font-medium">{t("card.open")}</span>
           <ChevronRight size={14} strokeWidth={2} />
         </div>
       </div>

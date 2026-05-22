@@ -6,9 +6,9 @@ import { toast } from "sonner";
 
 import { propertySchema } from "@/lib/validation/property";
 import { createProperty, editProperty } from "@/lib/actions/properties";
-import type { PropertyId, TProperty } from "@/lib/db/schema/properties";
+import type { TProperty } from "@/lib/db/schema/properties";
+import type { TPropertyDetail } from "@/app/(app)/properties/[id]/_data/queries";
 import type { TFormState } from "../types";
-import { TPropertyDetail } from "@/app/(app)/properties/_data/mock";
 
 type TParams = {
   open: boolean;
@@ -28,6 +28,7 @@ export const usePropertyForm = ({ open, onOpenChange, property, onCreated }: TPa
   const t = useTranslations("properties");
   const [form, setForm] = useState<TFormState>(() => makeInitialState(property));
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [formError, setFormError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
@@ -35,6 +36,7 @@ export const usePropertyForm = ({ open, onOpenChange, property, onCreated }: TPa
       const timer = setTimeout(() => {
         setForm(makeInitialState(property));
         setErrors({});
+        setFormError(null);
       }, 200);
       return () => clearTimeout(timer);
     }
@@ -43,6 +45,7 @@ export const usePropertyForm = ({ open, onOpenChange, property, onCreated }: TPa
   const set = (key: keyof TFormState) => (value: string) => {
     setForm((f) => ({ ...f, [key]: value }));
     if (errors[key]) setErrors((e) => ({ ...e, [key]: "" }));
+    if (formError) setFormError(null);
   };
 
   const isEditMode = property !== undefined;
@@ -54,7 +57,9 @@ export const usePropertyForm = ({ open, onOpenChange, property, onCreated }: TPa
       const fieldErrors: Record<string, string> = {};
       result.error.issues.forEach((issue) => {
         const field = issue.path[0] as string;
-        if (!fieldErrors[field]) fieldErrors[field] = issue.message;
+        // propertySchema messages are relative keys within the "properties" namespace.
+        // Translate here so PropertyForm renders plain strings, not i18n keys.
+        if (!fieldErrors[field]) fieldErrors[field] = t(issue.message as Parameters<typeof t>[0]);
       });
       setErrors(fieldErrors);
       return;
@@ -63,11 +68,18 @@ export const usePropertyForm = ({ open, onOpenChange, property, onCreated }: TPa
     setIsSaving(true);
     try {
       const response = isEditMode
-        ? await editProperty(property.id as PropertyId, result.data)
+        ? await editProperty(property.id, result.data)
         : await createProperty(result.data);
 
       if (!response.ok) {
-        toast.error(response.error.message);
+        // ValidationError → inline per decision #105 (form validation never a toast).
+        // NotFoundError → guard failure (user lost access between open and save); toast + close.
+        if (response.error.name === "ValidationError") {
+          setFormError(t("modal.formError"));
+        } else {
+          toast.error(t("toast.saveError"));
+          onOpenChange(false);
+        }
         return;
       }
 
@@ -79,5 +91,5 @@ export const usePropertyForm = ({ open, onOpenChange, property, onCreated }: TPa
     }
   };
 
-  return { form, errors, set, handleSave, isSaving, canSave, isEditMode };
+  return { form, errors, formError, set, handleSave, isSaving, canSave, isEditMode };
 };

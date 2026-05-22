@@ -12,15 +12,16 @@ import type { TFormState } from "../types";
 type TProps = {
   form: TFormState;
   errors: Record<string, string>;
+  formError?: string | null;
   set: (key: keyof TFormState) => (value: string) => void;
 };
 
-export const PropertyForm = ({ form, errors, set }: TProps) => {
+export const PropertyForm = ({ form, errors, formError, set }: TProps) => {
   const t = useTranslations("properties");
 
   return (
     <div className="flex flex-col gap-4">
-      <FormField label={t("fields.name.label")} error={errors.name ? t(errors.name) : undefined}>
+      <FormField label={t("fields.name.label")} error={errors.name}>
         <Input
           autoFocus
           value={form.name}
@@ -42,11 +43,7 @@ export const PropertyForm = ({ form, errors, set }: TProps) => {
 
       <PropertyTypeSelector value={form.type} onChange={(value) => set("type")(value)} />
 
-      <FormField
-        label={t("fields.address.label")}
-        optional
-        error={errors.address ? t(errors.address) : undefined}
-      >
+      <FormField label={t("fields.address.label")} optional error={errors.address}>
         <Input
           value={form.address}
           onChange={(e) => set("address")(e.target.value)}
@@ -65,11 +62,7 @@ export const PropertyForm = ({ form, errors, set }: TProps) => {
         />
       </FormField>
 
-      <FormField
-        label={t("fields.notes.label")}
-        optional
-        error={errors.notes ? t(errors.notes) : undefined}
-      >
+      <FormField label={t("fields.notes.label")} optional error={errors.notes}>
         <Textarea
           value={form.notes}
           onChange={(e) => set("notes")(e.target.value)}
@@ -78,6 +71,8 @@ export const PropertyForm = ({ form, errors, set }: TProps) => {
           rows={3}
         />
       </FormField>
+
+      {formError && <p className="text-destructive text-sm">{formError}</p>}
     </div>
   );
 };

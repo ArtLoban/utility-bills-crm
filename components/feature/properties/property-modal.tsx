@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import { Modal } from "@/components/modal";
 import { PropertyForm } from "@/components/feature/properties/property-form";
 import { usePropertyForm } from "@/components/feature/properties/hooks/use-property-form";
-import { TPropertyDetail } from "@/app/(app)/properties/_data/mock";
+import type { TPropertyDetail } from "@/app/(app)/properties/[id]/_data/queries";
 
 type TProps = {
   open: boolean;
@@ -15,12 +15,8 @@ type TProps = {
 
 export const PropertyModal = ({ open, onOpenChange, property, onCreated }: TProps) => {
   const t = useTranslations("properties");
-  const { form, errors, set, handleSave, isSaving, canSave, isEditMode } = usePropertyForm({
-    open,
-    onOpenChange,
-    property,
-    onCreated,
-  });
+  const { form, errors, formError, set, handleSave, isSaving, canSave, isEditMode } =
+    usePropertyForm({ open, onOpenChange, property, onCreated });
 
   return (
     <Modal
@@ -32,7 +28,7 @@ export const PropertyModal = ({ open, onOpenChange, property, onCreated }: TProp
       canSave={canSave}
       isSaving={isSaving}
     >
-      <PropertyForm form={form} errors={errors} set={set} />
+      <PropertyForm form={form} errors={errors} formError={formError} set={set} />
     </Modal>
   );
 };

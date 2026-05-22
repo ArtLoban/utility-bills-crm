@@ -4,14 +4,14 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Pencil } from "lucide-react";
 import { PropertyModal } from "@/components/feature/properties/property-modal";
-import { TPropertyDetail } from "@/app/(app)/properties/_data/mock";
+import type { TPropertyDetail } from "@/app/(app)/properties/[id]/_data/queries";
 
 type TProps = { property: TPropertyDetail };
 
 export const PropertyEditAction = ({ property }: TProps) => {
   const [editOpen, setEditOpen] = useState(false);
 
-  if (property.myRole !== "owner") return null;
+  if (property.role !== "owner") return null;
 
   return (
     <>

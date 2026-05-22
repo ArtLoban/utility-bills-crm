@@ -6,23 +6,27 @@ export const PROPERTY_LIMITS = {
   notes: 1000,
 } as const;
 
+// tech-debt: belongs in features/properties/ per feature-slices plan (README.living.md). Migrate when features/properties/ slice is established.
+
+// Error messages are relative keys within the "properties" i18n namespace.
+// Consumed by usePropertyForm which translates them via useTranslations("properties").
 export const propertySchema = z.object({
   name: z
     .string()
     .trim()
-    .min(1, "properties.validation.name.required")
-    .max(PROPERTY_LIMITS.name, "properties.validation.name.tooLong"),
+    .min(1, "validation.name.required")
+    .max(PROPERTY_LIMITS.name, "validation.name.tooLong"),
   type: z.enum(["apartment", "house", "cottage", "other"]),
   address: z
     .string()
     .trim()
-    .max(PROPERTY_LIMITS.address, "properties.validation.address.tooLong")
+    .max(PROPERTY_LIMITS.address, "validation.address.tooLong")
     .optional()
     .or(z.literal("")),
   notes: z
     .string()
     .trim()
-    .max(PROPERTY_LIMITS.notes, "properties.validation.notes.tooLong")
+    .max(PROPERTY_LIMITS.notes, "validation.notes.tooLong")
     .optional()
     .or(z.literal("")),
 });

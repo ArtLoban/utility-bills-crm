@@ -1,8 +1,8 @@
 import { PropertyCard } from "./property-card";
-import { TProperty } from "@/app/(app)/properties/_data/mock";
+import type { TPropertyListItem } from "@/app/(app)/properties/_data/queries";
 
-export type TProps = {
-  properties: TProperty[];
+type TProps = {
+  properties: TPropertyListItem[];
 };
 
 export const Properties = ({ properties }: TProps) => {

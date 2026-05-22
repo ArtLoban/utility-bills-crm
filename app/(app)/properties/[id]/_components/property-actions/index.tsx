@@ -1,9 +1,10 @@
 import { Button } from "@/components/ui/button";
-import { MoreHorizontal, Share2 } from "lucide-react";
+import { Share2 } from "lucide-react";
 import Link from "next/link";
-import { TPropertyDetail } from "@/app/(app)/properties/_data/mock";
 import { ROUTES } from "@/lib/routes";
 import { PropertyEditAction } from "./components/property-edit-action";
+import { PropertyDeleteAction } from "./components/property-delete-action";
+import type { TPropertyDetail } from "@/app/(app)/properties/[id]/_data/queries";
 
 type TProps = {
   property: TPropertyDetail;
@@ -12,14 +13,14 @@ type TProps = {
 export const PropertyActions = ({ property }: TProps) => (
   <div className="flex shrink-0 items-center gap-2">
     <PropertyEditAction property={property} />
-    <Button asChild variant="outline">
-      <Link href={`${ROUTES.properties}/${property.id}/sharing`}>
-        <Share2 size={13} />
-        Share
-      </Link>
-    </Button>
-    <Button variant="outline" className="h-8 w-8">
-      <MoreHorizontal size={15} />
-    </Button>
+    {property.role !== "viewer" && (
+      <Button asChild variant="outline">
+        <Link href={`${ROUTES.properties}/${property.id}/sharing`}>
+          <Share2 size={13} />
+          Share
+        </Link>
+      </Button>
+    )}
+    <PropertyDeleteAction propertyId={property.id} role={property.role} />
   </div>
 );
