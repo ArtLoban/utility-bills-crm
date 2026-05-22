@@ -12,9 +12,3 @@ export type TFiltersFormValues = {
   [FiltersFormField.SERVICE]: TStringOrNull;
   [FiltersFormField.PAID_AT]: TStringOrNull;
 };
-
-export type TDeleteTarget = {
-  id: string | number;
-  serviceName: string;
-  propertyName: string;
-};
