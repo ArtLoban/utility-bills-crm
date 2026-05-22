@@ -50,6 +50,7 @@
       <a href="#header" class="nav-link">Header / nav</a>
       <a href="#tables" class="nav-link">Tables</a>
       <a href="#tooltip" class="nav-link">Tooltips &amp; toasts</a>
+      <a href="#confirm" class="nav-link">Confirm dialog</a>
 
       <div class="nav-group">Sections</div>
       <a href="#section-landing" class="nav-link">Landing chrome</a>
@@ -1240,6 +1241,332 @@ const Z_DARK = {
           </div>
         </div>
       </div>
+    </section>
+
+    <!-- CONFIRM DIALOG -->
+    <section id="confirm" class="sec">
+      <header class="sec-head">
+        <h2 class="sec-h2">Confirm dialog</h2>
+        <p class="sec-sub">
+          One canonical recipe for every destructive or high-stakes confirmation —
+          <strong>Remove user</strong>, <strong>Soft-delete</strong>, <strong>Hard-delete property</strong>, and anything new.
+          Component lives at <code>crm/components/confirm-dialog.jsx</code> as <code>&lt;ConfirmDialog/&gt;</code>.
+        </p>
+      </header>
+
+      <!-- ── Anatomy ────────────────────────────────────────── -->
+      <div class="comp-name comp-name-large">Anatomy</div>
+      <div class="cd-anatomy">
+        <!-- The dialog mock -->
+        <div class="cd-stage cd-stage-flat">
+          <div class="cd-dialog" style="width:440px;">
+            <div class="cd-head">
+              <h3 class="cd-title">Title — sentence case</h3>
+              <button class="cd-close" aria-label="Close">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+              </button>
+            </div>
+            <div class="cd-body">
+              <div class="cd-icon-wrap">
+                <div class="cd-icon cd-icon-destructive">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+                </div>
+              </div>
+              <div class="cd-entity">
+                <div class="cd-avatar">EP</div>
+                <div>
+                  <div class="cd-entity-name">Entity preview (optional)</div>
+                  <div class="cd-entity-meta">muted helper line</div>
+                </div>
+              </div>
+              <p class="cd-desc">Main description — what's about to happen, with <strong>strong</strong> emphasis on the target.</p>
+              <p class="cd-sub">Secondary muted line — context, scope, or what won't be touched.</p>
+              <p class="cd-warn">Warning line — only when the action is destructive and irreversible.</p>
+            </div>
+            <div class="cd-foot">
+              <button class="cd-btn cd-btn-outline">Cancel</button>
+              <button class="cd-btn cd-btn-destructive">Confirm action</button>
+            </div>
+          </div>
+
+          <!-- Annotations -->
+          <div class="cd-annot cd-annot-1">① Header · 16px / 24px · title + ✕</div>
+          <div class="cd-annot cd-annot-2">② Centered tinted icon · 56×56 · radius 14</div>
+          <div class="cd-annot cd-annot-3">③ Entity preview pill <em>(optional)</em></div>
+          <div class="cd-annot cd-annot-4">④ Description · 14px / 1.55</div>
+          <div class="cd-annot cd-annot-5">⑤ Footer · subtle bg · Cancel ↔ Confirm</div>
+        </div>
+      </div>
+
+      <!-- ── Variants ───────────────────────────────────────── -->
+      <div class="comp-name comp-name-large" style="margin-top:36px;">Variants</div>
+
+      <!-- Variant 1: Simple destructive (RemoveUserModal) — light + dark -->
+      <div class="theme-pair">
+        <div class="theme-block theme-light">
+          <div class="theme-label">Light</div>
+          <div class="comp-name" style="margin-bottom:14px;">1 · Simple destructive · entity context</div>
+          <div class="cd-stage">
+            <div class="cd-dialog">
+              <div class="cd-head">
+                <h3 class="cd-title">Remove access?</h3>
+                <button class="cd-close" aria-label="Close"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+              </div>
+              <div class="cd-body">
+                <div class="cd-icon-wrap">
+                  <div class="cd-icon cd-icon-destructive">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 11h-6"/></svg>
+                  </div>
+                </div>
+                <div class="cd-entity">
+                  <div class="cd-avatar">AL</div>
+                  <div>
+                    <div class="cd-entity-name">Artem Loban</div>
+                    <div class="cd-entity-meta">artem@example.com · Editor</div>
+                  </div>
+                </div>
+                <p class="cd-desc cd-desc-left">Remove <strong>Artem Loban</strong> from <strong>Home apartment</strong>?</p>
+                <p class="cd-sub cd-sub-left">They will immediately lose access to this property and all its data. This can be undone by inviting them again.</p>
+              </div>
+              <div class="cd-foot">
+                <button class="cd-btn cd-btn-outline">Cancel</button>
+                <button class="cd-btn cd-btn-destructive">Remove access</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="theme-block theme-dark">
+          <div class="theme-label">Dark</div>
+          <div class="comp-name" style="margin-bottom:14px;">1 · Simple destructive · dark</div>
+          <div class="cd-stage cd-stage--dark">
+            <div class="cd-dialog cd-dialog--dark">
+              <div class="cd-head cd-head--dark">
+                <h3 class="cd-title cd-title--dark">Remove access?</h3>
+                <button class="cd-close cd-close--dark" aria-label="Close"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+              </div>
+              <div class="cd-body">
+                <div class="cd-icon-wrap">
+                  <div class="cd-icon cd-icon-destructive--dark">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 11h-6"/></svg>
+                  </div>
+                </div>
+                <div class="cd-entity cd-entity--dark">
+                  <div class="cd-avatar cd-avatar--dark">AL</div>
+                  <div>
+                    <div class="cd-entity-name cd-entity-name--dark">Artem Loban</div>
+                    <div class="cd-entity-meta cd-entity-meta--dark">artem@example.com · Editor</div>
+                  </div>
+                </div>
+                <p class="cd-desc cd-desc-left cd-desc--dark">Remove <strong>Artem Loban</strong> from <strong>Home apartment</strong>?</p>
+                <p class="cd-sub cd-sub-left">They will immediately lose access to this property and all its data. This can be undone by inviting them again.</p>
+              </div>
+              <div class="cd-foot cd-foot--dark">
+                <button class="cd-btn cd-btn-outline--dark">Cancel</button>
+                <button class="cd-btn cd-btn-destructive">Remove access</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Variant 2: High-risk type-to-confirm + Variant 3: Warning alert -->
+      <div class="theme-pair" style="margin-top:18px;">
+        <div class="theme-block theme-light">
+          <div class="theme-label">Light</div>
+          <div class="comp-name" style="margin-bottom:14px;">2 · High-risk · type to confirm</div>
+          <div class="cd-stage">
+            <div class="cd-dialog">
+              <div class="cd-head">
+                <h3 class="cd-title">Delete property permanently</h3>
+                <button class="cd-close" aria-label="Close"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+              </div>
+              <div class="cd-body">
+                <div class="cd-icon-wrap">
+                  <div class="cd-icon cd-icon-destructive">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+                  </div>
+                </div>
+                <p class="cd-desc cd-desc-left">You're about to permanently delete <strong>Old apartment</strong>. This removes 3 services, 47 readings, 18 bills, and 14 payments forever.</p>
+                <p class="cd-warn cd-warn-left">This cannot be undone.</p>
+                <div class="cd-divider"></div>
+                <label class="cd-label">To confirm, type <code class="cd-kbd">DELETE</code> below.</label>
+                <div class="cd-input-wrap">
+                  <input type="text" value="DELETE" readonly class="cd-input cd-input-ok"/>
+                  <span class="cd-input-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                  </span>
+                </div>
+              </div>
+              <div class="cd-foot">
+                <button class="cd-btn cd-btn-outline">Cancel</button>
+                <button class="cd-btn cd-btn-destructive">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+                  Delete permanently
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="theme-block theme-light">
+          <div class="theme-label">Light</div>
+          <div class="comp-name" style="margin-bottom:14px;">3 · Warning alert · single action</div>
+          <div class="cd-stage">
+            <div class="cd-dialog">
+              <div class="cd-head">
+                <h3 class="cd-title">Can't leave as the last owner</h3>
+                <button class="cd-close" aria-label="Close"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+              </div>
+              <div class="cd-body">
+                <div class="cd-icon-wrap">
+                  <div class="cd-icon cd-icon-warning">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+                  </div>
+                </div>
+                <p class="cd-desc">Every property needs at least one owner. You're currently the only owner of <strong>Home apartment</strong>.</p>
+                <p class="cd-sub">To leave, promote someone else to Owner first, or delete the property if it's no longer needed.</p>
+              </div>
+              <div class="cd-foot cd-foot-end">
+                <button class="cd-btn cd-btn-warning">Got it</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Props table ────────────────────────────────────── -->
+      <div class="comp-name comp-name-large" style="margin-top:36px;">Props</div>
+      <table class="cd-props">
+        <thead>
+          <tr><th>Prop</th><th>Type</th><th>Default</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>title</code></td><td>string</td><td>—</td><td>Required. Sentence case. No trailing punctuation unless it's a question.</td></tr>
+          <tr><td><code>tone</code></td><td><code>'destructive' | 'warning' | 'info'</code></td><td><code>'destructive'</code></td><td>Drives icon tint and confirm-button color.</td></tr>
+          <tr><td><code>icon</code></td><td>ReactNode</td><td>—</td><td>Required. Rendered centered inside the 56×56 tinted square.</td></tr>
+          <tr><td><code>entityPreview</code></td><td>ReactNode</td><td>—</td><td>Optional context row (avatar + name + meta).</td></tr>
+          <tr><td><code>description</code></td><td>ReactNode</td><td>—</td><td>Main message. Use <code>&lt;strong&gt;</code> for the target.</td></tr>
+          <tr><td><code>secondaryText</code></td><td>ReactNode</td><td>—</td><td>Optional muted helper below description.</td></tr>
+          <tr><td><code>warningText</code></td><td>ReactNode</td><td>—</td><td>Optional emphasized red line (e.g. "This cannot be undone").</td></tr>
+          <tr><td><code>requireType</code></td><td>string</td><td>—</td><td>When set, shows a type-to-confirm field. Confirm stays disabled until match.</td></tr>
+          <tr><td><code>confirmLabel</code></td><td>string</td><td><code>'Confirm'</code></td><td>Verb + object — "Delete permanently", "Remove access".</td></tr>
+          <tr><td><code>confirmIcon</code></td><td>ReactNode</td><td>—</td><td>Optional icon prefix on the confirm button.</td></tr>
+          <tr><td><code>cancelLabel</code></td><td>string | null</td><td><code>'Cancel'</code></td><td>Pass <code>null</code> for single-action alert (variant 3).</td></tr>
+          <tr><td><code>closeButton</code></td><td>bool</td><td><code>true</code></td><td>Header ✕ button.</td></tr>
+          <tr><td><code>width</code></td><td>number</td><td><code>460</code></td><td>Px. Don't exceed 520.</td></tr>
+          <tr><td><code>onConfirm / onCancel / onClose</code></td><td>fn</td><td>—</td><td>Handlers. <code>onClose</code> falls back to <code>onCancel</code>.</td></tr>
+        </tbody>
+      </table>
+
+      <!-- ── Recipe / code ──────────────────────────────────── -->
+      <div class="code" data-code='import &quot;./confirm-dialog.jsx&quot;;
+const { ConfirmDialog } = window;
+
+// Variant 1 — Remove user
+<ConfirmDialog
+  title=&quot;Remove access?&quot;
+  tone=&quot;destructive&quot;
+  icon={<UserMinusIcon size={28}/>}
+  entityPreview={
+    <>
+      <Avatar name=&quot;Artem Loban&quot; size={36}/>
+      <div>
+        <div className=&quot;name&quot;>Artem Loban</div>
+        <div className=&quot;meta&quot;>artem@example.com · Editor</div>
+      </div>
+    </>
+  }
+  description={<>Remove <strong>Artem Loban</strong> from <strong>Home apartment</strong>?</>}
+  secondaryText=&quot;They will immediately lose access to this property and all its data. This can be undone by inviting them again.&quot;
+  confirmLabel=&quot;Remove access&quot;
+  onConfirm={handleRemove}
+  onCancel={closeModal}
+/>
+
+// Variant 2 — Hard-delete property
+<ConfirmDialog
+  title=&quot;Delete property permanently&quot;
+  tone=&quot;destructive&quot;
+  icon={<AlertTriangle size={28}/>}
+  description={<>You&apos;re about to permanently delete <strong>Old apartment</strong>. This removes 3 services, 47 readings, 18 bills, and 14 payments forever.</>}
+  warningText=&quot;This cannot be undone.&quot;
+  requireType=&quot;DELETE&quot;
+  confirmLabel=&quot;Delete permanently&quot;
+  confirmIcon={<TrashIcon size={14}/>}
+  onConfirm={handleHardDelete}
+/>
+
+// Variant 3 — Warning alert (single action)
+<ConfirmDialog
+  title=&quot;Can&apos;t leave as the last owner&quot;
+  tone=&quot;warning&quot;
+  icon={<AlertCircle size={28}/>}
+  description={<>Every property needs at least one owner. You&apos;re currently the only owner of <strong>Home apartment</strong>.</>}
+  secondaryText=&quot;To leave, promote someone else to Owner first, or delete the property if it&apos;s no longer needed.&quot;
+  confirmLabel=&quot;Got it&quot;
+  cancelLabel={null}
+  onConfirm={closeModal}
+/>'><div class="code-head"><span>Usage · 3 canonical calls</span><button class="copy-btn" type="button">Copy</button></div><pre>import "./confirm-dialog.jsx";
+const { ConfirmDialog } = window;
+
+// Variant 1 — Remove user
+&lt;ConfirmDialog
+  title="Remove access?"
+  tone="destructive"
+  icon={&lt;UserMinusIcon size={28}/&gt;}
+  entityPreview={
+    &lt;&gt;
+      &lt;Avatar name="Artem Loban" size={36}/&gt;
+      &lt;div&gt;
+        &lt;div className="name"&gt;Artem Loban&lt;/div&gt;
+        &lt;div className="meta"&gt;artem@example.com · Editor&lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/&gt;
+  }
+  description={&lt;&gt;Remove &lt;strong&gt;Artem Loban&lt;/strong&gt; from &lt;strong&gt;Home apartment&lt;/strong&gt;?&lt;/&gt;}
+  secondaryText="They will immediately lose access to this property and all its data. This can be undone by inviting them again."
+  confirmLabel="Remove access"
+  onConfirm={handleRemove}
+  onCancel={closeModal}
+/&gt;
+
+// Variant 2 — Hard-delete property
+&lt;ConfirmDialog
+  title="Delete property permanently"
+  tone="destructive"
+  icon={&lt;AlertTriangle size={28}/&gt;}
+  description={&lt;&gt;You're about to permanently delete &lt;strong&gt;Old apartment&lt;/strong&gt;. This removes 3 services, 47 readings, 18 bills, and 14 payments forever.&lt;/&gt;}
+  warningText="This cannot be undone."
+  requireType="DELETE"
+  confirmLabel="Delete permanently"
+  confirmIcon={&lt;TrashIcon size={14}/&gt;}
+  onConfirm={handleHardDelete}
+/&gt;
+
+// Variant 3 — Warning alert (single action)
+&lt;ConfirmDialog
+  title="Can't leave as the last owner"
+  tone="warning"
+  icon={&lt;AlertCircle size={28}/&gt;}
+  description={&lt;&gt;Every property needs at least one owner. You're currently the only owner of &lt;strong&gt;Home apartment&lt;/strong&gt;.&lt;/&gt;}
+  secondaryText="To leave, promote someone else to Owner first, or delete the property if it's no longer needed."
+  confirmLabel="Got it"
+  cancelLabel={null}
+  onConfirm={closeModal}
+/&gt;</pre></div>
+
+      <!-- ── Do / Don't ─────────────────────────────────────── -->
+      <div class="comp-name comp-name-large" style="margin-top:36px;">Rules</div>
+      <ul class="diff-list">
+        <li><strong>One recipe, three tones.</strong> Never invent a new modal shell for a new kind of confirmation. Pick a tone, pass an icon.</li>
+        <li><strong>Title is a question or imperative.</strong> "Remove access?" · "Delete property permanently". Sentence case. No "Are you sure".</li>
+        <li><strong>Confirm button label is the verb.</strong> "Delete permanently", not "OK" or "Yes". Echoes the title.</li>
+        <li><strong><code>requireType</code> only above an irreversible threshold.</strong> Use for hard-delete; do not use for "Remove user", "Discard draft", or anything reversible.</li>
+        <li><strong>Cancel sits left, confirm sits right.</strong> Spacing <code>space-between</code>. The destructive action is always the right-most button.</li>
+        <li><strong>Single-action alerts</strong> (variant 3) use <code>cancelLabel={null}</code> and a primary-coloured confirm — the user is being told something, not asked.</li>
+        <li><strong>Width 460.</strong> Don't exceed 520. If you need more, you're building a form, not a confirm.</li>
+      </ul>
     </section>
 
     <!-- SECTION CHROME (Landing/CRM/Admin) -->

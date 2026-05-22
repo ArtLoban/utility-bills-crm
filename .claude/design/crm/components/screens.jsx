@@ -2,7 +2,7 @@
 // Additional screens — Violet accent locked.
 // Reuses primitives from dashboard.jsx via window.UB.
 
-const { useState: useState2 } = React;
+const { useState: useState2, useEffect: useEffect2, useRef: useRef2 } = React;
 const { Z, ACCENTS, SERVICE_COLORS, SERVICE_ICONS, Icons, Icon, TopBar, Card, Button, Select } = window.UB;
 const ACCENT = ACCENTS.violet;
 
@@ -53,6 +53,18 @@ const MoreIcon = {
     </Icon>
   ),
   ChevronRightSlash: (p) => <Icon d="m9 6 6 6-6 6" size={p.size} stroke={p.stroke}/>,
+  Trash: (p) => (
+    <Icon size={p.size} stroke={p.stroke}>
+      <path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+      <path d="M10 11v6M14 11v6"/>
+    </Icon>
+  ),
+  Archive: (p) => (
+    <Icon size={p.size} stroke={p.stroke}>
+      <rect width="20" height="5" x="2" y="3" rx="1"/>
+      <path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8M10 12h4"/>
+    </Icon>
+  ),
 };
 
 // ---------- Page chrome ----------
@@ -350,7 +362,7 @@ function Breadcrumbs() {
   );
 }
 
-function PropertyHeader() {
+function PropertyHeader({ onDeleteClick }) {
   return (
     <div style={{ marginBottom: 24 }}>
       <Breadcrumbs/>
@@ -380,17 +392,92 @@ function PropertyHeader() {
           <Button variant="outline" accent={ACCENT}>
             <MoreIcon.Share size={13} stroke={Z.foreground}/> Share
           </Button>
-          <button style={{
-            width: 32, height: 32, borderRadius: 6,
-            border: `1px solid ${Z.border}`, background: Z.background,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            cursor: 'pointer',
-          }}>
-            <MoreIcon.MoreHorizontal size={15} stroke={Z.foreground}/>
-          </button>
+          <MoreMenuButton onDeleteClick={onDeleteClick}/>
         </div>
       </div>
     </div>
+  );
+}
+
+// More menu — popover triggered by the "…" button.
+// Click-outside + Escape both close the menu.
+function MoreMenuButton({ onDeleteClick }) {
+  const [open, setOpen] = useState2(false);
+  const wrapRef = useRef2(null);
+
+  useEffect2(() => {
+    if (!open) return;
+    const onDocClick = (e) => {
+      if (wrapRef.current && !wrapRef.current.contains(e.target)) setOpen(false);
+    };
+    const onKey = (e) => { if (e.key === 'Escape') setOpen(false); };
+    document.addEventListener('mousedown', onDocClick);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('mousedown', onDocClick);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [open]);
+
+  return (
+    <div ref={wrapRef} style={{ position: 'relative' }}>
+      <button
+        onClick={() => setOpen((v) => !v)}
+        aria-haspopup="menu"
+        aria-expanded={open}
+        style={{
+          width: 32, height: 32, borderRadius: 6,
+          border: `1px solid ${open ? Z.foreground : Z.border}`,
+          background: open ? Z.muted : Z.background,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          cursor: 'pointer', transition: 'background 120ms, border-color 120ms',
+        }}
+      >
+        <MoreIcon.MoreHorizontal size={15} stroke={Z.foreground}/>
+      </button>
+      {open && (
+        <div role="menu" style={{
+          position: 'absolute', top: 38, right: 0, minWidth: 200,
+          background: Z.background, border: `1px solid ${Z.border}`,
+          borderRadius: 8, boxShadow: '0 10px 30px rgba(9,9,11,0.12), 0 2px 8px rgba(9,9,11,0.06)',
+          padding: 4, zIndex: 30,
+        }}>
+          <MenuItem icon={<MoreIcon.Pencil size={14} stroke={Z.foreground}/>} label="Rename" onClick={() => setOpen(false)}/>
+          <MenuItem icon={<MoreIcon.Archive size={14} stroke={Z.foreground}/>} label="Archive" onClick={() => setOpen(false)}/>
+          <div style={{ height: 1, background: Z.border, margin: '4px 0' }}/>
+          <MenuItem
+            icon={<MoreIcon.Trash size={14} stroke={Z.destructive}/>}
+            label="Delete property"
+            destructive
+            onClick={() => { setOpen(false); onDeleteClick && onDeleteClick(); }}
+          />
+        </div>
+      )}
+    </div>
+  );
+}
+
+function MenuItem({ icon, label, destructive, onClick }) {
+  const [hover, setHover] = useState2(false);
+  return (
+    <button
+      role="menuitem"
+      onClick={onClick}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      style={{
+        display: 'flex', alignItems: 'center', gap: 10,
+        width: '100%', padding: '8px 10px',
+        border: 'none', background: hover ? Z.muted : 'transparent',
+        borderRadius: 6, cursor: 'pointer', textAlign: 'left',
+        fontSize: 13.5, fontWeight: 500, fontFamily: 'inherit',
+        color: destructive ? Z.destructive : Z.foreground,
+        transition: 'background 100ms',
+      }}
+    >
+      <span style={{ display: 'inline-flex', flexShrink: 0 }}>{icon}</span>
+      <span>{label}</span>
+    </button>
   );
 }
 
@@ -477,9 +564,19 @@ function ServiceRow({ s, isLast }) {
 
 function PropertyDetail({ empty }) {
   const [tab, setTab] = useState2('overview');
+  const [deleteOpen, setDeleteOpen] = useState2(false);
+
+  // Close on Escape
+  useEffect2(() => {
+    if (!deleteOpen) return;
+    const onKey = (e) => { if (e.key === 'Escape') setDeleteOpen(false); };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [deleteOpen]);
+
   return (
     <PageShell activeNav="Properties">
-      <PropertyHeader/>
+      <PropertyHeader onDeleteClick={() => setDeleteOpen(true)}/>
       <Tabs
         value={tab}
         onChange={setTab}
@@ -548,7 +645,48 @@ function PropertyDetail({ empty }) {
           </div>
         )}
       </Card>
+
+      {deleteOpen && (
+        <DeletePropertyOverlay
+          onCancel={() => setDeleteOpen(false)}
+          onConfirm={() => setDeleteOpen(false)}
+        />
+      )}
     </PageShell>
+  );
+}
+
+// ---------- Delete property: backdrop + ConfirmDialog ----------
+function DeletePropertyOverlay({ onCancel, onConfirm }) {
+  const CD = window.ConfirmDialog;
+  if (!CD) return null;
+  return (
+    <div
+      onClick={onCancel}
+      style={{
+        position: 'fixed', inset: 0, zIndex: 50,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        padding: 24,
+        background: 'rgba(9,9,11,0.5)', backdropFilter: 'blur(2px)',
+      }}
+    >
+      <div onClick={(e) => e.stopPropagation()}>
+        <CD
+          title="Delete property?"
+          tone="destructive"
+          icon={<MoreIcon.Trash size={28}/>}
+          description={<>Delete <strong>{DETAIL_PROPERTY.name}</strong>?</>}
+          secondaryText={
+            <>You'll be able to restore it within 30 days. After that, all <strong>{DETAIL_SERVICES.length} services</strong>, readings, bills, and payments are removed permanently.</>
+          }
+          confirmLabel="Delete property"
+          confirmIcon={<MoreIcon.Trash size={14} stroke="#fff"/>}
+          onConfirm={onConfirm}
+          onCancel={onCancel}
+          onClose={onCancel}
+        />
+      </div>
+    </div>
   );
 }
 
