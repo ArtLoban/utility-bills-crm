@@ -1,4 +1,7 @@
-import { MoreHorizontal } from "lucide-react";
+"use client";
+
+import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 
 import {
@@ -11,20 +14,18 @@ import {
 import { SERVICE_COLORS } from "@/lib/constants/service-colors";
 import { SERVICE_ICONS } from "@/lib/constants/service-icons";
 import { TPayment } from "@/app/(app)/payments/_data/mock";
-
-const SUCCESS_COLOR = "#16a34a";
+import { formatUAH } from "@/lib/format/currency";
 
 type TProps = {
-  row: TPayment;
-  onEdit: (payment: TPayment) => void;
+  payment: TPayment;
 };
 
-const PaymentCard = ({ row, onEdit }: TProps) => {
-  const t = useTranslations("payments.list");
-  const color = SERVICE_COLORS[row.service.id];
-  const Icon = SERVICE_ICONS[row.service.id];
-  const shortDate = row.paidAt.split(" ").slice(0, 2).join(" ");
-  const amountStr = row.amount.toLocaleString();
+export const PaymentCard = ({ payment }: TProps) => {
+  const router = useRouter();
+  const t = useTranslations("dataTable.rowActions");
+  const color = SERVICE_COLORS[payment.service.id];
+  const Icon = SERVICE_ICONS[payment.service.id];
+  const shortDate = payment.paidAt.split(" ").slice(0, 2).join(" ");
 
   return (
     <div
@@ -37,15 +38,14 @@ const PaymentCard = ({ row, onEdit }: TProps) => {
         gap: 12,
         cursor: "pointer",
       }}
-      onClick={() => onEdit(row)}
+      onClick={() => router.push(`/test/${payment.id}/edit`)}
     >
-      {/* Service icon */}
       <div
         style={{
           width: 36,
           height: 36,
           borderRadius: 8,
-          background: color + "18",
+          background: `color-mix(in srgb, ${color} 10%, transparent)`,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -55,9 +55,7 @@ const PaymentCard = ({ row, onEdit }: TProps) => {
         <Icon size={18} style={{ color }} strokeWidth={1.75} />
       </div>
 
-      {/* Content */}
       <div style={{ flex: 1, minWidth: 0 }}>
-        {/* Top row */}
         <div
           style={{
             display: "flex",
@@ -76,54 +74,39 @@ const PaymentCard = ({ row, onEdit }: TProps) => {
               whiteSpace: "nowrap",
             }}
           >
-            {shortDate} · {row.service.name}
+            {shortDate} · {payment.service.name}
           </span>
           <span
+            className="text-green-600 dark:text-green-500"
             style={{
               fontSize: 14,
               fontWeight: 700,
-              color: SUCCESS_COLOR,
               fontFeatureSettings: '"tnum" 1',
               flexShrink: 0,
             }}
           >
-            {amountStr}
+            {formatUAH(payment.amount)}
           </span>
         </div>
 
-        {/* Bottom row */}
-        <div
+        <span
+          className="text-muted-foreground"
           style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
+            fontSize: 12,
+            display: "block",
             marginTop: 2,
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
           }}
         >
-          <span
-            className="text-zinc-500 dark:text-zinc-400"
-            style={{
-              fontSize: 12,
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
-              flex: 1,
-            }}
-          >
-            {row.property.name}
-          </span>
-          <span
-            className="text-zinc-500 dark:text-zinc-400"
-            style={{ fontSize: 11.5, marginLeft: 4, flexShrink: 0 }}
-          >
-            UAH
-          </span>
-        </div>
+          {payment.property.name}
+        </span>
       </div>
 
-      {/* Kebab */}
       <DropdownMenu>
         <DropdownMenuTrigger
+          className="inline-flex items-center justify-center data-[state=open]:border-zinc-200 data-[state=open]:bg-zinc-100 dark:data-[state=open]:border-zinc-700 dark:data-[state=open]:bg-zinc-800"
           style={{
             width: 28,
             height: 28,
@@ -131,12 +114,8 @@ const PaymentCard = ({ row, onEdit }: TProps) => {
             border: "1px solid transparent",
             background: "transparent",
             cursor: "pointer",
-            display: "inline-flex",
-            alignItems: "center",
-            justifyContent: "center",
             flexShrink: 0,
           }}
-          className="data-[state=open]:border-zinc-200 data-[state=open]:bg-zinc-100 dark:data-[state=open]:border-zinc-700 dark:data-[state=open]:bg-zinc-800"
           onClick={(e) => e.stopPropagation()}
         >
           <MoreHorizontal
@@ -146,14 +125,17 @@ const PaymentCard = ({ row, onEdit }: TProps) => {
           />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-40">
-          <DropdownMenuItem onClick={() => onEdit(row)}>{t("actions.edit")}</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => router.push(`/test/${payment.id}/edit`)}>
+            <Pencil size={14} />
+            {t("edit")}
+          </DropdownMenuItem>
           <DropdownMenuSeparator />
-          {/* devnote: wire Delete when deletePayment server action is implemented */}
-          <DropdownMenuItem variant="destructive">{t("actions.delete")}</DropdownMenuItem>
+          <DropdownMenuItem variant="destructive">
+            <Trash2 size={14} />
+            {t("delete")}
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
   );
 };
-
-export { PaymentCard };

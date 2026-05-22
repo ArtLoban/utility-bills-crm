@@ -30,9 +30,10 @@ const makeDefaultValues = (payment?: TPaymentRecord): TPaymentFormValues => ({
 
 type TParams = {
   payment?: TPaymentRecord;
+  onClose: () => void;
 };
 
-export const usePaymentForm = ({ payment }: TParams = {}) => {
+export const usePaymentForm = ({ payment, onClose }: TParams) => {
   const isEditMode = payment !== undefined;
 
   const form = useForm<TPaymentFormValues>({
@@ -56,10 +57,12 @@ export const usePaymentForm = ({ payment }: TParams = {}) => {
     await new Promise<void>((resolve) => setTimeout(resolve, 400));
     toast.success(isEditMode ? "Payment updated" : "Payment recorded");
     console.log("Payment submitted:", data);
+    onClose();
   });
 
   return {
     form,
+    isSaving: form.formState.isSubmitting,
     properties: MOCK_PROPERTIES,
     filteredServices,
     selectedPropertyId,

@@ -55,7 +55,9 @@ export const Modal = (props: TProps) => {
         </DialogHeader>
         {children && <div>{children}</div>}
         <DialogFooter>
-          <DialogClose>Cancel</DialogClose>
+          <Button variant="outline" asChild>
+            <DialogClose>Cancel</DialogClose>
+          </Button>
           <Button type="button" onClick={onSubmit} disabled={isSaving || !canSave}>
             {isSaving ? (
               <>

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { PaymentsClient } from "./_components/payments-client";
+import { ALL_PAYMENTS } from "@/app/(app)/payments/_data/mock";
 
 export const metadata: Metadata = {
   title: "Payments",
@@ -8,5 +9,7 @@ export const metadata: Metadata = {
 };
 
 export default function PaymentsPage() {
-  return <PaymentsClient />;
+  const data = [...ALL_PAYMENTS];
+
+  return <PaymentsClient payments={data} />;
 }

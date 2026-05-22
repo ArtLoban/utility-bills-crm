@@ -1,248 +1,144 @@
+"use client";
+
+import { useMemo, useState } from "react";
+import Link from "next/link";
 import { ArrowDown, Plus } from "lucide-react";
-import { useState } from "react";
 import { useTranslations } from "next-intl";
+import { useQueryStates } from "nuqs";
 
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { SERVICE_COLORS } from "@/lib/constants/service-colors";
-import { ACCENT, TINT_BG, TINT_BORDER } from "@/lib/constants/ui-tokens";
-import {
-  PAYMENT_PROPERTIES,
-  PAYMENT_SERVICES,
-  TFilterState,
-  TPayment,
-} from "@/app/(app)/payments/_data/mock";
-import { PaymentCard } from "./payment-card";
+import { formatUAH } from "@/lib/format/currency";
+import { TPayment, PAYMENT_PROPERTIES, PAYMENT_SERVICES } from "@/app/(app)/payments/_data/mock";
+
 import { FilterChip } from "./filter-chip";
 import { FilterSheet } from "./filter-sheet";
 import { MobilePager } from "./mobile-pager";
+import { PaymentCard } from "./payment-card";
+import { applyMobileFilters } from "./utils/filter-payments";
+import { URL_FIELDS } from "../payments-table/constants";
 
-const SUCCESS_COLOR = "#16a34a";
-
-type TProps = {
-  filteredPayments: TPayment[];
-  filters: TFilterState;
-  onFilterChange: (filters: TFilterState) => void;
-  page: number;
-  totalPages: number;
-  onPageChange: (page: number) => void;
-  total: number;
-  pageRows: TPayment[];
-  onAddPayment: () => void;
-  onEditPayment: (payment: TPayment) => void;
-};
+const PAGE_SIZE = 20;
 
 const PERIOD_LABELS: Record<string, string> = {
-  last6: "Last 6 months",
   last3: "Last 3 months",
+  last6: "Last 6 months",
+  last12: "Last 12 months",
 };
 
-const PaymentsMobile = ({
-  filteredPayments,
-  filters,
-  onFilterChange,
-  page,
-  totalPages,
-  onPageChange,
-  total,
-  pageRows,
-  onAddPayment,
-  onEditPayment,
-}: TProps) => {
+type TProps = {
+  payments: TPayment[];
+};
+
+export const PaymentsMobile = ({ payments }: TProps) => {
   const t = useTranslations("payments.list");
+  const [query, setQuery] = useQueryStates(URL_FIELDS);
+  const [page, setPage] = useState(1);
   const [sheetOpen, setSheetOpen] = useState(false);
 
-  const activeCount = [
-    filters.property !== "all",
-    filters.service !== "all",
-    filters.period !== "last12",
-  ].filter(Boolean).length;
+  const filtered = useMemo(() => applyMobileFilters(payments, query), [payments, query]);
 
-  const propertyName =
-    filters.property !== "all"
-      ? (PAYMENT_PROPERTIES.find((p) => p.id === filters.property)?.name ?? filters.property)
-      : null;
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
+  const pageRows = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+  const total = filtered.reduce((sum, r) => sum + r.amount, 0);
 
-  const serviceName =
-    filters.service !== "all"
-      ? (PAYMENT_SERVICES.find((s) => s.id === filters.service)?.name ?? filters.service)
-      : null;
+  const activeCount = [query.property, query.service, query.paidAt].filter(Boolean).length;
 
-  const serviceColor =
-    filters.service !== "all"
-      ? SERVICE_COLORS[filters.service as keyof typeof SERVICE_COLORS]
-      : undefined;
-
-  const periodLabel = filters.period !== "last12" ? (PERIOD_LABELS[filters.period] ?? null) : null;
+  const propertyLabel = query.property
+    ? (PAYMENT_PROPERTIES.find((p) => p.id === query.property)?.name ?? null)
+    : null;
+  const serviceLabel = query.service
+    ? (PAYMENT_SERVICES.find((s) => s.id === query.service)?.name ?? null)
+    : null;
+  const serviceColor = query.service
+    ? SERVICE_COLORS[query.service as keyof typeof SERVICE_COLORS]
+    : undefined;
+  const periodLabel = query.paidAt ? (PERIOD_LABELS[query.paidAt] ?? null) : null;
 
   return (
-    <div style={{ padding: "20px 14px 32px" }}>
-      {/* Header */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "flex-start",
-          justifyContent: "space-between",
-          marginBottom: 14,
-        }}
-      >
+    <div className="px-3.5 pt-5 pb-8">
+      <div className="mb-3.5 flex items-start justify-between">
         <div>
-          <h2 style={{ fontSize: 22, fontWeight: 700, letterSpacing: -0.5, margin: 0 }}>
-            {t("title")}
-          </h2>
-          <p className="text-zinc-500 dark:text-zinc-400" style={{ fontSize: 12.5, marginTop: 3 }}>
-            {filteredPayments.length}
-          </p>
+          <h2 className="text-[22px] font-bold tracking-tight">{t("title")}</h2>
+          <p className="text-muted-foreground mt-0.5 text-xs">{filtered.length}</p>
         </div>
-        <Button onClick={onAddPayment} style={{ height: 34, gap: 6, fontSize: 13 }}>
-          <Plus size={14} />
-          {t("mobile.add")}
+        <Button asChild>
+          <Link href="/test/new">
+            <Plus size={14} />
+            {t("mobile.add")}
+          </Link>
         </Button>
       </div>
 
-      {/* Filter trigger row */}
       <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          marginBottom: activeCount > 0 ? 10 : 14,
-        }}
+        className={cn("flex items-center justify-between", activeCount > 0 ? "mb-2.5" : "mb-3.5")}
       >
         <button
           onClick={() => setSheetOpen(true)}
-          className={
+          className={cn(
+            "inline-flex h-8 cursor-pointer items-center gap-1.5 rounded-md border px-3 text-[13px] font-medium",
             activeCount === 0
-              ? "border border-zinc-200 bg-white text-zinc-950 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50"
-              : ""
-          }
-          style={{
-            height: 32,
-            padding: "0 12px",
-            fontSize: 13,
-            fontWeight: 500,
-            borderRadius: 6,
-            cursor: "pointer",
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 6,
-            fontFamily: "inherit",
-            ...(activeCount > 0
-              ? {
-                  border: `1px solid ${TINT_BORDER}`,
-                  background: TINT_BG,
-                  color: ACCENT,
-                }
-              : {}),
-          }}
+              ? "border-zinc-200 bg-white text-zinc-950 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50"
+              : "border-brand bg-brand-bg text-brand",
+          )}
         >
           {t("mobile.filters")}
           {activeCount > 0 && (
-            <span
-              style={{
-                minWidth: 16,
-                height: 16,
-                borderRadius: 999,
-                background: ACCENT,
-                color: "#fff",
-                fontSize: 10.5,
-                fontWeight: 700,
-                padding: "0 4px",
-                display: "inline-flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
+            <span className="bg-brand inline-flex min-w-4 items-center justify-center rounded-full px-1 text-[10.5px] font-bold text-white">
               {activeCount}
             </span>
           )}
         </button>
 
-        <span
-          className="text-zinc-500 dark:text-zinc-400"
-          style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 12 }}
-        >
+        <span className="text-muted-foreground flex items-center gap-1 text-xs">
           <ArrowDown size={13} />
           {t("mobile.sortDefault")}
         </span>
       </div>
 
-      {/* Active filter chips */}
       {activeCount > 0 && (
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 14 }}>
-          {propertyName && (
-            <FilterChip
-              label={propertyName}
-              onRemove={() => onFilterChange({ ...filters, property: "all" })}
-            />
+        <div className="mb-3.5 flex flex-wrap gap-1.5">
+          {propertyLabel && (
+            <FilterChip label={propertyLabel} onRemove={() => void setQuery({ property: null })} />
           )}
-          {serviceName && (
+          {serviceLabel && (
             <FilterChip
-              label={serviceName}
+              label={serviceLabel}
               color={serviceColor}
-              onRemove={() => onFilterChange({ ...filters, service: "all" })}
+              onRemove={() => void setQuery({ service: null })}
             />
           )}
           {periodLabel && (
-            <FilterChip
-              label={periodLabel}
-              onRemove={() => onFilterChange({ ...filters, period: "last12" })}
-            />
+            <FilterChip label={periodLabel} onRemove={() => void setQuery({ paidAt: null })} />
           )}
         </div>
       )}
 
-      {/* Card list */}
-      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-        {pageRows.map((row) => (
-          <PaymentCard key={row.id} row={row} onEdit={onEditPayment} />
+      <div className="flex flex-col gap-2">
+        {pageRows.map((payment) => (
+          <PaymentCard key={payment.id} payment={payment} />
         ))}
       </div>
 
-      {/* Pager */}
       {totalPages > 1 && (
         <MobilePager
-          page={page}
+          page={currentPage}
           totalPages={totalPages}
-          onPrev={() => onPageChange(page - 1)}
-          onNext={() => onPageChange(page + 1)}
+          onPrev={() => setPage((p) => p - 1)}
+          onNext={() => setPage((p) => p + 1)}
         />
       )}
 
-      {/* Total footer */}
-      <div
-        className="border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900"
-        style={{
-          marginTop: 16,
-          padding: 14,
-          borderRadius: 8,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
-      >
-        <span className="text-zinc-500 dark:text-zinc-400" style={{ fontSize: 13 }}>
-          {t("footer.totalPaid")}
-        </span>
-        <span
-          style={{
-            fontSize: 15,
-            fontWeight: 700,
-            color: SUCCESS_COLOR,
-            fontFeatureSettings: '"tnum" 1',
-          }}
-        >
-          {`${total.toLocaleString()} UAH`}
+      <div className="mt-4 flex items-center justify-between rounded-lg border border-zinc-200 bg-white p-3.5 dark:border-zinc-800 dark:bg-zinc-900">
+        <span className="text-muted-foreground text-sm">{t("footer.totalPaid")}</span>
+        <span className="text-[15px] font-bold text-green-600 tabular-nums dark:text-green-500">
+          {formatUAH(total)}
         </span>
       </div>
 
-      <FilterSheet
-        open={sheetOpen}
-        onOpenChange={setSheetOpen}
-        filters={filters}
-        onFilterChange={onFilterChange}
-      />
+      <FilterSheet open={sheetOpen} onOpenChange={setSheetOpen} />
     </div>
   );
 };
-
-export { PaymentsMobile };

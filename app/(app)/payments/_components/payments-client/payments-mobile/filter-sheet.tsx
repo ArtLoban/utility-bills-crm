@@ -1,199 +1,120 @@
-import { ChevronDown, X } from "lucide-react";
-import { useTranslations } from "next-intl";
+"use client";
 
-import { Sheet, SheetClose, SheetContent, SheetTitle } from "@/components/ui/sheet";
-import { ACCENT } from "@/lib/constants/ui-tokens";
+import { useTranslations } from "next-intl";
+import { useQueryStates } from "nuqs";
+
+import { X } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
 import {
-  PAYMENT_PROPERTIES,
-  PAYMENT_SERVICES,
-  TFilterState,
-} from "@/app/(app)/payments/_data/mock";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Sheet, SheetClose, SheetContent, SheetTitle } from "@/components/ui/sheet";
+import { PAYMENT_PROPERTIES, PAYMENT_SERVICES } from "@/app/(app)/payments/_data/mock";
+import { INITIAL_FILTERS, URL_FIELDS } from "../payments-table/constants";
+
+const PERIOD_OPTIONS = [
+  { id: "last3", name: "Last 3 months" },
+  { id: "last6", name: "Last 6 months" },
+  { id: "last12", name: "Last 12 months" },
+];
 
 type TProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  filters: TFilterState;
-  onFilterChange: (filters: TFilterState) => void;
 };
 
-type TSheetSelectProps = {
+type TFilterSelectProps = {
   label: string;
-  value: string;
-  onChange: (value: string) => void;
-  children: React.ReactNode;
+  value: string | null;
+  onChange: (value: string | null) => void;
+  options: { id: string; name: string }[];
+  placeholder: string;
 };
 
-const SheetSelect = ({ label, value, onChange, children }: TSheetSelectProps) => (
-  <div>
-    <label style={{ fontSize: 12.5, fontWeight: 500, display: "block", marginBottom: 6 }}>
-      {label}
-    </label>
-    <div style={{ position: "relative" }}>
-      <select
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="border border-zinc-200 bg-white text-zinc-950 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50"
-        style={{
-          appearance: "none",
-          width: "100%",
-          height: 38,
-          paddingLeft: 12,
-          paddingRight: 32,
-          fontSize: 14,
-          borderRadius: 6,
-          cursor: "pointer",
-          outline: "none",
-          fontFamily: "inherit",
-        }}
-      >
-        {children}
-      </select>
-      <ChevronDown
-        size={14}
-        strokeWidth={2}
-        className="text-zinc-500 dark:text-zinc-400"
-        style={{
-          position: "absolute",
-          right: 10,
-          top: "50%",
-          transform: "translateY(-50%)",
-          pointerEvents: "none",
-        }}
-      />
-    </div>
+const FilterSelect = ({ label, value, onChange, options, placeholder }: TFilterSelectProps) => (
+  <div className="flex flex-col gap-1.5">
+    <label className="text-sm font-medium">{label}</label>
+    <Select value={value || ""} onValueChange={(v) => onChange(v === "__clear__" ? null : v)}>
+      <SelectTrigger className="w-full rounded-lg">
+        <SelectValue placeholder={placeholder} />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="__clear__">{placeholder}</SelectItem>
+        {options.map(({ id, name }) => (
+          <SelectItem key={id} value={id}>
+            {name}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   </div>
 );
 
-const FilterSheet = ({ open, onOpenChange, filters, onFilterChange }: TProps) => {
+export const FilterSheet = ({ open, onOpenChange }: TProps) => {
   const t = useTranslations("payments.list");
-  const set = (key: keyof TFilterState) => (value: string) =>
-    onFilterChange({ ...filters, [key]: value });
+  const [query, setQuery] = useQueryStates(URL_FIELDS);
 
   const handleClear = () => {
-    onFilterChange({ property: "all", service: "all", period: "last12" });
+    void setQuery(INITIAL_FILTERS);
     onOpenChange(false);
   };
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="bottom" showCloseButton={false} className="gap-0 rounded-t-[14px] p-0">
-        {/* Drag handle */}
-        <div style={{ display: "flex", justifyContent: "center", paddingTop: 10 }}>
-          <div
-            className="bg-zinc-200 dark:bg-zinc-700"
-            style={{ width: 36, height: 4, borderRadius: 2 }}
-          />
+        <div className="flex justify-center pt-2.5">
+          <div className="h-1 w-9 rounded-full bg-zinc-200 dark:bg-zinc-700" />
         </div>
 
-        {/* Inner content */}
-        <div style={{ padding: "0 16px 24px" }}>
-          {/* Header */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              padding: "10px 0 16px",
-            }}
-          >
-            <SheetTitle style={{ fontSize: 15, fontWeight: 600 }}>{t("mobile.filters")}</SheetTitle>
-            <SheetClose
-              style={{
-                width: 28,
-                height: 28,
-                borderRadius: 6,
-                border: "none",
-                background: "transparent",
-                cursor: "pointer",
-                display: "inline-flex",
-                alignItems: "center",
-                justifyContent: "center",
-                padding: 0,
-              }}
-            >
-              <X size={16} className="text-zinc-500 dark:text-zinc-400" />
+        <div className="px-4 pb-6">
+          <div className="flex items-center justify-between py-3">
+            <SheetTitle>{t("mobile.filters")}</SheetTitle>
+            <SheetClose asChild>
+              <Button variant="ghost" size="icon-sm" aria-label="Close">
+                <X size={16} className="text-muted-foreground" />
+              </Button>
             </SheetClose>
           </div>
 
-          {/* Selects */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-            <SheetSelect
+          <div className="flex flex-col gap-3.5">
+            <FilterSelect
               label={t("filters.property")}
-              value={filters.property}
-              onChange={set("property")}
-            >
-              <option value="all">{t("filters.allProperties")}</option>
-              {PAYMENT_PROPERTIES.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.name}
-                </option>
-              ))}
-            </SheetSelect>
-
-            <SheetSelect
+              value={query.property}
+              onChange={(v) => void setQuery({ property: v })}
+              options={PAYMENT_PROPERTIES}
+              placeholder={t("filters.allProperties")}
+            />
+            <FilterSelect
               label={t("filters.service")}
-              value={filters.service}
-              onChange={set("service")}
-            >
-              <option value="all">{t("filters.allServices")}</option>
-              {PAYMENT_SERVICES.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.name}
-                </option>
-              ))}
-            </SheetSelect>
-
-            <SheetSelect
+              value={query.service}
+              onChange={(v) => void setQuery({ service: v })}
+              options={PAYMENT_SERVICES}
+              placeholder={t("filters.allServices")}
+            />
+            <FilterSelect
               label={t("filters.period")}
-              value={filters.period}
-              onChange={set("period")}
-            >
-              <option value="last12">{t("filters.periodLast12")}</option>
-              <option value="last6">{t("filters.periodLast6")}</option>
-              <option value="last3">{t("filters.periodLast3")}</option>
-            </SheetSelect>
+              value={query.paidAt}
+              onChange={(v) => void setQuery({ paidAt: v })}
+              options={PERIOD_OPTIONS}
+              placeholder={t("filters.periodLast12")}
+            />
           </div>
 
-          {/* Action buttons */}
-          <div style={{ display: "flex", gap: 10, marginTop: 20 }}>
-            <button
-              onClick={handleClear}
-              className="bg-zinc-100 text-zinc-950 dark:bg-zinc-800 dark:text-zinc-50"
-              style={{
-                flex: 1,
-                height: 40,
-                borderRadius: 8,
-                border: "none",
-                fontSize: 14,
-                fontFamily: "inherit",
-                fontWeight: 500,
-                cursor: "pointer",
-              }}
-            >
+          <div className="mt-5 flex gap-2.5">
+            <Button variant="outline" className="flex-1" onClick={handleClear}>
               {t("filters.clear")}
-            </button>
-            <button
-              onClick={() => onOpenChange(false)}
-              style={{
-                flex: 2,
-                height: 40,
-                borderRadius: 8,
-                border: "none",
-                background: ACCENT,
-                fontSize: 14,
-                fontFamily: "inherit",
-                fontWeight: 500,
-                cursor: "pointer",
-                color: "#fff",
-              }}
-            >
+            </Button>
+            <Button className="flex-[2]" onClick={() => onOpenChange(false)}>
               {t("mobile.apply")}
-            </button>
+            </Button>
           </div>
         </div>
       </SheetContent>
     </Sheet>
   );
 };
-
-export { FilterSheet };
