@@ -455,14 +455,12 @@ Rationale: the "product-first" framing had begun to systematically under-scope f
 | 116 | Admin auth: `ADMIN_EMAILS` env var, seeded on first sign-in                                                     | DB flag set manually; separate admin setup flow                              | env-based seed                  |
 | 117 | Modal implementation: hybrid — intercepting routes for entity modals, local `<ConfirmDialog>` for confirmations | All via intercepting routes; all via Zustand store; all via local `useState` | Hybrid                          |
 
-**#117 — деталь.** Решение #71 зафиксировало, что создание/редактирование сущностей идёт через модалки, но не _как_ они реализованы технически. Это решение закрывает пробел. Критерий выбора механизма — наличие у модалки осмысленного shareable URL:
-
-- **Навигационные модалки** (view / edit / add сущности, привязанные к ID) реализуются через **Parallel + Intercepting Routes**. Модалка — это роут под `@modal` слотом; soft navigation показывает её поверх родителя, hard navigation (прямая ссылка, refresh, новая вкладка) отдаёт полноценную страницу-fallback. Даёт shareable URL, refresh-safety и закрытие по back-кнопке без js-стейта.
-- **Confirmation-модалки** (delete, leave property, role change, unsaved changes) реализуются через локальный компонент `<ConfirmDialog>` с `useState`. У них нет идентичности, которую осмысленно шарить; refresh должен их закрывать, а не сохранять. Роут для них был бы лишней церемонией.
-
-Прямой переход на роут навигационной модалки рендерит полноценную страницу (хедер, форма в `max-w-2xl`) — тот же контент-компонент, что и в модалке, в layout страницы. `@modal` слот при этом отдаёт `null` через `default.tsx`.
-
-Миграция существующих `useState`-навигационных модалок к intercepting routes — постепенная, по одной фиче за раз, чтобы возможные острые углы паттерна всплывали локально.
+> **#117 — detail.** Decision #71 established that entity creation/editing happens via modals, but not _how_ they are implemented. The mechanism is chosen by one criterion — whether the modal has a meaningful shareable URL:
+>
+> - **Navigational modals** (view / edit / add an entity tied to an ID) — implemented via **Parallel + Intercepting Routes** under a `@modal` slot. Soft navigation shows the modal over its parent; hard navigation renders a full-page fallback. Gives shareable URLs, refresh-safety, and browser-back close behaviour.
+> - **Confirmation modals** (delete, leave property, role change, unsaved changes) — implemented as a local `<ConfirmDialog>` driven by `useState`. They have no identity worth sharing; a refresh should close them, not preserve them.
+>
+> **Confirmation modal state.** When a confirmation modal is triggered from deep in the tree (typically a row action in a table), the `useState` is lifted into a feature-level Context provider, keeping `<DataTable>` a clean generic component. A global store is not used — the state belongs to the page, not the application. The Context is created via a shared `createSafeContext` helper (`lib/utils/`). For a single modal with one trigger point, local `useState` is enough.
 
 ## Open Questions
 
