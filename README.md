@@ -96,7 +96,9 @@ Required environment variables:
 
 ## Project Structure
 
-> `features/` is the target home for domain logic (components + hooks + schema + types per domain). Currently `payments/` and `properties/` are migrated. Legacy layers (`components/feature/`, `lib/actions/`, `lib/validation/`) have been cleared.
+> Domain logic lives in `features/<domain>/` — vertical slices that own their components, hooks,
+> actions, schemas and types. Legacy horizontal layers (`components/feature/`, `lib/actions/`,
+> `lib/validation/`) have been cleared.
 
 ```
 app/
@@ -108,27 +110,30 @@ app/
   api/                  route handlers (auth)
 components/
   ui/                   shadcn/ui components (Radix-based, locally owned)
-  feature/              domain-agnostic reusable components
-    data-table/         TanStack Table system with URL-synced filters
-    properties/         property form and modal
+  data-table/           TanStack Table system with URL-synced filters
   app-nav/              authenticated app navigation
   admin-nav/            admin section navigation
-  ...                   shared UI primitives
-features/               vertical feature slices (logic + schema + types)
-  payments/
+  ...                   other shared domain-agnostic UI primitives
+features/
+  <domain>/             one slice per business domain, e.g.:
+    components/         domain components
+    hooks/              domain hooks
+    actions.ts          server actions ('use server')
+    schema.ts           Zod validation schemas
+    types.ts            domain types
+    index.ts            public API of the slice
 lib/
-  actions/              server actions
   auth/                 Auth.js config and helpers
   constants/            shared constants (service colors, icons)
-  db/                   Drizzle schema, client, migrations
+  db/                   Drizzle schema, client, migrations, access queries
   format/               currency and date formatters
   hooks/                shared hooks
   locale/               next-intl helpers
   logger/               pino setup with correlation IDs
-  routes.ts             centralized route configuration
   types/                shared TypeScript types
   utils/                shared utilities
-  validation/           Zod validation schemas
+  routes.ts             centralized route configuration
+i18n/                   next-intl runtime config
 messages/               i18n translation files (en, uk, ru)
 db/                     database documentation and schema reference
 docs/                   project documentation
