@@ -206,6 +206,13 @@ All entity creation/editing uses modals, not dedicated pages. Used for:
 - Edit notes
 - Confirmation modals (delete, leave, role change)
 
+**Implementation approach.** Modals split into two families with different mechanics:
+
+- **Entity modals** (view / edit / add a record tied to an ID) — implemented as routes via Next.js Parallel + Intercepting Routes under a `@modal` slot. Soft navigation renders the modal over its parent; direct navigation, refresh, or a new tab renders a full-page fallback (standard page header + form at `max-w-2xl`, sharing the same content component). Gives shareable URLs, refresh-safety, and browser-back close behaviour for free.
+- **Confirmation modals** (delete, leave, role change, unsaved-changes prompts) — implemented as a local `<ConfirmDialog>` component driven by `useState`. No route, no URL — by design.
+
+The structure below applies to both families regardless of mechanism.
+
 **Structure:**
 
 - Header: title + close X

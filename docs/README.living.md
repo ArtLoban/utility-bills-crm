@@ -445,14 +445,24 @@ Rationale: the "product-first" framing had begun to systematically under-scope f
 
 ### 2026-05 — Phase 7: Implementation
 
-| #   | Decision                                                        | Alternatives considered                         | Outcome                         |
-| --- | --------------------------------------------------------------- | ----------------------------------------------- | ------------------------------- |
-| 111 | URL state sync: nuqs                                            | useSearchParams + manual sync                   | nuqs                            |
-| 112 | Date utilities: date-fns                                        | dayjs, Intl API only                            | date-fns                        |
-| 113 | Co-located page components: `_components/` convention per route | top-level `components/` for everything          | `_components/` per route        |
-| 114 | @base-ui/react → Radix UI (tech debt correction)                | keep @base-ui despite known issues              | Radix (aligns with decision #7) |
-| 115 | Sentry integration: deferred within Phase 7                     | integrate from scaffold                         | deferred                        |
-| 116 | Admin auth: `ADMIN_EMAILS` env var, seeded on first sign-in     | DB flag set manually; separate admin setup flow | env-based seed                  |
+| #   | Decision                                                                                                        | Alternatives considered                                                      | Outcome                         |
+| --- | --------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- | ------------------------------- |
+| 111 | URL state sync: nuqs                                                                                            | useSearchParams + manual sync                                                | nuqs                            |
+| 112 | Date utilities: date-fns                                                                                        | dayjs, Intl API only                                                         | date-fns                        |
+| 113 | Co-located page components: `_components/` convention per route                                                 | top-level `components/` for everything                                       | `_components/` per route        |
+| 114 | @base-ui/react → Radix UI (tech debt correction)                                                                | keep @base-ui despite known issues                                           | Radix (aligns with decision #7) |
+| 115 | Sentry integration: deferred within Phase 7                                                                     | integrate from scaffold                                                      | deferred                        |
+| 116 | Admin auth: `ADMIN_EMAILS` env var, seeded on first sign-in                                                     | DB flag set manually; separate admin setup flow                              | env-based seed                  |
+| 117 | Modal implementation: hybrid — intercepting routes for entity modals, local `<ConfirmDialog>` for confirmations | All via intercepting routes; all via Zustand store; all via local `useState` | Hybrid                          |
+
+**#117 — деталь.** Решение #71 зафиксировало, что создание/редактирование сущностей идёт через модалки, но не _как_ они реализованы технически. Это решение закрывает пробел. Критерий выбора механизма — наличие у модалки осмысленного shareable URL:
+
+- **Навигационные модалки** (view / edit / add сущности, привязанные к ID) реализуются через **Parallel + Intercepting Routes**. Модалка — это роут под `@modal` слотом; soft navigation показывает её поверх родителя, hard navigation (прямая ссылка, refresh, новая вкладка) отдаёт полноценную страницу-fallback. Даёт shareable URL, refresh-safety и закрытие по back-кнопке без js-стейта.
+- **Confirmation-модалки** (delete, leave property, role change, unsaved changes) реализуются через локальный компонент `<ConfirmDialog>` с `useState`. У них нет идентичности, которую осмысленно шарить; refresh должен их закрывать, а не сохранять. Роут для них был бы лишней церемонией.
+
+Прямой переход на роут навигационной модалки рендерит полноценную страницу (хедер, форма в `max-w-2xl`) — тот же контент-компонент, что и в модалке, в layout страницы. `@modal` слот при этом отдаёт `null` через `default.tsx`.
+
+Миграция существующих `useState`-навигационных модалок к intercepting routes — постепенная, по одной фиче за раз, чтобы возможные острые углы паттерна всплывали локально.
 
 ## Open Questions
 
