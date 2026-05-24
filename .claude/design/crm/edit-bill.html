@@ -1,0 +1,423 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Utility Bills CRM — Edit bill</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; padding: 0; height: 100%; background: #fafafa; }
+  body { font-family: 'Inter', system-ui, -apple-system, sans-serif; -webkit-font-smoothing: antialiased; font-feature-settings: 'cv11' 1, 'ss01' 1; color: #09090b; }
+  * { box-sizing: border-box; }
+  button, input, textarea, select { font-family: inherit; }
+  input:focus, textarea:focus, select:focus { outline: none; box-shadow: 0 0 0 3px rgba(124,58,237,0.30); border-color: #7c3aed !important; }
+  a { color: inherit; }
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel" data-presets="react">
+// ─── Tokens (Zinc + Violet, light) ───────────────────────────────────────────
+const Z = {
+  background:  '#ffffff',
+  page:        '#fafafa',
+  foreground:  '#09090b',
+  card:        '#ffffff',
+  muted:       '#f4f4f5',
+  mutedFg:     '#71717a',
+  mutedFg2:    '#52525b',
+  border:      '#e4e4e7',
+  subtle:      '#fafafa',
+  destructive: '#dc2626',
+  success:     '#16a34a',
+  warning:     '#d97706',
+  warningBg:   '#fffbeb',
+  warningBorder: '#fde68a',
+};
+const ACCENT = {
+  solid:       '#7c3aed',
+  solidHover:  '#6d28d9',
+  tintBg:      '#f5f3ff',
+  tintBorder:  '#ede9fe',
+};
+const SERVICE = {
+  electricity: { name: 'Electricity', color: '#f59e0b', unit: 'kWh',
+    icon: <path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/> },
+};
+
+// ─── Icons ───────────────────────────────────────────────────────────────────
+const Svg = ({ size = 16, stroke = 'currentColor', fill = 'none', children, style }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24"
+    fill={fill} stroke={stroke} strokeWidth="1.75"
+    strokeLinecap="round" strokeLinejoin="round" style={style}>{children}</svg>
+);
+const Ic = {
+  Logo:   p => <Svg {...p}><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></Svg>,
+  Globe:  p => <Svg {...p}><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></Svg>,
+  Moon:   p => <Svg {...p}><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></Svg>,
+  ChevR:  p => <Svg {...p}><path d="m9 18 6-6-6-6"/></Svg>,
+  ChevD:  p => <Svg {...p}><path d="m6 9 6 6 6-6"/></Svg>,
+  ChevL:  p => <Svg {...p}><path d="m15 18-6-6 6-6"/></Svg>,
+  Warn:   p => <Svg {...p}><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></Svg>,
+  Zap:    p => <Svg {...p}><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></Svg>,
+};
+
+// ─── Top bar ─────────────────────────────────────────────────────────────────
+function TopBar() {
+  const nav = ['Dashboard', 'Properties', 'Bills', 'Payments', 'Settings'];
+  const active = 'Bills';
+  const iconBtn = {
+    width: 32, height: 32, borderRadius: 6, display: 'flex',
+    alignItems: 'center', justifyContent: 'center',
+    background: 'transparent', border: 'none', cursor: 'pointer',
+  };
+  return (
+    <div style={{
+      height: 64, background: 'rgba(255,255,255,0.8)', backdropFilter: 'blur(8px)',
+      borderBottom: `1px solid ${Z.border}`,
+      display: 'flex', alignItems: 'center', padding: '0 32px',
+      position: 'sticky', top: 0, zIndex: 10,
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginRight: 40 }}>
+        <div style={{
+          width: 26, height: 26, borderRadius: 6, background: ACCENT.solid,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>
+          <Ic.Logo size={15} stroke="#fff"/>
+        </div>
+        <span style={{ fontSize: 14.5, fontWeight: 600, letterSpacing: -0.1 }}>UtilityBills</span>
+      </div>
+      <nav style={{ display: 'flex', alignItems: 'center', gap: 4, flex: 1 }}>
+        {nav.map(item => {
+          const isActive = item === active;
+          return (
+            <a key={item} href="#" data-screen-label={item} style={{
+              position: 'relative', padding: '8px 12px',
+              fontSize: 13.5, fontWeight: isActive ? 500 : 400,
+              color: isActive ? Z.foreground : Z.mutedFg,
+              textDecoration: 'none', borderRadius: 6,
+            }}>
+              {item}
+              {isActive && (
+                <span style={{
+                  position: 'absolute', left: 12, right: 12, bottom: -1,
+                  height: 2, background: ACCENT.solid, borderRadius: 2,
+                }}/>
+              )}
+            </a>
+          );
+        })}
+      </nav>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+        <button style={iconBtn}><Ic.Globe size={16} stroke={Z.mutedFg}/></button>
+        <button style={iconBtn}><Ic.Moon  size={16} stroke={Z.mutedFg}/></button>
+        <div style={{ width: 1, height: 20, background: Z.border, margin: '0 8px' }}/>
+        <button style={{
+          display: 'flex', alignItems: 'center', gap: 8, height: 36,
+          padding: '0 4px 0 8px', background: 'transparent',
+          border: 'none', borderRadius: 18, cursor: 'pointer',
+        }}>
+          <span style={{ fontSize: 13, fontWeight: 500 }}>Anna</span>
+          <div style={{
+            width: 28, height: 28, borderRadius: '50%',
+            background: ACCENT.tintBg, color: ACCENT.solid,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: 11, fontWeight: 600,
+            border: `1px solid ${ACCENT.tintBorder}`,
+          }}>AL</div>
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ─── Breadcrumb ──────────────────────────────────────────────────────────────
+function Breadcrumb() {
+  const items = [
+    { label: 'Bills', href: '#' },
+    { label: 'Edit bill' },
+  ];
+  return (
+    <nav style={{
+      display: 'flex', alignItems: 'center', gap: 6,
+      fontSize: 13, color: Z.mutedFg, marginBottom: 12, flexWrap: 'wrap',
+    }}>
+      {items.map((it, i) => (
+        <span key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+          {i > 0 && <Ic.ChevR size={12} stroke={Z.border}/>}
+          {it.href
+            ? <a href={it.href} style={{ color: Z.mutedFg, textDecoration: 'none' }}
+                onMouseEnter={e => e.currentTarget.style.color = Z.foreground}
+                onMouseLeave={e => e.currentTarget.style.color = Z.mutedFg}>{it.label}</a>
+            : <span style={{ color: Z.foreground, fontWeight: 500 }}>{it.label}</span>}
+        </span>
+      ))}
+    </nav>
+  );
+}
+
+// ─── Form primitives ─────────────────────────────────────────────────────────
+function Label({ htmlFor, children }) {
+  return (
+    <label htmlFor={htmlFor} style={{
+      display: 'block', fontSize: 13.5, fontWeight: 500,
+      color: Z.foreground, marginBottom: 6,
+    }}>{children}</label>
+  );
+}
+
+function Input({ id, defaultValue, placeholder, suffix, filled, warning, style }) {
+  const border = warning ? Z.warning : (filled ? ACCENT.tintBorder : Z.border);
+  const bg     = warning ? Z.warningBg : (filled ? ACCENT.tintBg : Z.background);
+  return (
+    <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+      <input
+        id={id}
+        defaultValue={defaultValue}
+        placeholder={placeholder}
+        style={{
+          width: '100%', height: 36,
+          padding: suffix ? '0 36px 0 12px' : '0 12px',
+          fontSize: 14, color: Z.foreground,
+          background: bg,
+          border: `1px solid ${border}`,
+          borderRadius: 6,
+          fontWeight: filled || warning ? 500 : 400,
+          fontFeatureSettings: '"tnum" 1',
+          ...style,
+        }}
+      />
+      {suffix && (
+        <div style={{ position: 'absolute', right: 10, pointerEvents: 'none', color: Z.mutedFg }}>
+          {suffix}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function Textarea({ id, defaultValue, placeholder, filled }) {
+  return (
+    <textarea
+      id={id}
+      defaultValue={defaultValue}
+      placeholder={placeholder}
+      rows={3}
+      style={{
+        width: '100%', padding: '9px 12px',
+        fontSize: 14, color: Z.foreground,
+        background: filled ? ACCENT.tintBg : Z.background,
+        border: `1px solid ${filled ? ACCENT.tintBorder : Z.border}`,
+        borderRadius: 6, resize: 'vertical', lineHeight: 1.5,
+        fontWeight: filled ? 500 : 400,
+      }}
+    />
+  );
+}
+
+function Select({ id, defaultValue, options, filled }) {
+  return (
+    <div style={{ position: 'relative' }}>
+      <select id={id} defaultValue={defaultValue} style={{
+        appearance: 'none', WebkitAppearance: 'none',
+        width: '100%', height: 36, padding: '0 32px 0 12px',
+        fontSize: 14, color: Z.foreground,
+        background: filled ? ACCENT.tintBg : Z.background,
+        border: `1px solid ${filled ? ACCENT.tintBorder : Z.border}`,
+        borderRadius: 6, fontWeight: filled ? 500 : 400, cursor: 'pointer',
+      }}>
+        {options.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+      </select>
+      <Ic.ChevD size={12} stroke={Z.mutedFg} style={{
+        position: 'absolute', right: 10, top: '50%',
+        transform: 'translateY(-50%)', pointerEvents: 'none',
+      }}/>
+    </div>
+  );
+}
+
+function Hint({ children, warning, success }) {
+  const color = warning ? Z.warning : success ? Z.success : Z.mutedFg;
+  return (
+    <div style={{
+      marginTop: 6, fontSize: 12.5, color, lineHeight: 1.4,
+      display: 'flex', alignItems: 'flex-start', gap: 6,
+    }}>
+      {warning && <Ic.Warn size={13} stroke={Z.warning} style={{ flexShrink: 0, marginTop: 1 }}/>}
+      <span>{children}</span>
+    </div>
+  );
+}
+
+function SvcChip({ id }) {
+  const s = SERVICE[id];
+  return (
+    <span style={{
+      display: 'inline-flex', alignItems: 'center', gap: 5,
+      padding: '2px 9px 2px 6px',
+      background: s.color + '18', border: `1px solid ${s.color}2A`,
+      borderRadius: 999, fontSize: 12, fontWeight: 500, color: Z.foreground,
+    }}>
+      <Svg size={12} stroke={s.color}>{s.icon}</Svg>{s.name}
+    </span>
+  );
+}
+
+// ─── Page ────────────────────────────────────────────────────────────────────
+const PROP_OPTS = [
+  { value: 'p1', label: 'Apartment on Main St' },
+  { value: 'p2', label: "Mom's apartment" },
+  { value: 'p3', label: 'Summer house' },
+];
+const SVC_OPTS = [
+  { value: 'electricity', label: 'Electricity' },
+  { value: 'gas',         label: 'Gas' },
+  { value: 'coldWater',   label: 'Cold water' },
+  { value: 'hotWater',    label: 'Hot water' },
+  { value: 'internet',    label: 'Internet' },
+  { value: 'heating',     label: 'Heating' },
+];
+const MONTH_OPTS = [
+  { value: 'apr2026', label: 'April 2026' },
+  { value: 'mar2026', label: 'March 2026' },
+  { value: 'feb2026', label: 'February 2026' },
+  { value: 'jan2026', label: 'January 2026' },
+  { value: 'dec2025', label: 'December 2025' },
+  { value: 'nov2025', label: 'November 2025' },
+  { value: 'custom',  label: 'Custom month…' },
+];
+
+function EditBillPage() {
+  return (
+    <div data-screen-label="Edit Bill · Light" style={{ minHeight: '100%', background: Z.page }}>
+      <TopBar/>
+
+      <div style={{ maxWidth: 1360, margin: '0 auto', padding: '32px 32px 64px' }}>
+        <Breadcrumb/>
+
+        {/* Page header */}
+        <div style={{ marginBottom: 28 }}>
+          <h1 style={{
+            margin: 0, fontSize: 28, fontWeight: 600,
+            letterSpacing: -0.6, lineHeight: 1.15,
+          }}>Edit bill</h1>
+          <p style={{
+            margin: '7px 0 0', fontSize: 13.5, color: Z.mutedFg,
+          }}>Update the details below.</p>
+        </div>
+
+        {/* Centered form card */}
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <div style={{
+            width: '100%', maxWidth: 600,
+            background: Z.card, border: `1px solid ${Z.border}`,
+            borderRadius: 8, boxShadow: '0 1px 2px rgba(24,24,27,0.05)',
+            overflow: 'hidden',
+          }}>
+            {/* Form body */}
+            <div style={{ padding: '28px 32px 24px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+                <div>
+                  <Label htmlFor="prop">Property</Label>
+                  <Select id="prop" defaultValue="p1" filled options={PROP_OPTS}/>
+                </div>
+
+                <div>
+                  <Label htmlFor="svc">Service</Label>
+                  <Select id="svc" defaultValue="electricity" filled options={SVC_OPTS}/>
+                  <div style={{
+                    marginTop: 8, display: 'flex', alignItems: 'center', gap: 6,
+                  }}>
+                    <span style={{ fontSize: 12, color: Z.mutedFg }}>Selected:</span>
+                    <SvcChip id="electricity"/>
+                  </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="month">Month</Label>
+                  <Select id="month" defaultValue="apr2026" filled options={MONTH_OPTS}/>
+                </div>
+
+                <div>
+                  <Label htmlFor="amount">Amount (UAH)</Label>
+                  <Input id="amount" defaultValue="760" warning/>
+                  <div style={{
+                    marginTop: 8, display: 'flex', alignItems: 'center',
+                    gap: 6, flexWrap: 'wrap',
+                  }}>
+                    <span style={{ fontSize: 12.5, color: Z.mutedFg }}>
+                      Expected based on your tariff:
+                    </span>
+                    <span style={{
+                      fontSize: 12.5, fontWeight: 600, color: Z.foreground,
+                      background: Z.muted, padding: '1px 7px',
+                      borderRadius: 4, fontFeatureSettings: '"tnum" 1',
+                    }}>432 UAH</span>
+                  </div>
+                  <Hint warning>
+                    Amount is 76% higher than expected — double-check before saving.
+                  </Hint>
+                </div>
+
+                <div>
+                  <Label htmlFor="notes">
+                    Notes <span style={{ fontWeight: 400, color: Z.mutedFg }}>(optional)</span>
+                  </Label>
+                  <Textarea id="notes" filled defaultValue="Unusually high — AC running all month"
+                    placeholder="Any remarks…"/>
+                </div>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              padding: '14px 32px', borderTop: `1px solid ${Z.border}`,
+              background: Z.subtle,
+            }}>
+              <a href="#" style={{
+                display: 'inline-flex', alignItems: 'center', gap: 6,
+                height: 36, padding: '0 14px 0 10px',
+                fontSize: 13.5, fontWeight: 500,
+                color: Z.foreground, textDecoration: 'none',
+                background: Z.background, border: `1px solid ${Z.border}`,
+                borderRadius: 6,
+              }}>
+                <Ic.ChevL size={14} stroke={Z.mutedFg2}/>
+                Back to Bills
+              </a>
+              <button style={{
+                display: 'inline-flex', alignItems: 'center',
+                height: 36, padding: '0 18px',
+                fontSize: 13.5, fontWeight: 500,
+                color: '#fff', background: ACCENT.solid,
+                border: `1px solid ${ACCENT.solid}`, borderRadius: 6,
+                cursor: 'pointer',
+                boxShadow: '0 1px 3px rgba(124,58,237,0.18)',
+              }}>Save changes</button>
+            </div>
+          </div>
+        </div>
+
+        {/* Subtle meta footer below card */}
+        <div style={{
+          maxWidth: 600, margin: '14px auto 0',
+          fontSize: 12, color: Z.mutedFg, textAlign: 'center',
+        }}>
+          Changes are saved to your account and synced across devices.
+        </div>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<EditBillPage/>);
+</script>
+</body>
+</html>
