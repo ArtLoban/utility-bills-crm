@@ -454,6 +454,7 @@ Rationale: the "product-first" framing had begun to systematically under-scope f
 | 115 | Sentry integration: deferred within Phase 7                                                                     | integrate from scaffold                                                      | deferred                        |
 | 116 | Admin auth: `ADMIN_EMAILS` env var, seeded on first sign-in                                                     | DB flag set manually; separate admin setup flow                              | env-based seed                  |
 | 117 | Modal implementation: hybrid — intercepting routes for entity modals, local `<ConfirmDialog>` for confirmations | All via intercepting routes; all via Zustand store; all via local `useState` | Hybrid                          |
+| 118 | `service_types` catalog delivered via migration `INSERT`; no separate production-seed mechanism                 | Dedicated `seed:prod` script; one idempotent seed with env-gated dev part    | Catalog in migration            |
 
 > **#117 — detail.** Decision #71 established that entity creation/editing happens via modals, but not _how_ they are implemented. The mechanism is chosen by one criterion — whether the modal has a meaningful shareable URL:
 >
@@ -461,6 +462,8 @@ Rationale: the "product-first" framing had begun to systematically under-scope f
 > - **Confirmation modals** (delete, leave property, role change, unsaved changes) — implemented as a local `<ConfirmDialog>` driven by `useState`. They have no identity worth sharing; a refresh should close them, not preserve them.
 >
 > **Confirmation modal state.** When a confirmation modal is triggered from deep in the tree (typically a row action in a table), the `useState` is lifted into a feature-level Context provider, keeping `<DataTable>` a clean generic component. A global store is not used — the state belongs to the page, not the application. The Context is created via a shared `createSafeContext` helper (`lib/utils/`). For a single modal with one trigger point, local `useState` is enough.
+
+> **#118 — detail.** Stage 3 raised the deferred question of seed infrastructure: the dev-seed had been kept minimal (2–3 rows per entity), and `service_types` is the first entity that _must_ be seeded for the product to function at all. Rather than introduce a production-seed script, the catalog is treated as schema-level product data: a fixed 11-entry reference table (#53, no admin UI), owned by the developer, changed only through code. It is delivered by the migration pipeline — the `CREATE TABLE` migration also `INSERT`s the rows, idempotently keyed on the unique `code`. Production receives the catalog automatically on `db:migrate`; no deploy step can forget it. The dev-seed script stays strictly dev-only, for fake properties/services. A genuine production-seed mechanism is not needed for the catalog; the question resurfaces at Stage 8 for the demo account, which _is_ seed data (bulk fake data, potentially re-seedable) rather than schema-level data.
 
 ## Open Questions
 
