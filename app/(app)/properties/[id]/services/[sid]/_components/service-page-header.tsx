@@ -1,24 +1,46 @@
-import { MoreHorizontal, Pencil } from "lucide-react";
+import type { ReactNode } from "react";
+import Link from "next/link";
+import { Pencil } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { ROUTES } from "@/lib/routes";
-import { SERVICE_COLORS } from "@/lib/constants/service-colors";
-import { SERVICE_ICONS } from "@/lib/constants/service-icons";
-import type { TServiceDetail } from "../_data/mock";
+import { getServiceTypeDisplay } from "@/lib/constants/service-types";
+import type { TPropertyRole } from "@/lib/db/schema/properties";
+import type { TService } from "@/lib/db/schema/services";
+import type { TServiceType } from "@/lib/db/schema/service-types";
 
-type TProps = { serviceDetail: TServiceDetail };
+type TProps = {
+  service: TService;
+  serviceType: TServiceType;
+  role: TPropertyRole;
+  propertyId: string;
+  propertyName: string;
+  // Slot for client-side action controls (e.g. DeleteServiceAction).
+  // Rendered to the right of "Edit notes" when role >= editor.
+  extraActions?: ReactNode;
+};
 
-const ServicePageHeader = ({ serviceDetail }: TProps) => {
-  const { serviceKey, name, providerShort, propertyName } = serviceDetail;
-  const color = SERVICE_COLORS[serviceKey];
-  const Icon = SERVICE_ICONS[serviceKey];
+const ServicePageHeader = async ({
+  service,
+  serviceType,
+  role,
+  propertyId,
+  propertyName,
+  extraActions,
+}: TProps) => {
+  const t = await getTranslations("services.types");
+  const name = t(serviceType.code as Parameters<typeof t>[0]);
+  const { color, Icon } = getServiceTypeDisplay(serviceType.code);
+  const canEdit = role !== "viewer";
+  const editHref = `/properties/${propertyId}/services/${service.id}/edit`;
 
   return (
     <div style={{ marginBottom: 28 }}>
       <Breadcrumbs
         items={[
           { label: "Home", href: ROUTES.home },
-          { label: propertyName, href: `${ROUTES.properties}/1` },
+          { label: propertyName, href: `${ROUTES.properties}/${propertyId}` },
           { label: name },
         ]}
       />
@@ -45,27 +67,23 @@ const ServicePageHeader = ({ serviceDetail }: TProps) => {
             {name}
           </h1>
           <p className="text-zinc-500 dark:text-zinc-400" style={{ fontSize: 13.5, margin: 0 }}>
-            {providerShort} · {propertyName}
+            {propertyName}
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
-          {/* devnote: wire Edit notes button to NotesEditModal when implemented */}
-          <button
-            className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-zinc-200 bg-white text-sm font-medium text-zinc-950 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50"
-            style={{ height: 32, padding: "0 12px" }}
-          >
-            <Pencil size={13} />
-            Edit notes
-          </button>
-          {/* devnote: wire ⋮ to DropdownMenu when kebab actions are defined */}
-          <button
-            className="flex cursor-pointer items-center justify-center rounded-md border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900"
-            style={{ width: 30, height: 30 }}
-          >
-            <MoreHorizontal size={15} className="text-zinc-500 dark:text-zinc-400" />
-          </button>
-        </div>
+        {canEdit && (
+          <div className="flex items-center gap-2">
+            <Link
+              href={editHref}
+              className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-zinc-200 bg-white text-sm font-medium text-zinc-950 no-underline dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50"
+              style={{ height: 32, padding: "0 12px" }}
+            >
+              <Pencil size={13} />
+              Edit notes
+            </Link>
+            {extraActions}
+          </div>
+        )}
       </div>
     </div>
   );

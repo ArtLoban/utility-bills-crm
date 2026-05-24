@@ -2,15 +2,20 @@ import Link from "next/link";
 import { Lightbulb, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { type TServiceSummary } from "../../../_data/mock";
+import type { TServiceListItem } from "@/lib/db/access/services";
+import type { TPropertyRole } from "@/lib/db/schema/properties";
 import { ServiceRow } from "./service-row";
 
 type TProps = {
-  services: TServiceSummary[];
+  services: TServiceListItem[];
+  role: TPropertyRole;
   propertyId: string;
 };
 
-const OverviewTab = ({ services, propertyId }: TProps) => {
+const OverviewTab = ({ services, role, propertyId }: TProps) => {
+  const canEdit = role !== "viewer";
+  const addHref = `/properties/${propertyId}/services/new`;
+
   if (services.length === 0) {
     return (
       <Card className="overflow-hidden rounded-lg p-0">
@@ -33,13 +38,14 @@ const OverviewTab = ({ services, propertyId }: TProps) => {
                 Add your first utility service to start tracking bills and readings.
               </p>
             </div>
-            {/* devnote: link to correct route when /properties/[id]/services/new is implemented */}
-            <Button asChild>
-              <Link href="#">
-                <Plus size={16} />
-                Add service
-              </Link>
-            </Button>
+            {canEdit && (
+              <Button asChild>
+                <Link href={addHref}>
+                  <Plus size={16} />
+                  Add service
+                </Link>
+              </Button>
+            )}
           </div>
         </div>
       </Card>
@@ -57,23 +63,25 @@ const OverviewTab = ({ services, propertyId }: TProps) => {
             Services on this property
           </p>
           <p className="mt-0.5 text-zinc-500" style={{ fontSize: 12 }}>
-            {services.length} services · Tap a row to open
+            {services.length} {services.length === 1 ? "service" : "services"} · Tap a row to open
           </p>
         </div>
-        {/* devnote: link to correct route when /properties/[id]/services/new is implemented */}
-        <Button asChild variant="outline">
-          <Link href="#">
-            <Plus size={13} />
-            Add service
-          </Link>
-        </Button>
+        {canEdit && (
+          <Button asChild variant="outline">
+            <Link href={addHref}>
+              <Plus size={13} />
+              Add service
+            </Link>
+          </Button>
+        )}
       </div>
 
       <div>
-        {services.map((service, index) => (
+        {services.map(({ service, serviceType }, index) => (
           <ServiceRow
             key={service.id}
             service={service}
+            serviceType={serviceType}
             propertyId={propertyId}
             isLast={index === services.length - 1}
           />

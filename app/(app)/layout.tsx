@@ -6,30 +6,26 @@ import { AppNav } from "@/components/app-nav";
 
 type Props = {
   children: ReactNode;
-  modal: ReactNode;
 };
 
-export default async function AppLayout({ children, modal }: Props) {
+export default async function AppLayout({ children }: Props) {
   const session = await auth();
   if (!session) redirect(ROUTES.login);
 
   const { id, name, email, image, systemRole } = session.user;
 
   return (
-    <>
-      <div className="flex min-h-full flex-col">
-        <AppNav
-          user={{
-            id,
-            name: name ?? null,
-            email: email ?? null,
-            image: image ?? null,
-            systemRole,
-          }}
-        />
-        <div className="flex flex-1 flex-col">{children}</div>
-      </div>
-      {modal}
-    </>
+    <div className="flex min-h-full flex-col">
+      <AppNav
+        user={{
+          id,
+          name: name ?? null,
+          email: email ?? null,
+          image: image ?? null,
+          systemRole,
+        }}
+      />
+      <div className="flex flex-1 flex-col">{children}</div>
+    </div>
   );
 }

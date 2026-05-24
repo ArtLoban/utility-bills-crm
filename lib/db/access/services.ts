@@ -2,7 +2,7 @@ import { and, eq, isNull } from "drizzle-orm";
 
 import { db } from "@/lib/db/client";
 import { propertyByIdForUser } from "@/lib/db/access/properties";
-import type { PropertyId } from "@/lib/db/schema/properties";
+import type { PropertyId, TPropertyRole } from "@/lib/db/schema/properties";
 import { services } from "@/lib/db/schema/services";
 import type { TService, TServiceId } from "@/lib/db/schema/services";
 import { serviceTypes } from "@/lib/db/schema/service-types";
@@ -18,7 +18,8 @@ import type { Result } from "@/lib/errors";
 // readings, balance).
 
 export type TServiceListItem = { service: TService; serviceType: TServiceType };
-export type TServiceDetail = { service: TService; serviceType: TServiceType };
+// role: caller's access level on the parent property — needed to gate edit/delete controls.
+export type TServiceDetail = { service: TService; serviceType: TServiceType; role: TPropertyRole };
 
 // --- Queries ---
 // Pure functions: userId is always a parameter. Never read the auth session internally.
@@ -64,5 +65,5 @@ export const serviceByIdForUser = async (
   const access = await propertyByIdForUser(userId, row.service.propertyId);
   if (!access.ok) return err(new NotFoundError("service", serviceId));
 
-  return ok(row);
+  return ok({ ...row, role: access.value.role });
 };

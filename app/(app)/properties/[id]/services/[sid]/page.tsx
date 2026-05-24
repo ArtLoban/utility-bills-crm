@@ -1,23 +1,59 @@
-import { MOCK_CONTRACT_HISTORY, MOCK_METER_FOR_READING, MOCK_SERVICE_DETAIL } from "./_data/mock";
+import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
+
+import { getPropertyDetail } from "@/app/(app)/properties/[id]/_data/queries";
+import { getServiceDetail } from "./_data/queries";
 import { ActivityCard } from "./_components/activity-card";
 import { BalanceCard } from "./_components/balance-card";
 import { ContractCard } from "./_components/contract-card";
 import { MeterCard } from "./_components/meter-card";
 import { NotesCard } from "./_components/notes-card";
-import { QuickActions } from "./_components/quick-actions";
 import { ServicePageHeader } from "./_components/service-page-header";
+import { DeleteServiceAction } from "./_components/delete-service-action";
+import type { PropertyId } from "@/lib/db/schema/properties";
+import type { TServiceId } from "@/lib/db/schema/services";
 
-export default function ServicePage() {
+type TProps = {
+  params: Promise<{ id: string; sid: string }>;
+};
+
+export default async function ServicePage({ params }: TProps) {
+  const { id, sid } = await params;
+
+  const [propertyResult, serviceResult] = await Promise.all([
+    getPropertyDetail(id as PropertyId),
+    getServiceDetail(sid as TServiceId),
+  ]);
+
+  if (!propertyResult.ok || !serviceResult.ok) notFound();
+
+  const property = propertyResult.value;
+  const { service, serviceType, role } = serviceResult.value;
+
+  const t = await getTranslations("services.types");
+  const serviceName = t(serviceType.code as Parameters<typeof t>[0]);
+  const editHref = `/properties/${id}/services/${sid}/edit`;
+
   return (
     <div style={{ maxWidth: 1360, margin: "0 auto", padding: "28px 32px 56px", width: "100%" }}>
-      <ServicePageHeader serviceDetail={MOCK_SERVICE_DETAIL} />
+      <ServicePageHeader
+        service={service}
+        serviceType={serviceType}
+        role={role}
+        propertyId={id}
+        propertyName={property.name}
+        extraActions={
+          role !== "viewer" ? (
+            <DeleteServiceAction serviceId={service.id} propertyId={id} serviceName={serviceName} />
+          ) : undefined
+        }
+      />
       <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-        <BalanceCard balance={MOCK_SERVICE_DETAIL.balance} />
-        <ContractCard contract={MOCK_SERVICE_DETAIL.contract} history={MOCK_CONTRACT_HISTORY} />
-        <MeterCard meter={MOCK_SERVICE_DETAIL.meter} readingMeter={MOCK_METER_FOR_READING} />
-        <ActivityCard activity={MOCK_SERVICE_DETAIL.activity} />
-        <NotesCard notes={MOCK_SERVICE_DETAIL.notes} />
-        <QuickActions readingMeter={MOCK_METER_FOR_READING} />
+        <BalanceCard />
+        <ContractCard />
+        <MeterCard />
+        <ActivityCard />
+        <NotesCard notes={service.notes ?? null} editHref={editHref} role={role} />
       </div>
     </div>
   );

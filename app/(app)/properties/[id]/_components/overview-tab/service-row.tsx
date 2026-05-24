@@ -1,45 +1,25 @@
+"use client";
+
 import Link from "next/link";
-import { ChevronRight, Droplets, Flame, Thermometer, Wifi, Zap } from "lucide-react";
-import { SERVICE_COLORS, type TServiceKey } from "@/lib/constants/service-colors";
+import { ChevronRight } from "lucide-react";
+import { useTranslations } from "next-intl";
+
 import { IconBadge } from "@/components/icon-badge";
-import { type TServiceSummary } from "../../../_data/mock";
-
-const SERVICE_ICONS: Record<TServiceKey, React.ElementType> = {
-  electricity: Zap,
-  gas: Flame,
-  coldWater: Droplets,
-  hotWater: Droplets,
-  heating: Thermometer,
-  internet: Wifi,
-};
-
-const buildSubtitle = (service: TServiceSummary): string => {
-  const provider = service.provider ?? "No provider set";
-  if (!service.isMetered) return `${provider} · No meter`;
-  if (!service.lastReadingDate) return `${provider} · No readings yet`;
-  return `${provider} · Last reading: ${service.lastReadingDate}`;
-};
-
-const formatBalance = (balance: number): { text: string; className: string } => {
-  if (balance < 0) {
-    return { text: `−${Math.abs(balance).toLocaleString()} UAH`, className: "text-destructive" };
-  }
-  if (balance > 0) {
-    return { text: `+${balance.toLocaleString()} UAH`, className: "text-green-600" };
-  }
-  return { text: "0 UAH", className: "text-zinc-500" };
-};
+import { getServiceTypeDisplay } from "@/lib/constants/service-types";
+import type { TService } from "@/lib/db/schema/services";
+import type { TServiceType } from "@/lib/db/schema/service-types";
 
 type TProps = {
-  service: TServiceSummary;
+  service: TService;
+  serviceType: TServiceType;
   propertyId: string;
   isLast: boolean;
 };
 
-const ServiceRow = ({ service, propertyId, isLast }: TProps) => {
-  const Icon = SERVICE_ICONS[service.serviceKey];
-  const color = SERVICE_COLORS[service.serviceKey];
-  const { text: balanceText, className: balanceClass } = formatBalance(service.balance);
+const ServiceRow = ({ service, serviceType, propertyId, isLast }: TProps) => {
+  const t = useTranslations("services.types");
+  const { color, Icon } = getServiceTypeDisplay(serviceType.code);
+  const name = t(serviceType.code as Parameters<typeof t>[0]);
 
   return (
     <Link
@@ -54,15 +34,15 @@ const ServiceRow = ({ service, propertyId, isLast }: TProps) => {
           className="font-semibold text-zinc-950 dark:text-zinc-50"
           style={{ fontSize: 14.5, letterSpacing: -0.1, marginBottom: 2 }}
         >
-          {service.name}
+          {name}
         </p>
         <p className="truncate text-zinc-500" style={{ fontSize: 12.5 }}>
-          {buildSubtitle(service)}
+          — · —
         </p>
       </div>
 
-      <p className={`shrink-0 font-semibold tabular-nums ${balanceClass}`} style={{ fontSize: 15 }}>
-        {balanceText}
+      <p className="shrink-0 font-semibold text-zinc-500 tabular-nums" style={{ fontSize: 15 }}>
+        —
       </p>
 
       <ChevronRight
