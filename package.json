@@ -18,7 +18,8 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",
-    "db:seed:properties": "tsx lib/db/seeds/properties.seed.ts"
+    "db:seed:properties": "tsx lib/db/seeds/properties.seed.ts",
+    "db:seed:services": "tsx lib/db/seeds/services.seed.ts"
   },
   "lint-staged": {
     "*.{ts,tsx,js,mjs,cjs}": [

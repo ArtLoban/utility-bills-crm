@@ -3,3 +3,4 @@ export * from "./health-check";
 export * from "./helpers";
 export * from "./properties";
 export * from "./service-types";
+export * from "./services";
