@@ -5,3 +5,9 @@ export type TNavUser = {
   image: string | null;
   systemRole: "user" | "admin";
 };
+
+export type TLink = {
+  href: string;
+  label: string;
+  active: boolean;
+};

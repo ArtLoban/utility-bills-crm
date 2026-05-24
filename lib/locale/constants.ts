@@ -5,3 +5,14 @@ export const DEFAULT_LOCALE: TLocale = "en";
 
 export const LOCALE_COOKIE_NAME = "NEXT_LOCALE";
 export const LOCALE_COOKIE_MAX_AGE_SECONDS = 60 * 60 * 24 * 365; // 1 year
+
+export type TLocaleConfig = {
+  label: string;
+  code: string;
+};
+
+export const LOCALE_CONFIG: Record<TLocale, TLocaleConfig> = {
+  en: { label: "English", code: "EN" },
+  uk: { label: "Українська", code: "UA" },
+  ru: { label: "Русский", code: "RU" },
+};

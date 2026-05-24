@@ -6,7 +6,7 @@ import { ROUTES } from "@/lib/routes";
 import { Logo } from "@/components/logo";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { AppNavMobileMenu } from "./components/app-nav-mobile-menu";
-import { LanguageSwitcherStub } from "./components/language-switcher-stub";
+import { LanguageSwitcher } from "./components/language-switcher";
 import { NavLink } from "./components/nav-link";
 import { UserDropdown } from "./components/user-dropdown";
 import type { TNavUser } from "./types";
@@ -48,11 +48,15 @@ export const AppNav = ({ user }: TProps) => {
         </nav>
 
         <div className="ml-auto flex items-center gap-1">
-          <LanguageSwitcherStub />
-          <ThemeToggle />
-          <div className="bg-border mx-2 h-5 w-px" />
-          <UserDropdown user={user} />
-          <AppNavMobileMenu links={links} />
+          <div className="hidden items-center gap-1 md:flex">
+            <LanguageSwitcher />
+            <ThemeToggle />
+            <div className="bg-border mx-2 h-5 w-px" />
+          </div>
+          <div className="hidden md:flex">
+            <UserDropdown user={user} />
+          </div>
+          <AppNavMobileMenu links={links} user={user} />
         </div>
       </div>
     </header>
