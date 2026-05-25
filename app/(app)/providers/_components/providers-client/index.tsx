@@ -1,15 +1,15 @@
 "use client";
 
-import Link from "next/link";
-import { Building2, Plus } from "lucide-react";
+import { Building2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 
-import { Button } from "@/components/ui/button";
 import { EmptyStateCard } from "@/components/empty-state-card";
 import { PageContainer } from "@/components/page-container";
 import { ROUTES } from "@/lib/routes";
-import { ProviderRow } from "./components/provider-row";
 import type { TProvider } from "@/lib/db/schema/providers";
+import { AddButton } from "@/components/add-button";
+import { PageMeta } from "@/components/page-meta";
+import { Providers } from "@/app/(app)/providers/_components/providers-client/components/providers";
 
 type TProps = {
   providers: TProvider[];
@@ -19,30 +19,16 @@ export const ProvidersClient = ({ providers }: TProps) => {
   const t = useTranslations("providers");
   const hasProviders = providers.length > 0;
 
-  const addButton = (
-    <Button asChild>
-      <Link href={`${ROUTES.providers}/new`}>
-        <Plus size={16} />
-        {t("list.addButton")}
-      </Link>
-    </Button>
-  );
-
   return (
-    <PageContainer title={t("list.title")} actions={hasProviders && addButton}>
+    <PageContainer
+      title={t("list.title")}
+      actions={<AddButton href={`${ROUTES.providers}/new`} text={t("list.addButton")} />}
+      meta={<PageMeta items={["todo", "todo"]} />}
+    >
       {hasProviders ? (
-        <div className="flex flex-col gap-2">
-          {providers.map((provider) => (
-            <ProviderRow key={provider.id} provider={provider} />
-          ))}
-        </div>
+        <Providers providers={providers} />
       ) : (
-        <EmptyStateCard
-          icon={<Building2 size={32} className="text-zinc-500" />}
-          title={t("empty.title")}
-          body={t("empty.body")}
-          cta={addButton}
-        />
+        <EmptyStateCard icon={Building2} title={t("empty.title")} body={t("empty.body")} />
       )}
     </PageContainer>
   );

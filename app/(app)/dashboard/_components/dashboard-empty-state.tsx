@@ -1,8 +1,8 @@
-import Link from "next/link";
-import { Home, Plus } from "lucide-react";
+import { Home } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
 import { EmptyStateCard } from "@/components/empty-state-card";
+import { ROUTES } from "@/lib/routes";
+import { AddButton } from "@/components/add-button";
 
 type TProps = {
   firstName: string | null;
@@ -25,17 +25,10 @@ const DashboardEmptyState = ({ firstName }: TProps) => {
       </h2>
 
       <EmptyStateCard
-        icon={<Home size={40} className="text-zinc-500" />}
+        icon={Home}
         title="Welcome to UtilityBills!"
         body="Start by adding your first property to track your utility bills."
-        cta={
-          <Button asChild>
-            <Link href="/properties/new">
-              <Plus size={16} />
-              Add property
-            </Link>
-          </Button>
-        }
+        cta={<AddButton href={`${ROUTES.properties}/new`} text="Add property" />}
       />
     </div>
   );

@@ -10,5 +10,6 @@ export const metadata: Metadata = {
 
 export default async function ProvidersPage() {
   const providers = await getProviderList();
+
   return <ProvidersClient providers={providers} />;
 }

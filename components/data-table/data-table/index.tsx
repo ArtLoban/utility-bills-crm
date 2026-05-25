@@ -21,7 +21,7 @@ import { Footer } from "./components/footer";
 import { useDataTablePagination } from "./hooks/use-data-table-pagination";
 import { useDataTableSorting } from "./hooks/use-data-table-sorting";
 import { TDefaultSorting } from "@/components/data-table/data-table/types";
-import { EmptyStateCard } from "./components/empty-state-card";
+import { EmptyState } from "./components/empty-state";
 
 type TDataTableProps<T> = {
   data: T[];
@@ -73,9 +73,7 @@ export const DataTable = <T,>(props: TDataTableProps<T>) => {
   const showEmpty = !isLoading && filteredRows.length === 0;
   const emptyKind = data.length > 0 && isFiltered ? "noResults" : "empty";
 
-  if (showEmpty) {
-    return <EmptyStateCard kind={emptyKind} />;
-  }
+  if (showEmpty) return <EmptyState kind={emptyKind} />;
 
   return (
     <div className="border-border overflow-hidden rounded-lg border">

@@ -45,7 +45,7 @@ export const BillsClient = () => {
 
         {filteredBills.length === 0 && !anyFilter && (
           <EmptyStateCard
-            icon={<Receipt size={36} strokeWidth={1.5} className="text-zinc-400" />}
+            icon={Receipt}
             title="No bills yet"
             body="Record your first bill to start tracking expenses."
           />
@@ -53,7 +53,7 @@ export const BillsClient = () => {
 
         {filteredBills.length === 0 && anyFilter && (
           <EmptyStateCard
-            icon={<FilterX size={36} strokeWidth={1.5} className="text-zinc-400" />}
+            icon={FilterX}
             title="No bills match your filters"
             body="Try adjusting period, property, or service filters."
             cta={

@@ -1,11 +1,8 @@
 "use client";
 
-import Link from "next/link";
-import { Plus } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
-import { Button } from "@/components/ui/button";
 import { PageContainer } from "@/components/page-container";
 import { PageMeta } from "@/components/page-meta";
 import { TPayment } from "@/app/(app)/payments/_data/mock";
@@ -13,6 +10,8 @@ import { TPayment } from "@/app/(app)/payments/_data/mock";
 import { PaymentsMobile } from "./payments-mobile";
 import { PaymentsTable } from "./payments-table";
 import { getPaymentsPageMeta } from "./utils/get-payments-page-meta";
+import { AddButton } from "@/components/add-button";
+import { ROUTES } from "@/lib/routes";
 
 type TProps = {
   payments: TPayment[];
@@ -28,17 +27,9 @@ export const PaymentsClient = ({ payments }: TProps) => {
     <PageContainer
       title={t("title")}
       meta={<PageMeta items={metaItems} />}
-      actions={
-        <Button asChild>
-          <Link href="/payments/new">
-            <Plus size={14} />
-            {t("cta.addPayment")}
-          </Link>
-        </Button>
-      }
+      actions={<AddButton href={`${ROUTES.payments}/new`} text={t("cta.addPayment")} />}
     >
       <PaymentsTable data={payments} filteredData={rows} setFilteredData={setRows} />
-
       <div className="-mx-8 md:hidden">
         <PaymentsMobile payments={payments} />
       </div>

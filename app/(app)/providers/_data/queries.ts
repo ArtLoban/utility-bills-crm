@@ -8,5 +8,6 @@ export const getProviderList = async (): Promise<TProvider[]> => {
   if (!session?.user.id) return [];
 
   const userId = session.user.id as UserId;
+
   return providersByUserId(userId);
 };
