@@ -5,6 +5,7 @@ export const ROUTES = {
   login: "/login",
   dashboard: "/dashboard",
   properties: "/properties",
+  providers: "/providers",
   bills: "/bills",
   meters: "/meters",
   payments: "/payments",

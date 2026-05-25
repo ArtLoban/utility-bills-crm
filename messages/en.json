@@ -6,6 +6,7 @@
   "nav": {
     "dashboard": "Dashboard",
     "properties": "Properties",
+    "providers": "Providers",
     "meters": "Meters",
     "bills": "Bills",
     "payments": "Payments",
@@ -376,6 +377,74 @@
       "perPageLabel": "Rows per page",
       "previous": "Previous",
       "next": "Next"
+    }
+  },
+  "providers": {
+    "list": {
+      "title": "Providers",
+      "addButton": "Add provider"
+    },
+    "empty": {
+      "title": "No providers yet",
+      "body": "Add your utility service providers to use them in contracts."
+    },
+    "modal": {
+      "add": {
+        "title": "Add provider",
+        "submit": "Add provider"
+      },
+      "edit": {
+        "title": "Edit provider",
+        "submit": "Save changes"
+      },
+      "cancel": "Cancel",
+      "formError": "Something went wrong. Please try again."
+    },
+    "fields": {
+      "name": {
+        "label": "Name",
+        "placeholder": "e.g. Kyivenergo"
+      },
+      "website": {
+        "label": "Website",
+        "placeholder": "e.g. https://kyivenergo.ua"
+      },
+      "phone": {
+        "label": "Phone",
+        "placeholder": "e.g. +380 44 207-00-00"
+      },
+      "notes": {
+        "label": "Notes",
+        "placeholder": "Any remarks…"
+      }
+    },
+    "toast": {
+      "added": "Provider added",
+      "updated": "Provider updated",
+      "deleted": "Provider deleted",
+      "saveError": "Something went wrong. Please try again.",
+      "deleteError": "Failed to delete provider"
+    },
+    "delete": {
+      "menuItem": "Delete provider",
+      "title": "Delete provider",
+      "description": "This action cannot be undone.",
+      "descriptionPrefix": "Delete"
+    },
+    "validation": {
+      "name": {
+        "required": "Name is required",
+        "tooLong": "Name is too long (max 200 characters)"
+      },
+      "website": {
+        "tooLong": "Website is too long (max 500 characters)"
+      },
+      "phone": {
+        "tooLong": "Phone is too long (max 50 characters)"
+      },
+      "notes": {
+        "tooLong": "Notes are too long (max 1000 characters)"
+      }
     }
   },
   "services": {
