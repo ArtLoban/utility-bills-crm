@@ -4,13 +4,15 @@ import { useState } from "react";
 import { History } from "lucide-react";
 
 import type { TContractWithProvider } from "@/lib/db/access/contracts";
+import type { TAttributeHistory } from "@/app/(app)/properties/[id]/services/[sid]/_data/queries";
 import { ContractHistoryDrawer } from "./contract-history-drawer";
 
 type TProps = {
   contractHistory: TContractWithProvider[];
+  attributeHistory: TAttributeHistory;
 };
 
-const ContractCardClient = ({ contractHistory }: TProps) => {
+const ContractCardClient = ({ contractHistory, attributeHistory }: TProps) => {
   const [historyOpen, setHistoryOpen] = useState(false);
 
   return (
@@ -28,6 +30,7 @@ const ContractCardClient = ({ contractHistory }: TProps) => {
         open={historyOpen}
         onOpenChange={setHistoryOpen}
         history={contractHistory}
+        attributeHistory={attributeHistory}
       />
     </>
   );

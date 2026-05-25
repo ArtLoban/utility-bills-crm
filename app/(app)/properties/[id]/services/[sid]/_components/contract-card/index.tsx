@@ -1,32 +1,47 @@
 import { format } from "date-fns";
-import { FileText, RefreshCw } from "lucide-react";
+import { FileText } from "lucide-react";
 import Link from "next/link";
 
 import type { TContractWithProvider } from "@/lib/db/access/contracts";
 import type { TCurrentContractSummary } from "@/lib/db/access/services";
 import type { TPropertyRole } from "@/lib/db/schema/properties";
 import type { TServiceId } from "@/lib/db/schema/services";
+import type { TServiceType } from "@/lib/db/schema/service-types";
+import type { TTariff } from "@/lib/db/schema/tariffs";
+import type { TAccountNumber } from "@/lib/db/schema/account-numbers";
+import type { TPaymentDetails } from "@/lib/db/schema/payment-details";
+import type { TAttributeHistory } from "../../_data/queries";
 import { ContractCardClient } from "./components/contract-card-client";
-import { ACCENT } from "@/lib/constants/ui-tokens";
+import { TariffRateChips } from "./components/tariff-rate-chips";
+import { UpdateContractButton } from "./components/update-contract-button";
 
 type TProps = {
   serviceId: TServiceId;
   propertyId: string;
+  serviceType: TServiceType;
   currentContract: TCurrentContractSummary | null;
+  currentTariff: TTariff | null;
+  currentAccountNumber: TAccountNumber | null;
+  currentPaymentDetails: TPaymentDetails | null;
   contractHistory: TContractWithProvider[];
+  attributeHistory: TAttributeHistory;
   role: TPropertyRole;
 };
 
 const ContractCard = ({
   serviceId,
   propertyId,
+  serviceType,
   currentContract,
+  currentTariff,
+  currentAccountNumber,
+  currentPaymentDetails,
   contractHistory,
+  attributeHistory,
   role,
 }: TProps) => {
   const canEdit = role !== "viewer";
   const newContractHref = `/properties/${propertyId}/services/${serviceId}/contract/new`;
-  const changeProviderHref = `/properties/${propertyId}/services/${serviceId}/contract/change-provider`;
 
   return (
     <div
@@ -43,7 +58,10 @@ const ContractCard = ({
         </span>
 
         {currentContract && contractHistory.length > 1 && (
-          <ContractCardClient contractHistory={contractHistory} />
+          <ContractCardClient
+            contractHistory={contractHistory}
+            attributeHistory={attributeHistory}
+          />
         )}
       </div>
 
@@ -51,7 +69,7 @@ const ContractCard = ({
       {currentContract ? (
         <div style={{ padding: "20px 20px" }}>
           {/* Provider row */}
-          <div className="mb-4 flex items-start gap-3">
+          <div className="mb-5 flex items-start gap-3">
             <div
               className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg"
               style={{
@@ -74,7 +92,75 @@ const ContractCard = ({
             </div>
           </div>
 
-          {/* Notes */}
+          {/* Tariff */}
+          {currentTariff && (
+            <div className="mb-4">
+              <p
+                className="mb-2 text-zinc-500 dark:text-zinc-400"
+                style={{
+                  fontSize: 11.5,
+                  fontWeight: 500,
+                  textTransform: "uppercase",
+                  letterSpacing: 0.3,
+                }}
+              >
+                Tariff
+              </p>
+              <TariffRateChips tariff={currentTariff} serviceUnit={serviceType.unit ?? null} />
+            </div>
+          )}
+
+          {/* Account number */}
+          {currentAccountNumber && (
+            <div className="mb-4">
+              <p
+                className="mb-1 text-zinc-500 dark:text-zinc-400"
+                style={{
+                  fontSize: 11.5,
+                  fontWeight: 500,
+                  textTransform: "uppercase",
+                  letterSpacing: 0.3,
+                }}
+              >
+                Account number
+              </p>
+              <p
+                className="text-zinc-950 dark:text-zinc-50"
+                style={{ fontSize: 13.5, fontFeatureSettings: '"tnum" 1' }}
+              >
+                {currentAccountNumber.value}
+              </p>
+            </div>
+          )}
+
+          {/* Payment details */}
+          {currentPaymentDetails && (
+            <div className="mb-4">
+              <p
+                className="mb-1 text-zinc-500 dark:text-zinc-400"
+                style={{
+                  fontSize: 11.5,
+                  fontWeight: 500,
+                  textTransform: "uppercase",
+                  letterSpacing: 0.3,
+                }}
+              >
+                Payment details
+              </p>
+              <p
+                className="whitespace-pre-wrap text-zinc-950 dark:text-zinc-50"
+                style={{
+                  fontSize: 12.5,
+                  lineHeight: 1.6,
+                  fontFamily: 'ui-monospace, "Cascadia Code", "Fira Code", monospace',
+                }}
+              >
+                {currentPaymentDetails.details}
+              </p>
+            </div>
+          )}
+
+          {/* Contract notes */}
           {currentContract.contract.notes && (
             <p
               className="mb-4 rounded-lg px-3 py-2.5 whitespace-pre-wrap text-zinc-600 dark:text-zinc-400"
@@ -91,14 +177,12 @@ const ContractCard = ({
           {/* Actions */}
           {canEdit && (
             <div className="flex items-center gap-2">
-              <Link
-                href={changeProviderHref}
-                className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border-0 text-sm font-medium text-white transition-opacity hover:opacity-90"
-                style={{ height: 32, padding: "0 14px", background: ACCENT }}
-              >
-                <RefreshCw size={13} />
-                Change provider
-              </Link>
+              <UpdateContractButton
+                contractId={currentContract.contract.id}
+                serviceId={serviceId}
+                serviceType={serviceType}
+                propertyId={propertyId}
+              />
             </div>
           )}
         </div>

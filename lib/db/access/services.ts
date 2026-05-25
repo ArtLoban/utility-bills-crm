@@ -11,6 +11,12 @@ import { services } from "@/lib/db/schema/services";
 import type { TService, TServiceId } from "@/lib/db/schema/services";
 import { serviceTypes } from "@/lib/db/schema/service-types";
 import type { TServiceType } from "@/lib/db/schema/service-types";
+import { tariffs } from "@/lib/db/schema/tariffs";
+import type { TTariff } from "@/lib/db/schema/tariffs";
+import { accountNumbers } from "@/lib/db/schema/account-numbers";
+import type { TAccountNumber } from "@/lib/db/schema/account-numbers";
+import { paymentDetails } from "@/lib/db/schema/payment-details";
+import type { TPaymentDetails } from "@/lib/db/schema/payment-details";
 import type { UserId } from "@/lib/db/schema/auth";
 import { NotFoundError, err, ok } from "@/lib/errors";
 import type { Result } from "@/lib/errors";
@@ -29,11 +35,15 @@ export type TServiceListItem = {
 };
 
 // role: caller's access level on the parent property — needed to gate edit/delete controls.
+// currentTariff / currentAccountNumber / currentPaymentDetails: the single active records, if any.
 export type TServiceDetail = {
   service: TService;
   serviceType: TServiceType;
   role: TPropertyRole;
   currentContract: TCurrentContractSummary | null;
+  currentTariff: TTariff | null;
+  currentAccountNumber: TAccountNumber | null;
+  currentPaymentDetails: TPaymentDetails | null;
 };
 
 // --- Queries ---
@@ -93,6 +103,9 @@ export const serviceByIdForUser = async (
       serviceType: serviceTypes,
       contract: contracts,
       provider: providers,
+      tariff: tariffs,
+      accountNumber: accountNumbers,
+      paymentDetail: paymentDetails,
     })
     .from(services)
     .innerJoin(serviceTypes, eq(services.serviceTypeId, serviceTypes.id))
@@ -105,6 +118,27 @@ export const serviceByIdForUser = async (
       ),
     )
     .leftJoin(providers, eq(contracts.providerId, providers.id))
+    // Current temporal attributes — only join when a contract exists (NULL contract_id never matches).
+    .leftJoin(
+      tariffs,
+      and(eq(tariffs.contractId, contracts.id), isNull(tariffs.validTo), isNull(tariffs.deletedAt)),
+    )
+    .leftJoin(
+      accountNumbers,
+      and(
+        eq(accountNumbers.contractId, contracts.id),
+        isNull(accountNumbers.validTo),
+        isNull(accountNumbers.deletedAt),
+      ),
+    )
+    .leftJoin(
+      paymentDetails,
+      and(
+        eq(paymentDetails.contractId, contracts.id),
+        isNull(paymentDetails.validTo),
+        isNull(paymentDetails.deletedAt),
+      ),
+    )
     .where(and(eq(services.id, serviceId), isNull(services.deletedAt)))
     .limit(1);
 
@@ -121,6 +155,11 @@ export const serviceByIdForUser = async (
     service: row.service,
     serviceType: row.serviceType,
     role: access.value.role,
+    // provider! is safe: FK RESTRICT guarantees a non-soft-deleted provider exists
+    // whenever a non-soft-deleted contract references it.
     currentContract: row.contract ? { contract: row.contract, provider: row.provider! } : null,
+    currentTariff: row.tariff ?? null,
+    currentAccountNumber: row.accountNumber ?? null,
+    currentPaymentDetails: row.paymentDetail ?? null,
   });
 };

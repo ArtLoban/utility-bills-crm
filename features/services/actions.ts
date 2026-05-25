@@ -1,11 +1,14 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { and, eq, isNull } from "drizzle-orm";
+import { and, eq, inArray, isNull } from "drizzle-orm";
 
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db/client";
 import { contracts } from "@/lib/db/schema/contracts";
+import { tariffs } from "@/lib/db/schema/tariffs";
+import { accountNumbers } from "@/lib/db/schema/account-numbers";
+import { paymentDetails } from "@/lib/db/schema/payment-details";
 import { services } from "@/lib/db/schema/services";
 import type { TService, TServiceId } from "@/lib/db/schema/services";
 import type { PropertyId } from "@/lib/db/schema/properties";
@@ -123,13 +126,40 @@ export const softDeleteService = async (
   await db.transaction(async (tx) => {
     const now = new Date();
 
-    // Soft-delete cascade for service children — add each new entity in one line here as introduced.
+    // Soft-delete cascade for service children — add each new entity here as introduced.
+    // Cascade order: fetch contract IDs first, then cascade to their children, then soft-delete contracts.
+
+    // Collect active contract IDs for this service (needed for the grandchild cascade below).
+    const activeContractIds = await tx
+      .select({ id: contracts.id })
+      .from(contracts)
+      .where(and(eq(contracts.serviceId, serviceId), isNull(contracts.deletedAt)));
+
+    if (activeContractIds.length > 0) {
+      const ids = activeContractIds.map((r) => r.id);
+      // tariffs ↓
+      await tx
+        .update(tariffs)
+        .set({ deletedAt: now })
+        .where(and(inArray(tariffs.contractId, ids), isNull(tariffs.deletedAt)));
+      // account_numbers ↓
+      await tx
+        .update(accountNumbers)
+        .set({ deletedAt: now })
+        .where(and(inArray(accountNumbers.contractId, ids), isNull(accountNumbers.deletedAt)));
+      // payment_details ↓
+      await tx
+        .update(paymentDetails)
+        .set({ deletedAt: now })
+        .where(and(inArray(paymentDetails.contractId, ids), isNull(paymentDetails.deletedAt)));
+    }
+
     // contracts ↓
     await tx
       .update(contracts)
       .set({ deletedAt: now })
       .where(and(eq(contracts.serviceId, serviceId), isNull(contracts.deletedAt)));
-    // Future: tariffs, meters/readings, bills, payments.
+    // Future: meters/readings, bills, payments.
 
     await tx
       .update(services)

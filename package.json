@@ -21,7 +21,10 @@
     "db:seed:properties": "tsx lib/db/seeds/properties.seed.ts",
     "db:seed:services": "tsx lib/db/seeds/services.seed.ts",
     "db:seed:providers": "tsx lib/db/seeds/providers.seed.ts",
-    "db:seed:contracts": "tsx lib/db/seeds/contracts.seed.ts"
+    "db:seed:contracts": "tsx lib/db/seeds/contracts.seed.ts",
+    "db:seed:tariffs": "tsx lib/db/seeds/tariffs.seed.ts",
+    "db:seed:account-numbers": "tsx lib/db/seeds/account-numbers.seed.ts",
+    "db:seed:payment-details": "tsx lib/db/seeds/payment-details.seed.ts"
   },
   "lint-staged": {
     "*.{ts,tsx,js,mjs,cjs}": [

@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 
 import { getPropertyDetail } from "@/app/(app)/properties/[id]/_data/queries";
-import { getContractHistory, getServiceDetail } from "./_data/queries";
+import { getAttributeHistory, getContractHistory, getServiceDetail } from "./_data/queries";
 import { ActivityCard } from "./_components/activity-card";
 import { BalanceCard } from "./_components/balance-card";
 import { ContractCard } from "./_components/contract-card";
@@ -20,16 +20,25 @@ type TProps = {
 export default async function ServicePage({ params }: TProps) {
   const { id, sid } = await params;
 
-  const [propertyResult, serviceResult, historyResult] = await Promise.all([
+  const [propertyResult, serviceResult, historyResult, attributeHistoryResult] = await Promise.all([
     getPropertyDetail(id as PropertyId),
     getServiceDetail(sid as TServiceId),
     getContractHistory(sid as TServiceId),
+    getAttributeHistory(sid as TServiceId),
   ]);
 
   if (!propertyResult.ok || !serviceResult.ok) notFound();
 
   const property = propertyResult.value;
-  const { service, serviceType, role, currentContract } = serviceResult.value;
+  const {
+    service,
+    serviceType,
+    role,
+    currentContract,
+    currentTariff,
+    currentAccountNumber,
+    currentPaymentDetails,
+  } = serviceResult.value;
 
   const t = await getTranslations("services.types");
   const serviceName = t(serviceType.code as Parameters<typeof t>[0]);
@@ -54,8 +63,21 @@ export default async function ServicePage({ params }: TProps) {
         <ContractCard
           serviceId={sid as TServiceId}
           propertyId={id}
+          serviceType={serviceType}
           currentContract={currentContract}
+          currentTariff={currentTariff}
+          currentAccountNumber={currentAccountNumber}
+          currentPaymentDetails={currentPaymentDetails}
           contractHistory={historyResult.ok ? historyResult.value : []}
+          attributeHistory={
+            attributeHistoryResult.ok
+              ? attributeHistoryResult.value
+              : {
+                  tariffsByContract: {},
+                  accountNumbersByContract: {},
+                  paymentDetailsByContract: {},
+                }
+          }
           role={role}
         />
         <MeterCard />

@@ -6,3 +6,6 @@ export * from "./providers";
 export * from "./service-types";
 export * from "./services";
 export * from "./contracts";
+export * from "./tariffs";
+export * from "./account-numbers";
+export * from "./payment-details";

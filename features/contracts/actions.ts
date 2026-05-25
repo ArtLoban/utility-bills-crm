@@ -7,6 +7,9 @@ import { auth } from "@/lib/auth";
 import { db } from "@/lib/db/client";
 import { contracts } from "@/lib/db/schema/contracts";
 import type { TContract, TContractId } from "@/lib/db/schema/contracts";
+import { tariffs } from "@/lib/db/schema/tariffs";
+import { accountNumbers } from "@/lib/db/schema/account-numbers";
+import { paymentDetails } from "@/lib/db/schema/payment-details";
 import type { ProviderId } from "@/lib/db/schema/providers";
 import type { TServiceId } from "@/lib/db/schema/services";
 import type { UserId } from "@/lib/db/schema/auth";
@@ -236,10 +239,31 @@ export const softDeleteContract = async (
   );
   if (!roleGuard.ok) return roleGuard;
 
-  await db
-    .update(contracts)
-    .set({ deletedAt: new Date() })
-    .where(and(eq(contracts.id, contractId), isNull(contracts.deletedAt)));
+  const now = new Date();
+
+  await db.transaction(async (tx) => {
+    // Soft-delete cascade for contract children — add each new entity here as introduced.
+    // tariffs ↓
+    await tx
+      .update(tariffs)
+      .set({ deletedAt: now })
+      .where(and(eq(tariffs.contractId, contractId), isNull(tariffs.deletedAt)));
+    // account_numbers ↓
+    await tx
+      .update(accountNumbers)
+      .set({ deletedAt: now })
+      .where(and(eq(accountNumbers.contractId, contractId), isNull(accountNumbers.deletedAt)));
+    // payment_details ↓
+    await tx
+      .update(paymentDetails)
+      .set({ deletedAt: now })
+      .where(and(eq(paymentDetails.contractId, contractId), isNull(paymentDetails.deletedAt)));
+
+    await tx
+      .update(contracts)
+      .set({ deletedAt: now })
+      .where(and(eq(contracts.id, contractId), isNull(contracts.deletedAt)));
+  });
 
   revalidatePath(
     `/properties/${serviceAccess.value.service.propertyId}/services/${contractAccess.value.contract.serviceId}`,

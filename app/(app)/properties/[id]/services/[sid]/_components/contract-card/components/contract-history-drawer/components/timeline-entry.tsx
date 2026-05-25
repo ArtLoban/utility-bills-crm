@@ -2,8 +2,17 @@ import { format } from "date-fns";
 
 import { cn } from "@/lib/utils";
 import type { TContractWithProvider } from "@/lib/db/access/contracts";
+import type { TTariff } from "@/lib/db/schema/tariffs";
+import type { TAccountNumber } from "@/lib/db/schema/account-numbers";
+import type { TPaymentDetails } from "@/lib/db/schema/payment-details";
 
-type TProps = { item: TContractWithProvider; isLast: boolean };
+type TProps = {
+  item: TContractWithProvider;
+  isLast: boolean;
+  tariffs: TTariff[];
+  accountNumbers: TAccountNumber[];
+  paymentDetails: TPaymentDetails[];
+};
 
 const formatRange = (validFrom: Date, validTo: Date | null): string => {
   const from = format(validFrom, "MMM d, yyyy");
@@ -11,9 +20,30 @@ const formatRange = (validFrom: Date, validTo: Date | null): string => {
   return `${from} — ${to}`;
 };
 
-const TimelineEntry = ({ item, isLast }: TProps) => {
+const formatTariff = (tariff: TTariff): string => {
+  if (tariff.fixedAmount !== null) return `Fixed: ${tariff.fixedAmount} ₴/mo`;
+  const parts = [`T1: ${tariff.rateT1}`];
+  if (tariff.rateT2) parts.push(`T2: ${tariff.rateT2}`);
+  if (tariff.rateT3) parts.push(`T3: ${tariff.rateT3}`);
+  return parts.join(" · ");
+};
+
+const NestedRow = ({ label, value }: { label: string; value: string }) => (
+  <div className="flex items-start gap-2">
+    <span className="text-zinc-500 dark:text-zinc-400" style={{ fontSize: 12, minWidth: 110 }}>
+      {label}
+    </span>
+    <span className="break-all text-zinc-950 dark:text-zinc-50" style={{ fontSize: 12.5 }}>
+      {value}
+    </span>
+  </div>
+);
+
+const TimelineEntry = ({ item, isLast, tariffs, accountNumbers, paymentDetails }: TProps) => {
   const { contract, provider } = item;
   const isCurrent = contract.validTo === null;
+  const hasAttributes =
+    tariffs.length > 0 || accountNumbers.length > 0 || paymentDetails.length > 0;
 
   return (
     <div className="flex">
@@ -82,33 +112,124 @@ const TimelineEntry = ({ item, isLast }: TProps) => {
         {/* Card body */}
         <div style={{ padding: "14px 16px", display: "flex", flexDirection: "column", gap: 10 }}>
           {/* Provider */}
-          <div className="flex items-start gap-2">
-            <span
-              className="text-zinc-500 dark:text-zinc-400"
-              style={{ fontSize: 12, minWidth: 120 }}
-            >
-              Provider
-            </span>
-            <span className="text-zinc-950 dark:text-zinc-50" style={{ fontSize: 13 }}>
-              {provider.name}
-            </span>
-          </div>
+          <NestedRow label="Provider" value={provider.name} />
 
-          {/* Notes */}
-          {contract.notes && (
-            <div className="flex items-start gap-2">
-              <span
-                className="text-zinc-500 dark:text-zinc-400"
-                style={{ fontSize: 12, minWidth: 120 }}
-              >
-                Notes
-              </span>
-              <span
-                className="whitespace-pre-wrap text-zinc-950 dark:text-zinc-50"
-                style={{ fontSize: 13 }}
-              >
-                {contract.notes}
-              </span>
+          {/* Contract notes */}
+          {contract.notes && <NestedRow label="Notes" value={contract.notes} />}
+
+          {/* Nested attribute history */}
+          {hasAttributes && (
+            <div
+              className="mt-1 flex flex-col gap-2 rounded-[6px] border border-zinc-100 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-800/40"
+              style={{ padding: "10px 12px" }}
+            >
+              {/* Tariffs */}
+              {tariffs.length > 0 && (
+                <div>
+                  <p
+                    className="mb-1.5 text-zinc-400 dark:text-zinc-500"
+                    style={{
+                      fontSize: 11,
+                      fontWeight: 600,
+                      textTransform: "uppercase",
+                      letterSpacing: 0.3,
+                    }}
+                  >
+                    Tariff periods
+                  </p>
+                  <div className="flex flex-col gap-1.5">
+                    {tariffs.map((t) => (
+                      <div key={t.id} className="flex items-start gap-2">
+                        <span
+                          className="text-zinc-400 dark:text-zinc-500"
+                          style={{ fontSize: 11.5, minWidth: 130 }}
+                        >
+                          {formatRange(t.validFrom, t.validTo)}
+                        </span>
+                        <span
+                          className="text-zinc-700 dark:text-zinc-300"
+                          style={{ fontSize: 11.5, fontFeatureSettings: '"tnum" 1' }}
+                        >
+                          {formatTariff(t)}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Account numbers */}
+              {accountNumbers.length > 0 && (
+                <div>
+                  <p
+                    className="mb-1.5 text-zinc-400 dark:text-zinc-500"
+                    style={{
+                      fontSize: 11,
+                      fontWeight: 600,
+                      textTransform: "uppercase",
+                      letterSpacing: 0.3,
+                    }}
+                  >
+                    Account numbers
+                  </p>
+                  <div className="flex flex-col gap-1.5">
+                    {accountNumbers.map((a) => (
+                      <div key={a.id} className="flex items-start gap-2">
+                        <span
+                          className="text-zinc-400 dark:text-zinc-500"
+                          style={{ fontSize: 11.5, minWidth: 130 }}
+                        >
+                          {formatRange(a.validFrom, a.validTo)}
+                        </span>
+                        <span
+                          className="break-all text-zinc-700 dark:text-zinc-300"
+                          style={{ fontSize: 11.5, fontFeatureSettings: '"tnum" 1' }}
+                        >
+                          {a.value}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Payment details */}
+              {paymentDetails.length > 0 && (
+                <div>
+                  <p
+                    className="mb-1.5 text-zinc-400 dark:text-zinc-500"
+                    style={{
+                      fontSize: 11,
+                      fontWeight: 600,
+                      textTransform: "uppercase",
+                      letterSpacing: 0.3,
+                    }}
+                  >
+                    Payment details
+                  </p>
+                  <div className="flex flex-col gap-1.5">
+                    {paymentDetails.map((pd) => (
+                      <div key={pd.id} className="flex items-start gap-2">
+                        <span
+                          className="text-zinc-400 dark:text-zinc-500"
+                          style={{ fontSize: 11.5, minWidth: 130 }}
+                        >
+                          {formatRange(pd.validFrom, pd.validTo)}
+                        </span>
+                        <span
+                          className="break-all whitespace-pre-wrap text-zinc-700 dark:text-zinc-300"
+                          style={{
+                            fontSize: 11.5,
+                            fontFamily: 'ui-monospace, "Fira Code", monospace',
+                          }}
+                        >
+                          {pd.details}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>

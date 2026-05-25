@@ -4,20 +4,21 @@ import { X } from "lucide-react";
 
 import { Sheet, SheetClose, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import type { TContractWithProvider } from "@/lib/db/access/contracts";
+import type { TAttributeHistory } from "@/app/(app)/properties/[id]/services/[sid]/_data/queries";
 import { TimelineEntry } from "./components/timeline-entry";
 
 type TProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   history: TContractWithProvider[];
+  attributeHistory: TAttributeHistory;
 };
 
-const ContractHistoryDrawer = ({ open, onOpenChange, history }: TProps) => (
+const ContractHistoryDrawer = ({ open, onOpenChange, history, attributeHistory }: TProps) => (
   <Sheet open={open} onOpenChange={onOpenChange}>
     <SheetContent
       side="right"
       showCloseButton={false}
-      // className="flex w-[520px] max-w-[520px] flex-col p-0 sm:max-w-[520px]"
       className="flex flex-col p-0"
       style={{ width: 520, maxWidth: 520 }}
     >
@@ -42,7 +43,14 @@ const ContractHistoryDrawer = ({ open, onOpenChange, history }: TProps) => (
           </p>
         ) : (
           history.map((item, i) => (
-            <TimelineEntry key={item.contract.id} item={item} isLast={i === history.length - 1} />
+            <TimelineEntry
+              key={item.contract.id}
+              item={item}
+              isLast={i === history.length - 1}
+              tariffs={attributeHistory.tariffsByContract[item.contract.id] ?? []}
+              accountNumbers={attributeHistory.accountNumbersByContract[item.contract.id] ?? []}
+              paymentDetails={attributeHistory.paymentDetailsByContract[item.contract.id] ?? []}
+            />
           ))
         )}
       </div>
