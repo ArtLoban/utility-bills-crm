@@ -444,7 +444,67 @@
       },
       "notes": {
         "tooLong": "Notes are too long (max 1000 characters)"
+      },
+      "hasActiveContracts": "This provider is referenced by an active contract and cannot be deleted."
+    }
+  },
+  "contracts": {
+    "modal": {
+      "add": {
+        "title": "Add contract",
+        "submit": "Add contract"
+      },
+      "changeProvider": {
+        "title": "Change provider",
+        "submit": "Change provider"
+      },
+      "cancel": "Cancel",
+      "formError": "Something went wrong. Please try again."
+    },
+    "fields": {
+      "provider": {
+        "label": "Provider",
+        "placeholder": "Select a provider"
+      },
+      "validFrom": {
+        "label": "In effect from",
+        "placeholder": "YYYY-MM-DD"
+      },
+      "changeDate": {
+        "label": "Change date",
+        "placeholder": "YYYY-MM-DD"
+      },
+      "notes": {
+        "label": "Notes",
+        "placeholder": "Any remarks about this contract…"
       }
+    },
+    "toast": {
+      "added": "Contract added",
+      "providerChanged": "Provider changed",
+      "saveError": "Something went wrong. Please try again."
+    },
+    "validation": {
+      "providerId": {
+        "required": "Please select a provider"
+      },
+      "validFrom": {
+        "required": "Start date is required",
+        "invalid": "Enter a valid date"
+      },
+      "changeDate": {
+        "required": "Change date is required"
+      },
+      "notes": {
+        "tooLong": "Notes are too long (max 1000 characters)"
+      },
+      "overlap": "A contract for this service already exists during this period.",
+      "closeDateBeforeStart": "Close date must be after the contract start date.",
+      "changeDateBeforeStart": "Change date must be after the current contract start date."
+    },
+    "noProviders": {
+      "message": "No providers yet.",
+      "link": "Add a provider first."
     }
   },
   "services": {

@@ -3,13 +3,13 @@
 import { X } from "lucide-react";
 
 import { Sheet, SheetClose, SheetContent, SheetTitle } from "@/components/ui/sheet";
-import type { TContractEra } from "../../../../_data/mock";
+import type { TContractWithProvider } from "@/lib/db/access/contracts";
 import { TimelineEntry } from "./components/timeline-entry";
 
 type TProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  history: TContractEra[];
+  history: TContractWithProvider[];
 };
 
 const ContractHistoryDrawer = ({ open, onOpenChange, history }: TProps) => (
@@ -17,7 +17,9 @@ const ContractHistoryDrawer = ({ open, onOpenChange, history }: TProps) => (
     <SheetContent
       side="right"
       showCloseButton={false}
-      className="flex w-[520px] max-w-[520px] flex-col p-0 sm:max-w-[520px]"
+      // className="flex w-[520px] max-w-[520px] flex-col p-0 sm:max-w-[520px]"
+      className="flex flex-col p-0"
+      style={{ width: 520, maxWidth: 520 }}
     >
       {/* Header */}
       <div
@@ -34,9 +36,15 @@ const ContractHistoryDrawer = ({ open, onOpenChange, history }: TProps) => (
 
       {/* Body */}
       <div className="flex-1 overflow-y-auto" style={{ padding: 20 }}>
-        {history.map((entry, i) => (
-          <TimelineEntry key={entry.id} entry={entry} isLast={i === history.length - 1} />
-        ))}
+        {history.length === 0 ? (
+          <p className="text-zinc-500 dark:text-zinc-400" style={{ fontSize: 13.5 }}>
+            No contract history yet.
+          </p>
+        ) : (
+          history.map((item, i) => (
+            <TimelineEntry key={item.contract.id} item={item} isLast={i === history.length - 1} />
+          ))
+        )}
       </div>
 
       {/* Footer */}

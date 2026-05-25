@@ -1,0 +1,248 @@
+"use server";
+
+import { revalidatePath } from "next/cache";
+import { and, eq, isNull } from "drizzle-orm";
+
+import { auth } from "@/lib/auth";
+import { db } from "@/lib/db/client";
+import { contracts } from "@/lib/db/schema/contracts";
+import type { TContract, TContractId } from "@/lib/db/schema/contracts";
+import type { ProviderId } from "@/lib/db/schema/providers";
+import type { TServiceId } from "@/lib/db/schema/services";
+import type { UserId } from "@/lib/db/schema/auth";
+import { contractByIdForUser, currentContractForService } from "@/lib/db/access/contracts";
+import { providerByIdForUser } from "@/lib/db/access/providers";
+import { requirePropertyRole } from "@/lib/db/access/properties";
+import { serviceByIdForUser } from "@/lib/db/access/services";
+import { NotFoundError, ValidationError, err, ok } from "@/lib/errors";
+import type { Result } from "@/lib/errors";
+import { insertContractInternal } from "./lib";
+import { changeProviderSchema, createContractSchema, updateContractNotesSchema } from "./schema";
+import type {
+  TChangeProviderInput,
+  TCreateContractInput,
+  TUpdateContractNotesInput,
+} from "./schema";
+
+// Throws on unauthenticated access — unexpected error, not a domain error.
+const requireAuth = async (): Promise<UserId> => {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("Unauthenticated");
+  return session.user.id as UserId;
+};
+
+// PostgreSQL error code 23P01 = exclusion_violation.
+const isExclusionViolation = (error: unknown): boolean =>
+  typeof error === "object" &&
+  error !== null &&
+  "code" in error &&
+  (error as { code: unknown }).code === "23P01";
+
+export const createContract = async (
+  input: TCreateContractInput,
+): Promise<Result<TContract, ValidationError | NotFoundError>> => {
+  const parsed = createContractSchema.safeParse(input);
+  if (!parsed.success) {
+    return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
+  }
+
+  const userId = await requireAuth();
+  const serviceId = parsed.data.serviceId as TServiceId;
+  const providerId = parsed.data.providerId as ProviderId;
+
+  // Verify service is accessible and get propertyId for role check.
+  const serviceAccess = await serviceByIdForUser(userId, serviceId);
+  if (!serviceAccess.ok) return serviceAccess;
+
+  const propertyId = serviceAccess.value.service.propertyId;
+  const roleGuard = await requirePropertyRole(userId, propertyId, "editor");
+  if (!roleGuard.ok) return roleGuard;
+
+  // Validate that the provider belongs to the current user (prevents cross-user leakage).
+  const providerGuard = await providerByIdForUser(userId, providerId);
+  if (!providerGuard.ok) return providerGuard;
+
+  const validFrom = new Date(parsed.data.validFrom);
+
+  try {
+    const contract = await db.transaction(async (tx) =>
+      insertContractInternal(tx, {
+        serviceId,
+        providerId,
+        validFrom,
+        notes: parsed.data.notes || null,
+      }),
+    );
+
+    revalidatePath(`/properties/${propertyId}/services/${serviceId}`);
+    return ok(contract);
+  } catch (error) {
+    if (isExclusionViolation(error)) {
+      return err(new ValidationError("validation.overlap"));
+    }
+    throw error;
+  }
+};
+
+export const closeContract = async (
+  contractId: TContractId,
+  validTo: Date,
+): Promise<Result<void, ValidationError | NotFoundError>> => {
+  const userId = await requireAuth();
+
+  const contractAccess = await contractByIdForUser(userId, contractId);
+  if (!contractAccess.ok) return contractAccess;
+
+  const { contract } = contractAccess.value;
+  const serviceAccess = await serviceByIdForUser(userId, contract.serviceId);
+  if (!serviceAccess.ok) return serviceAccess;
+
+  const roleGuard = await requirePropertyRole(
+    userId,
+    serviceAccess.value.service.propertyId,
+    "editor",
+  );
+  if (!roleGuard.ok) return roleGuard;
+
+  if (validTo <= contract.validFrom) {
+    return err(new ValidationError("validation.closeDateBeforeStart"));
+  }
+
+  await db
+    .update(contracts)
+    .set({ validTo })
+    .where(and(eq(contracts.id, contractId), isNull(contracts.deletedAt)));
+
+  revalidatePath(
+    `/properties/${serviceAccess.value.service.propertyId}/services/${contract.serviceId}`,
+  );
+  return ok(undefined);
+};
+
+export const changeProvider = async (
+  input: TChangeProviderInput,
+): Promise<Result<TContract, ValidationError | NotFoundError>> => {
+  const parsed = changeProviderSchema.safeParse(input);
+  if (!parsed.success) {
+    return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
+  }
+
+  const userId = await requireAuth();
+  const serviceId = parsed.data.serviceId as TServiceId;
+  const newProviderId = parsed.data.newProviderId as ProviderId;
+  const changeDate = new Date(parsed.data.changeDate);
+
+  const serviceAccess = await serviceByIdForUser(userId, serviceId);
+  if (!serviceAccess.ok) return serviceAccess;
+
+  const propertyId = serviceAccess.value.service.propertyId;
+  const roleGuard = await requirePropertyRole(userId, propertyId, "editor");
+  if (!roleGuard.ok) return roleGuard;
+
+  // Validate that the new provider belongs to the current user.
+  const providerGuard = await providerByIdForUser(userId, newProviderId);
+  if (!providerGuard.ok) return providerGuard;
+
+  // The current contract must exist — "change provider" implies there is something to change.
+  const currentContractResult = await currentContractForService(userId, serviceId);
+  if (!currentContractResult.ok) return currentContractResult;
+  if (!currentContractResult.value) {
+    return err(new NotFoundError("contract"));
+  }
+
+  const currentContract = currentContractResult.value.contract;
+
+  if (changeDate <= currentContract.validFrom) {
+    return err(new ValidationError("validation.changeDateBeforeStart"));
+  }
+
+  try {
+    const newContract = await db.transaction(async (tx) => {
+      // Close the current contract at changeDate.
+      await tx
+        .update(contracts)
+        .set({ validTo: changeDate })
+        .where(and(eq(contracts.id, currentContract.id), isNull(contracts.deletedAt)));
+
+      // Open the new contract starting at the same instant — half-open intervals meet without gap.
+      return insertContractInternal(tx, {
+        serviceId,
+        providerId: newProviderId,
+        validFrom: changeDate,
+        notes: parsed.data.notes || null,
+      });
+    });
+
+    revalidatePath(`/properties/${propertyId}/services/${serviceId}`);
+    return ok(newContract);
+  } catch (error) {
+    if (isExclusionViolation(error)) {
+      return err(new ValidationError("validation.overlap"));
+    }
+    throw error;
+  }
+};
+
+export const updateContractNotes = async (
+  contractId: TContractId,
+  input: TUpdateContractNotesInput,
+): Promise<Result<void, ValidationError | NotFoundError>> => {
+  const parsed = updateContractNotesSchema.safeParse(input);
+  if (!parsed.success) {
+    return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
+  }
+
+  const userId = await requireAuth();
+
+  const contractAccess = await contractByIdForUser(userId, contractId);
+  if (!contractAccess.ok) return contractAccess;
+
+  const serviceAccess = await serviceByIdForUser(userId, contractAccess.value.contract.serviceId);
+  if (!serviceAccess.ok) return serviceAccess;
+
+  const roleGuard = await requirePropertyRole(
+    userId,
+    serviceAccess.value.service.propertyId,
+    "editor",
+  );
+  if (!roleGuard.ok) return roleGuard;
+
+  await db
+    .update(contracts)
+    .set({ notes: parsed.data.notes || null })
+    .where(and(eq(contracts.id, contractAccess.value.contract.id), isNull(contracts.deletedAt)));
+
+  revalidatePath(
+    `/properties/${serviceAccess.value.service.propertyId}/services/${contractAccess.value.contract.serviceId}`,
+  );
+  return ok(undefined);
+};
+
+export const softDeleteContract = async (
+  contractId: TContractId,
+): Promise<Result<void, NotFoundError>> => {
+  const userId = await requireAuth();
+
+  const contractAccess = await contractByIdForUser(userId, contractId);
+  if (!contractAccess.ok) return contractAccess;
+
+  const serviceAccess = await serviceByIdForUser(userId, contractAccess.value.contract.serviceId);
+  if (!serviceAccess.ok) return serviceAccess;
+
+  const roleGuard = await requirePropertyRole(
+    userId,
+    serviceAccess.value.service.propertyId,
+    "editor",
+  );
+  if (!roleGuard.ok) return roleGuard;
+
+  await db
+    .update(contracts)
+    .set({ deletedAt: new Date() })
+    .where(and(eq(contracts.id, contractId), isNull(contracts.deletedAt)));
+
+  revalidatePath(
+    `/properties/${serviceAccess.value.service.propertyId}/services/${contractAccess.value.contract.serviceId}`,
+  );
+  return ok(undefined);
+};

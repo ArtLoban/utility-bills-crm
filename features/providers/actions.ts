@@ -5,12 +5,13 @@ import { and, eq, isNull } from "drizzle-orm";
 
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db/client";
+import { contracts } from "@/lib/db/schema/contracts";
 import { providers } from "@/lib/db/schema/providers";
 import type { ProviderId, TProvider } from "@/lib/db/schema/providers";
 import type { UserId } from "@/lib/db/schema/auth";
 import { providerByIdForUser } from "@/lib/db/access/providers";
-import { ValidationError, err, ok } from "@/lib/errors";
-import type { NotFoundError, Result } from "@/lib/errors";
+import { NotFoundError, ValidationError, err, ok } from "@/lib/errors";
+import type { Result } from "@/lib/errors";
 import { providerSchema } from "./schema";
 import type { TProviderInput } from "./schema";
 
@@ -76,13 +77,24 @@ export const editProvider = async (
 
 export const softDeleteProvider = async (
   providerId: ProviderId,
-): Promise<Result<void, NotFoundError>> => {
+): Promise<Result<void, NotFoundError | ValidationError>> => {
   const currentUserId = await requireAuth();
 
   const guard = await providerByIdForUser(currentUserId, providerId);
   if (!guard.ok) return guard;
 
-  // devnote: Active-contracts delete guard omitted — contracts don't exist yet. Add in Stage 4.2.
+  // Active-contracts guard: a provider referenced by any non-soft-deleted contract
+  // cannot be soft-deleted. The DB FK RESTRICT covers hard deletes; this covers soft deletes.
+  const activeContracts = await db
+    .select({ id: contracts.id })
+    .from(contracts)
+    .where(and(eq(contracts.providerId, providerId), isNull(contracts.deletedAt)))
+    .limit(1);
+
+  if (activeContracts.length > 0) {
+    return err(new ValidationError("validation.hasActiveContracts"));
+  }
+
   await db
     .update(providers)
     .set({ deletedAt: new Date() })

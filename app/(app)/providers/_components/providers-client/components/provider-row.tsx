@@ -28,7 +28,12 @@ export const ProviderRow = ({ provider }: TProps) => {
     try {
       const result = await softDeleteProvider(provider.id);
       if (!result.ok) {
-        toast.error(t("toast.deleteError"));
+        if (result.error.name === "ValidationError") {
+          const key = result.error.message as Parameters<typeof t>[0];
+          toast.error(t(key));
+        } else {
+          toast.error(t("toast.deleteError"));
+        }
         setConfirmOpen(false);
         return;
       }

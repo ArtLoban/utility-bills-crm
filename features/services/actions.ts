@@ -5,6 +5,7 @@ import { and, eq, isNull } from "drizzle-orm";
 
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db/client";
+import { contracts } from "@/lib/db/schema/contracts";
 import { services } from "@/lib/db/schema/services";
 import type { TService, TServiceId } from "@/lib/db/schema/services";
 import type { PropertyId } from "@/lib/db/schema/properties";
@@ -119,12 +120,22 @@ export const softDeleteService = async (
   const guard = await requirePropertyRole(currentUserId, propertyId, "editor");
   if (!guard.ok) return guard;
 
-  // Soft-delete cascade for service children — add each new entity in one line here as introduced.
-  // Future: contracts, tariffs, meters/readings, bills, payments.
-  await db
-    .update(services)
-    .set({ deletedAt: new Date() })
-    .where(and(eq(services.id, serviceId), isNull(services.deletedAt)));
+  await db.transaction(async (tx) => {
+    const now = new Date();
+
+    // Soft-delete cascade for service children — add each new entity in one line here as introduced.
+    // contracts ↓
+    await tx
+      .update(contracts)
+      .set({ deletedAt: now })
+      .where(and(eq(contracts.serviceId, serviceId), isNull(contracts.deletedAt)));
+    // Future: tariffs, meters/readings, bills, payments.
+
+    await tx
+      .update(services)
+      .set({ deletedAt: now })
+      .where(and(eq(services.id, serviceId), isNull(services.deletedAt)));
+  });
 
   revalidatePath(`/properties/${propertyId}`);
   return ok(undefined);

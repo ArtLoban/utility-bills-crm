@@ -5,3 +5,4 @@ export * from "./properties";
 export * from "./providers";
 export * from "./service-types";
 export * from "./services";
+export * from "./contracts";
