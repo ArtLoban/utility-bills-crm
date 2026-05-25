@@ -8,12 +8,12 @@ import { ConfirmDialog } from "@/components/confirm-dialog";
 import { createSafeContext } from "@/lib/utils/create-safe-context";
 import type { TPayment } from "@/lib/types/models/payment";
 
-type TPaymentsTableContextValue = {
+type TPaymentsTableContext = {
   requestDelete: (payment: TPayment) => void;
 };
 
-const [PaymentsTableProvider, usePaymentsTable] =
-  createSafeContext<TPaymentsTableContextValue>("PaymentsTable");
+const [PaymentsTableContext, usePaymentsTable] =
+  createSafeContext<TPaymentsTableContext>("PaymentsTable");
 
 export { usePaymentsTable };
 
@@ -32,7 +32,7 @@ export const PaymentsTableActions = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <PaymentsTableProvider value={{ requestDelete: setRowToDelete }}>
+    <PaymentsTableContext value={{ requestDelete: setRowToDelete }}>
       {children}
       <ConfirmDialog
         open={rowToDelete !== null}
@@ -51,6 +51,6 @@ export const PaymentsTableActions = ({ children }: { children: ReactNode }) => {
         isPending={isPending}
         onConfirm={handleConfirm}
       />
-    </PaymentsTableProvider>
+    </PaymentsTableContext>
   );
 };

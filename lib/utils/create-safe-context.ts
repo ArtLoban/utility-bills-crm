@@ -7,7 +7,7 @@ export const createSafeContext = <T>(name: string) => {
   const useSafeContext = (): T => {
     const value = useContext(Ctx);
     if (value === null) {
-      throw new Error(`use${name} must be used within <${name}Provider>`);
+      throw new Error(`use${name} must be used within <${name}Context>`);
     }
     return value;
   };
