@@ -21,3 +21,22 @@ export const SERVICE_LABELS: Record<TServiceKey, string> = {
   heating: "Heating",
   internet: "Internet",
 };
+
+// Converts DB snake_case service type code to camelCase TServiceKey.
+// "cold_water" → "coldWater", "electricity" → "electricity", etc.
+const snakeToCamel = (code: string): string =>
+  code.replace(/_([a-z])/g, (_, c: string) => c.toUpperCase());
+
+// Maps a DB service type code to TServiceKey, or undefined if not in the design system.
+export const dbCodeToServiceKey = (dbCode: string): TServiceKey | undefined => {
+  const camel = snakeToCamel(dbCode) as TServiceKey;
+  return camel in SERVICE_COLORS ? camel : undefined;
+};
+
+// Returns a human-readable label for a DB service type code.
+export const getServiceLabel = (dbCode: string): string => {
+  const key = dbCodeToServiceKey(dbCode);
+  if (key) return SERVICE_LABELS[key];
+  // Fallback: prettify the raw code ("gas_delivery" → "Gas delivery").
+  return dbCode.replace(/_/g, " ").replace(/^[a-z]/, (c) => c.toUpperCase());
+};

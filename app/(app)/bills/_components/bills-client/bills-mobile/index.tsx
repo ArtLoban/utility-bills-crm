@@ -1,13 +1,17 @@
+"use client";
+
 import { ArrowDown } from "lucide-react";
 import { useState } from "react";
 
-import { SERVICE_COLORS } from "@/lib/constants/service-colors";
+import { SERVICE_COLORS, dbCodeToServiceKey } from "@/lib/constants/service-colors";
 import { ACCENT, DESTRUCTIVE, TINT_BG, TINT_BORDER } from "@/lib/constants/ui-tokens";
-import { BILL_PROPERTIES, BILL_SERVICES, TBill, TFilterState } from "@/app/(app)/bills/_data/mock";
+import type { TBillRow, TFilterState } from "@/features/bills/types";
 import { BillCard } from "./bill-card";
 import { FilterChip } from "./filter-chip";
 import { FilterSheet } from "./filter-sheet";
 import { MobilePager } from "./mobile-pager";
+
+type TFilterOption = { id: string; name: string };
 
 type TProps = {
   filters: TFilterState;
@@ -16,7 +20,9 @@ type TProps = {
   totalPages: number;
   onPageChange: (page: number) => void;
   total: number;
-  pageRows: TBill[];
+  pageRows: TBillRow[];
+  propertyOptions: TFilterOption[];
+  serviceOptions: TFilterOption[];
 };
 
 const PERIOD_LABELS: Record<string, string> = {
@@ -32,6 +38,8 @@ const BillsMobile = ({
   onPageChange,
   total,
   pageRows,
+  propertyOptions,
+  serviceOptions,
 }: TProps) => {
   const [sheetOpen, setSheetOpen] = useState(false);
 
@@ -43,18 +51,14 @@ const BillsMobile = ({
 
   const propertyName =
     filters.property !== "all"
-      ? (BILL_PROPERTIES.find((p) => p.id === filters.property)?.name ?? filters.property)
+      ? (propertyOptions.find((p) => p.id === filters.property)?.name ?? filters.property)
       : null;
 
-  const serviceName =
-    filters.service !== "all"
-      ? (BILL_SERVICES.find((s) => s.id === filters.service)?.name ?? filters.service)
-      : null;
-
-  const serviceColor =
-    filters.service !== "all"
-      ? SERVICE_COLORS[filters.service as keyof typeof SERVICE_COLORS]
-      : undefined;
+  const serviceOption =
+    filters.service !== "all" ? serviceOptions.find((s) => s.id === filters.service) : null;
+  const serviceName = serviceOption?.name ?? null;
+  const serviceKey = filters.service !== "all" ? dbCodeToServiceKey(filters.service) : undefined;
+  const serviceColor = serviceKey ? SERVICE_COLORS[serviceKey] : undefined;
 
   const periodLabel = filters.period !== "last12" ? PERIOD_LABELS[filters.period] : null;
 
@@ -201,6 +205,8 @@ const BillsMobile = ({
         onOpenChange={setSheetOpen}
         filters={filters}
         onFilterChange={onFilterChange}
+        propertyOptions={propertyOptions}
+        serviceOptions={serviceOptions}
       />
     </div>
   );

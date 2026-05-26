@@ -28,7 +28,8 @@
     "db:seed:account-numbers": "tsx lib/db/seeds/account-numbers.seed.ts",
     "db:seed:payment-details": "tsx lib/db/seeds/payment-details.seed.ts",
     "db:seed:meters": "tsx lib/db/seeds/meters.seed.ts",
-    "db:seed:readings": "tsx lib/db/seeds/readings.seed.ts"
+    "db:seed:readings": "tsx lib/db/seeds/readings.seed.ts",
+    "db:seed:bills": "tsx lib/db/seeds/bills.seed.ts"
   },
   "lint-staged": {
     "*.{ts,tsx,js,mjs,cjs}": [

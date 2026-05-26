@@ -1,10 +1,10 @@
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 
-import { TBill, TSortColumn, TSortDir } from "@/app/(app)/bills/_data/mock";
+import type { TBillRow, TSortColumn, TSortDir } from "@/features/bills/types";
 import { BillRow } from "./bill-row";
 
 type TProps = {
-  rows: TBill[];
+  rows: TBillRow[];
   sortCol: TSortColumn;
   sortDir: TSortDir;
   onSort: (col: TSortColumn) => void;

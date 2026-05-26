@@ -1,4 +1,6 @@
-import { MoreHorizontal } from "lucide-react";
+"use client";
+
+import { Layers, MoreHorizontal } from "lucide-react";
 
 import {
   DropdownMenu,
@@ -7,16 +9,19 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { SERVICE_COLORS } from "@/lib/constants/service-colors";
+import { SERVICE_COLORS, dbCodeToServiceKey } from "@/lib/constants/service-colors";
 import { SERVICE_ICONS } from "@/lib/constants/service-icons";
 import { DESTRUCTIVE } from "@/lib/constants/ui-tokens";
-import { TBill } from "@/app/(app)/bills/_data/mock";
+import type { TBillRow } from "@/features/bills/types";
+import { useBillsTable } from "../context";
 
-type TProps = { row: TBill };
+type TProps = { row: TBillRow };
 
 const BillCard = ({ row }: TProps) => {
-  const color = SERVICE_COLORS[row.service.id];
-  const Icon = SERVICE_ICONS[row.service.id];
+  const { requestEdit, requestDelete } = useBillsTable();
+  const key = dbCodeToServiceKey(row.service.id);
+  const color = key ? SERVICE_COLORS[key] : "#71717a";
+  const Icon = key ? SERVICE_ICONS[key] : Layers;
   const shortDate = row.date.split(" ").slice(0, 2).join(" ");
   const amountStr = `−${row.amount.toLocaleString()}`;
 
@@ -129,6 +134,7 @@ const BillCard = ({ row }: TProps) => {
             flexShrink: 0,
           }}
           className="data-[state=open]:border-zinc-200 data-[state=open]:bg-zinc-100 dark:data-[state=open]:border-zinc-700 dark:data-[state=open]:bg-zinc-800"
+          onClick={(e) => e.stopPropagation()}
         >
           <MoreHorizontal
             size={15}
@@ -137,11 +143,11 @@ const BillCard = ({ row }: TProps) => {
           />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-40">
-          {/* devnote: wire Edit action when API routes exist */}
-          <DropdownMenuItem>Edit</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => requestEdit(row)}>Edit</DropdownMenuItem>
           <DropdownMenuSeparator />
-          {/* devnote: wire Delete action when API routes exist */}
-          <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
+          <DropdownMenuItem variant="destructive" onClick={() => requestDelete(row)}>
+            Delete
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

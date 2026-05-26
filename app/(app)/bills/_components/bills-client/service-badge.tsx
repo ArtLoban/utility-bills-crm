@@ -1,15 +1,24 @@
-import { SERVICE_COLORS } from "@/lib/constants/service-colors";
+import { Layers } from "lucide-react";
+
+import {
+  SERVICE_COLORS,
+  dbCodeToServiceKey,
+  getServiceLabel,
+} from "@/lib/constants/service-colors";
 import { SERVICE_ICONS } from "@/lib/constants/service-icons";
-import { TBillService } from "@/app/(app)/bills/_data/mock";
+
+type TService = { id: string; name: string };
 
 type TProps = {
-  service: TBillService;
+  service: TService;
   size?: "sm" | "default";
 };
 
 const ServiceBadge = ({ service, size = "default" }: TProps) => {
-  const color = SERVICE_COLORS[service.id];
-  const Icon = SERVICE_ICONS[service.id];
+  const key = dbCodeToServiceKey(service.id);
+  const color = key ? SERVICE_COLORS[key] : "#71717a";
+  const Icon = key ? SERVICE_ICONS[key] : Layers;
+  const label = service.name || getServiceLabel(service.id);
 
   const squareSize = size === "sm" ? 16 : 20;
   const iconSize = size === "sm" ? 10 : 12;
@@ -30,7 +39,7 @@ const ServiceBadge = ({ service, size = "default" }: TProps) => {
       >
         <Icon size={iconSize} style={{ color }} strokeWidth={1.75} />
       </span>
-      <span style={{ fontSize: 13.5 }}>{service.name}</span>
+      <span style={{ fontSize: 13.5 }}>{label}</span>
     </span>
   );
 };

@@ -1,3 +1,5 @@
+"use client";
+
 import { MoreHorizontal } from "lucide-react";
 
 import {
@@ -8,17 +10,19 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ServiceBadge } from "@/app/(app)/bills/_components/bills-client/service-badge";
-import { TBill } from "@/app/(app)/bills/_data/mock";
 import { DESTRUCTIVE } from "@/lib/constants/ui-tokens";
+import type { TBillRow } from "@/features/bills/types";
+import { useBillsTable } from "../context";
 
 type TProps = {
-  row: TBill;
+  row: TBillRow;
   isLast: boolean;
 };
 
 const formatAmount = (amount: number): string => `−${amount.toLocaleString("en-US")} UAH`;
 
 const BillRow = ({ row, isLast }: TProps) => {
+  const { requestEdit, requestDelete } = useBillsTable();
   const tdBorderClass = isLast ? "" : "border-b border-zinc-200 dark:border-zinc-800";
   const tdBaseClass = `${tdBorderClass} text-zinc-950 dark:text-zinc-50`;
 
@@ -28,11 +32,7 @@ const BillRow = ({ row, isLast }: TProps) => {
   };
 
   return (
-    <tr
-      className="hover:bg-zinc-50 dark:hover:bg-zinc-800/50"
-      style={{ cursor: "pointer" }}
-      // devnote: clicking the row should navigate to a bill detail page — not yet implemented
-    >
+    <tr className="hover:bg-zinc-50 dark:hover:bg-zinc-800/50" style={{ cursor: "default" }}>
       <td className={tdBaseClass} style={tdStyle}>
         {row.date}
       </td>
@@ -87,11 +87,11 @@ const BillRow = ({ row, isLast }: TProps) => {
             />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-40">
-            {/* devnote: wire Edit action when API routes exist */}
-            <DropdownMenuItem>Edit</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => requestEdit(row)}>Edit</DropdownMenuItem>
             <DropdownMenuSeparator />
-            {/* devnote: wire Delete action when API routes exist */}
-            <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
+            <DropdownMenuItem variant="destructive" onClick={() => requestDelete(row)}>
+              Delete
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </td>

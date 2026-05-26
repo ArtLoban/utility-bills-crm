@@ -1,17 +1,27 @@
-import { AlertTriangle, ChevronDown, X } from "lucide-react";
+"use client";
+
+import { ChevronDown, Loader2, X } from "lucide-react";
 import { useState } from "react";
 
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogClose, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { TServiceKey } from "@/lib/constants/service-colors";
 import { ACCENT, TINT_BG, TINT_BORDER } from "@/lib/constants/ui-tokens";
-import { BILL_PROPERTIES, BILL_SERVICES } from "@/app/(app)/bills/_data/mock";
+import { createBill, editBill } from "@/features/bills/actions";
+import type { PropertyId } from "@/lib/db/schema/properties";
+import type { TServiceId } from "@/lib/db/schema/services";
+import type { TServiceOption } from "@/lib/db/access/bills";
+import type { TBillRow } from "@/features/bills/types";
+import { toast } from "sonner";
+import { getServiceLabel } from "@/lib/constants/service-colors";
 import { ServiceChip } from "./service-chip";
 
 type TProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  propertyOptions: { id: PropertyId; name: string }[];
+  serviceOptions: Record<PropertyId, TServiceOption[]>;
+  bill?: TBillRow; // present → edit mode
 };
 
 type TFormState = {
@@ -22,25 +32,43 @@ type TFormState = {
   notes: string;
 };
 
-const INITIAL_STATE: TFormState = {
-  property: "",
-  service: "",
-  month: "apr2026",
-  amount: "",
-  notes: "",
+// Generate last 24 calendar months in descending order, format "YYYY-MM".
+const generateMonthOptions = (): { value: string; label: string }[] => {
+  const options: { value: string; label: string }[] = [];
+  const now = new Date();
+  const MONTH_NAMES = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+  for (let i = 0; i < 24; i++) {
+    const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - i, 1));
+    const value = `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}`;
+    const label = `${MONTH_NAMES[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
+    options.push({ value, label });
+  }
+  return options;
 };
 
-const MONTH_OPTIONS = [
-  { value: "apr2026", label: "April 2026" },
-  { value: "mar2026", label: "March 2026" },
-  { value: "feb2026", label: "February 2026" },
-  { value: "jan2026", label: "January 2026" },
-  { value: "dec2025", label: "December 2025" },
-  { value: "nov2025", label: "November 2025" },
-  { value: "custom", label: "Custom month…" },
-];
+const MONTH_OPTIONS = generateMonthOptions();
 
-const MOCK_EXPECTED = 432;
+const defaultMonth = (): string => MONTH_OPTIONS[0]?.value ?? "";
+
+// Derives "YYYY-MM" from periodSort (YYYYMM number), e.g. 202405 → "2024-05".
+const periodSortToMonth = (sort: number): string => {
+  const year = Math.floor(sort / 100);
+  const month = sort % 100;
+  return `${year}-${String(month).padStart(2, "0")}`;
+};
 
 type TModalSelectProps = {
   value: string;
@@ -100,28 +128,92 @@ const ModalSelect = ({ value, isFilled, onChange, children }: TModalSelectProps)
   </div>
 );
 
-const AddBillModal = ({ open, onOpenChange }: TProps) => {
-  const [form, setForm] = useState<TFormState>(INITIAL_STATE);
+const buildInitialState = (bill: TBillRow | undefined): TFormState => {
+  if (bill) {
+    return {
+      property: bill.property.id,
+      service: bill.serviceId,
+      month: periodSortToMonth(bill.periodSort),
+      amount: String(bill.amount),
+      notes: bill.notes ?? "",
+    };
+  }
+  return { property: "", service: "", month: defaultMonth(), amount: "", notes: "" };
+};
 
-  const set = (key: keyof TFormState) => (value: string) =>
+const AddBillModal = ({ open, onOpenChange, propertyOptions, serviceOptions, bill }: TProps) => {
+  const isEditMode = Boolean(bill);
+  const [form, setForm] = useState<TFormState>(() => buildInitialState(bill));
+  const [formError, setFormError] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+
+  const set = (key: keyof TFormState) => (value: string) => {
     setForm((f) => ({ ...f, [key]: value }));
+    if (formError) setFormError(null);
+  };
 
-  const isServiceKey = (v: string): v is TServiceKey => BILL_SERVICES.some((s) => s.id === v);
+  // Reset property → also reset service when property changes (create mode only)
+  const setProperty = (propertyId: string) => {
+    setForm((f) => ({ ...f, property: propertyId, service: "" }));
+    if (formError) setFormError(null);
+  };
 
-  const showTariffHint = form.service === "electricity" && form.amount !== "";
-  const amountNum = Number(form.amount);
-  const showWarning = showTariffHint && amountNum > MOCK_EXPECTED * 1.5;
-  const overPct = showWarning ? Math.round((amountNum / MOCK_EXPECTED - 1) * 100) : 0;
+  const availableServices: TServiceOption[] = serviceOptions[form.property as PropertyId] ?? [];
 
-  const canSave = form.property !== "" && form.service !== "" && form.amount !== "";
+  const selectedServiceCode =
+    availableServices.find((s) => s.id === form.service)?.typeCode ?? form.service;
 
-  const handleSave = () => {
-    // devnote: wire to POST /api/bills when API routes exist
-    onOpenChange(false);
+  const canSave = form.service !== "" && form.amount !== "" && form.month !== "";
+
+  const handleSave = async () => {
+    if (!canSave) return;
+    setIsSaving(true);
+    try {
+      if (isEditMode && bill) {
+        const result = await editBill(bill.id, {
+          month: form.month,
+          amount: Number(form.amount),
+          notes: form.notes,
+        });
+        if (!result.ok) {
+          if (result.error.name === "ValidationError") {
+            setFormError(result.error.message);
+          } else {
+            toast.error("Failed to save bill. Please try again.");
+            onOpenChange(false);
+          }
+          return;
+        }
+        toast.success("Bill updated.");
+      } else {
+        const result = await createBill({
+          serviceId: form.service as TServiceId,
+          month: form.month,
+          amount: Number(form.amount),
+          notes: form.notes,
+        });
+        if (!result.ok) {
+          if (result.error.name === "ValidationError") {
+            setFormError(result.error.message);
+          } else {
+            toast.error("Failed to create bill. Please try again.");
+            onOpenChange(false);
+          }
+          return;
+        }
+        toast.success("Bill added.");
+      }
+      onOpenChange(false);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleOpenChange = (next: boolean) => {
-    if (!next) setForm(INITIAL_STATE);
+    if (!next) {
+      setForm(buildInitialState(bill));
+      setFormError(null);
+    }
     onOpenChange(next);
   };
 
@@ -142,7 +234,7 @@ const AddBillModal = ({ open, onOpenChange }: TProps) => {
           }}
         >
           <DialogTitle style={{ fontSize: 15, fontWeight: 600, letterSpacing: -0.2, margin: 0 }}>
-            Add Bill
+            {isEditMode ? "Edit Bill" : "Add Bill"}
           </DialogTitle>
           <DialogClose
             style={{
@@ -164,69 +256,120 @@ const AddBillModal = ({ open, onOpenChange }: TProps) => {
 
         {/* Body */}
         <div style={{ padding: "20px 24px", display: "flex", flexDirection: "column", gap: 16 }}>
-          {/* Property */}
-          <div>
-            <label style={{ fontSize: 13.5, fontWeight: 500, display: "block", marginBottom: 6 }}>
-              Property
-            </label>
-            <ModalSelect
-              value={form.property}
-              isFilled={form.property !== ""}
-              onChange={set("property")}
-            >
-              <option value="" disabled>
-                Select property
-              </option>
-              {BILL_PROPERTIES.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.name}
-                </option>
-              ))}
-            </ModalSelect>
-          </div>
-
-          {/* Service */}
-          <div>
-            <label style={{ fontSize: 13.5, fontWeight: 500, display: "block", marginBottom: 6 }}>
-              Service
-            </label>
-            <ModalSelect
-              value={form.service}
-              isFilled={form.service !== ""}
-              onChange={set("service")}
-            >
-              <option value="" disabled>
-                Select service
-              </option>
-              {BILL_SERVICES.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.name}
-                </option>
-              ))}
-            </ModalSelect>
-            {form.service === "" && (
+          {/* Property — locked in edit mode */}
+          {isEditMode ? (
+            <div>
+              <label style={{ fontSize: 13.5, fontWeight: 500, display: "block", marginBottom: 6 }}>
+                Property
+              </label>
               <p
-                className="text-zinc-500 dark:text-zinc-400"
-                style={{ fontSize: 12.5, marginTop: 6 }}
-              >
-                Filtered by selected property
-              </p>
-            )}
-            {form.service !== "" && isServiceKey(form.service) && (
-              <div
-                className="text-zinc-500 dark:text-zinc-400"
+                className="text-zinc-950 dark:text-zinc-50"
                 style={{
+                  height: 36,
                   display: "flex",
                   alignItems: "center",
-                  gap: 6,
-                  marginTop: 6,
-                  fontSize: 12.5,
+                  fontSize: 14,
+                  fontWeight: 500,
+                  paddingLeft: 12,
+                  borderRadius: 6,
+                  border: "1px solid",
+                  borderColor: "var(--border)",
+                  background: "var(--muted)",
                 }}
               >
-                Selected: <ServiceChip serviceId={form.service} />
-              </div>
-            )}
-          </div>
+                {bill?.property.name}
+              </p>
+            </div>
+          ) : (
+            <div>
+              <label style={{ fontSize: 13.5, fontWeight: 500, display: "block", marginBottom: 6 }}>
+                Property
+              </label>
+              <ModalSelect
+                value={form.property}
+                isFilled={form.property !== ""}
+                onChange={setProperty}
+              >
+                <option value="" disabled>
+                  Select property
+                </option>
+                {propertyOptions.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.name}
+                  </option>
+                ))}
+              </ModalSelect>
+            </div>
+          )}
+
+          {/* Service — locked in edit mode */}
+          {isEditMode ? (
+            <div>
+              <label style={{ fontSize: 13.5, fontWeight: 500, display: "block", marginBottom: 6 }}>
+                Service
+              </label>
+              <p
+                className="text-zinc-950 dark:text-zinc-50"
+                style={{
+                  height: 36,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
+                  fontSize: 14,
+                  fontWeight: 500,
+                  paddingLeft: 12,
+                  borderRadius: 6,
+                  border: "1px solid",
+                  borderColor: "var(--border)",
+                  background: "var(--muted)",
+                }}
+              >
+                <ServiceChip serviceId={selectedServiceCode} />
+              </p>
+            </div>
+          ) : (
+            <div>
+              <label style={{ fontSize: 13.5, fontWeight: 500, display: "block", marginBottom: 6 }}>
+                Service
+              </label>
+              <ModalSelect
+                value={form.service}
+                isFilled={form.service !== ""}
+                onChange={set("service")}
+              >
+                <option value="" disabled>
+                  Select service
+                </option>
+                {availableServices.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {getServiceLabel(s.typeCode)}
+                  </option>
+                ))}
+              </ModalSelect>
+              {form.property === "" && (
+                <p
+                  className="text-zinc-500 dark:text-zinc-400"
+                  style={{ fontSize: 12.5, marginTop: 6 }}
+                >
+                  Select a property first
+                </p>
+              )}
+              {form.service !== "" && (
+                <div
+                  className="text-zinc-500 dark:text-zinc-400"
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 6,
+                    marginTop: 6,
+                    fontSize: 12.5,
+                  }}
+                >
+                  Selected: <ServiceChip serviceId={selectedServiceCode} />
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Month */}
           <div>
@@ -260,42 +403,6 @@ const AddBillModal = ({ open, onOpenChange }: TProps) => {
               }
               className="h-9"
             />
-            {showTariffHint && (
-              <div style={{ marginTop: 6, display: "flex", flexDirection: "column", gap: 4 }}>
-                <div
-                  className="text-zinc-500 dark:text-zinc-400"
-                  style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12.5 }}
-                >
-                  Expected based on your tariff:
-                  <span
-                    className="bg-zinc-100 dark:bg-zinc-800"
-                    style={{
-                      fontSize: 12.5,
-                      fontWeight: 600,
-                      padding: "1px 7px",
-                      borderRadius: 4,
-                      fontFeatureSettings: '"tnum" 1',
-                    }}
-                  >
-                    {MOCK_EXPECTED} UAH
-                  </span>
-                </div>
-                {showWarning && (
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "flex-start",
-                      gap: 6,
-                      fontSize: 12.5,
-                      color: "#d97706",
-                    }}
-                  >
-                    <AlertTriangle size={13} style={{ flexShrink: 0, marginTop: 1 }} />
-                    Amount is {overPct}% higher than expected — double-check before saving.
-                  </div>
-                )}
-              </div>
-            )}
           </div>
 
           {/* Notes */}
@@ -313,6 +420,8 @@ const AddBillModal = ({ open, onOpenChange }: TProps) => {
               rows={3}
             />
           </div>
+
+          {formError && <p className="text-destructive -mt-2 text-sm">{formError}</p>}
         </div>
 
         {/* Footer */}
@@ -341,9 +450,11 @@ const AddBillModal = ({ open, onOpenChange }: TProps) => {
           </DialogClose>
           <button
             onClick={handleSave}
-            disabled={!canSave}
+            disabled={!canSave || isSaving}
             className={
-              !canSave ? "bg-zinc-200 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400" : ""
+              !canSave || isSaving
+                ? "bg-zinc-200 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400"
+                : ""
             }
             style={{
               height: 34,
@@ -352,12 +463,16 @@ const AddBillModal = ({ open, onOpenChange }: TProps) => {
               fontFamily: "inherit",
               border: "none",
               borderRadius: 6,
-              cursor: canSave ? "pointer" : "default",
+              cursor: canSave && !isSaving ? "pointer" : "default",
               fontWeight: 500,
-              ...(canSave ? { background: ACCENT, color: "#fff" } : {}),
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 6,
+              ...(canSave && !isSaving ? { background: ACCENT, color: "#fff" } : {}),
             }}
           >
-            Save
+            {isSaving && <Loader2 size={14} className="animate-spin" />}
+            {isSaving ? "Saving…" : isEditMode ? "Save changes" : "Save"}
           </button>
         </div>
       </DialogContent>

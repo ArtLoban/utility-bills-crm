@@ -2,13 +2,17 @@ import { ChevronDown, X } from "lucide-react";
 
 import { Sheet, SheetClose, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { ACCENT } from "@/lib/constants/ui-tokens";
-import { BILL_PROPERTIES, BILL_SERVICES, TFilterState } from "@/app/(app)/bills/_data/mock";
+import type { TFilterState } from "@/features/bills/types";
+
+type TFilterOption = { id: string; name: string };
 
 type TProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   filters: TFilterState;
   onFilterChange: (filters: TFilterState) => void;
+  propertyOptions: TFilterOption[];
+  serviceOptions: TFilterOption[];
 };
 
 type TSheetSelectProps = {
@@ -59,7 +63,14 @@ const SheetSelect = ({ label, value, onChange, children }: TSheetSelectProps) =>
   </div>
 );
 
-const FilterSheet = ({ open, onOpenChange, filters, onFilterChange }: TProps) => {
+const FilterSheet = ({
+  open,
+  onOpenChange,
+  filters,
+  onFilterChange,
+  propertyOptions,
+  serviceOptions,
+}: TProps) => {
   const set = (key: keyof TFilterState) => (value: string) =>
     onFilterChange({ ...filters, [key]: value });
 
@@ -113,7 +124,7 @@ const FilterSheet = ({ open, onOpenChange, filters, onFilterChange }: TProps) =>
           <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
             <SheetSelect label="Property" value={filters.property} onChange={set("property")}>
               <option value="all">All properties</option>
-              {BILL_PROPERTIES.map((p) => (
+              {propertyOptions.map((p) => (
                 <option key={p.id} value={p.id}>
                   {p.name}
                 </option>
@@ -122,7 +133,7 @@ const FilterSheet = ({ open, onOpenChange, filters, onFilterChange }: TProps) =>
 
             <SheetSelect label="Service" value={filters.service} onChange={set("service")}>
               <option value="all">All services</option>
-              {BILL_SERVICES.map((s) => (
+              {serviceOptions.map((s) => (
                 <option key={s.id} value={s.id}>
                   {s.name}
                 </option>

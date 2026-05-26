@@ -1,11 +1,19 @@
-import { SERVICE_COLORS, SERVICE_LABELS, TServiceKey } from "@/lib/constants/service-colors";
+import { Layers } from "lucide-react";
+
+import {
+  SERVICE_COLORS,
+  dbCodeToServiceKey,
+  getServiceLabel,
+} from "@/lib/constants/service-colors";
 import { SERVICE_ICONS } from "@/lib/constants/service-icons";
 
-type TProps = { serviceId: TServiceKey };
+type TProps = { serviceId: string };
 
 const ServiceChip = ({ serviceId }: TProps) => {
-  const color = SERVICE_COLORS[serviceId];
-  const Icon = SERVICE_ICONS[serviceId];
+  const key = dbCodeToServiceKey(serviceId);
+  const color = key ? SERVICE_COLORS[key] : "#71717a";
+  const Icon = key ? SERVICE_ICONS[key] : Layers;
+  const label = getServiceLabel(serviceId);
 
   return (
     <span
@@ -22,7 +30,7 @@ const ServiceChip = ({ serviceId }: TProps) => {
       }}
     >
       <Icon size={12} style={{ color }} strokeWidth={1.75} />
-      {SERVICE_LABELS[serviceId]}
+      {label}
     </span>
   );
 };

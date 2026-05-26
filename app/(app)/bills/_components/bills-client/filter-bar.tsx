@@ -1,12 +1,16 @@
 import { ChevronDown } from "lucide-react";
 
-import { BILL_PROPERTIES, BILL_SERVICES, TFilterState } from "@/app/(app)/bills/_data/mock";
 import { ACCENT, TINT_BG, TINT_BORDER } from "@/lib/constants/ui-tokens";
+import type { TFilterState } from "@/features/bills/types";
+
+type TFilterOption = { id: string; name: string };
 
 type TProps = {
   filters: TFilterState;
   onFilterChange: (filters: TFilterState) => void;
   anyFilter: boolean;
+  propertyOptions: TFilterOption[];
+  serviceOptions: TFilterOption[];
 };
 
 type TSelectProps = {
@@ -63,7 +67,13 @@ const FilterSelect = ({ value, isActive, onChange, children }: TSelectProps) => 
   </div>
 );
 
-const FilterBar = ({ filters, onFilterChange, anyFilter }: TProps) => {
+const FilterBar = ({
+  filters,
+  onFilterChange,
+  anyFilter,
+  propertyOptions,
+  serviceOptions,
+}: TProps) => {
   const set = (key: keyof TFilterState) => (value: string) =>
     onFilterChange({ ...filters, [key]: value });
 
@@ -90,7 +100,7 @@ const FilterBar = ({ filters, onFilterChange, anyFilter }: TProps) => {
         onChange={set("property")}
       >
         <option value="all">All properties</option>
-        {BILL_PROPERTIES.map((p) => (
+        {propertyOptions.map((p) => (
           <option key={p.id} value={p.id}>
             {p.name}
           </option>
@@ -103,7 +113,7 @@ const FilterBar = ({ filters, onFilterChange, anyFilter }: TProps) => {
         onChange={set("service")}
       >
         <option value="all">All services</option>
-        {BILL_SERVICES.map((s) => (
+        {serviceOptions.map((s) => (
           <option key={s.id} value={s.id}>
             {s.name}
           </option>

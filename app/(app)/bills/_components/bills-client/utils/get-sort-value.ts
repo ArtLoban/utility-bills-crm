@@ -1,6 +1,6 @@
-import { TBill, TSortColumn } from "@/app/(app)/bills/_data/mock";
+import type { TBillRow, TSortColumn } from "@/features/bills/types";
 
-export const getSortValue = (bill: TBill, col: TSortColumn): string | number => {
+export const getSortValue = (bill: TBillRow, col: TSortColumn): string | number => {
   switch (col) {
     case "date":
       return bill.sortTs;
