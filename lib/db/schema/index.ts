@@ -10,3 +10,4 @@ export * from "./tariffs";
 export * from "./account-numbers";
 export * from "./payment-details";
 export * from "./meters";
+export * from "./readings";

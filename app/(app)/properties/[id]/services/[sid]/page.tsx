@@ -6,6 +6,7 @@ import {
   getAttributeHistory,
   getContractHistory,
   getCurrentMeterForService,
+  getLastReadingForMeter,
   getServiceDetail,
 } from "./_data/queries";
 import { ActivityCard } from "./_components/activity-card";
@@ -13,6 +14,7 @@ import { BalanceCard } from "./_components/balance-card";
 import { ContractCard } from "./_components/contract-card";
 import { MeterCard } from "./_components/meter-card";
 import { NotesCard } from "./_components/notes-card";
+import { QuickActions } from "./_components/quick-actions";
 import { ServicePageHeader } from "./_components/service-page-header";
 import { DeleteServiceAction } from "./_components/delete-service-action";
 import type { PropertyId } from "@/lib/db/schema/properties";
@@ -33,6 +35,8 @@ export default async function ServicePage({ params }: TProps) {
       getAttributeHistory(sid as TServiceId),
       getCurrentMeterForService(sid as TServiceId),
     ]);
+
+  const lastMeterReading = currentMeter ? await getLastReadingForMeter(currentMeter) : null;
 
   if (!propertyResult.ok || !serviceResult.ok) notFound();
 
@@ -88,6 +92,14 @@ export default async function ServicePage({ params }: TProps) {
           role={role}
         />
         <MeterCard meter={currentMeter} propertyId={id} />
+        {currentMeter && role !== "viewer" && (
+          <QuickActions
+            meter={currentMeter}
+            serviceType={serviceType}
+            propertyName={property.name}
+            lastReading={lastMeterReading}
+          />
+        )}
         <ActivityCard />
         <NotesCard notes={service.notes ?? null} editHref={editHref} role={role} />
       </div>

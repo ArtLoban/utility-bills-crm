@@ -1,4 +1,3 @@
-import type { TMeter } from "@/components/reading-modal/types";
 import type { TServiceKey } from "@/lib/constants/service-colors";
 
 export type TContractInfo = {
@@ -133,15 +132,3 @@ export const MOCK_CONTRACT_HISTORY: TContractEra[] = [
     paymentDetails: "KE-00482-77 · Ощадбанк",
   },
 ];
-
-export const MOCK_METER_FOR_READING: TMeter = {
-  serialNumber: "NIK2303-11-456789",
-  serviceKey: "electricity",
-  propertyName: "Apartment on Main St",
-  zones: 2,
-  lastReadingValue: 0,
-  lastReadingDate: "Oct 22, 2025",
-  unit: "kWh",
-  lastReadingT1: 8432,
-  lastReadingT2: 3210,
-};

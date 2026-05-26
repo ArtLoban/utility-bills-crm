@@ -3,16 +3,22 @@
 import { useState } from "react";
 import { FileText, Gauge, Wallet } from "lucide-react";
 
-import { ReadingModal } from "@/components/reading-modal";
-import type { TMeter } from "@/components/reading-modal/types";
+import type { TMeter } from "@/lib/db/schema/meters";
+import type { TServiceType } from "@/lib/db/schema/service-types";
+import type { TReading } from "@/lib/db/schema/readings";
+import { SubmitReadingModal } from "@/features/readings/components/submit-reading-modal";
 import { ACCENT } from "@/lib/constants/ui-tokens";
 
-type TProps = { readingMeter: TMeter };
+type TProps = {
+  meter: TMeter;
+  serviceType: TServiceType;
+  propertyName: string;
+  lastReading: TReading | null;
+};
 
-const QuickActions = ({ readingMeter }: TProps) => {
+const QuickActions = ({ meter, serviceType, propertyName, lastReading }: TProps) => {
   const [readingOpen, setReadingOpen] = useState(false);
 
-  // devnote: consider lifting ReadingModal state to page level if sync needed
   return (
     <>
       <div
@@ -36,7 +42,7 @@ const QuickActions = ({ readingMeter }: TProps) => {
             <Gauge size={13} />
             Submit reading
           </button>
-          {/* devnote: wire to AddBillModal/RecordPaymentModal when implemented */}
+          {/* devnote: wire to AddBillModal when implemented in Stage 6 */}
           <button
             className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-zinc-200 bg-white text-sm font-medium text-zinc-950 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50"
             style={{ height: 32, padding: "0 12px" }}
@@ -44,7 +50,7 @@ const QuickActions = ({ readingMeter }: TProps) => {
             <FileText size={13} />
             Add bill
           </button>
-          {/* devnote: wire to AddBillModal/RecordPaymentModal when implemented */}
+          {/* devnote: wire to RecordPaymentModal when implemented in Stage 6 */}
           <button
             className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-zinc-200 bg-white text-sm font-medium text-zinc-950 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50"
             style={{ height: 32, padding: "0 12px" }}
@@ -55,7 +61,14 @@ const QuickActions = ({ readingMeter }: TProps) => {
         </div>
       </div>
 
-      <ReadingModal open={readingOpen} onOpenChange={setReadingOpen} meter={readingMeter} />
+      <SubmitReadingModal
+        open={readingOpen}
+        onOpenChange={setReadingOpen}
+        meter={meter}
+        serviceType={serviceType}
+        propertyName={propertyName}
+        lastReading={lastReading}
+      />
     </>
   );
 };

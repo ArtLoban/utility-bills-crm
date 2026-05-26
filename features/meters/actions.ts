@@ -7,6 +7,7 @@ import { auth } from "@/lib/auth";
 import { db } from "@/lib/db/client";
 import { meters } from "@/lib/db/schema/meters";
 import type { MeterId, TMeter } from "@/lib/db/schema/meters";
+import { readings } from "@/lib/db/schema/readings";
 import type { PropertyId } from "@/lib/db/schema/properties";
 import type { TServiceTypeId } from "@/lib/db/schema/service-types";
 import { serviceTypes } from "@/lib/db/schema/service-types";
@@ -218,7 +219,10 @@ export const softDeleteMeter = async (meterId: MeterId): Promise<Result<void, No
   const now = new Date();
 
   await db.transaction(async (tx) => {
-    // Stage 5.2: soft-delete readings here (register readings cascade in this transaction).
+    await tx
+      .update(readings)
+      .set({ deletedAt: now })
+      .where(and(eq(readings.meterId, meterId), isNull(readings.deletedAt)));
 
     await tx
       .update(meters)

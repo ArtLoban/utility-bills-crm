@@ -7,8 +7,10 @@ import { properties, propertyAccess } from "@/lib/db/schema/properties";
 import type { PropertyId, TPropertyRole } from "@/lib/db/schema/properties";
 import { serviceTypes } from "@/lib/db/schema/service-types";
 import type { TServiceTypeId, TServiceType } from "@/lib/db/schema/service-types";
+import type { TReading } from "@/lib/db/schema/readings";
 import type { UserId } from "@/lib/db/schema/auth";
 import { propertyByIdForUser } from "./properties";
+import { lastReadingsByMeterIds } from "./readings";
 import { NotFoundError, err, ok } from "@/lib/errors";
 import type { Result } from "@/lib/errors";
 
@@ -19,6 +21,7 @@ export type TMeterGlobalRow = {
   serviceType: TServiceType;
   property: { id: PropertyId; name: string };
   role: TPropertyRole;
+  lastReading: TReading | null;
 };
 
 // --- Access helpers ---
@@ -108,10 +111,14 @@ export const metersForGlobalList = async (userId: UserId): Promise<TMeterGlobalR
     .where(and(isNull(meters.deletedAt), isNull(properties.deletedAt)))
     .orderBy(asc(properties.name), asc(serviceTypes.sortOrder), desc(meters.validFrom));
 
+  const meterIds = rows.map((r) => r.meter.id);
+  const lastReadings = await lastReadingsByMeterIds(meterIds);
+
   return rows.map((r) => ({
     meter: r.meter,
     serviceType: r.serviceType,
     property: { id: r.propertyId, name: r.propertyName },
     role: r.role,
+    lastReading: lastReadings.get(r.meter.id) ?? null,
   }));
 };

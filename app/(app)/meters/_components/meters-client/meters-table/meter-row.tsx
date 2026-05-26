@@ -11,7 +11,43 @@ import {
 import { IconBadge } from "@/components/icon-badge";
 import { getServiceTypeDisplay } from "@/lib/constants/service-types";
 import type { TMeterGlobalRow } from "@/lib/db/access/meters";
+import type { TReading } from "@/lib/db/schema/readings";
 import { formatInstalled } from "../utils";
+
+const formatReadingValue = (v: string | null): string => {
+  if (v === null) return "—";
+  const n = parseFloat(v);
+  return n.toLocaleString("en-US", { maximumFractionDigits: 3 });
+};
+
+const LastReadingCell = ({
+  lastReading,
+  zoneCount,
+}: {
+  lastReading: TReading;
+  zoneCount: number;
+}) => {
+  const dateStr = new Date(lastReading.readAt).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+
+  const values =
+    zoneCount === 1
+      ? formatReadingValue(lastReading.valueT1)
+      : zoneCount === 2
+        ? `T1: ${formatReadingValue(lastReading.valueT1)} / T2: ${formatReadingValue(lastReading.valueT2)}`
+        : `T1: ${formatReadingValue(lastReading.valueT1)} / T2: ${formatReadingValue(lastReading.valueT2)} / T3: ${formatReadingValue(lastReading.valueT3)}`;
+
+  return (
+    <span>
+      {dateStr}
+      <span className="text-zinc-400 dark:text-zinc-600">{" · "}</span>
+      {values}
+    </span>
+  );
+};
 
 type TProps = {
   row: TMeterGlobalRow;
@@ -84,10 +120,14 @@ const MeterRow = ({ row, showHistoricalBadge, isLast }: TProps) => {
       </td>
 
       <td
-        className={`${tdBorderClass} text-zinc-400 dark:text-zinc-600`}
+        className={`${tdBorderClass} text-zinc-500 dark:text-zinc-400`}
         style={{ ...tdStyle, fontSize: 13 }}
       >
-        —
+        {row.lastReading ? (
+          <LastReadingCell lastReading={row.lastReading} zoneCount={row.meter.zoneCount} />
+        ) : (
+          <span className="text-zinc-400 dark:text-zinc-600">—</span>
+        )}
       </td>
 
       <td

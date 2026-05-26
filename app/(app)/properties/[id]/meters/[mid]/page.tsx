@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import { getPropertyDetail } from "@/app/(app)/properties/[id]/_data/queries";
 import type { PropertyId } from "@/lib/db/schema/properties";
 import type { MeterId } from "@/lib/db/schema/meters";
-import { getMeterDetail } from "./_data/queries";
+import { getMeterDetail, getMeterReadings, getMostRecentReading } from "./_data/queries";
 import { ConsumptionChart } from "./_components/consumption-chart";
 import { DetailsCard } from "./_components/details-card";
 import { MeterPageHeader } from "./_components/meter-page-header";
@@ -45,6 +45,14 @@ export default async function MeterPage({ params }: TProps) {
   // Verify the meter belongs to the requested property.
   if (meter.propertyId !== id) notFound();
 
+  const [readingsResult, lastReadingResult] = await Promise.all([
+    getMeterReadings(mid as MeterId),
+    getMostRecentReading(mid as MeterId),
+  ]);
+
+  const readings = readingsResult.ok ? readingsResult.value : [];
+  const lastReading = lastReadingResult.ok ? lastReadingResult.value : null;
+
   const canMutate = property.role !== "viewer";
 
   return (
@@ -63,11 +71,18 @@ export default async function MeterPage({ params }: TProps) {
           <DetailsCard meter={meter} serviceType={serviceType} propertyName={property.name} />
         </div>
 
-        <ReadingsSection />
+        <ReadingsSection
+          meter={meter}
+          serviceType={serviceType}
+          propertyName={property.name}
+          readings={readings}
+          lastReading={lastReading}
+          role={property.role}
+        />
 
         <div>
           <SectionHeading>Consumption</SectionHeading>
-          <ConsumptionChart />
+          <ConsumptionChart readings={readings} meter={meter} serviceType={serviceType} />
         </div>
       </div>
     </div>

@@ -6,6 +6,8 @@ import { contractsByServiceId } from "@/lib/db/access/contracts";
 import type { TContractWithProvider } from "@/lib/db/access/contracts";
 import { currentMeterForServiceType } from "@/lib/db/access/meters";
 import type { TMeter } from "@/lib/db/schema/meters";
+import { mostRecentReadingForMeter } from "@/lib/db/access/readings";
+import type { TReading } from "@/lib/db/schema/readings";
 import { serviceByIdForUser } from "@/lib/db/access/services";
 import type { TServiceDetail } from "@/lib/db/access/services";
 import { providersByUserId } from "@/lib/db/access/providers";
@@ -155,4 +157,13 @@ export const getCurrentMeterForService = async (serviceId: TServiceId): Promise<
   const meterResult = await currentMeterForServiceType(userId, service.propertyId, serviceType.id);
 
   return meterResult.ok ? meterResult.value : null;
+};
+
+export const getLastReadingForMeter = async (meter: TMeter): Promise<TReading | null> => {
+  const session = await auth();
+  if (!session?.user.id) return null;
+
+  const userId = session.user.id as UserId;
+  const result = await mostRecentReadingForMeter(userId, meter.id);
+  return result.ok ? result.value : null;
 };

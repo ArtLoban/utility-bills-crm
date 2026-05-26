@@ -1,11 +1,12 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { and, eq, isNull } from "drizzle-orm";
+import { and, eq, inArray, isNull } from "drizzle-orm";
 
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db/client";
 import { meters } from "@/lib/db/schema/meters";
+import { readings } from "@/lib/db/schema/readings";
 import { properties, propertyAccess } from "@/lib/db/schema/properties";
 import { services } from "@/lib/db/schema/services";
 import type { PropertyId, TProperty } from "@/lib/db/schema/properties";
@@ -94,6 +95,18 @@ export const softDeleteProperty = async (
     const now = new Date();
 
     // Soft-delete cascade — add each new entity in one line here as introduced.
+    await tx
+      .update(readings)
+      .set({ deletedAt: now })
+      .where(
+        and(
+          inArray(
+            readings.meterId,
+            db.select({ id: meters.id }).from(meters).where(eq(meters.propertyId, propertyId)),
+          ),
+          isNull(readings.deletedAt),
+        ),
+      );
     await tx
       .update(meters)
       .set({ deletedAt: now })
