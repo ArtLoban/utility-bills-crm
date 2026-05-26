@@ -1,8 +1,22 @@
-import { MOCK_METER_DETAIL, MOCK_METER_FOR_READING, MOCK_READINGS } from "./_data/mock";
+import { notFound } from "next/navigation";
+import type { Metadata } from "next";
+
+import { getPropertyDetail } from "@/app/(app)/properties/[id]/_data/queries";
+import type { PropertyId } from "@/lib/db/schema/properties";
+import type { MeterId } from "@/lib/db/schema/meters";
+import { getMeterDetail } from "./_data/queries";
 import { ConsumptionChart } from "./_components/consumption-chart";
 import { DetailsCard } from "./_components/details-card";
 import { MeterPageHeader } from "./_components/meter-page-header";
 import { ReadingsSection } from "./_components/readings-section";
+
+type TProps = {
+  params: Promise<{ id: string; mid: string }>;
+};
+
+export const metadata: Metadata = {
+  title: "Meter",
+};
 
 const SectionHeading = ({ children }: { children: string }) => (
   <div style={{ marginBottom: 12 }}>
@@ -15,31 +29,45 @@ const SectionHeading = ({ children }: { children: string }) => (
   </div>
 );
 
-export default function MeterPage() {
+export default async function MeterPage({ params }: TProps) {
+  const { id, mid } = await params;
+
+  const [propertyResult, meterResult] = await Promise.all([
+    getPropertyDetail(id as PropertyId),
+    getMeterDetail(mid as MeterId),
+  ]);
+
+  if (!propertyResult.ok || !meterResult.ok) notFound();
+
+  const property = propertyResult.value;
+  const { meter, serviceType } = meterResult.value;
+
+  // Verify the meter belongs to the requested property.
+  if (meter.propertyId !== id) notFound();
+
+  const canMutate = property.role !== "viewer";
+
   return (
     <div style={{ maxWidth: 920, margin: "0 auto", padding: "28px 32px 80px", width: "100%" }}>
-      <MeterPageHeader meter={MOCK_METER_DETAIL} />
+      <MeterPageHeader
+        meter={meter}
+        serviceType={serviceType}
+        propertyId={id}
+        propertyName={property.name}
+        canMutate={canMutate}
+      />
 
       <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
-        {/* Details */}
         <div>
           <SectionHeading>Details</SectionHeading>
-          <DetailsCard meter={MOCK_METER_DETAIL} />
+          <DetailsCard meter={meter} serviceType={serviceType} propertyName={property.name} />
         </div>
 
-        {/* Readings */}
-        <ReadingsSection readings={MOCK_READINGS} readingMeter={MOCK_METER_FOR_READING} />
+        <ReadingsSection />
 
-        {/* Consumption */}
         <div>
           <SectionHeading>Consumption</SectionHeading>
-          <ConsumptionChart readings={MOCK_READINGS} />
-          <p
-            className="text-zinc-500 dark:text-zinc-400"
-            style={{ fontSize: 12, margin: "8px 0 0", textAlign: "right" }}
-          >
-            Raw meter readings over time · kWh
-          </p>
+          <ConsumptionChart />
         </div>
       </div>
     </div>

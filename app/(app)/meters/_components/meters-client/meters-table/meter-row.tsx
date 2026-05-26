@@ -6,45 +6,30 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { SERVICE_COLORS, SERVICE_LABELS } from "@/lib/constants/service-colors";
-import { SERVICE_ICONS } from "@/lib/constants/service-icons";
-import type { TGlobalMeter } from "../../../_data/mock";
 import { IconBadge } from "@/components/icon-badge";
+import { getServiceTypeDisplay } from "@/lib/constants/service-types";
+import type { TMeterGlobalRow } from "@/lib/db/access/meters";
+import { formatInstalled } from "../utils";
 
 type TProps = {
-  meter: TGlobalMeter;
+  row: TMeterGlobalRow;
   showHistoricalBadge: boolean;
-  onSubmitReading: (meter: TGlobalMeter) => void;
   isLast: boolean;
 };
 
-const formatLastReading = (meter: TGlobalMeter): { text: string; muted: boolean } => {
-  if (!meter.lastReading) return { text: "—", muted: true };
-
-  const { date, values } = meter.lastReading;
-
-  if (values.length === 1) {
-    const unit = meter.unit ? ` ${meter.unit}` : "";
-    return { text: `${date} · ${(values[0] ?? 0).toLocaleString("en-US")}${unit}`, muted: false };
-  }
-
-  const zoneParts = values.map((v, i) => `T${i + 1}: ${v.toLocaleString("en-US")}`).join(" / ");
-  return { text: `${date} · ${zoneParts}`, muted: false };
-};
-
-const MeterRow = ({ meter, showHistoricalBadge, onSubmitReading, isLast }: TProps) => {
+const MeterRow = ({ row, showHistoricalBadge, isLast }: TProps) => {
   const router = useRouter();
   const t = useTranslations("meters.list");
 
-  const color = SERVICE_COLORS[meter.serviceKey];
-  const Icon = SERVICE_ICONS[meter.serviceKey];
-  const lastReading = formatLastReading(meter);
-  const detailHref = `/properties/${meter.property.id}/meters/${meter.id}`;
-  const isActive = meter.removedAt === null;
-  const canSubmit = isActive && meter.propertyRole !== "viewer";
+  const { color, Icon } = getServiceTypeDisplay(row.serviceType.code);
+  const isHistorical = row.meter.validTo !== null;
+  const detailHref = `/properties/${row.property.id}/meters/${row.meter.id}`;
+
+  const serviceLabel = row.serviceType.code
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, (c) => c.toUpperCase());
 
   const tdBorderClass = isLast ? "" : "border-b border-zinc-200 dark:border-zinc-800";
   const tdBaseClass = `${tdBorderClass} text-zinc-950 dark:text-zinc-50`;
@@ -58,16 +43,11 @@ const MeterRow = ({ meter, showHistoricalBadge, onSubmitReading, isLast }: TProp
     >
       <td className={tdBaseClass} style={tdStyle}>
         <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          {meter.property.name}
-          {showHistoricalBadge && meter.removedAt && (
+          {row.property.name}
+          {showHistoricalBadge && isHistorical && (
             <span
               className="bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400"
-              style={{
-                fontSize: 11,
-                fontWeight: 500,
-                padding: "2px 6px",
-                borderRadius: 4,
-              }}
+              style={{ fontSize: 11, fontWeight: 500, padding: "2px 6px", borderRadius: 4 }}
             >
               {t("badge.historical")}
             </span>
@@ -78,7 +58,7 @@ const MeterRow = ({ meter, showHistoricalBadge, onSubmitReading, isLast }: TProp
       <td className={tdBaseClass} style={tdStyle}>
         <span className="inline-flex items-center gap-1.5">
           <IconBadge icon={Icon} color={color} size="xs" />
-          <span style={{ fontSize: 13.5 }}>{SERVICE_LABELS[meter.serviceKey]}</span>
+          <span style={{ fontSize: 13.5 }}>{serviceLabel}</span>
         </span>
       </td>
 
@@ -86,32 +66,28 @@ const MeterRow = ({ meter, showHistoricalBadge, onSubmitReading, isLast }: TProp
         className={`${tdBorderClass} text-zinc-700 dark:text-zinc-300`}
         style={{ ...tdStyle, fontFamily: "ui-monospace, monospace", fontSize: 13 }}
       >
-        {meter.serial}
+        {row.meter.serialNumber ?? "—"}
       </td>
 
       <td
         className={`${tdBorderClass} text-zinc-500 dark:text-zinc-400`}
         style={{ ...tdStyle, fontSize: 13 }}
       >
-        {t("zones.count", { count: meter.zones })}
+        {t("zones.count", { count: row.meter.zoneCount })}
       </td>
 
       <td
         className={`${tdBorderClass} text-zinc-500 dark:text-zinc-400`}
         style={{ ...tdStyle, fontSize: 13 }}
       >
-        {meter.installedAt}
+        {formatInstalled(row.meter.installedAt)}
       </td>
 
       <td
-        className={
-          lastReading.muted
-            ? `${tdBorderClass} text-zinc-400 dark:text-zinc-600`
-            : `${tdBorderClass} text-zinc-950 dark:text-zinc-50`
-        }
+        className={`${tdBorderClass} text-zinc-400 dark:text-zinc-600`}
         style={{ ...tdStyle, fontSize: 13 }}
       >
-        {lastReading.text}
+        —
       </td>
 
       <td
@@ -144,14 +120,6 @@ const MeterRow = ({ meter, showHistoricalBadge, onSubmitReading, isLast }: TProp
             <DropdownMenuItem onClick={() => router.push(detailHref)}>
               {t("actions.viewDetails")}
             </DropdownMenuItem>
-            {canSubmit && (
-              <>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => onSubmitReading(meter)}>
-                  {t("actions.submitReading")}
-                </DropdownMenuItem>
-              </>
-            )}
           </DropdownMenuContent>
         </DropdownMenu>
       </td>

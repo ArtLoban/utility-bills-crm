@@ -1,45 +1,57 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { Calendar, ChevronDown, X } from "lucide-react";
 
 import { Dialog, DialogClose, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ACCENT } from "@/lib/constants/ui-tokens";
-import { SERVICE_TYPE_OPTIONS, ZONE_OPTIONS } from "../_data/mock";
-
-type TZoneValue = "single" | "two" | "three";
+import { createMeter } from "@/features/meters/actions";
+import type { TServiceType } from "@/lib/db/schema/service-types";
 
 type TFormState = {
-  serviceType: string;
+  serviceTypeId: string;
   serialNumber: string;
-  zones: TZoneValue;
+  zoneCount: "1" | "2" | "3";
   installedAt: string;
-  activeSince: string;
+  validFrom: string;
   notes: string;
 };
 
 const INITIAL_STATE: TFormState = {
-  serviceType: "",
+  serviceTypeId: "",
   serialNumber: "",
-  zones: "single",
+  zoneCount: "1",
   installedAt: "",
-  activeSince: "",
+  validFrom: "",
   notes: "",
 };
 
 type TProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  propertyId: string;
+  availableServiceTypes: TServiceType[];
 };
 
-const AddMeterModal = ({ open, onOpenChange }: TProps) => {
+const ZONE_OPTIONS = [
+  { value: "1", label: "Single zone" },
+  { value: "2", label: "Two zones (day / night)" },
+  { value: "3", label: "Three zones (peak / shoulder / off-peak)" },
+] as const;
+
+const AddMeterModal = ({ open, onOpenChange, propertyId, availableServiceTypes }: TProps) => {
   const [form, setForm] = useState<TFormState>(INITIAL_STATE);
+  const [error, setError] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
     if (!open) {
-      const timer = setTimeout(() => setForm(INITIAL_STATE), 200);
+      const timer = setTimeout(() => {
+        setForm(INITIAL_STATE);
+        setError(null);
+      }, 200);
       return () => clearTimeout(timer);
     }
   }, [open]);
@@ -47,15 +59,31 @@ const AddMeterModal = ({ open, onOpenChange }: TProps) => {
   const set = (key: keyof TFormState) => (value: string) =>
     setForm((f) => ({ ...f, [key]: value }));
 
-  const canSubmit =
-    form.serviceType !== "" &&
-    form.serialNumber !== "" &&
-    form.installedAt !== "" &&
-    form.activeSince !== "";
+  const selectedType = availableServiceTypes.find((st) => st.id === form.serviceTypeId);
+  const supportsZones = selectedType?.supportsZones ?? false;
+
+  const canSubmit = form.serviceTypeId !== "" && form.validFrom !== "" && !isPending;
 
   const handleSubmit = () => {
-    // devnote: wire to server action when add-meter endpoint is ready
-    onOpenChange(false);
+    setError(null);
+    startTransition(async () => {
+      const result = await createMeter({
+        propertyId,
+        serviceTypeId: form.serviceTypeId,
+        serialNumber: form.serialNumber || undefined,
+        zoneCount: Number(form.zoneCount) as 1 | 2 | 3,
+        installedAt: form.installedAt ? new Date(form.installedAt).toISOString() : undefined,
+        validFrom: new Date(form.validFrom).toISOString(),
+        notes: form.notes || undefined,
+      });
+
+      if (!result.ok) {
+        setError(result.error.message);
+        return;
+      }
+
+      onOpenChange(false);
+    });
   };
 
   return (
@@ -112,39 +140,51 @@ const AddMeterModal = ({ open, onOpenChange }: TProps) => {
             <label className="mb-1.5 block text-sm font-medium">
               Service type <span className="font-normal text-zinc-500 dark:text-zinc-400">*</span>
             </label>
-            <div className="relative">
-              <select
-                value={form.serviceType}
-                onChange={(e) => set("serviceType")(e.target.value)}
-                className="border-input focus-visible:border-ring focus-visible:ring-ring/50 h-9 w-full appearance-none rounded-lg border bg-transparent px-2.5 pr-8 text-sm outline-none focus-visible:ring-3"
-                style={{ fontFamily: "inherit" }}
-              >
-                <option value="" disabled>
-                  Select service
-                </option>
-                {SERVICE_TYPE_OPTIONS.map((o) => (
-                  <option key={o.value} value={o.value}>
-                    {o.label}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown
-                size={14}
-                className="pointer-events-none absolute top-1/2 right-2.5 -translate-y-1/2 text-zinc-500 dark:text-zinc-400"
-              />
-            </div>
-            <p
-              className="text-zinc-500 dark:text-zinc-400"
-              style={{ marginTop: 6, fontSize: 12.5 }}
-            >
-              Only services without an active meter are shown.
-            </p>
+            {availableServiceTypes.length === 0 ? (
+              <p className="text-zinc-500 dark:text-zinc-400" style={{ fontSize: 13 }}>
+                All services on this property already have an active meter.
+              </p>
+            ) : (
+              <>
+                <div className="relative">
+                  <select
+                    value={form.serviceTypeId}
+                    onChange={(e) => {
+                      set("serviceTypeId")(e.target.value);
+                      set("zoneCount")("1");
+                    }}
+                    className="border-input focus-visible:border-ring focus-visible:ring-ring/50 h-9 w-full appearance-none rounded-lg border bg-transparent px-2.5 pr-8 text-sm outline-none focus-visible:ring-3"
+                    style={{ fontFamily: "inherit" }}
+                  >
+                    <option value="" disabled>
+                      Select service
+                    </option>
+                    {availableServiceTypes.map((st) => (
+                      <option key={st.id} value={st.id}>
+                        {st.code.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown
+                    size={14}
+                    className="pointer-events-none absolute top-1/2 right-2.5 -translate-y-1/2 text-zinc-500 dark:text-zinc-400"
+                  />
+                </div>
+                <p
+                  className="text-zinc-500 dark:text-zinc-400"
+                  style={{ marginTop: 6, fontSize: 12.5 }}
+                >
+                  Only services without an active meter are shown.
+                </p>
+              </>
+            )}
           </div>
 
           {/* Serial number */}
           <div>
             <label className="mb-1.5 block text-sm font-medium">
-              Serial number <span className="font-normal text-zinc-500 dark:text-zinc-400">*</span>
+              Serial number{" "}
+              <span className="font-normal text-zinc-500 dark:text-zinc-400">(optional)</span>
             </label>
             <Input
               value={form.serialNumber}
@@ -155,29 +195,31 @@ const AddMeterModal = ({ open, onOpenChange }: TProps) => {
           </div>
 
           {/* Zones */}
-          <div>
-            <label className="mb-1.5 block text-sm font-medium">
-              Zones <span className="font-normal text-zinc-500 dark:text-zinc-400">*</span>
-            </label>
-            <div className="relative">
-              <select
-                value={form.zones}
-                onChange={(e) => set("zones")(e.target.value)}
-                className="border-input focus-visible:border-ring focus-visible:ring-ring/50 h-9 w-full appearance-none rounded-lg border bg-transparent px-2.5 pr-8 text-sm outline-none focus-visible:ring-3"
-                style={{ fontFamily: "inherit" }}
-              >
-                {ZONE_OPTIONS.map((o) => (
-                  <option key={o.value} value={o.value}>
-                    {o.label}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown
-                size={14}
-                className="pointer-events-none absolute top-1/2 right-2.5 -translate-y-1/2 text-zinc-500 dark:text-zinc-400"
-              />
+          {supportsZones && (
+            <div>
+              <label className="mb-1.5 block text-sm font-medium">
+                Zones <span className="font-normal text-zinc-500 dark:text-zinc-400">*</span>
+              </label>
+              <div className="relative">
+                <select
+                  value={form.zoneCount}
+                  onChange={(e) => set("zoneCount")(e.target.value)}
+                  className="border-input focus-visible:border-ring focus-visible:ring-ring/50 h-9 w-full appearance-none rounded-lg border bg-transparent px-2.5 pr-8 text-sm outline-none focus-visible:ring-3"
+                  style={{ fontFamily: "inherit" }}
+                >
+                  {ZONE_OPTIONS.map((o) => (
+                    <option key={o.value} value={o.value}>
+                      {o.label}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown
+                  size={14}
+                  className="pointer-events-none absolute top-1/2 right-2.5 -translate-y-1/2 text-zinc-500 dark:text-zinc-400"
+                />
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Installed at / Active since */}
           <div>
@@ -185,7 +227,7 @@ const AddMeterModal = ({ open, onOpenChange }: TProps) => {
               <div>
                 <label className="mb-1.5 block text-sm font-medium">
                   Installed at{" "}
-                  <span className="font-normal text-zinc-500 dark:text-zinc-400">*</span>
+                  <span className="font-normal text-zinc-500 dark:text-zinc-400">(optional)</span>
                 </label>
                 <div className="relative">
                   <Input
@@ -208,8 +250,8 @@ const AddMeterModal = ({ open, onOpenChange }: TProps) => {
                 <div className="relative">
                   <Input
                     type="date"
-                    value={form.activeSince}
-                    onChange={(e) => set("activeSince")(e.target.value)}
+                    value={form.validFrom}
+                    onChange={(e) => set("validFrom")(e.target.value)}
                     className="h-9 pl-9"
                   />
                   <Calendar
@@ -239,6 +281,13 @@ const AddMeterModal = ({ open, onOpenChange }: TProps) => {
               rows={3}
             />
           </div>
+
+          {/* Error */}
+          {error && (
+            <p className="text-sm" style={{ color: "#dc2626" }}>
+              {error}
+            </p>
+          )}
         </div>
 
         {/* Footer */}
@@ -266,7 +315,7 @@ const AddMeterModal = ({ open, onOpenChange }: TProps) => {
               ...(canSubmit ? { background: ACCENT } : {}),
             }}
           >
-            Add meter
+            {isPending ? "Adding…" : "Add meter"}
           </button>
         </div>
       </DialogContent>

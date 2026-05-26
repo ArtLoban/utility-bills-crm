@@ -1,8 +1,21 @@
-import { Zap } from "lucide-react";
+import { getServiceTypeDisplay } from "@/lib/constants/service-types";
+import type { TMeter } from "@/lib/db/schema/meters";
+import type { TServiceType } from "@/lib/db/schema/service-types";
 
-import { ACCENT } from "@/lib/constants/ui-tokens";
+const ZONE_DESCRIPTIONS: Record<number, string> = {
+  1: "Single zone",
+  2: "Two zones (T1 day, T2 night)",
+  3: "Three zones (T1 peak, T2 shoulder, T3 off-peak)",
+};
 
-import type { TMeterDetail } from "../_data/mock";
+const formatDate = (date: Date | null): string => {
+  if (!date) return "—";
+  return new Date(date).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+};
 
 type TKVItem = {
   label: string;
@@ -10,32 +23,43 @@ type TKVItem = {
   fullWidth?: boolean;
 };
 
-type TProps = { meter: TMeterDetail };
+type TProps = {
+  meter: TMeter;
+  serviceType: TServiceType;
+  propertyName: string;
+};
 
-const DetailsCard = ({ meter }: TProps) => {
+const DetailsCard = ({ meter, serviceType, propertyName }: TProps) => {
+  const { color, Icon } = getServiceTypeDisplay(serviceType.code);
+
+  const serviceLabel = serviceType.code.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+
   const items: TKVItem[] = [
     {
       label: "Service type",
       value: (
         <span className="inline-flex items-center" style={{ gap: 5 }}>
-          <Zap size={14} style={{ color: ACCENT }} />
-          Electricity
+          <Icon size={14} style={{ color }} />
+          {serviceLabel}
         </span>
       ),
     },
-    { label: "Property", value: meter.propertyName },
+    { label: "Property", value: propertyName },
     {
       label: "Serial number",
       value: (
         <span style={{ fontFamily: "ui-monospace, monospace", fontSize: 13 }}>
-          {meter.serialNumber}
+          {meter.serialNumber ?? "—"}
         </span>
       ),
     },
-    { label: "Zones", value: `${meter.zones} (${meter.zoneLabels})` },
-    { label: "Installed at", value: meter.installedAt },
-    { label: "Active since", value: meter.activeSince },
-    { label: "Notes", value: meter.notes, fullWidth: true },
+    {
+      label: "Zones",
+      value: ZONE_DESCRIPTIONS[meter.zoneCount] ?? `${meter.zoneCount} zones`,
+    },
+    { label: "Installed at", value: formatDate(meter.installedAt) },
+    { label: "Active since", value: formatDate(meter.validFrom) },
+    ...(meter.notes ? [{ label: "Notes", value: meter.notes, fullWidth: true }] : []),
   ];
 
   return (
@@ -43,13 +67,7 @@ const DetailsCard = ({ meter }: TProps) => {
       className="rounded-[8px] border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900"
       style={{ boxShadow: "0 1px 2px rgba(24,24,27,0.05)", padding: "20px 24px" }}
     >
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gap: "16px 40px",
-        }}
-      >
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px 40px" }}>
         {items.map(({ label, value, fullWidth }) => (
           <div key={label} style={fullWidth ? { gridColumn: "1 / -1" } : {}}>
             <div

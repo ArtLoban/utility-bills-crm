@@ -1,13 +1,17 @@
 import { ChevronDown } from "lucide-react";
 import { useTranslations } from "next-intl";
 
-import { SERVICE_LABELS } from "@/lib/constants/service-colors";
 import { ACCENT, TINT_BG, TINT_BORDER } from "@/lib/constants/ui-tokens";
 import type { TFilterState } from "../../_data/mock";
-import { METER_PROPERTIES } from "../../_data/mock";
+import { formatServiceCode } from "./utils";
+
+type TPropertyOption = { id: string; name: string };
+type TServiceTypeOption = { code: string };
 
 type TProps = {
   filters: TFilterState;
+  properties: TPropertyOption[];
+  serviceTypes: TServiceTypeOption[];
   onFilterChange: (key: keyof TFilterState, value: string) => void;
   anyFilter: boolean;
   onClear: () => void;
@@ -67,7 +71,14 @@ const FilterSelect = ({ value, isActive, onChange, children }: TSelectProps) => 
   </div>
 );
 
-const FilterBar = ({ filters, onFilterChange, anyFilter, onClear }: TProps) => {
+const FilterBar = ({
+  filters,
+  properties,
+  serviceTypes,
+  onFilterChange,
+  anyFilter,
+  onClear,
+}: TProps) => {
   const t = useTranslations("meters.list");
 
   return (
@@ -93,7 +104,7 @@ const FilterBar = ({ filters, onFilterChange, anyFilter, onClear }: TProps) => {
         onChange={(v) => onFilterChange("property", v)}
       >
         <option value="all">All properties</option>
-        {METER_PROPERTIES.map((p) => (
+        {properties.map((p) => (
           <option key={p.id} value={p.id}>
             {p.name}
           </option>
@@ -106,9 +117,9 @@ const FilterBar = ({ filters, onFilterChange, anyFilter, onClear }: TProps) => {
         onChange={(v) => onFilterChange("service", v)}
       >
         <option value="all">All service types</option>
-        {Object.entries(SERVICE_LABELS).map(([key, label]) => (
-          <option key={key} value={key}>
-            {label}
+        {serviceTypes.map((st) => (
+          <option key={st.code} value={st.code}>
+            {formatServiceCode(st.code)}
           </option>
         ))}
       </FilterSelect>

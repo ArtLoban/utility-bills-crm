@@ -2,26 +2,30 @@ import { ArrowDown } from "lucide-react";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 
-import { SERVICE_COLORS, SERVICE_LABELS } from "@/lib/constants/service-colors";
-import type { TServiceKey } from "@/lib/constants/service-colors";
+import { getServiceTypeDisplay } from "@/lib/constants/service-types";
 import { ACCENT, TINT_BG, TINT_BORDER } from "@/lib/constants/ui-tokens";
-import type { TFilterState, TGlobalMeter } from "../../../_data/mock";
-import { METER_PROPERTIES } from "../../../_data/mock";
+import type { TMeterGlobalRow } from "@/lib/db/access/meters";
+import type { TFilterState } from "../../../_data/mock";
+import { formatServiceCode } from "../utils";
 import { FilterChip } from "./filter-chip";
 import { FilterSheet } from "./filter-sheet";
 import { MeterCard } from "./meter-card";
 import { MobilePager } from "./mobile-pager";
 
+type TPropertyOption = { id: string; name: string };
+type TServiceTypeOption = { code: string };
+
 type TProps = {
-  filteredMeters: TGlobalMeter[];
+  filteredMeters: TMeterGlobalRow[];
   filters: TFilterState;
   onFilterChange: (key: keyof TFilterState, value: string) => void;
   onClear: () => void;
   page: number;
   totalPages: number;
   onPageChange: (page: number) => void;
-  pageRows: TGlobalMeter[];
-  onSubmitReading: (meter: TGlobalMeter) => void;
+  pageRows: TMeterGlobalRow[];
+  properties: TPropertyOption[];
+  serviceTypes: TServiceTypeOption[];
 };
 
 const MetersMobile = ({
@@ -33,12 +37,13 @@ const MetersMobile = ({
   totalPages,
   onPageChange,
   pageRows,
-  onSubmitReading,
+  properties,
+  serviceTypes,
 }: TProps) => {
   const t = useTranslations("meters.list");
   const [sheetOpen, setSheetOpen] = useState(false);
 
-  const activeCount = [
+  const activeFilterCount = [
     filters.property !== "all",
     filters.service !== "all",
     filters.status !== "active",
@@ -46,13 +51,11 @@ const MetersMobile = ({
 
   const propertyName =
     filters.property !== "all"
-      ? (METER_PROPERTIES.find((p) => p.id === filters.property)?.name ?? filters.property)
+      ? (properties.find((p) => p.id === filters.property)?.name ?? filters.property)
       : null;
 
   const serviceColor =
-    filters.service !== "all"
-      ? SERVICE_COLORS[filters.service as keyof typeof SERVICE_COLORS]
-      : undefined;
+    filters.service !== "all" ? getServiceTypeDisplay(filters.service).color : undefined;
 
   const showHistoricalBadge = filters.status === "all";
 
@@ -81,13 +84,13 @@ const MetersMobile = ({
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          marginBottom: activeCount > 0 ? 10 : 14,
+          marginBottom: activeFilterCount > 0 ? 10 : 14,
         }}
       >
         <button
           onClick={() => setSheetOpen(true)}
           className={
-            activeCount === 0
+            activeFilterCount === 0
               ? "border border-zinc-200 bg-white text-zinc-950 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50"
               : ""
           }
@@ -102,17 +105,13 @@ const MetersMobile = ({
             alignItems: "center",
             gap: 6,
             fontFamily: "inherit",
-            ...(activeCount > 0
-              ? {
-                  border: `1px solid ${TINT_BORDER}`,
-                  background: TINT_BG,
-                  color: ACCENT,
-                }
+            ...(activeFilterCount > 0
+              ? { border: `1px solid ${TINT_BORDER}`, background: TINT_BG, color: ACCENT }
               : {}),
           }}
         >
           Filters
-          {activeCount > 0 && (
+          {activeFilterCount > 0 && (
             <span
               style={{
                 minWidth: 16,
@@ -128,7 +127,7 @@ const MetersMobile = ({
                 justifyContent: "center",
               }}
             >
-              {activeCount}
+              {activeFilterCount}
             </span>
           )}
         </button>
@@ -142,14 +141,14 @@ const MetersMobile = ({
         </span>
       </div>
 
-      {activeCount > 0 && (
+      {activeFilterCount > 0 && (
         <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 14 }}>
           {propertyName && (
             <FilterChip label={propertyName} onRemove={() => onFilterChange("property", "all")} />
           )}
           {filters.service !== "all" && (
             <FilterChip
-              label={SERVICE_LABELS[filters.service as TServiceKey] ?? filters.service}
+              label={formatServiceCode(filters.service)}
               color={serviceColor}
               onRemove={() => onFilterChange("service", "all")}
             />
@@ -168,13 +167,8 @@ const MetersMobile = ({
       )}
 
       <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-        {pageRows.map((meter) => (
-          <MeterCard
-            key={meter.id}
-            meter={meter}
-            showHistoricalBadge={showHistoricalBadge}
-            onSubmitReading={onSubmitReading}
-          />
+        {pageRows.map((row) => (
+          <MeterCard key={row.meter.id} row={row} showHistoricalBadge={showHistoricalBadge} />
         ))}
       </div>
 
@@ -193,6 +187,8 @@ const MetersMobile = ({
         filters={filters}
         onFilterChange={onFilterChange}
         onClear={onClear}
+        properties={properties}
+        serviceTypes={serviceTypes}
       />
     </div>
   );

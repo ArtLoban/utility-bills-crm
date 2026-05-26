@@ -6,39 +6,27 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { SERVICE_COLORS, SERVICE_LABELS } from "@/lib/constants/service-colors";
-import { SERVICE_ICONS } from "@/lib/constants/service-icons";
-import type { TGlobalMeter } from "../../../_data/mock";
+import { getServiceTypeDisplay } from "@/lib/constants/service-types";
+import type { TMeterGlobalRow } from "@/lib/db/access/meters";
 
 type TProps = {
-  meter: TGlobalMeter;
+  row: TMeterGlobalRow;
   showHistoricalBadge: boolean;
-  onSubmitReading: (meter: TGlobalMeter) => void;
 };
 
-const MeterCard = ({ meter, showHistoricalBadge, onSubmitReading }: TProps) => {
+const MeterCard = ({ row, showHistoricalBadge }: TProps) => {
   const router = useRouter();
   const t = useTranslations("meters.list");
 
-  const color = SERVICE_COLORS[meter.serviceKey];
-  const Icon = SERVICE_ICONS[meter.serviceKey];
-  const detailHref = `/properties/${meter.property.id}/meters/${meter.id}`;
-  const isActive = meter.removedAt === null;
-  const canSubmit = isActive && meter.propertyRole !== "viewer";
+  const { color, Icon } = getServiceTypeDisplay(row.serviceType.code);
+  const isHistorical = row.meter.validTo !== null;
+  const detailHref = `/properties/${row.property.id}/meters/${row.meter.id}`;
 
-  const lastReadingText = (() => {
-    if (!meter.lastReading) return t("lastReading.none");
-    const { date, values } = meter.lastReading;
-    if (values.length === 1) {
-      const unit = meter.unit ? ` ${meter.unit}` : "";
-      return `${date} · ${(values[0] ?? 0).toLocaleString("en-US")}${unit}`;
-    }
-    const zoneParts = values.map((v, i) => `T${i + 1}: ${v.toLocaleString("en-US")}`).join(" / ");
-    return `${date} · ${zoneParts}`;
-  })();
+  const serviceLabel = row.serviceType.code
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, (c) => c.toUpperCase());
 
   return (
     <div
@@ -80,8 +68,8 @@ const MeterCard = ({ meter, showHistoricalBadge, onSubmitReading }: TProps) => {
               whiteSpace: "nowrap",
             }}
           >
-            {meter.property.name}
-            {showHistoricalBadge && meter.removedAt && (
+            {row.property.name}
+            {showHistoricalBadge && isHistorical && (
               <span
                 className="bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400"
                 style={{
@@ -100,33 +88,19 @@ const MeterCard = ({ meter, showHistoricalBadge, onSubmitReading }: TProps) => {
             className="text-zinc-500 dark:text-zinc-400"
             style={{ fontSize: 12, flexShrink: 0, fontFamily: "ui-monospace, monospace" }}
           >
-            {meter.serial}
-          </span>
-        </div>
-
-        <div
-          style={{
-            marginTop: 2,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          <span className="text-zinc-500 dark:text-zinc-400" style={{ fontSize: 12 }}>
-            {SERVICE_LABELS[meter.serviceKey]} · {t("zones.count", { count: meter.zones })}
+            {row.meter.serialNumber ?? "—"}
           </span>
         </div>
 
         <div style={{ marginTop: 2 }}>
-          <span
-            className={
-              meter.lastReading
-                ? "text-zinc-700 dark:text-zinc-300"
-                : "text-zinc-400 dark:text-zinc-600"
-            }
-            style={{ fontSize: 12 }}
-          >
-            {lastReadingText}
+          <span className="text-zinc-500 dark:text-zinc-400" style={{ fontSize: 12 }}>
+            {serviceLabel} · {t("zones.count", { count: row.meter.zoneCount })}
+          </span>
+        </div>
+
+        <div style={{ marginTop: 2 }}>
+          <span className="text-zinc-400 dark:text-zinc-600" style={{ fontSize: 12 }}>
+            {t("lastReading.none")}
           </span>
         </div>
       </div>
@@ -158,19 +132,6 @@ const MeterCard = ({ meter, showHistoricalBadge, onSubmitReading }: TProps) => {
           <DropdownMenuItem onClick={() => router.push(detailHref)}>
             {t("actions.viewDetails")}
           </DropdownMenuItem>
-          {canSubmit && (
-            <>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onSubmitReading(meter);
-                }}
-              >
-                {t("actions.submitReading")}
-              </DropdownMenuItem>
-            </>
-          )}
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

@@ -81,7 +81,11 @@ export const createContract = async (
     return ok(contract);
   } catch (error) {
     if (isExclusionViolation(error)) {
-      return err(new ValidationError("validation.overlap"));
+      return err(
+        new ValidationError(
+          "An active contract for this service already exists in the selected period",
+        ),
+      );
     }
     throw error;
   }
@@ -108,7 +112,7 @@ export const closeContract = async (
   if (!roleGuard.ok) return roleGuard;
 
   if (validTo <= contract.validFrom) {
-    return err(new ValidationError("validation.closeDateBeforeStart"));
+    return err(new ValidationError("End date must be after the contract's start date"));
   }
 
   await db
@@ -156,7 +160,7 @@ export const changeProvider = async (
   const currentContract = currentContractResult.value.contract;
 
   if (changeDate <= currentContract.validFrom) {
-    return err(new ValidationError("validation.changeDateBeforeStart"));
+    return err(new ValidationError("Change date must be after the current contract's start date"));
   }
 
   try {
@@ -180,7 +184,11 @@ export const changeProvider = async (
     return ok(newContract);
   } catch (error) {
     if (isExclusionViolation(error)) {
-      return err(new ValidationError("validation.overlap"));
+      return err(
+        new ValidationError(
+          "An active contract for this service already exists in the selected period",
+        ),
+      );
     }
     throw error;
   }

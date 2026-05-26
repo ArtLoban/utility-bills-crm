@@ -2,10 +2,12 @@ import { ChevronDown, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { Sheet, SheetClose, SheetContent, SheetTitle } from "@/components/ui/sheet";
-import { SERVICE_LABELS } from "@/lib/constants/service-colors";
 import { ACCENT } from "@/lib/constants/ui-tokens";
 import type { TFilterState } from "../../../_data/mock";
-import { METER_PROPERTIES } from "../../../_data/mock";
+import { formatServiceCode } from "../utils";
+
+type TPropertyOption = { id: string; name: string };
+type TServiceTypeOption = { code: string };
 
 type TProps = {
   open: boolean;
@@ -13,6 +15,8 @@ type TProps = {
   filters: TFilterState;
   onFilterChange: (key: keyof TFilterState, value: string) => void;
   onClear: () => void;
+  properties: TPropertyOption[];
+  serviceTypes: TServiceTypeOption[];
 };
 
 type TSheetSelectProps = {
@@ -63,7 +67,15 @@ const SheetSelect = ({ label, value, onChange, children }: TSheetSelectProps) =>
   </div>
 );
 
-const FilterSheet = ({ open, onOpenChange, filters, onFilterChange, onClear }: TProps) => {
+const FilterSheet = ({
+  open,
+  onOpenChange,
+  filters,
+  onFilterChange,
+  onClear,
+  properties,
+  serviceTypes,
+}: TProps) => {
   const t = useTranslations("meters.list");
 
   const handleClear = () => {
@@ -116,7 +128,7 @@ const FilterSheet = ({ open, onOpenChange, filters, onFilterChange, onClear }: T
               onChange={(v) => onFilterChange("property", v)}
             >
               <option value="all">All properties</option>
-              {METER_PROPERTIES.map((p) => (
+              {properties.map((p) => (
                 <option key={p.id} value={p.id}>
                   {p.name}
                 </option>
@@ -129,9 +141,9 @@ const FilterSheet = ({ open, onOpenChange, filters, onFilterChange, onClear }: T
               onChange={(v) => onFilterChange("service", v)}
             >
               <option value="all">All service types</option>
-              {Object.entries(SERVICE_LABELS).map(([key, label]) => (
-                <option key={key} value={key}>
-                  {label}
+              {serviceTypes.map((st) => (
+                <option key={st.code} value={st.code}>
+                  {formatServiceCode(st.code)}
                 </option>
               ))}
             </SheetSelect>

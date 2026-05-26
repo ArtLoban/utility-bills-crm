@@ -4,6 +4,8 @@ import { auth } from "@/lib/auth";
 import { db } from "@/lib/db/client";
 import { contractsByServiceId } from "@/lib/db/access/contracts";
 import type { TContractWithProvider } from "@/lib/db/access/contracts";
+import { currentMeterForServiceType } from "@/lib/db/access/meters";
+import type { TMeter } from "@/lib/db/schema/meters";
 import { serviceByIdForUser } from "@/lib/db/access/services";
 import type { TServiceDetail } from "@/lib/db/access/services";
 import { providersByUserId } from "@/lib/db/access/providers";
@@ -136,4 +138,21 @@ export const getProvidersForContractPage = async (): Promise<TProvider[]> => {
 
   const userId = session.user.id as UserId;
   return providersByUserId(userId);
+};
+
+// Returns the active meter for the service's property + service type pair.
+// Performs its own access check so it can be called in parallel with getServiceDetail.
+// Returns null when no active meter exists (not an error condition).
+export const getCurrentMeterForService = async (serviceId: TServiceId): Promise<TMeter | null> => {
+  const session = await auth();
+  if (!session?.user.id) return null;
+
+  const userId = session.user.id as UserId;
+  const serviceResult = await serviceByIdForUser(userId, serviceId);
+  if (!serviceResult.ok) return null;
+
+  const { service, serviceType } = serviceResult.value;
+  const meterResult = await currentMeterForServiceType(userId, service.propertyId, serviceType.id);
+
+  return meterResult.ok ? meterResult.value : null;
 };

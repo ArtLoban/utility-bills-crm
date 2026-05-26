@@ -1,15 +1,14 @@
 import { useTranslations } from "next-intl";
 
-import type { TGlobalMeter } from "../../../_data/mock";
+import type { TMeterGlobalRow } from "@/lib/db/access/meters";
 import { MeterRow } from "./meter-row";
 
 type TProps = {
-  rows: TGlobalMeter[];
+  rows: TMeterGlobalRow[];
   showHistoricalBadge: boolean;
-  onSubmitReading: (meter: TGlobalMeter) => void;
 };
 
-const MetersTable = ({ rows, showHistoricalBadge, onSubmitReading }: TProps) => {
+const MetersTable = ({ rows, showHistoricalBadge }: TProps) => {
   const t = useTranslations("meters.list.columns");
 
   const COLUMNS = [
@@ -48,12 +47,11 @@ const MetersTable = ({ rows, showHistoricalBadge, onSubmitReading }: TProps) => 
           </tr>
         </thead>
         <tbody>
-          {rows.map((meter, i) => (
+          {rows.map((row, i) => (
             <MeterRow
-              key={meter.id}
-              meter={meter}
+              key={row.meter.id}
+              row={row}
               showHistoricalBadge={showHistoricalBadge}
-              onSubmitReading={onSubmitReading}
               isLast={i === rows.length - 1}
             />
           ))}

@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 
-import type { TMeterDetail } from "../_data/mock";
-import { ReplaceMeterModal } from "./replace-meter-modal";
+import type { TMeter } from "@/lib/db/schema/meters";
+import { ReplaceMeterModal } from "../../_components/replace-meter-modal";
 
-type TProps = { meter: TMeterDetail };
+type TProps = { meter: TMeter };
 
 const ReplaceMeterButton = ({ meter }: TProps) => {
   const [open, setOpen] = useState(false);

@@ -1,39 +1,44 @@
 "use client";
 
 import { FilterX, Gauge } from "lucide-react";
-import { useState } from "react";
+import { useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 
 import { EmptyStateCard } from "@/components/empty-state-card";
 import { PageContainer } from "@/components/page-container";
 import { PageMeta } from "@/components/page-meta";
-import { ReadingModal } from "@/components/reading-modal";
-import type { TMeter } from "@/components/reading-modal/types";
 import { Button } from "@/components/ui/button";
 import { ROUTES } from "@/lib/routes";
-import type { TGlobalMeter } from "../../_data/mock";
+import type { TMeterGlobalRow } from "@/lib/db/access/meters";
 import { useMetersList } from "./hooks/use-meters-list";
 import { FilterBar } from "./filter-bar";
 import { MetersTable } from "./meters-table";
 import { MetersFooter } from "./meters-footer";
 import { MetersMobile } from "./meters-mobile";
 
-const toReadingMeter = (meter: TGlobalMeter): TMeter => ({
-  serialNumber: meter.serial,
-  serviceKey: meter.serviceKey,
-  propertyName: meter.property.name,
-  zones: Math.min(meter.zones, 2) as 1 | 2,
-  lastReadingValue: meter.lastReading?.values[0] ?? 0,
-  lastReadingDate: meter.lastReading?.date ?? "",
-  unit: meter.unit ?? "",
-  lastReadingT1: meter.lastReading?.values[0],
-  lastReadingT2: meter.lastReading?.values[1],
-});
+type TPropertyOption = { id: string; name: string };
 
-export const MetersClient = () => {
+type TProps = {
+  meters: TMeterGlobalRow[];
+  properties: TPropertyOption[];
+};
+
+export const MetersClient = ({ meters, properties }: TProps) => {
   const t = useTranslations("meters.list");
   const router = useRouter();
+
+  const serviceTypes = useMemo(() => {
+    const seen = new Set<string>();
+    const result: { code: string }[] = [];
+    for (const row of meters) {
+      if (!seen.has(row.serviceType.code)) {
+        seen.add(row.serviceType.code);
+        result.push({ code: row.serviceType.code });
+      }
+    }
+    return result;
+  }, [meters]);
 
   const {
     filters,
@@ -50,9 +55,7 @@ export const MetersClient = () => {
     handleFilterChange,
     handleClearFilters,
     handlePerPageChange,
-  } = useMetersList();
-
-  const [readingMeter, setReadingMeter] = useState<TMeter | null>(null);
+  } = useMetersList(meters);
 
   return (
     <PageContainer
@@ -73,6 +76,8 @@ export const MetersClient = () => {
         {(filteredMeters.length > 0 || anyFilter) && (
           <FilterBar
             filters={filters}
+            properties={properties}
+            serviceTypes={serviceTypes}
             onFilterChange={handleFilterChange}
             anyFilter={anyFilter}
             onClear={handleClearFilters}
@@ -81,7 +86,7 @@ export const MetersClient = () => {
 
         {filteredMeters.length === 0 && !anyFilter && (
           <EmptyStateCard
-            icon={<Gauge size={36} strokeWidth={1.5} className="text-zinc-400" />}
+            icon={Gauge}
             title={t("empty.noMeters.title")}
             body={t("empty.noMeters.body")}
             cta={
@@ -94,7 +99,7 @@ export const MetersClient = () => {
 
         {filteredMeters.length === 0 && anyFilter && (
           <EmptyStateCard
-            icon={<FilterX size={36} strokeWidth={1.5} className="text-zinc-400" />}
+            icon={FilterX}
             title={t("empty.filtered.title")}
             body=""
             cta={
@@ -107,11 +112,7 @@ export const MetersClient = () => {
 
         {filteredMeters.length > 0 && (
           <div className="overflow-hidden rounded-lg border border-zinc-200 shadow-[0_1px_2px_0_rgba(24,24,27,0.05)] dark:border-zinc-800 dark:shadow-none">
-            <MetersTable
-              rows={pageRows}
-              showHistoricalBadge={showHistoricalBadge}
-              onSubmitReading={(m) => setReadingMeter(toReadingMeter(m))}
-            />
+            <MetersTable rows={pageRows} showHistoricalBadge={showHistoricalBadge} />
             <MetersFooter
               total={filteredMeters.length}
               propertyCount={propertyCount}
@@ -137,19 +138,10 @@ export const MetersClient = () => {
           totalPages={totalPages}
           onPageChange={setPage}
           pageRows={pageRows}
-          onSubmitReading={(m) => setReadingMeter(toReadingMeter(m))}
+          properties={properties}
+          serviceTypes={serviceTypes}
         />
       </div>
-
-      {readingMeter && (
-        <ReadingModal
-          open
-          onOpenChange={(open) => {
-            if (!open) setReadingMeter(null);
-          }}
-          meter={readingMeter}
-        />
-      )}
     </PageContainer>
   );
 };

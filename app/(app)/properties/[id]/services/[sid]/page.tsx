@@ -2,7 +2,12 @@ import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 
 import { getPropertyDetail } from "@/app/(app)/properties/[id]/_data/queries";
-import { getAttributeHistory, getContractHistory, getServiceDetail } from "./_data/queries";
+import {
+  getAttributeHistory,
+  getContractHistory,
+  getCurrentMeterForService,
+  getServiceDetail,
+} from "./_data/queries";
 import { ActivityCard } from "./_components/activity-card";
 import { BalanceCard } from "./_components/balance-card";
 import { ContractCard } from "./_components/contract-card";
@@ -20,12 +25,14 @@ type TProps = {
 export default async function ServicePage({ params }: TProps) {
   const { id, sid } = await params;
 
-  const [propertyResult, serviceResult, historyResult, attributeHistoryResult] = await Promise.all([
-    getPropertyDetail(id as PropertyId),
-    getServiceDetail(sid as TServiceId),
-    getContractHistory(sid as TServiceId),
-    getAttributeHistory(sid as TServiceId),
-  ]);
+  const [propertyResult, serviceResult, historyResult, attributeHistoryResult, currentMeter] =
+    await Promise.all([
+      getPropertyDetail(id as PropertyId),
+      getServiceDetail(sid as TServiceId),
+      getContractHistory(sid as TServiceId),
+      getAttributeHistory(sid as TServiceId),
+      getCurrentMeterForService(sid as TServiceId),
+    ]);
 
   if (!propertyResult.ok || !serviceResult.ok) notFound();
 
@@ -80,7 +87,7 @@ export default async function ServicePage({ params }: TProps) {
           }
           role={role}
         />
-        <MeterCard />
+        <MeterCard meter={currentMeter} propertyId={id} />
         <ActivityCard />
         <NotesCard notes={service.notes ?? null} editHref={editHref} role={role} />
       </div>
