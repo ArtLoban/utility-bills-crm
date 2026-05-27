@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { Home, TreePine, ChevronRight } from "lucide-react";
 import type { TDashboardData } from "../_data/mock";
-import { type TPropertyType } from "@/lib/constants/property";
 import { DataCard } from "@/components/data-card";
+import { TPropertyType } from "@/features/properties/types";
 
 type TProps = {
   data: TDashboardData["balance"];

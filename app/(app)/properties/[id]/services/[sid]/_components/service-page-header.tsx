@@ -5,10 +5,10 @@ import { getTranslations } from "next-intl/server";
 
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { ROUTES } from "@/lib/routes";
-import { getServiceTypeDisplay } from "@/lib/constants/service-types";
 import type { TPropertyRole } from "@/lib/db/schema/properties";
 import type { TService } from "@/lib/db/schema/services";
 import type { TServiceType } from "@/lib/db/schema/service-types";
+import { getServiceTypeVisuals, TServiceTypeCode } from "@/features/services/service-type";
 
 type TProps = {
   service: TService;
@@ -31,7 +31,7 @@ const ServicePageHeader = async ({
 }: TProps) => {
   const t = await getTranslations("services.types");
   const name = t(serviceType.code as Parameters<typeof t>[0]);
-  const { color, Icon } = getServiceTypeDisplay(serviceType.code);
+  const { color, Icon } = getServiceTypeVisuals(serviceType.code as TServiceTypeCode);
   const canEdit = role !== "viewer";
   const editHref = `/properties/${propertyId}/services/${service.id}/edit`;
 

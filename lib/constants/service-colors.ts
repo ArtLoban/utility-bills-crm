@@ -1,7 +1,5 @@
-// Hex mirror of --service-* CSS variables in globals.css.
-// Keep in sync manually. Hex is required for SVG fill attributes (Recharts).
-// CSS consumers (inline styles, backgrounds) use color-mix() with these values.
-// Migration path: when charts no longer use SVG fill, switch values to var(--service-*).
+// @deprecated Legacy camelCase keys for mock data consumers. New code uses features/services/service-type.ts.
+
 export const SERVICE_COLORS = {
   electricity: "#f59e0b",
   gas: "#ef4444",

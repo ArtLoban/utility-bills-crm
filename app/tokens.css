@@ -34,6 +34,11 @@
     --pink-500: oklch(0.68 0.22 350); /* was #ec4899 (hot water) */
     --violet-500: oklch(0.61 0.23 295); /* was #8b5cf6 (heating) */
     --teal-500: oklch(0.7 0.13 185); /* was #14b8a6 (internet) */
+    --orange-500: oklch(0.7 0.19 47); /* was #f97316 (gas delivery) */
+    --slate-500: oklch(0.55 0.04 257); /* was #64748b (building maintenance) */
+    --gray-500: oklch(0.55 0.02 286); /* was #6b7280 (garbage collection) */
+    --sky-500: oklch(0.69 0.15 233); /* was #0ea5e9 (intercom) */
+    --lime-500: oklch(0.77 0.2 131); /* was #84cc16 (hoa fees) */
 
     /* Neutrals */
     --neutral-0: oklch(1 0 0);
@@ -99,6 +104,11 @@
     --service-hot-water: var(--pink-500);
     --service-heating: var(--violet-500);
     --service-internet: var(--teal-500);
+    --service-gas-delivery: var(--orange-500);
+    --service-building-maintenance: var(--slate-500);
+    --service-garbage-collection: var(--gray-500);
+    --service-intercom: var(--sky-500);
+    --service-hoa-fees: var(--lime-500);
 
     /* Brand: DevNote. Custom */
     --brand: var(--purple-600);

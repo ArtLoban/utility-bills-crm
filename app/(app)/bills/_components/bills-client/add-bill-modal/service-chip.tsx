@@ -1,18 +1,10 @@
-import { Layers } from "lucide-react";
-
-import {
-  SERVICE_COLORS,
-  dbCodeToServiceKey,
-  getServiceLabel,
-} from "@/lib/constants/service-colors";
-import { SERVICE_ICONS } from "@/lib/constants/service-icons";
+import { getServiceLabel } from "@/lib/constants/service-colors";
+import { getServiceTypeVisuals, TServiceTypeCode } from "@/features/services/service-type";
 
 type TProps = { serviceId: string };
 
 const ServiceChip = ({ serviceId }: TProps) => {
-  const key = dbCodeToServiceKey(serviceId);
-  const color = key ? SERVICE_COLORS[key] : "#71717a";
-  const Icon = key ? SERVICE_ICONS[key] : Layers;
+  const { color, Icon } = getServiceTypeVisuals(serviceId as TServiceTypeCode);
   const label = getServiceLabel(serviceId);
 
   return (

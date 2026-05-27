@@ -60,6 +60,11 @@
   --color-service-hot-water: var(--service-hot-water);
   --color-service-heating: var(--service-heating);
   --color-service-internet: var(--service-internet);
+  --color-service-gas-delivery: var(--service-gas-delivery);
+  --color-service-building-maintenance: var(--service-building-maintenance);
+  --color-service-garbage-collection: var(--service-garbage-collection);
+  --color-service-intercom: var(--service-intercom);
+  --color-service-hoa-fees: var(--service-hoa-fees);
 
   /* DevNote. Custom */
   --color-brand: var(--brand);

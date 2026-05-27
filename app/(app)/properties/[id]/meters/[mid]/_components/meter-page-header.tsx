@@ -1,10 +1,10 @@
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { ROUTES } from "@/lib/routes";
-import { getServiceTypeDisplay } from "@/lib/constants/service-types";
 import type { TMeter } from "@/lib/db/schema/meters";
 import type { TServiceType } from "@/lib/db/schema/service-types";
 import { ReplaceMeterButton } from "./replace-meter-button";
 import { OverflowMenu } from "./overflow-menu";
+import { getServiceTypeVisuals, TServiceTypeCode } from "@/features/services/service-type";
 
 type TProps = {
   meter: TMeter;
@@ -15,7 +15,7 @@ type TProps = {
 };
 
 const MeterPageHeader = ({ meter, serviceType, propertyId, propertyName, canMutate }: TProps) => {
-  const { color } = getServiceTypeDisplay(serviceType.code);
+  const { color } = getServiceTypeVisuals(serviceType.code as TServiceTypeCode);
   const isHistorical = meter.validTo !== null;
 
   const serviceLabel = serviceType.code.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());

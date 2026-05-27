@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { db } from "@/lib/db/client";
 import { serviceTypes } from "@/lib/db/schema/service-types";
-import { SERVICE_TYPE_CODES } from "@/lib/constants/service-types";
+import { SERVICE_TYPE_CODES } from "../service-type";
 
 describe("SERVICE_TYPE_CODES", () => {
   it("matches service_types rows in the DB — divergence means a migration was added without updating the enum", async () => {

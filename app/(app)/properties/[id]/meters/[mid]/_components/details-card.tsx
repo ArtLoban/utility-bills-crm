@@ -1,6 +1,6 @@
-import { getServiceTypeDisplay } from "@/lib/constants/service-types";
 import type { TMeter } from "@/lib/db/schema/meters";
 import type { TServiceType } from "@/lib/db/schema/service-types";
+import { getServiceTypeVisuals, TServiceTypeCode } from "@/features/services/service-type";
 
 const ZONE_DESCRIPTIONS: Record<number, string> = {
   1: "Single zone",
@@ -30,7 +30,7 @@ type TProps = {
 };
 
 const DetailsCard = ({ meter, serviceType, propertyName }: TProps) => {
-  const { color, Icon } = getServiceTypeDisplay(serviceType.code);
+  const { color, Icon } = getServiceTypeVisuals(serviceType.code as TServiceTypeCode);
 
   const serviceLabel = serviceType.code.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 

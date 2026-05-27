@@ -8,8 +8,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { getServiceTypeDisplay } from "@/lib/constants/service-types";
 import type { TMeterGlobalRow } from "@/lib/db/access/meters";
+import { getServiceTypeVisuals, TServiceTypeCode } from "@/features/services/service-type";
 
 type TProps = {
   row: TMeterGlobalRow;
@@ -20,7 +20,7 @@ const MeterCard = ({ row, showHistoricalBadge }: TProps) => {
   const router = useRouter();
   const t = useTranslations("meters.list");
 
-  const { color, Icon } = getServiceTypeDisplay(row.serviceType.code);
+  const { color, Icon } = getServiceTypeVisuals(row.serviceType.code as TServiceTypeCode);
   const isHistorical = row.meter.validTo !== null;
   const detailHref = `/properties/${row.property.id}/meters/${row.meter.id}`;
 

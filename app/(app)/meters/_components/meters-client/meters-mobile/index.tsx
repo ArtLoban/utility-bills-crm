@@ -2,7 +2,6 @@ import { ArrowDown } from "lucide-react";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 
-import { getServiceTypeDisplay } from "@/lib/constants/service-types";
 import { ACCENT, TINT_BG, TINT_BORDER } from "@/lib/constants/ui-tokens";
 import type { TMeterGlobalRow } from "@/lib/db/access/meters";
 import type { TFilterState } from "../../../_data/mock";
@@ -11,6 +10,7 @@ import { FilterChip } from "./filter-chip";
 import { FilterSheet } from "./filter-sheet";
 import { MeterCard } from "./meter-card";
 import { MobilePager } from "./mobile-pager";
+import { getServiceTypeVisuals, TServiceTypeCode } from "@/features/services/service-type";
 
 type TPropertyOption = { id: string; name: string };
 type TServiceTypeOption = { code: string };
@@ -55,7 +55,9 @@ const MetersMobile = ({
       : null;
 
   const serviceColor =
-    filters.service !== "all" ? getServiceTypeDisplay(filters.service).color : undefined;
+    filters.service !== "all"
+      ? getServiceTypeVisuals(filters.service as TServiceTypeCode).color
+      : undefined;
 
   const showHistoricalBadge = filters.status === "all";
 

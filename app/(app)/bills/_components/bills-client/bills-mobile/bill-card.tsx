@@ -1,6 +1,6 @@
 "use client";
 
-import { Layers, MoreHorizontal } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
 
 import {
   DropdownMenu,
@@ -9,19 +9,17 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { SERVICE_COLORS, dbCodeToServiceKey } from "@/lib/constants/service-colors";
-import { SERVICE_ICONS } from "@/lib/constants/service-icons";
 import { DESTRUCTIVE } from "@/lib/constants/ui-tokens";
 import type { TBillRow } from "@/features/bills/types";
 import { useBillsTable } from "../context";
+import { getServiceTypeVisuals, TServiceTypeCode } from "@/features/services/service-type";
 
 type TProps = { row: TBillRow };
 
 const BillCard = ({ row }: TProps) => {
   const { requestEdit, requestDelete } = useBillsTable();
-  const key = dbCodeToServiceKey(row.service.id);
-  const color = key ? SERVICE_COLORS[key] : "#71717a";
-  const Icon = key ? SERVICE_ICONS[key] : Layers;
+  const { color, Icon } = getServiceTypeVisuals(row.service.id as TServiceTypeCode);
+
   const shortDate = row.date.split(" ").slice(0, 2).join(" ");
   const amountStr = `−${row.amount.toLocaleString()}`;
 

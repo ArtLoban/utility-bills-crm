@@ -5,9 +5,9 @@ import { ChevronRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { IconBadge } from "@/components/icon-badge";
-import { getServiceTypeDisplay } from "@/lib/constants/service-types";
 import type { TService } from "@/lib/db/schema/services";
 import type { TServiceType } from "@/lib/db/schema/service-types";
+import { getServiceTypeVisuals, TServiceTypeCode } from "@/features/services/service-type";
 
 type TProps = {
   service: TService;
@@ -18,7 +18,7 @@ type TProps = {
 
 const ServiceRow = ({ service, serviceType, propertyId, isLast }: TProps) => {
   const t = useTranslations("services.types");
-  const { color, Icon } = getServiceTypeDisplay(serviceType.code);
+  const { color, Icon } = getServiceTypeVisuals(serviceType.code as TServiceTypeCode);
   const name = t(serviceType.code as Parameters<typeof t>[0]);
 
   return (

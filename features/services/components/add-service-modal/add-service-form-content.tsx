@@ -7,12 +7,12 @@ import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { FormField } from "@/components/form-field";
-import { getServiceTypeDisplay } from "@/lib/constants/service-types";
 import { SERVICE_LIMITS } from "@/features/services/schema";
 import type { PropertyId } from "@/lib/db/schema/properties";
 import type { TServiceType, TServiceTypeId } from "@/lib/db/schema/service-types";
 import { useAddService } from "./hooks/use-add-service";
 import { ServiceTypeCard } from "./components/service-type-card";
+import { getServiceTypeVisuals, TServiceTypeCode } from "@/features/services/service-type";
 
 type TProps = {
   propertyId: PropertyId;
@@ -33,7 +33,7 @@ export const AddServiceFormContent = ({ propertyId, serviceTypes, existingTypeId
       <FormField label="Service type">
         <div className="mt-2 grid grid-cols-3 gap-2 sm:grid-cols-4">
           {serviceTypes.map((st) => {
-            const { color, Icon } = getServiceTypeDisplay(st.code);
+            const { color, Icon } = getServiceTypeVisuals(st.code as TServiceTypeCode);
             const label = t(st.code as Parameters<typeof t>[0]);
             return (
               <ServiceTypeCard

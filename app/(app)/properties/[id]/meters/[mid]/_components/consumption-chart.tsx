@@ -10,10 +10,10 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart";
-import { getServiceTypeDisplay } from "@/lib/constants/service-types";
 import type { TReading } from "@/lib/db/schema/readings";
 import type { TMeter } from "@/lib/db/schema/meters";
 import type { TServiceType } from "@/lib/db/schema/service-types";
+import { getServiceTypeVisuals, TServiceTypeCode } from "@/features/services/service-type";
 
 // Zone palette — same values as mock; hex required for Recharts SVG strokes.
 const ZONE_COLORS = {
@@ -49,7 +49,7 @@ const ConsumptionChart = ({ readings, meter, serviceType }: TProps) => {
     );
   }
 
-  const { color: serviceColor } = getServiceTypeDisplay(serviceType.code);
+  const { color: serviceColor } = getServiceTypeVisuals(serviceType.code as TServiceTypeCode);
   const t1Color = meter.zoneCount === 1 ? serviceColor : ZONE_COLORS.t1;
 
   const chartConfig: ChartConfig = {

@@ -8,11 +8,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { IconBadge } from "@/components/icon-badge";
-import { getServiceTypeDisplay } from "@/lib/constants/service-types";
 import type { TMeterGlobalRow } from "@/lib/db/access/meters";
 import type { TReading } from "@/lib/db/schema/readings";
 import { formatInstalled } from "../utils";
+import { TServiceTypeCode } from "@/features/services/service-type";
+import { ServiceCell } from "@/components/data-table/cells/service-cell";
 
 const formatReadingValue = (v: string | null): string => {
   if (v === null) return "—";
@@ -59,13 +59,8 @@ const MeterRow = ({ row, showHistoricalBadge, isLast }: TProps) => {
   const router = useRouter();
   const t = useTranslations("meters.list");
 
-  const { color, Icon } = getServiceTypeDisplay(row.serviceType.code);
   const isHistorical = row.meter.validTo !== null;
   const detailHref = `/properties/${row.property.id}/meters/${row.meter.id}`;
-
-  const serviceLabel = row.serviceType.code
-    .replace(/_/g, " ")
-    .replace(/\b\w/g, (c) => c.toUpperCase());
 
   const tdBorderClass = isLast ? "" : "border-b border-zinc-200 dark:border-zinc-800";
   const tdBaseClass = `${tdBorderClass} text-zinc-950 dark:text-zinc-50`;
@@ -92,10 +87,7 @@ const MeterRow = ({ row, showHistoricalBadge, isLast }: TProps) => {
       </td>
 
       <td className={tdBaseClass} style={tdStyle}>
-        <span className="inline-flex items-center gap-1.5">
-          <IconBadge icon={Icon} color={color} size="xs" />
-          <span style={{ fontSize: 13.5 }}>{serviceLabel}</span>
-        </span>
+        <ServiceCell type={row.serviceType.code as TServiceTypeCode} />
       </td>
 
       <td

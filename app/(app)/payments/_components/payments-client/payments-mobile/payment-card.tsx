@@ -11,9 +11,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { getServiceTypeDisplay } from "@/lib/constants/service-types";
 import { TPayment } from "@/app/(app)/payments/_data/mock";
 import { formatUAH } from "@/lib/format/currency";
+import { getServiceTypeVisuals } from "@/features/services/service-type";
+import { IconBadge } from "@/components/icon-badge";
 
 type TProps = {
   payment: TPayment;
@@ -22,7 +23,7 @@ type TProps = {
 export const PaymentCard = ({ payment }: TProps) => {
   const router = useRouter();
   const t = useTranslations("dataTable.rowActions");
-  const { color, Icon } = getServiceTypeDisplay(payment.service.id);
+  const { color, Icon: icon } = getServiceTypeVisuals(payment.service.id);
   const shortDate = payment.paidAt.split(" ").slice(0, 2).join(" ");
 
   return (
@@ -38,21 +39,7 @@ export const PaymentCard = ({ payment }: TProps) => {
       }}
       onClick={() => router.push(`/payments/${payment.id}/edit`)}
     >
-      <div
-        style={{
-          width: 36,
-          height: 36,
-          borderRadius: 8,
-          background: `color-mix(in srgb, ${color} 10%, transparent)`,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          flexShrink: 0,
-        }}
-      >
-        <Icon size={18} style={{ color }} strokeWidth={1.75} />
-      </div>
-
+      <IconBadge icon={icon} color={color} />
       <div style={{ flex: 1, minWidth: 0 }}>
         <div
           style={{
@@ -101,7 +88,6 @@ export const PaymentCard = ({ payment }: TProps) => {
           {payment.property.name}
         </span>
       </div>
-
       <DropdownMenu>
         <DropdownMenuTrigger
           className="inline-flex items-center justify-center data-[state=open]:border-zinc-200 data-[state=open]:bg-zinc-100 dark:data-[state=open]:border-zinc-700 dark:data-[state=open]:bg-zinc-800"

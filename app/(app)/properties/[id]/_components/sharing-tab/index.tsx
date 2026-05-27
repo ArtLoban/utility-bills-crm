@@ -10,7 +10,7 @@ import { UserCard } from "./components/user-card";
 import { InviteModal } from "./components/invite-modal";
 import { LastOwnerModal } from "./components/last-owner-modal";
 import { RemoveUserModal } from "./components/remove-user-modal";
-import { type TPropertyRole } from "@/lib/constants/property";
+import { TPropertyRole } from "@/features/properties/types";
 
 type TProps = {
   myRole: TPropertyRole;

@@ -1,9 +1,9 @@
 import Link from "next/link";
 
 import { IconBadge } from "@/components/icon-badge";
-import { getServiceTypeDisplay } from "@/lib/constants/service-types";
 import type { TMeter } from "@/lib/db/schema/meters";
 import type { TServiceType } from "@/lib/db/schema/service-types";
+import { getServiceTypeVisuals, TServiceTypeCode } from "@/features/services/service-type";
 
 type TProps = {
   meter: TMeter;
@@ -20,7 +20,7 @@ const ZONE_LABELS: Record<number, string> = {
 };
 
 const MeterRow = ({ meter, serviceType, propertyId, canMutate, onReplace }: TProps) => {
-  const { color, Icon } = getServiceTypeDisplay(serviceType.code);
+  const { color, Icon } = getServiceTypeVisuals(serviceType.code as TServiceTypeCode);
   const isHistorical = meter.validTo !== null;
 
   return (

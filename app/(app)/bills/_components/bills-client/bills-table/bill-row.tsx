@@ -9,10 +9,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ServiceBadge } from "@/app/(app)/bills/_components/bills-client/service-badge";
 import { DESTRUCTIVE } from "@/lib/constants/ui-tokens";
 import type { TBillRow } from "@/features/bills/types";
 import { useBillsTable } from "../context";
+import { ServiceCell } from "@/components/data-table/cells/service-cell";
+import { TServiceTypeCode } from "@/features/services/service-type";
 
 type TProps = {
   row: TBillRow;
@@ -40,7 +41,7 @@ const BillRow = ({ row, isLast }: TProps) => {
         {row.property.name}
       </td>
       <td className={tdBaseClass} style={tdStyle}>
-        <ServiceBadge service={row.service} />
+        <ServiceCell type={row.service.id as TServiceTypeCode} />
       </td>
       <td
         className={`${tdBorderClass} text-zinc-500 dark:text-zinc-400`}

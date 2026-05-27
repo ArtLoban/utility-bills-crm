@@ -7,11 +7,11 @@ import { Dialog, DialogClose, DialogContent, DialogTitle } from "@/components/ui
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ACCENT, SUCCESS, TINT_BG, TINT_BORDER } from "@/lib/constants/ui-tokens";
-import { getServiceTypeDisplay } from "@/lib/constants/service-types";
 import type { TReading } from "@/lib/db/schema/readings";
 import type { TMeter } from "@/lib/db/schema/meters";
 import type { TServiceType } from "@/lib/db/schema/service-types";
 import { useReadingForm } from "./hooks/use-reading-form";
+import { getServiceTypeVisuals, TServiceTypeCode } from "@/features/services/service-type";
 
 type TProps = {
   open: boolean;
@@ -62,7 +62,7 @@ const SubmitReadingModal = ({
   lastReading,
   reading,
 }: TProps) => {
-  const { color, Icon } = getServiceTypeDisplay(serviceType.code);
+  const { color, Icon } = getServiceTypeVisuals(serviceType.code as TServiceTypeCode);
 
   const {
     form,
