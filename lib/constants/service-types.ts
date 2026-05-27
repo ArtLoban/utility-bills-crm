@@ -7,7 +7,6 @@ import {
   Building2,
   Droplets,
   Flame,
-  Gauge,
   Globe,
   Phone,
   Plug,
@@ -18,7 +17,23 @@ import {
   Zap,
 } from "lucide-react";
 
-export const SERVICE_TYPE_COLORS: Record<string, string> = {
+export const SERVICE_TYPE_CODES = {
+  ELECTRICITY: "electricity",
+  GAS: "gas",
+  COLD_WATER: "cold_water",
+  HOT_WATER: "hot_water",
+  GAS_DELIVERY: "gas_delivery",
+  HEATING: "heating",
+  BUILDING_MAINTENANCE: "building_maintenance",
+  GARBAGE_COLLECTION: "garbage_collection",
+  INTERNET: "internet",
+  INTERCOM: "intercom",
+  HOA_FEES: "hoa_fees",
+} as const;
+
+export type TServiceTypeCode = (typeof SERVICE_TYPE_CODES)[keyof typeof SERVICE_TYPE_CODES];
+
+export const SERVICE_TYPE_COLORS: Record<TServiceTypeCode, string> = {
   electricity: "#f59e0b",
   gas: "#ef4444",
   cold_water: "#3b82f6",
@@ -32,7 +47,7 @@ export const SERVICE_TYPE_COLORS: Record<string, string> = {
   hoa_fees: "#84cc16",
 };
 
-export const SERVICE_TYPE_ICONS: Record<string, ElementType> = {
+export const SERVICE_TYPE_ICONS: Record<TServiceTypeCode, ElementType> = {
   electricity: Zap,
   gas: Flame,
   cold_water: Droplets,
@@ -50,15 +65,15 @@ const FALLBACK_COLOR = "#94a3b8";
 const FALLBACK_ICON: ElementType = Plug;
 
 export const getServiceTypeDisplay = (code: string): { color: string; Icon: ElementType } => ({
-  color: SERVICE_TYPE_COLORS[code] ?? FALLBACK_COLOR,
-  Icon: SERVICE_TYPE_ICONS[code] ?? FALLBACK_ICON,
+  color: SERVICE_TYPE_COLORS[code as TServiceTypeCode] ?? FALLBACK_COLOR,
+  Icon: SERVICE_TYPE_ICONS[code as TServiceTypeCode] ?? FALLBACK_ICON,
 });
 
 // Convenience: measurement type indicator for UI decisions (show meter prompt, etc.)
 // Mirrors the DB measurementType column without requiring a DB call.
-export const METERED_SERVICE_CODES = new Set([
-  "electricity",
-  "gas",
-  "cold_water",
-  "hot_water",
-] as const);
+export const METERED_SERVICE_CODES = new Set<TServiceTypeCode>([
+  SERVICE_TYPE_CODES.ELECTRICITY,
+  SERVICE_TYPE_CODES.GAS,
+  SERVICE_TYPE_CODES.COLD_WATER,
+  SERVICE_TYPE_CODES.HOT_WATER,
+]);

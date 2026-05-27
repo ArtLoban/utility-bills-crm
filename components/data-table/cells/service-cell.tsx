@@ -1,52 +1,37 @@
 import { useTranslations } from "next-intl";
 import {
+  Building2,
   Droplets,
   Flame,
-  Home,
+  Globe,
   Phone,
   Thermometer,
   Trash2,
-  Wifi,
+  Truck,
+  Wallet,
   Zap,
   type LucideIcon,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import type { TServiceTypeCode } from "@/lib/constants/service-types";
 
-/* TODO: Refactor */
-/**
- * Mirrors the `service_types` catalog seeded in the DB.
- * Keep in sync with `lib/db/seed/service-types.ts` (TBD in scaffolding).
- */
-export type TServiceType =
-  | "electricity"
-  | "gas"
-  | "gas_delivery"
-  | "cold_water"
-  | "hot_water"
-  | "heating"
-  | "building_maintenance"
-  | "garbage"
-  | "internet"
-  | "intercom"
-  | "hoa";
-
-const SERVICE_ICONS: Record<TServiceType, LucideIcon> = {
+const SERVICE_ICONS: Record<TServiceTypeCode, LucideIcon> = {
   electricity: Zap,
   gas: Flame,
-  gas_delivery: Flame,
+  gas_delivery: Truck,
   cold_water: Droplets,
   hot_water: Droplets,
   heating: Thermometer,
-  building_maintenance: Home,
-  garbage: Trash2,
-  internet: Wifi,
+  building_maintenance: Building2,
+  garbage_collection: Trash2,
+  internet: Globe,
   intercom: Phone,
-  hoa: Home,
+  hoa_fees: Wallet,
 };
 
 type TProps = {
-  type: TServiceType;
+  type: TServiceTypeCode;
   /** Show the localized label next to the icon. Default: true. */
   showLabel?: boolean;
   className?: string;

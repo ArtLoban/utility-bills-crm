@@ -13,6 +13,7 @@ import { readings } from "../schema/readings";
 import { properties } from "../schema/properties";
 import { serviceTypes } from "../schema/service-types";
 import { propertyAccess } from "../schema/properties";
+import type { TServiceTypeCode } from "@/lib/constants/service-types";
 
 type TSeedReading = {
   readAt: Date;
@@ -24,7 +25,7 @@ type TSeedReading = {
 
 type TSeedMeterReadings = {
   propertyName: string;
-  serviceTypeCode: string;
+  serviceTypeCode: TServiceTypeCode;
   meterValidFrom: Date;
   readings: TSeedReading[];
 };

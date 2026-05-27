@@ -497,10 +497,10 @@
       "hot_water": "Гаряча вода",
       "heating": "Опалення",
       "building_maintenance": "Утримання будинку",
-      "garbage": "Вивіз сміття",
+      "garbage_collection": "Вивіз сміття",
       "internet": "Інтернет",
       "intercom": "Домофон",
-      "hoa": "Внески ОСББ"
+      "hoa_fees": "Внески ОСББ"
     }
   }
 }

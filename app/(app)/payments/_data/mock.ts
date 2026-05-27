@@ -1,4 +1,4 @@
-import { TServiceKey } from "@/lib/constants/service-colors";
+import type { TServiceTypeCode } from "@/lib/constants/service-types";
 
 export type TPaymentProperty = {
   id: string;
@@ -7,7 +7,7 @@ export type TPaymentProperty = {
 };
 
 export type TPaymentService = {
-  id: TServiceKey;
+  id: TServiceTypeCode;
   name: string;
   unit: string | null;
 };
@@ -40,8 +40,8 @@ export const PAYMENT_PROPERTIES: TPaymentProperty[] = [
 export const PAYMENT_SERVICES: TPaymentService[] = [
   { id: "electricity", name: "Electricity", unit: "kWh" },
   { id: "gas", name: "Gas", unit: "m³" },
-  { id: "coldWater", name: "Cold water", unit: "m³" },
-  { id: "hotWater", name: "Hot water", unit: "m³" },
+  { id: "cold_water", name: "Cold water", unit: "m³" },
+  { id: "hot_water", name: "Hot water", unit: "m³" },
   { id: "internet", name: "Internet", unit: null },
   { id: "heating", name: "Heating", unit: "m³" },
 ];
@@ -61,16 +61,16 @@ const MONTHS: Array<{ year: number; month: number }> = [
   { year: 2025, month: 3 },
 ];
 
-const SERVICES_PER_PROPERTY: Record<string, TServiceKey[]> = {
-  p1: ["electricity", "gas", "coldWater", "hotWater", "internet", "heating"],
-  p2: ["electricity", "gas", "coldWater", "hotWater", "internet", "heating"],
+const SERVICES_PER_PROPERTY: Record<string, TServiceTypeCode[]> = {
+  p1: ["electricity", "gas", "cold_water", "hot_water", "internet", "heating"],
+  p2: ["electricity", "gas", "cold_water", "hot_water", "internet", "heating"],
   p3: ["electricity", "gas"],
 };
 
-const BASE_AMOUNTS: Record<string, Record<TServiceKey, number>> = {
-  p1: { electricity: 680, gas: 300, coldWater: 150, hotWater: 230, internet: 250, heating: 520 },
-  p2: { electricity: 440, gas: 220, coldWater: 110, hotWater: 180, internet: 250, heating: 380 },
-  p3: { electricity: 320, gas: 180, coldWater: 0, hotWater: 0, internet: 0, heating: 0 },
+const BASE_AMOUNTS: Record<string, Partial<Record<TServiceTypeCode, number>>> = {
+  p1: { electricity: 680, gas: 300, cold_water: 150, hot_water: 230, internet: 250, heating: 520 },
+  p2: { electricity: 440, gas: 220, cold_water: 110, hot_water: 180, internet: 250, heating: 380 },
+  p3: { electricity: 320, gas: 180, cold_water: 0, hot_water: 0, internet: 0, heating: 0 },
 };
 
 const HEATING_MULT = [0.2, 0.15, 0, 0, 0, 0, 0, 0.18, 0.72, 1.0, 1.1, 1.05];
@@ -91,14 +91,14 @@ const MONTH_ABBR = [
   "Dec",
 ];
 
-const seasonalMult = (serviceId: TServiceKey, month: number): number => {
+const seasonalMult = (serviceId: TServiceTypeCode, month: number): number => {
   const idx = month - 1;
   if (serviceId === "heating") return HEATING_MULT[idx] ?? 0;
   if (serviceId === "gas") return GAS_MULT[idx] ?? 0;
   return 0.85 + Math.sin(month * 0.5) * 0.15;
 };
 
-const getService = (id: TServiceKey): TPaymentService => {
+const getService = (id: TServiceTypeCode): TPaymentService => {
   const s = PAYMENT_SERVICES.find((p) => p.id === id);
   if (!s) throw new Error(`Unknown service: ${id}`);
   return s;

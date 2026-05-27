@@ -12,10 +12,11 @@ import { meters } from "../schema/meters";
 import { properties } from "../schema/properties";
 import { serviceTypes } from "../schema/service-types";
 import { propertyAccess } from "../schema/properties";
+import type { TServiceTypeCode } from "@/lib/constants/service-types";
 
 type TSeedEntry = {
   propertyName: string;
-  serviceTypeCode: string;
+  serviceTypeCode: TServiceTypeCode;
   serialNumber?: string;
   zoneCount: 1 | 2 | 3;
   installedAt: Date | null;

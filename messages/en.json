@@ -516,10 +516,10 @@
       "hot_water": "Hot water",
       "heating": "Heating",
       "building_maintenance": "Building maintenance",
-      "garbage": "Garbage collection",
+      "garbage_collection": "Garbage collection",
       "internet": "Internet",
       "intercom": "Intercom",
-      "hoa": "HOA fees"
+      "hoa_fees": "HOA fees"
     }
   }
 }

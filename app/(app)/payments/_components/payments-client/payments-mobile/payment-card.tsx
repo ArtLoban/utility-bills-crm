@@ -11,8 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { SERVICE_COLORS } from "@/lib/constants/service-colors";
-import { SERVICE_ICONS } from "@/lib/constants/service-icons";
+import { getServiceTypeDisplay } from "@/lib/constants/service-types";
 import { TPayment } from "@/app/(app)/payments/_data/mock";
 import { formatUAH } from "@/lib/format/currency";
 
@@ -23,8 +22,7 @@ type TProps = {
 export const PaymentCard = ({ payment }: TProps) => {
   const router = useRouter();
   const t = useTranslations("dataTable.rowActions");
-  const color = SERVICE_COLORS[payment.service.id];
-  const Icon = SERVICE_ICONS[payment.service.id];
+  const { color, Icon } = getServiceTypeDisplay(payment.service.id);
   const shortDate = payment.paidAt.split(" ").slice(0, 2).join(" ");
 
   return (

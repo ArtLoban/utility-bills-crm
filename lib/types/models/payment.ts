@@ -1,6 +1,6 @@
 // devnote TODO: Move types to proper place
 
-import { TServiceKey } from "@/lib/constants/service-colors";
+import type { TServiceTypeCode } from "@/lib/constants/service-types";
 
 export type TPaymentProperty = {
   id: string;
@@ -9,7 +9,7 @@ export type TPaymentProperty = {
 };
 
 export type TPaymentService = {
-  id: TServiceKey;
+  id: TServiceTypeCode;
   name: string;
   unit: string | null;
 };

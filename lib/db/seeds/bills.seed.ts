@@ -12,10 +12,11 @@ import { bills } from "../schema/bills";
 import { properties, propertyAccess } from "../schema/properties";
 import { services } from "../schema/services";
 import { serviceTypes } from "../schema/service-types";
+import type { TServiceTypeCode } from "@/lib/constants/service-types";
 
 type TSeedEntry = {
   propertyName: string;
-  serviceTypeCode: string;
+  serviceTypeCode: TServiceTypeCode;
   month: string; // "YYYY-MM"
   amount: number;
   notes?: string;

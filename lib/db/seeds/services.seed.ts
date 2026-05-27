@@ -10,8 +10,9 @@ import * as schema from "../schema";
 import { properties } from "../schema/properties";
 import { serviceTypes } from "../schema/service-types";
 import { services } from "../schema/services";
+import type { TServiceTypeCode } from "@/lib/constants/service-types";
 
-type TSeedEntry = { propertyName: string; serviceTypeCode: string };
+type TSeedEntry = { propertyName: string; serviceTypeCode: TServiceTypeCode };
 
 const SEED_SERVICES: TSeedEntry[] = [
   { propertyName: "Квартира на Хрещатику", serviceTypeCode: "electricity" },

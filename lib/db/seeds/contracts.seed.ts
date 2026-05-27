@@ -13,10 +13,11 @@ import { properties } from "../schema/properties";
 import { providers } from "../schema/providers";
 import { serviceTypes } from "../schema/service-types";
 import { services } from "../schema/services";
+import type { TServiceTypeCode } from "@/lib/constants/service-types";
 
 type TSeedEntry = {
   propertyName: string;
-  serviceTypeCode: string;
+  serviceTypeCode: TServiceTypeCode;
   providerName: string;
   validFrom: Date;
   validTo: Date | null;

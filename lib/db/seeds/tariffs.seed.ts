@@ -13,12 +13,13 @@ import { tariffs } from "../schema/tariffs";
 import { properties } from "../schema/properties";
 import { serviceTypes } from "../schema/service-types";
 import { services } from "../schema/services";
+import type { TServiceTypeCode } from "@/lib/constants/service-types";
 
 // Two tariff records per contract: one closed, one current (validTo = NULL).
 // For metered services both metered and fixed shapes are represented in history.
 type TSeedEntry = {
   propertyName: string;
-  serviceTypeCode: string;
+  serviceTypeCode: TServiceTypeCode;
   contractValidFrom: Date;
   // Tariff entries for this contract, ordered by validFrom.
   tariffPeriods: Array<{

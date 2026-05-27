@@ -13,10 +13,11 @@ import { accountNumbers } from "../schema/account-numbers";
 import { properties } from "../schema/properties";
 import { serviceTypes } from "../schema/service-types";
 import { services } from "../schema/services";
+import type { TServiceTypeCode } from "@/lib/constants/service-types";
 
 type TSeedEntry = {
   propertyName: string;
-  serviceTypeCode: string;
+  serviceTypeCode: TServiceTypeCode;
   contractValidFrom: Date;
   periods: Array<{
     value: string;

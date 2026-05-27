@@ -13,6 +13,7 @@ import type { UserId } from "@/lib/db/schema/auth";
 import { propertyByIdForUser } from "./properties";
 import { NotFoundError, err, ok } from "@/lib/errors";
 import type { Result } from "@/lib/errors";
+import type { TServiceTypeCode } from "@/lib/constants/service-types";
 
 // --- Result types ---
 
@@ -28,7 +29,7 @@ export type TBillGlobalRow = {
     | "notes"
     | "createdAt"
   >;
-  serviceTypeCode: string;
+  serviceTypeCode: TServiceTypeCode;
   serviceTypeUnit: TServiceTypeUnit | null;
   property: { id: PropertyId; name: string };
   role: TPropertyRole;
@@ -36,7 +37,7 @@ export type TBillGlobalRow = {
 
 export type TServiceOption = {
   id: TServiceId;
-  typeCode: string;
+  typeCode: TServiceTypeCode;
   typeUnit: TServiceTypeUnit | null;
 };
 
@@ -79,7 +80,7 @@ export const billsForGlobalList = async (userId: UserId): Promise<TBillGlobalRow
 
   return rows.map((r) => ({
     bill: r.bill,
-    serviceTypeCode: r.serviceTypeCode,
+    serviceTypeCode: r.serviceTypeCode as TServiceTypeCode,
     serviceTypeUnit: r.serviceTypeUnit,
     property: { id: r.propertyId, name: r.propertyName },
     role: r.role,
@@ -129,7 +130,7 @@ export const billByIdForUser = async (
   const r = rows[0]!;
   return ok({
     bill: r.bill,
-    serviceTypeCode: r.serviceTypeCode,
+    serviceTypeCode: r.serviceTypeCode as TServiceTypeCode,
     serviceTypeUnit: r.serviceTypeUnit,
     property: { id: r.propertyId, name: r.propertyName },
     role: r.role,
@@ -167,7 +168,7 @@ export const servicesForBillForm = async (
     const existing = result[row.propertyId];
     const option: TServiceOption = {
       id: row.serviceId,
-      typeCode: row.serviceTypeCode,
+      typeCode: row.serviceTypeCode as TServiceTypeCode,
       typeUnit: row.serviceTypeUnit,
     };
     if (existing) {

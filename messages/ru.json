@@ -497,10 +497,10 @@
       "hot_water": "Горячая вода",
       "heating": "Отопление",
       "building_maintenance": "Содержание дома",
-      "garbage": "Вывоз мусора",
+      "garbage_collection": "Вывоз мусора",
       "internet": "Интернет",
       "intercom": "Домофон",
-      "hoa": "Взносы ТСЖ"
+      "hoa_fees": "Взносы ТСЖ"
     }
   }
 }
