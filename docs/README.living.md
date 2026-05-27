@@ -455,6 +455,8 @@ Rationale: the "product-first" framing had begun to systematically under-scope f
 | 116 | Admin auth: `ADMIN_EMAILS` env var, seeded on first sign-in                                                     | DB flag set manually; separate admin setup flow                              | env-based seed                  |
 | 117 | Modal implementation: hybrid — intercepting routes for entity modals, local `<ConfirmDialog>` for confirmations | All via intercepting routes; all via Zustand store; all via local `useState` | Hybrid                          |
 | 118 | `service_types` catalog delivered via migration `INSERT`; no separate production-seed mechanism                 | Dedicated `seed:prod` script; one idempotent seed with env-gated dev part    | Catalog in migration            |
+| 119 | Global `/providers` catalog page; provider management not limited to contract-form inline only                  | Provider management inline within the contract form only (no dedicated page) | Dedicated `/providers` page     |
+| 120 | List-page filtering, sorting, and pagination run on the backend; URL is the source of truth for query state     | Client-side data operations via TanStack Table row models                    | Backend-driven, URL-synced      |
 
 > **#117 — detail.** Decision #71 established that entity creation/editing happens via modals, but not _how_ they are implemented. The mechanism is chosen by one criterion — whether the modal has a meaningful shareable URL:
 >
@@ -465,6 +467,26 @@ Rationale: the "product-first" framing had begun to systematically under-scope f
 > **#118 — detail.** Stage 3 raised the deferred question of seed infrastructure: the dev-seed had been kept minimal (2–3 rows per entity), and `service_types` is the first entity that _must_ be seeded for the product to function at all. Rather than introduce a production-seed script, the catalog is treated as schema-level product data: a fixed 11-entry reference table (#53, no admin UI), owned by the developer, changed only through code. It is delivered by the migration pipeline — the `CREATE TABLE` migration also `INSERT`s the rows, idempotently keyed on the unique `code`. Production receives the catalog automatically on `db:migrate`; no deploy step can forget it. The dev-seed script stays strictly dev-only, for fake properties/services. A genuine production-seed mechanism is not needed for the catalog; the question resurfaces at Stage 8 for the demo account, which _is_ seed data (bulk fake data, potentially re-seedable) rather than schema-level data.
 
 > **#119 — detail.** Global `/providers` page added. Alternatives considered: provider management inline within the contract form only (no dedicated page). Outcome: dedicated `/providers` catalog page. Rationale: provider is a per-user data entity and deserves explicit, discoverable management; the UI design (Phase 6) surfaced providers only inside the contract flow because contracts weren't detailed yet — this closes that gap.
+
+> **#120 — detail.** All list pages perform filtering, sorting, and pagination on the backend. Query parameters are read from the URL search string and passed to the server action or API route; `useReactTable` is used for rendering only — it does not own filtering, sorting, or pagination state.
+>
+> **Transport:** query string parameters on a GET request.
+>
+> **Pagination — offset-based:** `page` and `pageSize` parameters. Backend defaults: `page=1`, `pageSize=25`. `pageSize` maximum is `100`; larger values are clamped. A `page` beyond available data returns an empty `data` array with accurate pagination metadata.
+>
+> **Sorting:** `sortBy` and `sortOrder` parameters. Single-column sorting only — multi-sort is not supported. `sortBy` is validated against a per-page allow-list of sortable columns. Default sorting is domain-specific with `createdAt desc` as the secondary tie-breaker (Bills: `periodMonth desc`; Payments: `paidAt desc`).
+>
+> **Filtering:** equality filters (`status=active`, `propertyId=<id>`); multi-value filters use `;` as separator (`service=gas;water`). Operator-based filters (`gte`, `lte`) are not used.
+>
+> **Date filtering:** `dateFrom` and `dateTo`, format `YYYY-MM-DD`. Both optional and independent — either bound alone is valid; both together form a range; neither means no date filter. Both bounds are inclusive. Named period presets are a frontend concern; only resolved dates are sent to the backend.
+>
+> **Invalid parameters:** any invalid query parameter is replaced with its default; the page still renders. Invalid `sortBy` falls back to the default sorting.
+>
+> **Response shape:** `{ data: [...], pagination: { page, pageSize, total, totalPages } }`.
+>
+> **Parameter vocabulary:** shared across all list pages — `page`, `pageSize`, `sortBy`, `sortOrder`, `dateFrom`, `dateTo`, plus page-specific filter keys (e.g. `status`, `propertyId`, `service`).
+>
+> Rationale: client-side data operations (TanStack Table row models) cannot work once data is paginated server-side — the table only receives one page of rows. A URL-based contract gives shareable, refresh-safe state and lets every list page share one backend contract.
 
 ## Open Questions
 

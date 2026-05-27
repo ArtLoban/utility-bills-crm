@@ -226,6 +226,8 @@ The structure below applies to both families regardless of mechanism.
 
 Used for: Bills list, Payments list, Admin properties, Admin users, etc.
 
+**Data operations:** filtering, sorting, and pagination run on the backend. All query state (filters, sort, pagination) lives in the URL search string — the URL is the single source of truth. `useReactTable` is used for rendering only; it does not own filtering, sorting, or pagination state.
+
 **Structure:**
 
 - Page header with title + count + primary action
@@ -239,7 +241,7 @@ Used for: Bills list, Payments list, Admin properties, Admin users, etc.
 
 **Mobile:** table collapses to card list. Filters move to bottom sheet.
 
-**URL sync:** all filter state stored in searchParams for shareability and refresh-safety.
+**URL sync:** all query state — filters, sort column/direction, and page — is stored in searchParams for shareability and refresh-safety (see Decision #120).
 
 ### Empty states
 
