@@ -1,11 +1,14 @@
 "use client";
 
-import { ArrowDown } from "lucide-react";
 import { useState } from "react";
+import { parseAsString, useQueryStates } from "nuqs";
 
 import { SERVICE_COLORS, dbCodeToServiceKey } from "@/lib/constants/service-colors";
-import { ACCENT, DESTRUCTIVE, TINT_BG, TINT_BORDER } from "@/lib/constants/ui-tokens";
-import type { TBillRow, TFilterState } from "@/features/bills/types";
+import { getServiceLabel } from "@/lib/constants/service-colors";
+import { ACCENT, TINT_BG, TINT_BORDER } from "@/lib/constants/ui-tokens";
+import type { PropertyId } from "@/lib/db/schema/properties";
+import type { TBillGlobalRow } from "@/lib/db/access/bills";
+import type { TServerPagination } from "@/lib/types/data-table";
 import { BillCard } from "./bill-card";
 import { FilterChip } from "./filter-chip";
 import { FilterSheet } from "./filter-sheet";
@@ -14,15 +17,11 @@ import { MobilePager } from "./mobile-pager";
 type TFilterOption = { id: string; name: string };
 
 type TProps = {
-  filters: TFilterState;
-  onFilterChange: (filters: TFilterState) => void;
-  page: number;
-  totalPages: number;
-  onPageChange: (page: number) => void;
-  total: number;
-  pageRows: TBillRow[];
-  propertyOptions: TFilterOption[];
+  data: TBillGlobalRow[];
+  pagination: TServerPagination;
+  propertyOptions: { id: PropertyId; name: string }[];
   serviceOptions: TFilterOption[];
+  onPageChange: (page: number) => void;
 };
 
 const PERIOD_LABELS: Record<string, string> = {
@@ -31,36 +30,42 @@ const PERIOD_LABELS: Record<string, string> = {
 };
 
 const BillsMobile = ({
-  filters,
-  onFilterChange,
-  page,
-  totalPages,
-  onPageChange,
-  total,
-  pageRows,
+  data,
+  pagination,
   propertyOptions,
   serviceOptions,
+  onPageChange,
 }: TProps) => {
   const [sheetOpen, setSheetOpen] = useState(false);
 
+  const [filters, setFilters] = useQueryStates(
+    {
+      propertyId: parseAsString,
+      service: parseAsString,
+      period: parseAsString,
+    },
+    { history: "replace", shallow: false },
+  );
+
   const activeCount = [
-    filters.property !== "all",
-    filters.service !== "all",
-    filters.period !== "last12",
+    filters.propertyId !== null,
+    filters.service !== null,
+    filters.period !== null,
   ].filter(Boolean).length;
 
-  const propertyName =
-    filters.property !== "all"
-      ? (propertyOptions.find((p) => p.id === filters.property)?.name ?? filters.property)
-      : null;
+  const propertyName = filters.propertyId
+    ? (propertyOptions.find((p) => p.id === filters.propertyId)?.name ?? filters.propertyId)
+    : null;
 
-  const serviceOption =
-    filters.service !== "all" ? serviceOptions.find((s) => s.id === filters.service) : null;
-  const serviceName = serviceOption?.name ?? null;
-  const serviceKey = filters.service !== "all" ? dbCodeToServiceKey(filters.service) : undefined;
+  const serviceOption = filters.service
+    ? serviceOptions.find((s) => s.id === filters.service)
+    : null;
+  const serviceName =
+    serviceOption?.name ?? (filters.service ? getServiceLabel(filters.service) : null);
+  const serviceKey = filters.service ? dbCodeToServiceKey(filters.service) : undefined;
   const serviceColor = serviceKey ? SERVICE_COLORS[serviceKey] : undefined;
 
-  const periodLabel = filters.period !== "last12" ? PERIOD_LABELS[filters.period] : null;
+  const periodLabel = filters.period ? (PERIOD_LABELS[filters.period] ?? null) : null;
 
   return (
     <div style={{ padding: "12px 14px 32px" }}>
@@ -122,12 +127,8 @@ const BillsMobile = ({
           )}
         </button>
 
-        <span
-          className="text-zinc-500 dark:text-zinc-400"
-          style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 12 }}
-        >
-          <ArrowDown size={13} />
-          Date (newest)
+        <span className="text-zinc-500 dark:text-zinc-400" style={{ fontSize: 12 }}>
+          {pagination.total} {pagination.total === 1 ? "bill" : "bills"}
         </span>
       </div>
 
@@ -137,74 +138,44 @@ const BillsMobile = ({
           {propertyName && (
             <FilterChip
               label={propertyName}
-              onRemove={() => onFilterChange({ ...filters, property: "all" })}
+              onRemove={() => void setFilters({ propertyId: null })}
             />
           )}
           {serviceName && (
             <FilterChip
               label={serviceName}
               color={serviceColor}
-              onRemove={() => onFilterChange({ ...filters, service: "all" })}
+              onRemove={() => void setFilters({ service: null })}
             />
           )}
           {periodLabel && (
-            <FilterChip
-              label={periodLabel}
-              onRemove={() => onFilterChange({ ...filters, period: "last12" })}
-            />
+            <FilterChip label={periodLabel} onRemove={() => void setFilters({ period: null })} />
           )}
         </div>
       )}
 
       {/* Card list */}
       <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-        {pageRows.map((row) => (
-          <BillCard key={row.id} row={row} />
+        {data.map((row) => (
+          <BillCard key={row.bill.id} row={row} />
         ))}
       </div>
 
       {/* Pager */}
-      {totalPages > 1 && (
+      {pagination.totalPages > 1 && (
         <MobilePager
-          page={page}
-          totalPages={totalPages}
-          onPrev={() => onPageChange(page - 1)}
-          onNext={() => onPageChange(page + 1)}
+          page={pagination.page}
+          totalPages={pagination.totalPages}
+          onPrev={() => onPageChange(pagination.page - 1)}
+          onNext={() => onPageChange(pagination.page + 1)}
         />
       )}
-
-      {/* Total footer */}
-      <div
-        className="border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900"
-        style={{
-          marginTop: 16,
-          padding: 14,
-          borderRadius: 8,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
-      >
-        <span className="text-zinc-500 dark:text-zinc-400" style={{ fontSize: 13 }}>
-          Total (filtered)
-        </span>
-        <span
-          style={{
-            fontSize: 15,
-            fontWeight: 700,
-            color: DESTRUCTIVE,
-            fontFeatureSettings: '"tnum" 1',
-          }}
-        >
-          {`−${total.toLocaleString()} UAH`}
-        </span>
-      </div>
 
       <FilterSheet
         open={sheetOpen}
         onOpenChange={setSheetOpen}
         filters={filters}
-        onFilterChange={onFilterChange}
+        onFilterChange={(updated) => void setFilters(updated)}
         propertyOptions={propertyOptions}
         serviceOptions={serviceOptions}
       />

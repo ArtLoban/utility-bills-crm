@@ -196,6 +196,31 @@
       }
     }
   },
+  "bills": {
+    "list": {
+      "columns": {
+        "date": "Date",
+        "property": "Property",
+        "service": "Service",
+        "period": "Period",
+        "amount": "Amount",
+        "actions": "Actions"
+      },
+      "meta": {
+        "records": "{count, plural, one {# bill} other {# bills}}"
+      },
+      "empty": {
+        "noBills": {
+          "title": "No bills yet",
+          "body": "Record your first bill to start tracking expenses."
+        },
+        "filtered": {
+          "title": "No bills match your filters",
+          "cta": "Clear filters"
+        }
+      }
+    }
+  },
   "payments": {
     "list": {
       "title": "Payments",

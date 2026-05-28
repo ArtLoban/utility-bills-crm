@@ -1,6 +1,7 @@
 "use client";
 
 import { MoreHorizontal } from "lucide-react";
+import { useFormatter } from "next-intl";
 
 import {
   DropdownMenu,
@@ -10,18 +11,29 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { DESTRUCTIVE } from "@/lib/constants/ui-tokens";
-import type { TBillRow } from "@/features/bills/types";
+import { getServiceLabel } from "@/lib/constants/service-colors";
+import { getServiceTypeVisuals } from "@/features/services/service-type";
+import type { TBillGlobalRow } from "@/lib/db/access/bills";
 import { useBillsTable } from "../context";
-import { getServiceTypeVisuals, TServiceTypeCode } from "@/features/services/service-type";
 
-type TProps = { row: TBillRow };
+type TProps = { row: TBillGlobalRow };
 
 const BillCard = ({ row }: TProps) => {
   const { requestEdit, requestDelete } = useBillsTable();
-  const { color, Icon } = getServiceTypeVisuals(row.service.id as TServiceTypeCode);
+  const formatter = useFormatter();
+  const { color, Icon } = getServiceTypeVisuals(row.serviceTypeCode);
 
-  const shortDate = row.date.split(" ").slice(0, 2).join(" ");
-  const amountStr = `−${row.amount.toLocaleString()}`;
+  const shortDate = formatter.dateTime(new Date(row.bill.createdAt), {
+    month: "short",
+    day: "numeric",
+  });
+  const periodLabel = formatter.dateTime(new Date(row.bill.periodMonth), {
+    year: "numeric",
+    month: "long",
+  });
+  const serviceName = getServiceLabel(row.serviceTypeCode);
+  const amount = parseFloat(row.bill.amount);
+  const amountStr = `−${amount.toLocaleString()}`;
 
   return (
     <div
@@ -71,7 +83,7 @@ const BillCard = ({ row }: TProps) => {
               whiteSpace: "nowrap",
             }}
           >
-            {shortDate} · {row.service.name}
+            {shortDate} · {serviceName}
           </span>
           <span
             style={{
@@ -105,7 +117,7 @@ const BillCard = ({ row }: TProps) => {
               flex: 1,
             }}
           >
-            {row.property.name} · {row.period}
+            {row.property.name} · {periodLabel}
           </span>
           <span
             className="text-zinc-500 dark:text-zinc-400"

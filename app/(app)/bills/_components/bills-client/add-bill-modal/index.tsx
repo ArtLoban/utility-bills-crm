@@ -10,8 +10,7 @@ import { ACCENT, TINT_BG, TINT_BORDER } from "@/lib/constants/ui-tokens";
 import { createBill, editBill } from "@/features/bills/actions";
 import type { PropertyId } from "@/lib/db/schema/properties";
 import type { TServiceId } from "@/lib/db/schema/services";
-import type { TServiceOption } from "@/lib/db/access/bills";
-import type { TBillRow } from "@/features/bills/types";
+import type { TBillGlobalRow, TServiceOption } from "@/lib/db/access/bills";
 import { toast } from "sonner";
 import { getServiceLabel } from "@/lib/constants/service-colors";
 import { ServiceChip } from "./service-chip";
@@ -21,7 +20,7 @@ type TProps = {
   onOpenChange: (open: boolean) => void;
   propertyOptions: { id: PropertyId; name: string }[];
   serviceOptions: Record<PropertyId, TServiceOption[]>;
-  bill?: TBillRow; // present → edit mode
+  bill?: TBillGlobalRow; // present → edit mode
 };
 
 type TFormState = {
@@ -62,13 +61,6 @@ const generateMonthOptions = (): { value: string; label: string }[] => {
 const MONTH_OPTIONS = generateMonthOptions();
 
 const defaultMonth = (): string => MONTH_OPTIONS[0]?.value ?? "";
-
-// Derives "YYYY-MM" from periodSort (YYYYMM number), e.g. 202405 → "2024-05".
-const periodSortToMonth = (sort: number): string => {
-  const year = Math.floor(sort / 100);
-  const month = sort % 100;
-  return `${year}-${String(month).padStart(2, "0")}`;
-};
 
 type TModalSelectProps = {
   value: string;
@@ -128,14 +120,14 @@ const ModalSelect = ({ value, isFilled, onChange, children }: TModalSelectProps)
   </div>
 );
 
-const buildInitialState = (bill: TBillRow | undefined): TFormState => {
+const buildInitialState = (bill: TBillGlobalRow | undefined): TFormState => {
   if (bill) {
     return {
       property: bill.property.id,
-      service: bill.serviceId,
-      month: periodSortToMonth(bill.periodSort),
-      amount: String(bill.amount),
-      notes: bill.notes ?? "",
+      service: bill.bill.serviceId,
+      month: bill.bill.periodMonth.substring(0, 7),
+      amount: bill.bill.amount,
+      notes: bill.bill.notes ?? "",
     };
   }
   return { property: "", service: "", month: defaultMonth(), amount: "", notes: "" };
@@ -170,7 +162,7 @@ const AddBillModal = ({ open, onOpenChange, propertyOptions, serviceOptions, bil
     setIsSaving(true);
     try {
       if (isEditMode && bill) {
-        const result = await editBill(bill.id, {
+        const result = await editBill(bill.bill.id, {
           month: form.month,
           amount: Number(form.amount),
           notes: form.notes,

@@ -2,15 +2,20 @@ import { ChevronDown, X } from "lucide-react";
 
 import { Sheet, SheetClose, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { ACCENT } from "@/lib/constants/ui-tokens";
-import type { TFilterState } from "@/features/bills/types";
 
 type TFilterOption = { id: string; name: string };
+
+type TFilters = {
+  propertyId: string | null;
+  service: string | null;
+  period: string | null;
+};
 
 type TProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  filters: TFilterState;
-  onFilterChange: (filters: TFilterState) => void;
+  filters: TFilters;
+  onFilterChange: (filters: TFilters) => void;
   propertyOptions: TFilterOption[];
   serviceOptions: TFilterOption[];
 };
@@ -71,11 +76,14 @@ const FilterSheet = ({
   propertyOptions,
   serviceOptions,
 }: TProps) => {
-  const set = (key: keyof TFilterState) => (value: string) =>
-    onFilterChange({ ...filters, [key]: value });
+  const set =
+    (key: keyof TFilters) =>
+    (value: string): void => {
+      onFilterChange({ ...filters, [key]: value === "" ? null : value });
+    };
 
   const handleClear = () => {
-    onFilterChange({ property: "all", service: "all", period: "last12" });
+    onFilterChange({ propertyId: null, service: null, period: null });
     onOpenChange(false);
   };
 
@@ -122,8 +130,12 @@ const FilterSheet = ({
 
           {/* Selects */}
           <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-            <SheetSelect label="Property" value={filters.property} onChange={set("property")}>
-              <option value="all">All properties</option>
+            <SheetSelect
+              label="Property"
+              value={filters.propertyId ?? ""}
+              onChange={set("propertyId")}
+            >
+              <option value="">All properties</option>
               {propertyOptions.map((p) => (
                 <option key={p.id} value={p.id}>
                   {p.name}
@@ -131,8 +143,8 @@ const FilterSheet = ({
               ))}
             </SheetSelect>
 
-            <SheetSelect label="Service" value={filters.service} onChange={set("service")}>
-              <option value="all">All services</option>
+            <SheetSelect label="Service" value={filters.service ?? ""} onChange={set("service")}>
+              <option value="">All services</option>
               {serviceOptions.map((s) => (
                 <option key={s.id} value={s.id}>
                   {s.name}
@@ -140,8 +152,8 @@ const FilterSheet = ({
               ))}
             </SheetSelect>
 
-            <SheetSelect label="Period" value={filters.period} onChange={set("period")}>
-              <option value="last12">Last 12 months</option>
+            <SheetSelect label="Period" value={filters.period ?? ""} onChange={set("period")}>
+              <option value="">Last 12 months</option>
               <option value="last6">Last 6 months</option>
               <option value="last3">Last 3 months</option>
             </SheetSelect>

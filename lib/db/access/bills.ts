@@ -1,4 +1,4 @@
-import { and, asc, desc, eq, isNull } from "drizzle-orm";
+import { and, asc, count, desc, eq, gte, inArray, isNull, lte } from "drizzle-orm";
 
 import { db } from "@/lib/db/client";
 import { bills } from "@/lib/db/schema/bills";
@@ -10,10 +10,10 @@ import type { TServiceTypeUnit } from "@/lib/db/schema/service-types";
 import { properties, propertyAccess } from "@/lib/db/schema/properties";
 import type { PropertyId, TPropertyRole } from "@/lib/db/schema/properties";
 import type { UserId } from "@/lib/db/schema/auth";
-import { propertyByIdForUser } from "./properties";
 import { NotFoundError, err, ok } from "@/lib/errors";
 import type { Result } from "@/lib/errors";
-import type { TServiceTypeCode } from "@/lib/constants/service-types";
+import type { TServiceTypeCode } from "@/features/services/service-type";
+import type { TBillsListParams, TBillsPagination } from "@/features/bills/types";
 
 // --- Result types ---
 
@@ -35,56 +35,140 @@ export type TBillGlobalRow = {
   role: TPropertyRole;
 };
 
+export type TBillsListResult = {
+  data: TBillGlobalRow[];
+  pagination: TBillsPagination;
+};
+
 export type TServiceOption = {
   id: TServiceId;
   typeCode: TServiceTypeCode;
   typeUnit: TServiceTypeUnit | null;
 };
 
+// --- Shared select shape ---
+
+const BILL_SELECT = {
+  bill: {
+    id: bills.id,
+    serviceId: bills.serviceId,
+    periodStart: bills.periodStart,
+    periodEnd: bills.periodEnd,
+    periodMonth: bills.periodMonth,
+    amount: bills.amount,
+    notes: bills.notes,
+    createdAt: bills.createdAt,
+  },
+  serviceTypeCode: serviceTypes.code,
+  serviceTypeUnit: serviceTypes.unit,
+  propertyId: properties.id,
+  propertyName: properties.name,
+  role: propertyAccess.propertyRole,
+} as const;
+
+// Intermediate shape returned by the DB query before the property fields are nested.
+// serviceTypeCode is string here — toRow() narrows it to TServiceTypeCode.
+type TRawRow = Omit<TBillGlobalRow, "property" | "serviceTypeCode"> & {
+  serviceTypeCode: string;
+  propertyId: PropertyId;
+  propertyName: string;
+};
+
+const toRow = (r: TRawRow): TBillGlobalRow => ({
+  bill: r.bill,
+  serviceTypeCode: r.serviceTypeCode as TServiceTypeCode,
+  serviceTypeUnit: r.serviceTypeUnit,
+  property: { id: r.propertyId, name: r.propertyName },
+  role: r.role,
+});
+
+// Builds the WHERE conditions array for the bills list query.
+const buildConditions = (userId: UserId, params: TBillsListParams) => {
+  const conds = [
+    isNull(bills.deletedAt),
+    isNull(properties.deletedAt),
+    eq(propertyAccess.userId, userId),
+    isNull(propertyAccess.deletedAt),
+  ];
+
+  if (params.propertyId) conds.push(eq(properties.id, params.propertyId as PropertyId));
+  if (params.services?.length) conds.push(inArray(serviceTypes.code, params.services));
+  if (params.dateFrom) conds.push(gte(bills.periodMonth, params.dateFrom));
+  if (params.dateTo) conds.push(lte(bills.periodMonth, params.dateTo));
+
+  return and(...conds);
+};
+
+// Builds the ORDER BY clause. Default: periodMonth DESC, createdAt DESC.
+const buildOrderBy = (params: TBillsListParams) => {
+  const dir = params.sortOrder === "asc" ? asc : desc;
+  switch (params.sortBy) {
+    case "amount":
+      return [dir(bills.amount), desc(bills.createdAt)] as const;
+    case "createdAt":
+      return [dir(bills.createdAt)] as const;
+    case "periodMonth":
+    default:
+      return [dir(bills.periodMonth), desc(bills.createdAt)] as const;
+  }
+};
+
 // --- Access helpers ---
 // Pure functions: userId is always a parameter. Never read the auth session internally.
 
-export const billsForGlobalList = async (userId: UserId): Promise<TBillGlobalRow[]> => {
-  const rows = await db
-    .select({
-      bill: {
-        id: bills.id,
-        serviceId: bills.serviceId,
-        periodStart: bills.periodStart,
-        periodEnd: bills.periodEnd,
-        periodMonth: bills.periodMonth,
-        amount: bills.amount,
-        notes: bills.notes,
-        createdAt: bills.createdAt,
-      },
-      serviceTypeCode: serviceTypes.code,
-      serviceTypeUnit: serviceTypes.unit,
-      propertyId: properties.id,
-      propertyName: properties.name,
-      role: propertyAccess.propertyRole,
-    })
-    .from(bills)
-    .innerJoin(services, eq(bills.serviceId, services.id))
-    .innerJoin(properties, eq(services.propertyId, properties.id))
-    .innerJoin(
-      propertyAccess,
-      and(
-        eq(propertyAccess.propertyId, properties.id),
-        eq(propertyAccess.userId, userId),
-        isNull(propertyAccess.deletedAt),
-      ),
-    )
-    .innerJoin(serviceTypes, eq(services.serviceTypeId, serviceTypes.id))
-    .where(and(isNull(bills.deletedAt), isNull(properties.deletedAt)))
-    .orderBy(desc(bills.createdAt));
+export const getBillsList = async (
+  userId: UserId,
+  params: TBillsListParams,
+): Promise<TBillsListResult> => {
+  const where = buildConditions(userId, params);
+  const orderBy = buildOrderBy(params);
+  const offset = (params.page - 1) * params.pageSize;
 
-  return rows.map((r) => ({
-    bill: r.bill,
-    serviceTypeCode: r.serviceTypeCode as TServiceTypeCode,
-    serviceTypeUnit: r.serviceTypeUnit,
-    property: { id: r.propertyId, name: r.propertyName },
-    role: r.role,
-  }));
+  // Two queries run in parallel: total count + paginated page.
+  const [countResult, rows] = await Promise.all([
+    db
+      .select({ total: count() })
+      .from(bills)
+      .innerJoin(services, eq(bills.serviceId, services.id))
+      .innerJoin(properties, eq(services.propertyId, properties.id))
+      .innerJoin(
+        propertyAccess,
+        and(
+          eq(propertyAccess.propertyId, properties.id),
+          eq(propertyAccess.userId, userId),
+          isNull(propertyAccess.deletedAt),
+        ),
+      )
+      .innerJoin(serviceTypes, eq(services.serviceTypeId, serviceTypes.id))
+      .where(where),
+
+    db
+      .select(BILL_SELECT)
+      .from(bills)
+      .innerJoin(services, eq(bills.serviceId, services.id))
+      .innerJoin(properties, eq(services.propertyId, properties.id))
+      .innerJoin(
+        propertyAccess,
+        and(
+          eq(propertyAccess.propertyId, properties.id),
+          eq(propertyAccess.userId, userId),
+          isNull(propertyAccess.deletedAt),
+        ),
+      )
+      .innerJoin(serviceTypes, eq(services.serviceTypeId, serviceTypes.id))
+      .where(where)
+      .orderBy(...orderBy)
+      .limit(params.pageSize)
+      .offset(offset),
+  ]);
+
+  const total = countResult[0]?.total ?? 0;
+  const totalPages = Math.max(1, Math.ceil(total / params.pageSize));
+
+  return {
+    data: rows.map(toRow),
+    pagination: { page: params.page, pageSize: params.pageSize, total, totalPages },
+  };
 };
 
 export const billByIdForUser = async (
@@ -92,23 +176,7 @@ export const billByIdForUser = async (
   billId: BillId,
 ): Promise<Result<TBillGlobalRow, NotFoundError>> => {
   const rows = await db
-    .select({
-      bill: {
-        id: bills.id,
-        serviceId: bills.serviceId,
-        periodStart: bills.periodStart,
-        periodEnd: bills.periodEnd,
-        periodMonth: bills.periodMonth,
-        amount: bills.amount,
-        notes: bills.notes,
-        createdAt: bills.createdAt,
-      },
-      serviceTypeCode: serviceTypes.code,
-      serviceTypeUnit: serviceTypes.unit,
-      propertyId: properties.id,
-      propertyName: properties.name,
-      role: propertyAccess.propertyRole,
-    })
+    .select(BILL_SELECT)
     .from(bills)
     .innerJoin(services, eq(bills.serviceId, services.id))
     .innerJoin(properties, eq(services.propertyId, properties.id))
@@ -127,14 +195,7 @@ export const billByIdForUser = async (
   // Decision #108: inaccessible bill is indistinguishable from a nonexistent one.
   if (rows.length === 0) return err(new NotFoundError("bill", billId));
 
-  const r = rows[0]!;
-  return ok({
-    bill: r.bill,
-    serviceTypeCode: r.serviceTypeCode as TServiceTypeCode,
-    serviceTypeUnit: r.serviceTypeUnit,
-    property: { id: r.propertyId, name: r.propertyName },
-    role: r.role,
-  });
+  return ok(toRow(rows[0]!));
 };
 
 // Returns a map of propertyId → services for populating the Add/Edit Bill modal dropdowns.

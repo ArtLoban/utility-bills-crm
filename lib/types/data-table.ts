@@ -7,3 +7,11 @@ export type TPagination = {
   canPreviousPage: boolean;
   canNextPage: boolean;
 };
+
+// Backend-driven pagination metadata returned by list-page queries.
+export type TServerPagination = {
+  page: number;
+  pageSize: number;
+  total: number;
+  totalPages: number;
+};
