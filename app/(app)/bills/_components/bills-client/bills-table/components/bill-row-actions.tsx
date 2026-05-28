@@ -1,11 +1,11 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { Pencil, Trash2 } from "lucide-react";
 
 import type { TRowAction } from "@/components/data-table/cells/row-actions/types";
 import { RowActions } from "@/components/data-table/cells/row-actions";
 import type { TBillGlobalRow } from "@/lib/db/access/bills";
-
 import { useBillsTable } from "../../context";
 
 type TProps = {
@@ -13,14 +13,15 @@ type TProps = {
 };
 
 export const BillRowActions = ({ bill }: TProps) => {
-  const { requestEdit, requestDelete } = useBillsTable();
+  const router = useRouter();
+  const { requestDelete } = useBillsTable();
 
   const items: TRowAction[] = [
     {
       kind: "item",
       label: "Edit",
       icon: <Pencil size={14} />,
-      onSelect: () => requestEdit(bill),
+      onSelect: () => router.push(`/bills/${bill.bill.id}/edit`),
     },
     { kind: "separator" },
     {

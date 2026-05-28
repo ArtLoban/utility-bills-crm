@@ -57,11 +57,11 @@ export const BillsClient = ({ data, pagination, serviceOptions, propertyOptions 
     void setFilterParams({ propertyId: null, service: null, period: null });
 
   return (
-    <BillsTableActions propertyOptions={propertyOptions} serviceOptions={serviceOptions}>
+    <BillsTableActions>
       <PageContainer
         title="Bills"
         meta={<PageMeta items={[`${pagination.total} records`]} />}
-        actions={<BillsActions propertyOptions={propertyOptions} serviceOptions={serviceOptions} />}
+        actions={<BillsActions />}
       >
         {/* Desktop layout */}
         <div className="hidden md:block">

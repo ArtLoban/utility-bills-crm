@@ -1,9 +1,10 @@
 import { getServiceLabel } from "@/lib/constants/service-colors";
-import { getServiceTypeVisuals, TServiceTypeCode } from "@/features/services/service-type";
+import { getServiceTypeVisuals } from "@/features/services/service-type";
+import type { TServiceTypeCode } from "@/features/services/service-type";
 
 type TProps = { serviceId: string };
 
-const ServiceChip = ({ serviceId }: TProps) => {
+export const ServiceChip = ({ serviceId }: TProps) => {
   const { color, Icon } = getServiceTypeVisuals(serviceId as TServiceTypeCode);
   const label = getServiceLabel(serviceId);
 
@@ -26,5 +27,3 @@ const ServiceChip = ({ serviceId }: TProps) => {
     </span>
   );
 };
-
-export { ServiceChip };

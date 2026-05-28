@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { MoreHorizontal } from "lucide-react";
 import { useFormatter } from "next-intl";
 
@@ -19,7 +20,8 @@ import { useBillsTable } from "../context";
 type TProps = { row: TBillGlobalRow };
 
 const BillCard = ({ row }: TProps) => {
-  const { requestEdit, requestDelete } = useBillsTable();
+  const router = useRouter();
+  const { requestDelete } = useBillsTable();
   const formatter = useFormatter();
   const { color, Icon } = getServiceTypeVisuals(row.serviceTypeCode);
 
@@ -153,7 +155,9 @@ const BillCard = ({ row }: TProps) => {
           />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-40">
-          <DropdownMenuItem onClick={() => requestEdit(row)}>Edit</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => router.push(`/bills/${row.bill.id}/edit`)}>
+            Edit
+          </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem variant="destructive" onClick={() => requestDelete(row)}>
             Delete

@@ -7,14 +7,11 @@ import { toast } from "sonner";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { createSafeContext } from "@/lib/utils/create-safe-context";
 import { softDeleteBill } from "@/features/bills/actions";
-import type { PropertyId } from "@/lib/db/schema/properties";
-import type { TBillGlobalRow, TServiceOption } from "@/lib/db/access/bills";
 import { getServiceLabel } from "@/lib/constants/service-colors";
-import { AddBillModal } from "./add-bill-modal";
+import type { TBillGlobalRow } from "@/lib/db/access/bills";
 
 type TBillsTableContext = {
   requestDelete: (bill: TBillGlobalRow) => void;
-  requestEdit: (bill: TBillGlobalRow) => void;
 };
 
 const [BillsTableContext, useBillsTable] = createSafeContext<TBillsTableContext>("BillsTable");
@@ -23,13 +20,10 @@ export { useBillsTable };
 
 type TProps = {
   children: ReactNode;
-  propertyOptions: { id: PropertyId; name: string }[];
-  serviceOptions: Record<PropertyId, TServiceOption[]>;
 };
 
-export const BillsTableActions = ({ children, propertyOptions, serviceOptions }: TProps) => {
+export const BillsTableActions = ({ children }: TProps) => {
   const [rowToDelete, setRowToDelete] = useState<TBillGlobalRow | null>(null);
-  const [billToEdit, setBillToEdit] = useState<TBillGlobalRow | null>(null);
   const [isPending, startTransition] = useTransition();
 
   const handleConfirmDelete = () => {
@@ -47,7 +41,7 @@ export const BillsTableActions = ({ children, propertyOptions, serviceOptions }:
   };
 
   return (
-    <BillsTableContext value={{ requestDelete: setRowToDelete, requestEdit: setBillToEdit }}>
+    <BillsTableContext value={{ requestDelete: setRowToDelete }}>
       {children}
 
       <ConfirmDialog
@@ -68,16 +62,6 @@ export const BillsTableActions = ({ children, propertyOptions, serviceOptions }:
         isPending={isPending}
         onConfirm={handleConfirmDelete}
       />
-
-      {billToEdit && (
-        <AddBillModal
-          open={true}
-          onOpenChange={(open) => !open && setBillToEdit(null)}
-          propertyOptions={propertyOptions}
-          serviceOptions={serviceOptions}
-          bill={billToEdit}
-        />
-      )}
     </BillsTableContext>
   );
 };
