@@ -23,10 +23,9 @@ export default async function NewBillPage() {
     <PageContainer
       title="Add Bill"
       breadcrumbs={[{ label: "Bills", href: ROUTES.bills }, { label: "Add Bill" }]}
+      meta={<span className="text-sm text-zinc-500">Create new Bill</span>}
     >
-      <div className="max-w-2xl">
-        <BillFormContent propertyOptions={propertyOptions} serviceOptions={serviceOptions} />
-      </div>
+      <BillFormContent propertyOptions={propertyOptions} serviceOptions={serviceOptions} />
     </PageContainer>
   );
 }

@@ -7,10 +7,9 @@ export default function NewPaymentPage() {
     <PageContainer
       title="Record Payment"
       breadcrumbs={[{ label: "Payments", href: ROUTES.payments }, { label: "Record Payment" }]}
+      meta={<span className="text-sm text-zinc-500">Create new Payment</span>}
     >
-      <div className="max-w-2xl">
-        <PaymentFormContent />
-      </div>
+      <PaymentFormContent />
     </PageContainer>
   );
 }

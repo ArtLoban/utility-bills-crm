@@ -14,10 +14,9 @@ export default async function EditPaymentPage({ params }: TProps) {
     <PageContainer
       title="Edit Payment"
       breadcrumbs={[{ label: "Payments", href: ROUTES.payments }, { label: "Edit Payment" }]}
+      meta="todo"
     >
-      <div className="max-w-2xl">
-        <PaymentFormContent payment={{ id, serviceId: "", paidAt: "", amount: 0 }} />
-      </div>
+      <PaymentFormContent payment={{ id, serviceId: "", paidAt: "", amount: 0 }} />
     </PageContainer>
   );
 }

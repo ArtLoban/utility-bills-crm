@@ -26,10 +26,9 @@ export default async function EditProviderPage({ params }: TProps) {
         { label: t("list.title"), href: ROUTES.providers },
         { label: t("modal.edit.title") },
       ]}
+      meta={<span className="text-sm text-zinc-500">Update the details below.</span>}
     >
-      <div className="max-w-2xl">
-        <ProviderFormContent provider={provider} />
-      </div>
+      <ProviderFormContent provider={provider} />
     </PageContainer>
   );
 }
