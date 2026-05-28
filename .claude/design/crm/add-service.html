@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Utility Bills CRM — Add service wizard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; padding: 0; height: 100%; background: #f0eee9; overflow: hidden; }
+  body { font-family: 'Inter', system-ui, -apple-system, sans-serif; -webkit-font-smoothing: antialiased; font-feature-settings: 'cv11' 1, 'ss01' 1; color: #09090b; }
+  * { box-sizing: border-box; }
+  button, input, textarea, select { font-family: inherit; }
+  input:focus, textarea:focus, select:focus { outline: none; }
+  a { color: inherit; }
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#7c3aed"/><g transform="translate(50,50)" fill="#fff" font-family="Inter,system-ui,sans-serif" font-weight="700" font-size="28" text-anchor="middle"><text y="10">UB</text></g></svg></template>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel" src="../design-canvas.jsx" data-presets="react"></script>
+<script type="text/babel" src="components/add-service.jsx" data-presets="react"></script>
+<script type="text/babel" src="components/add-service-mobile.jsx" data-presets="react"></script>
+
+<script type="text/babel" data-presets="react">
+  // Don't redeclare these — design-canvas.jsx already binds them as globals.
+  const DCanvas  = window.DesignCanvas;
+  const DCSec    = window.DCSection;
+  const DCBoard  = window.DCArtboard;
+  const Wizard   = window.AddServiceWizard;
+  const WizardM  = window.AddServiceWizardMobile;
+
+  const ARTBOARD_W = 1360;
+  const MOBILE_W   = 390;
+
+  function Page() {
+    return (
+      <DCanvas>
+        <DCSec
+          id="add-service"
+          title="Add Service wizard"
+          subtitle="One full-page form · /properties/[id]/services/new · light desktop. Four conditions of the same design — pan/zoom to compare, click any label to open fullscreen."
+        >
+          <DCBoard id="empty" label="01 · Empty start"
+            width={ARTBOARD_W} height={1780}>
+            <Wizard stateKey="empty" variant="v2"/>
+          </DCBoard>
+
+          <DCBoard id="metered" label="02 · Metered selected · post-submit error"
+            width={ARTBOARD_W} height={1900}>
+            <Wizard stateKey="metered" variant="v2"/>
+          </DCBoard>
+
+          <DCBoard id="fixed" label="03 · Fixed selected (no meter section)"
+            width={ARTBOARD_W} height={1480}>
+            <Wizard stateKey="fixed" variant="v2"/>
+          </DCBoard>
+
+          <DCBoard id="meterFilled" label="04 · Meter engaged · 2 zones · ready"
+            width={ARTBOARD_W} height={2080}>
+            <Wizard stateKey="meterFilled" variant="v2"/>
+          </DCBoard>
+        </DCSec>
+
+        <DCSec
+          id="add-service-dark"
+          title="Add Service wizard — Dark theme"
+          subtitle="Same 4 states, dark palette (Zinc-950 background, brighter violet for contrast). Brand service colors stay the same — they read fine on both themes."
+        >
+          <DCBoard id="d-empty" label="01 · Empty start · Dark"
+            width={ARTBOARD_W} height={1780}>
+            <Wizard stateKey="empty" theme="dark" variant="v2"/>
+          </DCBoard>
+
+          <DCBoard id="d-metered" label="02 · Metered selected · post-submit error · Dark"
+            width={ARTBOARD_W} height={1900}>
+            <Wizard stateKey="metered" theme="dark" variant="v2"/>
+          </DCBoard>
+
+          <DCBoard id="d-fixed" label="03 · Fixed selected (no meter section) · Dark"
+            width={ARTBOARD_W} height={1480}>
+            <Wizard stateKey="fixed" theme="dark" variant="v2"/>
+          </DCBoard>
+
+          <DCBoard id="d-meterFilled" label="04 · Meter engaged · 2 zones · ready · Dark"
+            width={ARTBOARD_W} height={2080}>
+            <Wizard stateKey="meterFilled" theme="dark" variant="v2"/>
+          </DCBoard>
+        </DCSec>
+
+        <DCSec
+          id="add-service-mobile"
+          title="Add Service wizard — Mobile"
+          subtitle="Same 4 conditions, reflowed for 390px (iPhone 14 Pro): stacked rows, 2-col service grid, full-width primary action."
+        >
+          <DCBoard id="m-empty" label="01 · Empty start"
+            width={MOBILE_W} height={2020}>
+            <WizardM stateKey="empty"/>
+          </DCBoard>
+
+          <DCBoard id="m-metered" label="02 · Metered · post-submit error"
+            width={MOBILE_W} height={2200}>
+            <WizardM stateKey="metered"/>
+          </DCBoard>
+
+          <DCBoard id="m-fixed" label="03 · Fixed (no meter section)"
+            width={MOBILE_W} height={1740}>
+            <WizardM stateKey="fixed"/>
+          </DCBoard>
+
+          <DCBoard id="m-meterFilled" label="04 · Meter engaged · 2 zones"
+            width={MOBILE_W} height={2540}>
+            <WizardM stateKey="meterFilled"/>
+          </DCBoard>
+        </DCSec>
+      </DCanvas>
+    );
+  }
+
+  // Wait for component scripts to finish parsing before mounting.
+  const start = () => {
+    if (window.AddServiceWizard && window.AddServiceWizardMobile && window.DesignCanvas) {
+      ReactDOM.createRoot(document.getElementById('root')).render(<Page/>);
+    } else {
+      setTimeout(start, 30);
+    }
+  };
+  start();
+</script>
+</body>
+</html>
