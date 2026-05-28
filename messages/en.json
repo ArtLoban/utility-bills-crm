@@ -545,6 +545,120 @@
       "internet": "Internet",
       "intercom": "Intercom",
       "hoa_fees": "HOA fees"
+    },
+    "serviceForm": {
+      "title": "Add service",
+      "breadcrumb": "Add service",
+      "sections": {
+        "type": {
+          "title": "Service type",
+          "desc": "Choose which utility to set up for this property."
+        },
+        "contract": {
+          "title": "Initial contract",
+          "desc": "The provider and agreement that governs this service."
+        },
+        "tariff": {
+          "title": "Initial tariff",
+          "desc": "The pricing in effect when the contract starts."
+        },
+        "meter": {
+          "title": "Meter",
+          "desc": "Track consumption readings. You can add a meter later."
+        }
+      },
+      "fields": {
+        "provider": {
+          "label": "Provider",
+          "placeholder": "Select a provider…"
+        },
+        "contractValidFrom": {
+          "label": "Contract start date"
+        },
+        "contractNotes": {
+          "label": "Contract notes",
+          "placeholder": "Anything worth remembering about this agreement…"
+        },
+        "fixedAmount": {
+          "label": "Monthly amount",
+          "placeholder": "e.g. 480"
+        },
+        "rate": {
+          "label": "Rate"
+        },
+        "rates": {
+          "label": "Rates per zone"
+        },
+        "tariffValidFrom": {
+          "label": "Tariff start date"
+        },
+        "tariffNotes": {
+          "label": "Tariff notes",
+          "placeholder": "e.g. new rates from Apr 1"
+        },
+        "serviceNotes": {
+          "label": "Service notes",
+          "placeholder": "Any notes about this service…"
+        },
+        "serialNumber": {
+          "label": "Serial number",
+          "placeholder": "e.g. 12345678"
+        },
+        "installedAt": {
+          "label": "Installation date"
+        },
+        "meterValidFrom": {
+          "label": "Meter start date"
+        },
+        "meterNotes": {
+          "label": "Meter notes",
+          "placeholder": "Optional notes…"
+        },
+        "zoneCount": {
+          "label": "Number of zones"
+        }
+      },
+      "zoneLabels": {
+        "single": "Single rate",
+        "t1Day": "T1 — Day",
+        "t2Night": "T2 — Night",
+        "t1Peak": "T1 — Peak",
+        "t2Shoulder": "T2 — Shoulder",
+        "t3OffPeak": "T3 — Off-peak"
+      },
+      "measurement": {
+        "metered": "Metered",
+        "meteredZones": "Metered · zones",
+        "fixed": "Fixed amount"
+      },
+      "noProviders": {
+        "before": "You don't have any providers yet. Add one on the",
+        "link": "Providers page",
+        "after": "first, then return here."
+      },
+      "meterRow": {
+        "title": "Track readings with a meter",
+        "desc": "Recommended when bills depend on usage. You can add a meter later."
+      },
+      "badge": {
+        "added": "Added"
+      },
+      "submit": "Create service",
+      "toast": {
+        "created": "Service created."
+      },
+      "error": {
+        "title": "Couldn't create service",
+        "alreadyExists": "A service of this type is already active for this property.",
+        "overlap": "The dates overlap with an existing entry.",
+        "generic": "Something went wrong. Please try again."
+      },
+      "hint": {
+        "singleZone": "Billed at a single rate. Add a meter below to bill by day/night or three zones.",
+        "multiZone": "Rates apply per zone. Zone count comes from the meter section below.",
+        "noZoneSupport": "This service type does not support multiple zones.",
+        "fixedAmount": "A flat amount billed each month regardless of usage."
+      }
     }
   }
 }

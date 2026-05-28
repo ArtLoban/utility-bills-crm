@@ -19,6 +19,7 @@ type TProps = {
   isSaving?: boolean;
   size?: keyof typeof SIZE_MAP;
   className?: string;
+  noCard?: boolean;
 };
 
 export const FormContainer = (props: TProps) => {
@@ -31,13 +32,14 @@ export const FormContainer = (props: TProps) => {
     isSaving = false,
     size = "sm",
     className,
+    noCard = false,
   } = props;
 
   const { maxWidth } = SIZE_MAP[size];
 
   return (
     <div className={cn("mx-auto w-full", maxWidth, className)}>
-      <div className="rounded-lg border p-6">{children}</div>
+      {noCard ? children : <div className="rounded-lg border p-6">{children}</div>}
       <div className="mt-5 flex items-center justify-between">
         <Button variant="outline" asChild>
           <Link href={backHref}>

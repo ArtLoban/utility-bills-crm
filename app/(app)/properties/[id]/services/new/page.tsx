@@ -1,8 +1,9 @@
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 
 import { getPropertyDetail } from "@/app/(app)/properties/[id]/_data/queries";
 import { getAddServicePageData } from "./_data/queries";
-import { AddServiceFormContent } from "@/features/services";
+import { AddServiceSetupForm } from "@/features/services";
 import { PageContainer } from "@/components/page-container";
 import { ROUTES } from "@/lib/routes";
 import type { PropertyId } from "@/lib/db/schema/properties";
@@ -24,23 +25,23 @@ export default async function NewServicePage({ params }: TProps) {
   if (!dataResult.ok) notFound();
 
   const property = propertyResult.value;
+  const t = await getTranslations("services.serviceForm");
 
   return (
     <PageContainer
-      title="Add service"
+      title={t("title")}
       breadcrumbs={[
         { label: "Properties", href: ROUTES.properties },
         { label: property.name, href: `/properties/${id}` },
-        { label: "Add service" },
+        { label: t("breadcrumb") },
       ]}
     >
-      <div className="max-w-2xl">
-        <AddServiceFormContent
-          propertyId={propertyId}
-          serviceTypes={dataResult.value.allServiceTypes}
-          existingTypeIds={dataResult.value.existingTypeIds}
-        />
-      </div>
+      <AddServiceSetupForm
+        propertyId={propertyId}
+        serviceTypes={dataResult.value.allServiceTypes}
+        existingTypeIds={dataResult.value.existingTypeIds}
+        providers={dataResult.value.providers}
+      />
     </PageContainer>
   );
 }
