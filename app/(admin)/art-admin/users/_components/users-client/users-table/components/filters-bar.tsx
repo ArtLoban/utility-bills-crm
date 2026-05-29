@@ -5,7 +5,7 @@ import { parseAsInteger, useQueryStates } from "nuqs";
 import { TableFilters } from "@/components/data-table/table-filters";
 import { SelectInput } from "@/components/select-input";
 import { FIRST_PAGE_INDEX_DEFAULT } from "@/components/data-table/data-table/constants";
-import { DataTableField } from "@/components/data-table/data-table/types";
+import { DATA_TABLE_PARAMS } from "@/components/data-table/data-table/types";
 import { getInitialValuesFromUrl } from "@/components/data-table/data-table/utils/get-initial-values-from-url";
 import { TSelectableEntity } from "@/components/select-input/types";
 
@@ -25,7 +25,7 @@ const STATUS_OPTIONS: TSelectableEntity[] = [
 export const FiltersBar = () => {
   const [query, setQuery] = useQueryStates({
     ...URL_FIELDS,
-    [DataTableField.PAGE]: parseAsInteger.withDefault(FIRST_PAGE_INDEX_DEFAULT),
+    [DATA_TABLE_PARAMS.PAGE]: parseAsInteger.withDefault(FIRST_PAGE_INDEX_DEFAULT),
   });
 
   const form = useForm<TFiltersFormValues>({
@@ -35,7 +35,7 @@ export const FiltersBar = () => {
   const values = useWatch({ control: form.control });
 
   useEffect(() => {
-    void setQuery({ ...values, [DataTableField.PAGE]: FIRST_PAGE_INDEX_DEFAULT });
+    void setQuery({ ...values, [DATA_TABLE_PARAMS.PAGE]: FIRST_PAGE_INDEX_DEFAULT });
   }, [values, setQuery]);
 
   const handleClear = () => form.reset(INITIAL_FILTERS);

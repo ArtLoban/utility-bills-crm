@@ -6,7 +6,6 @@ export { PAYMENTS_SORT_COLUMNS } from "./types";
 export type {
   TPaymentSortColumn,
   TPaymentsListParams,
-  TPaymentsPagination,
   TPaymentGlobalRow,
   TPaymentsListResult,
 } from "./types";

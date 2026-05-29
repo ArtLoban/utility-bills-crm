@@ -4,18 +4,20 @@ import { parseAsString, useQueryStates } from "nuqs";
 import { Updater } from "@tanstack/table-core";
 import { SortingState } from "@tanstack/react-table";
 import {
-  DataTableField,
-  SortOrder,
+  DATA_TABLE_PARAMS,
+  SORT_ORDER,
   TDefaultSorting,
 } from "@/components/data-table/data-table/types";
 
-const DEFAULT_SORT_ORDER = SortOrder.DESC;
+const DEFAULT_SORT_ORDER = SORT_ORDER.DESC;
 
 export function useDataTableSorting(initial?: TDefaultSorting) {
   const [query, setQuery] = useQueryStates({
-    [DataTableField.SORT_BY]: parseAsString.withDefault(initial?.[DataTableField.SORT_BY] ?? ""),
-    [DataTableField.SORT_ORDER]: parseAsString.withDefault(
-      initial?.[DataTableField.SORT_ORDER] ?? DEFAULT_SORT_ORDER,
+    [DATA_TABLE_PARAMS.SORT_BY]: parseAsString.withDefault(
+      initial?.[DATA_TABLE_PARAMS.SORT_BY] ?? "",
+    ),
+    [DATA_TABLE_PARAMS.SORT_ORDER]: parseAsString.withDefault(
+      initial?.[DATA_TABLE_PARAMS.SORT_ORDER] ?? DEFAULT_SORT_ORDER,
     ),
   });
 
@@ -27,7 +29,7 @@ export function useDataTableSorting(initial?: TDefaultSorting) {
     return [
       {
         id: query.sortBy,
-        desc: query.sortOrder === SortOrder.DESC,
+        desc: query.sortOrder === SORT_ORDER.DESC,
       },
     ];
   }, [query.sortBy, query.sortOrder]);
@@ -40,16 +42,16 @@ export function useDataTableSorting(initial?: TDefaultSorting) {
 
       if (!item) {
         void setQuery({
-          [DataTableField.SORT_BY]: null,
-          [DataTableField.SORT_ORDER]: null,
+          [DATA_TABLE_PARAMS.SORT_BY]: null,
+          [DATA_TABLE_PARAMS.SORT_ORDER]: null,
         });
 
         return;
       }
 
       void setQuery({
-        [DataTableField.SORT_BY]: item.id,
-        [DataTableField.SORT_ORDER]: item.desc ? SortOrder.DESC : DEFAULT_SORT_ORDER,
+        [DATA_TABLE_PARAMS.SORT_BY]: item.id,
+        [DATA_TABLE_PARAMS.SORT_ORDER]: item.desc ? SORT_ORDER.DESC : DEFAULT_SORT_ORDER,
       });
     },
     [setQuery, sorting],

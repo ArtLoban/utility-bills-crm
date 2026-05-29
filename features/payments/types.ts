@@ -3,6 +3,8 @@ import type { TPayment } from "@/lib/db/schema/payments";
 import type { PropertyId, TPropertyRole } from "@/lib/db/schema/properties";
 import type { TServiceTypeCode } from "@/features/services/service-type";
 import type { TServiceTypeUnit } from "@/lib/db/schema/service-types";
+import { TDataTableParams } from "@/components/data-table/data-table/types";
+import { TDateParams } from "@/lib/types/common";
 
 // --- Sort allow-list ---
 
@@ -11,19 +13,11 @@ export type TPaymentSortColumn = (typeof PAYMENTS_SORT_COLUMNS)[number];
 
 // --- List query contract (Decision #120) ---
 
-export type TPaymentsListParams = {
-  page: number;
-  pageSize: number;
-  sortBy: TPaymentSortColumn;
-  sortOrder: "asc" | "desc";
-  propertyId?: string;
-  services?: string[]; // serviceType codes, ;-separated in URL
-  dateFrom?: string; // YYYY-MM-DD on paidAt, inclusive
-  dateTo?: string; // YYYY-MM-DD on paidAt, inclusive
-};
-
-// Named alias so consumers can import without knowing the underlying type.
-export type TPaymentsPagination = TServerPagination;
+export type TPaymentsListParams = TDataTableParams &
+  TDateParams & {
+    propertyId?: string;
+    services?: string[]; // serviceType codes, ;-separated in URL
+  };
 
 // --- Row shape returned from getPaymentsList ---
 
@@ -39,7 +33,7 @@ export type TPaymentGlobalRow = {
 
 export type TPaymentsListResult = {
   data: TPaymentGlobalRow[];
-  pagination: TPaymentsPagination;
+  pagination: TServerPagination;
   // SUM of all filtered payments (not just current page) — for "Total paid (filtered)" footer.
   totalAmount: string;
 };

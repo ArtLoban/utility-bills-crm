@@ -4,7 +4,7 @@ import {
   DEFAULT_PAGE_SIZE,
   FIRST_PAGE_INDEX_DEFAULT,
 } from "@/components/data-table/data-table/constants";
-import { DataTableField } from "@/components/data-table/data-table/types";
+import { DATA_TABLE_PARAMS } from "@/components/data-table/data-table/types";
 
 const PAGE_INDEX_OFFSET = 1;
 
@@ -15,14 +15,14 @@ type TPaginationState = {
 
 export function useDataTablePagination() {
   const [query, setQuery] = useQueryStates({
-    [DataTableField.PAGE]: parseAsInteger.withDefault(FIRST_PAGE_INDEX_DEFAULT),
-    [DataTableField.PAGE_SIZE]: parseAsInteger.withDefault(DEFAULT_PAGE_SIZE),
+    [DATA_TABLE_PARAMS.PAGE]: parseAsInteger.withDefault(FIRST_PAGE_INDEX_DEFAULT),
+    [DATA_TABLE_PARAMS.PAGE_SIZE]: parseAsInteger.withDefault(DEFAULT_PAGE_SIZE),
   });
 
   const pagination: TPaginationState = useMemo(
     () => ({
       pageIndex: query.page - PAGE_INDEX_OFFSET,
-      [DataTableField.PAGE_SIZE]: query.pageSize,
+      [DATA_TABLE_PARAMS.PAGE_SIZE]: query.pageSize,
     }),
     [query.page, query.pageSize],
   );
@@ -33,22 +33,22 @@ export function useDataTablePagination() {
     const next = typeof updater === "function" ? updater(pagination) : updater;
 
     void setQuery({
-      [DataTableField.PAGE]: next.pageIndex + PAGE_INDEX_OFFSET,
-      [DataTableField.PAGE_SIZE]: next.pageSize,
+      [DATA_TABLE_PARAMS.PAGE]: next.pageIndex + PAGE_INDEX_OFFSET,
+      [DATA_TABLE_PARAMS.PAGE_SIZE]: next.pageSize,
     });
   };
 
   const setPageIndex = (pageIndex: number) => {
     void setQuery((prev) => ({
-      [DataTableField.PAGE]: pageIndex,
-      [DataTableField.PAGE_SIZE]: prev.pageSize,
+      [DATA_TABLE_PARAMS.PAGE]: pageIndex,
+      [DATA_TABLE_PARAMS.PAGE_SIZE]: prev.pageSize,
     }));
   };
 
   const setPageSize = (pageSize: number) => {
     void setQuery(() => ({
-      [DataTableField.PAGE]: FIRST_PAGE_INDEX_DEFAULT,
-      [DataTableField.PAGE_SIZE]: pageSize,
+      [DATA_TABLE_PARAMS.PAGE]: FIRST_PAGE_INDEX_DEFAULT,
+      [DATA_TABLE_PARAMS.PAGE_SIZE]: pageSize,
     }));
   };
 
