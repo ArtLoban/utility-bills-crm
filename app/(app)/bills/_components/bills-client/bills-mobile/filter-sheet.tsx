@@ -1,6 +1,10 @@
+import { useState } from "react";
 import { ChevronDown, X } from "lucide-react";
 
 import { Sheet, SheetClose, SheetContent, SheetTitle } from "@/components/ui/sheet";
+import { PRESETS } from "@/components/date-range-filter/constants";
+import type { TTimePeriod } from "@/components/date-range-filter/types";
+import { resolvePreset } from "@/components/date-range-filter/utils";
 import { ACCENT } from "@/lib/constants/ui-tokens";
 
 type TFilterOption = { id: string; name: string };
@@ -8,7 +12,8 @@ type TFilterOption = { id: string; name: string };
 type TFilters = {
   propertyId: string | null;
   service: string | null;
-  period: string | null;
+  dateFrom: string | null;
+  dateTo: string | null;
 };
 
 type TProps = {
@@ -68,6 +73,36 @@ const SheetSelect = ({ label, value, onChange, children }: TSheetSelectProps) =>
   </div>
 );
 
+type TSheetDateInputProps = {
+  label: string;
+  value: string | null;
+  onChange: (value: string | null) => void;
+};
+
+const SheetDateInput = ({ label, value, onChange }: TSheetDateInputProps) => (
+  <div>
+    <label style={{ fontSize: 12.5, fontWeight: 500, display: "block", marginBottom: 6 }}>
+      {label}
+    </label>
+    <input
+      type="date"
+      value={value ?? ""}
+      onChange={(e) => onChange(e.target.value || null)}
+      className="border border-zinc-200 bg-white text-zinc-950 [color-scheme:light] dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50 dark:[color-scheme:dark]"
+      style={{
+        width: "100%",
+        height: 38,
+        paddingLeft: 12,
+        paddingRight: 12,
+        fontSize: 14,
+        borderRadius: 6,
+        outline: "none",
+        fontFamily: "inherit",
+      }}
+    />
+  </div>
+);
+
 const FilterSheet = ({
   open,
   onOpenChange,
@@ -76,14 +111,39 @@ const FilterSheet = ({
   propertyOptions,
   serviceOptions,
 }: TProps) => {
-  const set =
-    (key: keyof TFilters) =>
+  const [timePeriod, setTimePeriod] = useState<TTimePeriod | null>(null);
+
+  const setField =
+    (key: keyof Pick<TFilters, "propertyId" | "service">) =>
     (value: string): void => {
       onFilterChange({ ...filters, [key]: value === "" ? null : value });
     };
 
+  const handleDateFromChange = (value: string | null) => {
+    setTimePeriod(null);
+    onFilterChange({ ...filters, dateFrom: value });
+  };
+
+  const handleDateToChange = (value: string | null) => {
+    setTimePeriod(null);
+    onFilterChange({ ...filters, dateTo: value });
+  };
+
+  const handlePresetChange = (value: string) => {
+    if (value === "") {
+      setTimePeriod(null);
+      onFilterChange({ ...filters, dateFrom: null, dateTo: null });
+      return;
+    }
+    const id = value as TTimePeriod;
+    const resolved = resolvePreset(id);
+    setTimePeriod(id);
+    onFilterChange({ ...filters, dateFrom: resolved.dateFrom, dateTo: resolved.dateTo });
+  };
+
   const handleClear = () => {
-    onFilterChange({ propertyId: null, service: null, period: null });
+    setTimePeriod(null);
+    onFilterChange({ propertyId: null, service: null, dateFrom: null, dateTo: null });
     onOpenChange(false);
   };
 
@@ -128,12 +188,12 @@ const FilterSheet = ({
             </SheetClose>
           </div>
 
-          {/* Selects */}
+          {/* Controls */}
           <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
             <SheetSelect
               label="Property"
               value={filters.propertyId ?? ""}
-              onChange={set("propertyId")}
+              onChange={setField("propertyId")}
             >
               <option value="">All properties</option>
               {propertyOptions.map((p) => (
@@ -143,7 +203,11 @@ const FilterSheet = ({
               ))}
             </SheetSelect>
 
-            <SheetSelect label="Service" value={filters.service ?? ""} onChange={set("service")}>
+            <SheetSelect
+              label="Service"
+              value={filters.service ?? ""}
+              onChange={setField("service")}
+            >
               <option value="">All services</option>
               {serviceOptions.map((s) => (
                 <option key={s.id} value={s.id}>
@@ -152,10 +216,21 @@ const FilterSheet = ({
               ))}
             </SheetSelect>
 
-            <SheetSelect label="Period" value={filters.period ?? ""} onChange={set("period")}>
-              <option value="">Last 12 months</option>
-              <option value="last6">Last 6 months</option>
-              <option value="last3">Last 3 months</option>
+            <SheetDateInput
+              label="Date from"
+              value={filters.dateFrom}
+              onChange={handleDateFromChange}
+            />
+
+            <SheetDateInput label="Date to" value={filters.dateTo} onChange={handleDateToChange} />
+
+            <SheetSelect label="Time Period" value={timePeriod ?? ""} onChange={handlePresetChange}>
+              <option value="">Select period</option>
+              {PRESETS.map(({ id, label }) => (
+                <option key={id} value={id}>
+                  {label}
+                </option>
+              ))}
             </SheetSelect>
           </div>
 

@@ -33,10 +33,17 @@ export const BillsClient = ({ data, pagination, serviceOptions, propertyOptions 
 
   // Read filter state to distinguish "no bills yet" from "no matching bills".
   const [filterParams, setFilterParams] = useQueryStates(
-    { propertyId: parseAsString, service: parseAsString, period: parseAsString },
+    {
+      propertyId: parseAsString,
+      service: parseAsString,
+      dateFrom: parseAsString,
+      dateTo: parseAsString,
+    },
     { history: "replace", shallow: false },
   );
-  const anyFilter = Boolean(filterParams.propertyId || filterParams.service || filterParams.period);
+  const anyFilter = Boolean(
+    filterParams.propertyId || filterParams.service || filterParams.dateFrom || filterParams.dateTo,
+  );
 
   // Derive unique service type options from all accessible services (not from current page data).
   const serviceFilterOptions = useMemo(() => {
@@ -54,7 +61,7 @@ export const BillsClient = ({ data, pagination, serviceOptions, propertyOptions 
   }, [serviceOptions]);
 
   const handleClearFilters = () =>
-    void setFilterParams({ propertyId: null, service: null, period: null });
+    void setFilterParams({ propertyId: null, service: null, dateFrom: null, dateTo: null });
 
   return (
     <BillsTableActions>

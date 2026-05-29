@@ -1,10 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import { format, parseISO } from "date-fns";
 import { parseAsString, useQueryStates } from "nuqs";
 
-import { SERVICE_COLORS, dbCodeToServiceKey } from "@/lib/constants/service-colors";
-import { getServiceLabel } from "@/lib/constants/service-colors";
+import {
+  SERVICE_COLORS,
+  dbCodeToServiceKey,
+  getServiceLabel,
+} from "@/lib/constants/service-colors";
 import { ACCENT, TINT_BG, TINT_BORDER } from "@/lib/constants/ui-tokens";
 import type { PropertyId } from "@/lib/db/schema/properties";
 import type { TBillGlobalRow } from "@/lib/db/access/bills";
@@ -24,9 +28,12 @@ type TProps = {
   onPageChange: (page: number) => void;
 };
 
-const PERIOD_LABELS: Record<string, string> = {
-  last6: "Last 6 months",
-  last3: "Last 3 months",
+const fmtDate = (d: string) => format(parseISO(d), "MMM d, yyyy");
+
+const formatDateRangeChip = (dateFrom: string | null, dateTo: string | null): string => {
+  if (dateFrom && dateTo) return `${fmtDate(dateFrom)} – ${fmtDate(dateTo)}`;
+  if (dateFrom) return `From ${fmtDate(dateFrom)}`;
+  return `To ${fmtDate(dateTo!)}`;
 };
 
 const BillsMobile = ({
@@ -42,16 +49,17 @@ const BillsMobile = ({
     {
       propertyId: parseAsString,
       service: parseAsString,
-      period: parseAsString,
+      dateFrom: parseAsString,
+      dateTo: parseAsString,
     },
     { history: "replace", shallow: false },
   );
 
-  const activeCount = [
-    filters.propertyId !== null,
-    filters.service !== null,
-    filters.period !== null,
-  ].filter(Boolean).length;
+  const hasDateFilter = filters.dateFrom !== null || filters.dateTo !== null;
+
+  const activeCount = [filters.propertyId !== null, filters.service !== null, hasDateFilter].filter(
+    Boolean,
+  ).length;
 
   const propertyName = filters.propertyId
     ? (propertyOptions.find((p) => p.id === filters.propertyId)?.name ?? filters.propertyId)
@@ -64,8 +72,6 @@ const BillsMobile = ({
     serviceOption?.name ?? (filters.service ? getServiceLabel(filters.service) : null);
   const serviceKey = filters.service ? dbCodeToServiceKey(filters.service) : undefined;
   const serviceColor = serviceKey ? SERVICE_COLORS[serviceKey] : undefined;
-
-  const periodLabel = filters.period ? (PERIOD_LABELS[filters.period] ?? null) : null;
 
   return (
     <div style={{ padding: "12px 14px 32px" }}>
@@ -148,8 +154,11 @@ const BillsMobile = ({
               onRemove={() => void setFilters({ service: null })}
             />
           )}
-          {periodLabel && (
-            <FilterChip label={periodLabel} onRemove={() => void setFilters({ period: null })} />
+          {hasDateFilter && (
+            <FilterChip
+              label={formatDateRangeChip(filters.dateFrom, filters.dateTo)}
+              onRemove={() => void setFilters({ dateFrom: null, dateTo: null })}
+            />
           )}
         </div>
       )}

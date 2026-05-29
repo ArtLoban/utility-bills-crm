@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { parseAsInteger, parseAsString, useQueryStates } from "nuqs";
 
+import { DateRangeFilter } from "@/components/date-range-filter";
 import { TableFilters } from "@/components/data-table/table-filters";
 import { SelectInput } from "@/components/select-input";
 import { FIRST_PAGE_INDEX_DEFAULT } from "@/components/data-table/data-table/constants";
@@ -17,23 +18,24 @@ type TProps = {
 type TFilterForm = {
   propertyId: string | null;
   service: string | null;
-  period: string | null;
+  dateFrom: string | null;
+  dateTo: string | null;
 };
 
-const PERIOD_OPTIONS = [
-  { id: "last3", name: "Last 3 months" },
-  { id: "last6", name: "Last 6 months" },
-  { id: "last12", name: "Last 12 months" },
-] as const;
-
-const EMPTY_FILTERS: TFilterForm = { propertyId: null, service: null, period: null };
+const EMPTY_FILTERS: TFilterForm = {
+  propertyId: null,
+  service: null,
+  dateFrom: null,
+  dateTo: null,
+};
 
 export const FilterBar = ({ propertyOptions, serviceOptions }: TProps) => {
   const [query, setQuery] = useQueryStates(
     {
       propertyId: parseAsString,
       service: parseAsString,
-      period: parseAsString,
+      dateFrom: parseAsString,
+      dateTo: parseAsString,
       page: parseAsInteger.withDefault(FIRST_PAGE_INDEX_DEFAULT),
     },
     { history: "replace", shallow: false },
@@ -43,7 +45,8 @@ export const FilterBar = ({ propertyOptions, serviceOptions }: TProps) => {
     defaultValues: {
       propertyId: query.propertyId,
       service: query.service,
-      period: query.period,
+      dateFrom: query.dateFrom,
+      dateTo: query.dateTo,
     },
   });
 
@@ -58,12 +61,15 @@ export const FilterBar = ({ propertyOptions, serviceOptions }: TProps) => {
     void setQuery({
       propertyId: values.propertyId ?? null,
       service: values.service ?? null,
-      period: values.period ?? null,
+      dateFrom: values.dateFrom ?? null,
+      dateTo: values.dateTo ?? null,
       page: FIRST_PAGE_INDEX_DEFAULT,
     });
   }, [values, setQuery]);
 
-  const hasActiveFilters = Boolean(values.propertyId || values.service || values.period);
+  const hasActiveFilters = Boolean(
+    values.propertyId || values.service || values.dateFrom || values.dateTo,
+  );
 
   const handleClear = () => form.reset(EMPTY_FILTERS);
 
@@ -71,7 +77,14 @@ export const FilterBar = ({ propertyOptions, serviceOptions }: TProps) => {
     <TableFilters hasActiveFilters={hasActiveFilters} onClear={handleClear}>
       <SelectInput form={form} field="propertyId" label="Property" options={propertyOptions} />
       <SelectInput form={form} field="service" label="Service" options={serviceOptions} />
-      <SelectInput form={form} field="period" label="Period" options={[...PERIOD_OPTIONS]} />
+      <DateRangeFilter
+        dateFrom={values.dateFrom ?? null}
+        dateTo={values.dateTo ?? null}
+        onChange={(from, to) => {
+          form.setValue("dateFrom", from, { shouldDirty: true });
+          form.setValue("dateTo", to, { shouldDirty: true });
+        }}
+      />
     </TableFilters>
   );
 };
