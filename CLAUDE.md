@@ -146,3 +146,9 @@ Read the relevant document(s) when working on a related task. Do not preload.
 
 Code, identifiers, technical terms — English.
 Explanations — match the user's language.
+
+## 8. Playwright
+
+Chromium is installed (`~/Library/Caches/ms-playwright/`) and persists across sessions.
+Do NOT run `playwright install` preemptively — assume the browser is present.
+Run `npx playwright install chromium` only if a run fails with "Executable doesn't exist" or "browser not found".
