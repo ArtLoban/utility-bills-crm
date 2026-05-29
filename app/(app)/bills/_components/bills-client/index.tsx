@@ -22,11 +22,18 @@ import { BillsTableActions } from "./context";
 type TProps = {
   data: TBillGlobalRow[];
   pagination: TServerPagination;
+  totalAmount: string;
   serviceOptions: Record<PropertyId, TServiceOption[]>;
   propertyOptions: { id: PropertyId; name: string }[];
 };
 
-export const BillsClient = ({ data, pagination, serviceOptions, propertyOptions }: TProps) => {
+export const BillsClient = ({
+  data,
+  pagination,
+  totalAmount,
+  serviceOptions,
+  propertyOptions,
+}: TProps) => {
   const { sorting, onSortingChange, setPage, setPageSize } = useServerListParams({
     defaultSortBy: "periodMonth",
   });
@@ -101,6 +108,7 @@ export const BillsClient = ({ data, pagination, serviceOptions, propertyOptions 
             <BillsTable
               data={data}
               pagination={pagination}
+              totalAmount={totalAmount}
               sorting={sorting}
               onSortingChange={onSortingChange}
               onPageChange={setPage}
@@ -114,6 +122,7 @@ export const BillsClient = ({ data, pagination, serviceOptions, propertyOptions 
           <BillsMobile
             data={data}
             pagination={pagination}
+            totalAmount={totalAmount}
             propertyOptions={propertyOptions}
             serviceOptions={serviceFilterOptions}
             onPageChange={setPage}

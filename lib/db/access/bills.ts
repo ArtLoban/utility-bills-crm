@@ -1,4 +1,4 @@
-import { and, asc, count, desc, eq, gte, inArray, isNull, lte } from "drizzle-orm";
+import { and, asc, count, desc, eq, gte, inArray, isNull, lte, sum } from "drizzle-orm";
 
 import { db } from "@/lib/db/client";
 import { bills } from "@/lib/db/schema/bills";
@@ -38,6 +38,7 @@ export type TBillGlobalRow = {
 export type TBillsListResult = {
   data: TBillGlobalRow[];
   pagination: TBillsPagination;
+  totals: { amount: string };
 };
 
 export type TServiceOption = {
@@ -124,10 +125,26 @@ export const getBillsList = async (
   const orderBy = buildOrderBy(params);
   const offset = (params.page - 1) * params.pageSize;
 
-  // Two queries run in parallel: total count + paginated page.
-  const [countResult, rows] = await Promise.all([
+  // Three queries run in parallel: total count, sum of all filtered amounts, paginated page.
+  const [countResult, sumResult, rows] = await Promise.all([
     db
       .select({ total: count() })
+      .from(bills)
+      .innerJoin(services, eq(bills.serviceId, services.id))
+      .innerJoin(properties, eq(services.propertyId, properties.id))
+      .innerJoin(
+        propertyAccess,
+        and(
+          eq(propertyAccess.propertyId, properties.id),
+          eq(propertyAccess.userId, userId),
+          isNull(propertyAccess.deletedAt),
+        ),
+      )
+      .innerJoin(serviceTypes, eq(services.serviceTypeId, serviceTypes.id))
+      .where(where),
+
+    db
+      .select({ totalAmount: sum(bills.amount) })
       .from(bills)
       .innerJoin(services, eq(bills.serviceId, services.id))
       .innerJoin(properties, eq(services.propertyId, properties.id))
@@ -168,6 +185,7 @@ export const getBillsList = async (
   return {
     data: rows.map(toRow),
     pagination: { page: params.page, pageSize: params.pageSize, total, totalPages },
+    totals: { amount: sumResult[0]?.totalAmount ?? "0" },
   };
 };
 

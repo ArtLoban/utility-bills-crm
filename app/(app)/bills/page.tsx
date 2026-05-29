@@ -38,6 +38,7 @@ export default async function BillsPage({
     <BillsClient
       data={result.data}
       pagination={result.pagination}
+      totalAmount={result.totals.amount}
       serviceOptions={serviceOptions}
       propertyOptions={propertyOptions}
     />

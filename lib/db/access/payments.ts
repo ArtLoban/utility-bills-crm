@@ -160,12 +160,11 @@ export const getPaymentsList = async (
 
   const total = countResult[0]?.total ?? 0;
   const totalPages = Math.max(1, Math.ceil(total / params.pageSize));
-  const totalAmount = sumResult[0]?.totalAmount ?? "0";
 
   return {
     data: rows.map(toRow),
     pagination: { page: params.page, pageSize: params.pageSize, total, totalPages },
-    totalAmount,
+    totals: { amount: sumResult[0]?.totalAmount ?? "0" },
   };
 };
 

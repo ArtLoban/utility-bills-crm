@@ -218,6 +218,9 @@
           "title": "No bills match your filters",
           "cta": "Clear filters"
         }
+      },
+      "footer": {
+        "total": "Total"
       }
     }
   },

@@ -8,10 +8,12 @@ import type { TServerPagination } from "@/lib/types/data-table";
 import type { TBillGlobalRow } from "@/lib/db/access/bills";
 
 import { getBillsColumns } from "./utils/get-table-columns";
+import { FooterMeta } from "./components/footer-meta";
 
 type TProps = {
   data: TBillGlobalRow[];
   pagination: TServerPagination;
+  totalAmount: string;
   sorting: SortingState;
   onSortingChange: (updater: Updater<SortingState>) => void;
   onPageChange: (page: number) => void;
@@ -21,6 +23,7 @@ type TProps = {
 export const BillsTable = ({
   data,
   pagination,
+  totalAmount,
   sorting,
   onSortingChange,
   onPageChange,
@@ -38,6 +41,7 @@ export const BillsTable = ({
       pagination={pagination}
       onPageChange={onPageChange}
       onPageSizeChange={onPageSizeChange}
+      footerMeta={<FooterMeta totalAmount={totalAmount} />}
     />
   );
 };

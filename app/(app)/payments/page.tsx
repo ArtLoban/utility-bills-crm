@@ -38,7 +38,7 @@ export default async function PaymentsPage({
     <PaymentsClient
       data={result.data}
       pagination={result.pagination}
-      totalAmount={result.totalAmount}
+      totalAmount={result.totals.amount}
       serviceOptions={serviceOptions}
       propertyOptions={propertyOptions}
     />

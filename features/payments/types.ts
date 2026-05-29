@@ -34,8 +34,7 @@ export type TPaymentGlobalRow = {
 export type TPaymentsListResult = {
   data: TPaymentGlobalRow[];
   pagination: TServerPagination;
-  // SUM of all filtered payments (not just current page) — for "Total paid (filtered)" footer.
-  totalAmount: string;
+  totals: { amount: string };
 };
 
 // --- Form types ---

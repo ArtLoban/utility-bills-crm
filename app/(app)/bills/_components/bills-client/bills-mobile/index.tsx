@@ -10,6 +10,7 @@ import {
   getServiceLabel,
 } from "@/lib/constants/service-colors";
 import { ACCENT, TINT_BG, TINT_BORDER } from "@/lib/constants/ui-tokens";
+import { formatUAH } from "@/lib/format/currency";
 import type { PropertyId } from "@/lib/db/schema/properties";
 import type { TBillGlobalRow } from "@/lib/db/access/bills";
 import type { TServerPagination } from "@/lib/types/data-table";
@@ -23,6 +24,7 @@ type TFilterOption = { id: string; name: string };
 type TProps = {
   data: TBillGlobalRow[];
   pagination: TServerPagination;
+  totalAmount: string;
   propertyOptions: { id: PropertyId; name: string }[];
   serviceOptions: TFilterOption[];
   onPageChange: (page: number) => void;
@@ -39,6 +41,7 @@ const formatDateRangeChip = (dateFrom: string | null, dateTo: string | null): st
 const BillsMobile = ({
   data,
   pagination,
+  totalAmount,
   propertyOptions,
   serviceOptions,
   onPageChange,
@@ -179,6 +182,11 @@ const BillsMobile = ({
           onNext={() => onPageChange(pagination.page + 1)}
         />
       )}
+
+      <div className="mt-4 flex items-center justify-between rounded-lg border border-zinc-200 bg-white p-3.5 dark:border-zinc-800 dark:bg-zinc-900">
+        <span className="text-muted-foreground text-sm">Total</span>
+        <span className="text-[15px] font-bold tabular-nums">{formatUAH(Number(totalAmount))}</span>
+      </div>
 
       <FilterSheet
         open={sheetOpen}

@@ -457,6 +457,7 @@ Rationale: the "product-first" framing had begun to systematically under-scope f
 | 118 | `service_types` catalog delivered via migration `INSERT`; no separate production-seed mechanism                 | Dedicated `seed:prod` script; one idempotent seed with env-gated dev part    | Catalog in migration            |
 | 119 | Global `/providers` catalog page; provider management not limited to contract-form inline only                  | Provider management inline within the contract form only (no dedicated page) | Dedicated `/providers` page     |
 | 120 | List-page filtering, sorting, and pagination run on the backend; URL is the source of truth for query state     | Client-side data operations via TanStack Table row models                    | Backend-driven, URL-synced      |
+| 121 | List-page filtered totals: domain aggregate separate from pagination                                            | Extending `pagination` with the sum                                          | `totals: { amount }` separate   |
 
 > **#117 — detail.** Decision #71 established that entity creation/editing happens via modals, but not _how_ they are implemented. The mechanism is chosen by one criterion — whether the modal has a meaningful shareable URL:
 >
@@ -487,6 +488,8 @@ Rationale: the "product-first" framing had begun to systematically under-scope f
 > **Parameter vocabulary:** shared across all list pages — `page`, `pageSize`, `sortBy`, `sortOrder`, `dateFrom`, `dateTo`, plus page-specific filter keys (e.g. `status`, `propertyId`, `service`).
 >
 > Rationale: client-side data operations (TanStack Table row models) cannot work once data is paginated server-side — the table only receives one page of rows. A URL-based contract gives shareable, refresh-safe state and lets every list page share one backend contract.
+
+> **#121 — List-page filtered totals: domain aggregate separate from pagination.** List pages that show a filtered total amount (bills, payments) compute that sum on the backend over the full filtered set (same filters, no pagination) and return it as `totals: { amount }`, separate from `pagination`. Rationale: row count is a property of pagination (`pagination.total`); a domain amount aggregate is a page-specific fact and does not belong inside pagination metadata. A frontend sum over the received page is incorrect once the filtered set exceeds one page. Alternative considered: extending `pagination` with the sum (rejected — conflates pagination with domain data).
 
 ## Open Questions
 
