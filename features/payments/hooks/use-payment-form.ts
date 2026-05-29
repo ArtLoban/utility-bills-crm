@@ -1,11 +1,13 @@
 "use client";
 
-import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 
 import { getServiceLabel } from "@/lib/constants/service-colors";
+import { getServiceBalanceAction } from "@/features/ledger/actions";
+import type { TBalance } from "@/features/ledger/types";
 import type { PropertyId } from "@/lib/db/schema/properties";
 import type { TServiceOption } from "@/lib/db/access/payments";
 import type { TPaymentGlobalRow } from "@/features/payments/types";
@@ -40,6 +42,20 @@ export const usePaymentForm = ({ payment, propertyOptions, serviceOptions, onClo
 
   const initialPropertyId = payment?.property.id ?? "";
   const [selectedPropertyId, setSelectedPropertyId] = useState<string>(initialPropertyId);
+  const [currentDebt, setCurrentDebt] = useState<TBalance | null>(null);
+
+  const serviceId = useWatch({ control: form.control, name: "serviceId" });
+
+  useEffect(() => {
+    if (!serviceId) return;
+    let cancelled = false;
+    getServiceBalanceAction(serviceId).then((result) => {
+      if (!cancelled) setCurrentDebt(result);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [serviceId]);
 
   const filteredServices: Array<{ id: string; name: string }> = selectedPropertyId
     ? (serviceOptions?.[selectedPropertyId as PropertyId] ?? []).map((s) => ({
@@ -53,6 +69,7 @@ export const usePaymentForm = ({ payment, propertyOptions, serviceOptions, onClo
   const onPropertyChange = (id: string) => {
     setSelectedPropertyId(id);
     form.setValue("serviceId", "", { shouldDirty: true, shouldValidate: false });
+    setCurrentDebt(null);
   };
 
   const handleSave = form.handleSubmit(async (data) => {
@@ -92,5 +109,6 @@ export const usePaymentForm = ({ payment, propertyOptions, serviceOptions, onClo
     onPropertyChange,
     handleSave,
     isEditMode,
+    currentDebt,
   };
 };

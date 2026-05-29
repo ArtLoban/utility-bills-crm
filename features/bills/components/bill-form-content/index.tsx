@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { TINT_BG, TINT_BORDER } from "@/lib/constants/ui-tokens";
 import { getServiceLabel } from "@/lib/constants/service-colors";
+import { formatUAH } from "@/lib/format/currency";
 import type { PropertyId } from "@/lib/db/schema/properties";
 import type { TBillGlobalRow, TServiceOption } from "@/lib/db/access/bills";
 import { MONTH_OPTIONS } from "./constants";
@@ -35,6 +36,7 @@ export const BillFormContent = ({ bill, propertyOptions = [], serviceOptions = {
     formError,
     handleSave,
     isEditMode,
+    expectedAmount,
   } = useBillForm({ bill, propertyOptions, serviceOptions, onClose });
 
   return (
@@ -185,6 +187,11 @@ export const BillFormContent = ({ bill, propertyOptions = [], serviceOptions = {
           }
           className="h-9"
         />
+        {expectedAmount?.kind === "computed" && (
+          <p className="mt-1.5 text-zinc-500 dark:text-zinc-400" style={{ fontSize: 12.5 }}>
+            Expected: {formatUAH(expectedAmount.amount)}
+          </p>
+        )}
       </div>
       {/* Notes */}
       <div>

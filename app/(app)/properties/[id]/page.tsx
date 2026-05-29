@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 
 import { auth } from "@/lib/auth";
 import { servicesByPropertyId } from "@/lib/db/access/services";
+import { balancesForServices } from "@/features/ledger";
+import type { TBalance } from "@/features/ledger";
 import { getPropertyDetail } from "./_data/queries";
 import { OverviewTab } from "./_components/overview-tab";
 import { PageContainer } from "@/components/page-container";
@@ -10,6 +12,7 @@ import { ROUTES } from "@/lib/routes";
 import { PropertyMeta } from "./_components/property-meta";
 import { PropertyActions } from "./_components/property-actions";
 import type { PropertyId } from "@/lib/db/schema/properties";
+import type { TServiceId } from "@/lib/db/schema/services";
 import type { UserId } from "@/lib/db/schema/auth";
 
 type TProps = {
@@ -42,6 +45,10 @@ export default async function PropertyPage({ params }: TProps) {
     : { ok: false as const };
   const services = servicesResult.ok ? servicesResult.value : [];
 
+  const serviceIds = services.map((s) => s.service.id as TServiceId);
+  const serviceBalances =
+    serviceIds.length > 0 ? await balancesForServices(serviceIds) : new Map<TServiceId, TBalance>();
+
   return (
     <PageContainer
       title={property.name}
@@ -49,7 +56,12 @@ export default async function PropertyPage({ params }: TProps) {
       breadcrumbs={[{ label: "Properties", href: ROUTES.properties }, { label: property.name }]}
       actions={<PropertyActions property={property} />}
     >
-      <OverviewTab services={services} role={property.role} propertyId={id} />
+      <OverviewTab
+        services={services}
+        role={property.role}
+        propertyId={id}
+        serviceBalances={serviceBalances}
+      />
     </PageContainer>
   );
 }

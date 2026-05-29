@@ -2,6 +2,8 @@ import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 
 import { getPropertyDetail } from "@/app/(app)/properties/[id]/_data/queries";
+import { balancesForServices } from "@/features/ledger";
+import type { TBalance } from "@/features/ledger";
 import {
   getAttributeHistory,
   getContractHistory,
@@ -20,6 +22,8 @@ import { DeleteServiceAction } from "./_components/delete-service-action";
 import type { PropertyId } from "@/lib/db/schema/properties";
 import type { TServiceId } from "@/lib/db/schema/services";
 
+const ZERO_BALANCE: TBalance = { billsTotal: 0, paymentsTotal: 0, balance: 0 };
+
 type TProps = {
   params: Promise<{ id: string; sid: string }>;
 };
@@ -27,14 +31,21 @@ type TProps = {
 export default async function ServicePage({ params }: TProps) {
   const { id, sid } = await params;
 
-  const [propertyResult, serviceResult, historyResult, attributeHistoryResult, currentMeter] =
-    await Promise.all([
-      getPropertyDetail(id as PropertyId),
-      getServiceDetail(sid as TServiceId),
-      getContractHistory(sid as TServiceId),
-      getAttributeHistory(sid as TServiceId),
-      getCurrentMeterForService(sid as TServiceId),
-    ]);
+  const [
+    propertyResult,
+    serviceResult,
+    historyResult,
+    attributeHistoryResult,
+    currentMeter,
+    serviceBalances,
+  ] = await Promise.all([
+    getPropertyDetail(id as PropertyId),
+    getServiceDetail(sid as TServiceId),
+    getContractHistory(sid as TServiceId),
+    getAttributeHistory(sid as TServiceId),
+    getCurrentMeterForService(sid as TServiceId),
+    balancesForServices([sid as TServiceId]),
+  ]);
 
   const lastMeterReading = currentMeter ? await getLastReadingForMeter(currentMeter) : null;
 
@@ -70,7 +81,7 @@ export default async function ServicePage({ params }: TProps) {
         }
       />
       <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-        <BalanceCard />
+        <BalanceCard balance={serviceBalances.get(sid as TServiceId) ?? ZERO_BALANCE} />
         <ContractCard
           serviceId={sid as TServiceId}
           propertyId={id}

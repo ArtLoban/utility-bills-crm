@@ -1,9 +1,11 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { toast } from "sonner";
 
 import { createBill, editBill } from "@/features/bills/actions";
+import { getExpectedAmountHintAction } from "@/features/ledger/actions";
+import type { TExpectedAmount } from "@/features/ledger/types";
 import type { PropertyId } from "@/lib/db/schema/properties";
 import type { TServiceId } from "@/lib/db/schema/services";
 import type { TBillGlobalRow, TServiceOption } from "@/lib/db/access/bills";
@@ -48,14 +50,29 @@ export const useBillForm = ({ bill, serviceOptions = {}, onClose }: TUseBillForm
   const [form, setForm] = useState<TFormState>(() => buildInitialState(bill));
   const [formError, setFormError] = useState<string | null>(null);
   const [isSaving, startTransition] = useTransition();
+  const [expectedAmount, setExpectedAmount] = useState<TExpectedAmount | null>(null);
+
+  useEffect(() => {
+    if (!form.service || !form.month) return;
+    let cancelled = false;
+    getExpectedAmountHintAction(form.service as TServiceId, form.month).then((result) => {
+      if (!cancelled) setExpectedAmount(result);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [form.service, form.month]);
 
   const set = (key: keyof TFormState) => (value: string) => {
     setForm((f) => ({ ...f, [key]: value }));
+    // Reset hint when the selection that drives it changes, before the async fetch completes.
+    if (key === "service" || key === "month") setExpectedAmount(null);
     if (formError) setFormError(null);
   };
 
   const setProperty = (propertyId: string) => {
     setForm((f) => ({ ...f, property: propertyId, service: "" }));
+    setExpectedAmount(null);
     if (formError) setFormError(null);
   };
 
@@ -118,5 +135,6 @@ export const useBillForm = ({ bill, serviceOptions = {}, onClose }: TUseBillForm
     formError,
     handleSave,
     isEditMode,
+    expectedAmount,
   };
 };

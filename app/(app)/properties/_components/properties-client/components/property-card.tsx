@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Building2, ChevronRight, Home, TreePine, Users } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { TPropertyListItem } from "@/app/(app)/properties/_data/queries";
+import { formatUAH } from "@/lib/format/currency";
 
 const PROPERTY_ICONS = {
   apartment: Building2,
@@ -67,8 +68,16 @@ export const PropertyCard = ({ property }: TProps) => {
           <p className="mb-1 text-[11px] font-medium tracking-[0.3px] text-zinc-500 uppercase">
             {t("card.balance")}
           </p>
-          <p className="text-[22px] font-semibold tracking-[-0.4px] text-zinc-400 tabular-nums dark:text-zinc-600">
-            {t("card.balancePlaceholder")}
+          <p
+            className={`text-[22px] font-semibold tracking-[-0.4px] tabular-nums ${
+              property.balance.balance > 0
+                ? "text-destructive"
+                : property.balance.balance < 0
+                  ? "text-green-600 dark:text-green-500"
+                  : "text-zinc-400 dark:text-zinc-600"
+            }`}
+          >
+            {formatUAH(Math.abs(property.balance.balance))}
           </p>
         </div>
 

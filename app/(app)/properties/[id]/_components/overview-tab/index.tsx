@@ -4,15 +4,18 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import type { TServiceListItem } from "@/lib/db/access/services";
 import type { TPropertyRole } from "@/lib/db/schema/properties";
+import type { TServiceId } from "@/lib/db/schema/services";
+import type { TBalance } from "@/features/ledger/types";
 import { ServiceRow } from "./service-row";
 
 type TProps = {
   services: TServiceListItem[];
   role: TPropertyRole;
   propertyId: string;
+  serviceBalances: Map<TServiceId, TBalance>;
 };
 
-const OverviewTab = ({ services, role, propertyId }: TProps) => {
+const OverviewTab = ({ services, role, propertyId, serviceBalances }: TProps) => {
   const canEdit = role !== "viewer";
   const addHref = `/properties/${propertyId}/services/new`;
 
@@ -84,6 +87,7 @@ const OverviewTab = ({ services, role, propertyId }: TProps) => {
             serviceType={serviceType}
             propertyId={propertyId}
             isLast={index === services.length - 1}
+            balance={serviceBalances.get(service.id) ?? null}
           />
         ))}
       </div>

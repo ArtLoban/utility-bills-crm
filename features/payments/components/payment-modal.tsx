@@ -28,6 +28,7 @@ export const PaymentModal = ({ payment, propertyOptions, serviceOptions }: TProp
     onPropertyChange,
     handleSave,
     isEditMode,
+    currentDebt,
   } = usePaymentForm({ payment, propertyOptions, serviceOptions, onClose });
 
   return (
@@ -45,6 +46,7 @@ export const PaymentModal = ({ payment, propertyOptions, serviceOptions }: TProp
         services={filteredServices}
         selectedPropertyId={selectedPropertyId}
         onPropertyChange={onPropertyChange}
+        currentDebt={currentDebt}
       />
     </Modal>
   );

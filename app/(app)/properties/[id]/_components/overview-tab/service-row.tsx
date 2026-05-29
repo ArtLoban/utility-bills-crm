@@ -8,15 +8,18 @@ import { IconBadge } from "@/components/icon-badge";
 import type { TService } from "@/lib/db/schema/services";
 import type { TServiceType } from "@/lib/db/schema/service-types";
 import { getServiceTypeVisuals, TServiceTypeCode } from "@/features/services/service-type";
+import { formatUAH } from "@/lib/format/currency";
+import type { TBalance } from "@/features/ledger/types";
 
 type TProps = {
   service: TService;
   serviceType: TServiceType;
   propertyId: string;
   isLast: boolean;
+  balance: TBalance | null;
 };
 
-const ServiceRow = ({ service, serviceType, propertyId, isLast }: TProps) => {
+const ServiceRow = ({ service, serviceType, propertyId, isLast, balance }: TProps) => {
   const t = useTranslations("services.types");
   const { color, Icon } = getServiceTypeVisuals(serviceType.code as TServiceTypeCode);
   const name = t(serviceType.code as Parameters<typeof t>[0]);
@@ -41,8 +44,19 @@ const ServiceRow = ({ service, serviceType, propertyId, isLast }: TProps) => {
         </p>
       </div>
 
-      <p className="shrink-0 font-semibold text-zinc-500 tabular-nums" style={{ fontSize: 15 }}>
-        —
+      <p
+        className={`shrink-0 font-semibold tabular-nums ${
+          balance === null
+            ? "text-zinc-500"
+            : balance.balance > 0
+              ? "text-destructive"
+              : balance.balance < 0
+                ? "text-green-600 dark:text-green-500"
+                : "text-zinc-500"
+        }`}
+        style={{ fontSize: 15 }}
+      >
+        {balance === null ? "—" : formatUAH(Math.abs(balance.balance))}
       </p>
 
       <ChevronRight

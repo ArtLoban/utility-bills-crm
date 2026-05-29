@@ -20,6 +20,8 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { formatUAH } from "@/lib/format/currency";
+import type { TBalance } from "@/features/ledger/types";
 import type { TPaymentFormValues } from "../../types";
 
 type TPropertyItem = { id: string; name: string };
@@ -31,6 +33,7 @@ type TProps = {
   services: TServiceItem[];
   selectedPropertyId: string;
   onPropertyChange: (id: string) => void;
+  currentDebt?: TBalance | null;
 };
 
 export const PaymentForm = ({
@@ -39,6 +42,7 @@ export const PaymentForm = ({
   services,
   selectedPropertyId,
   onPropertyChange,
+  currentDebt,
 }: TProps) => (
   <Form {...form}>
     <div className="flex flex-col gap-3.5">
@@ -131,6 +135,11 @@ export const PaymentForm = ({
                 className="h-9"
               />
             </FormControl>
+            {currentDebt !== null && currentDebt !== undefined && currentDebt.balance > 0 && (
+              <p className="text-muted-foreground text-[12.5px]">
+                Current debt: {formatUAH(currentDebt.balance)}
+              </p>
+            )}
             <FormMessage />
           </FormItem>
         )}

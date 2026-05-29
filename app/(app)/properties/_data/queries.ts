@@ -1,12 +1,14 @@
 import { auth } from "@/lib/auth";
 import { accessibleProperties } from "@/lib/db/access/properties";
 import type { UserId } from "@/lib/db/schema/auth";
-import type { TProperty, TPropertyRole } from "@/lib/db/schema/properties";
+import type { PropertyId, TProperty, TPropertyRole } from "@/lib/db/schema/properties";
+import { balancesForProperties } from "@/features/ledger";
+import type { TBalance } from "@/features/ledger";
 
 // Named by screen purpose, not field composition (per DATA_MODEL.md type naming convention).
-// serviceCount and balance are NOT included — they arrive in Steps 3 and 6 respectively.
 export type TPropertyListItem = TProperty & {
   role: TPropertyRole;
+  balance: TBalance;
 };
 
 export const getPropertyList = async (): Promise<TPropertyListItem[]> => {
@@ -15,5 +17,17 @@ export const getPropertyList = async (): Promise<TPropertyListItem[]> => {
 
   const userId = session.user.id as UserId;
   const rows = await accessibleProperties(userId);
-  return rows.map(({ property, role }) => ({ ...property, role }));
+
+  const propertyIds = rows.map(({ property }) => property.id);
+  const balancesMap = await balancesForProperties(userId, propertyIds);
+
+  return rows.map(({ property, role }) => ({
+    ...property,
+    role,
+    balance: balancesMap.get(property.id as PropertyId) ?? {
+      billsTotal: 0,
+      paymentsTotal: 0,
+      balance: 0,
+    },
+  }));
 };
