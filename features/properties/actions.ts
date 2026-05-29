@@ -8,6 +8,7 @@ import { db } from "@/lib/db/client";
 import { meters } from "@/lib/db/schema/meters";
 import { readings } from "@/lib/db/schema/readings";
 import { bills } from "@/lib/db/schema/bills";
+import { payments } from "@/lib/db/schema/payments";
 import { properties, propertyAccess } from "@/lib/db/schema/properties";
 import { services } from "@/lib/db/schema/services";
 import type { PropertyId, TProperty } from "@/lib/db/schema/properties";
@@ -112,7 +113,22 @@ export const softDeleteProperty = async (
       .update(meters)
       .set({ deletedAt: now })
       .where(and(eq(meters.propertyId, propertyId), isNull(meters.deletedAt)));
-    // Bills are children of services — must be deleted before services.
+    // Payments and bills are children of services — must be deleted before services.
+    await tx
+      .update(payments)
+      .set({ deletedAt: now })
+      .where(
+        and(
+          inArray(
+            payments.serviceId,
+            db
+              .select({ id: services.id })
+              .from(services)
+              .where(eq(services.propertyId, propertyId)),
+          ),
+          isNull(payments.deletedAt),
+        ),
+      );
     await tx
       .update(bills)
       .set({ deletedAt: now })

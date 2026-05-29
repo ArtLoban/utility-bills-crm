@@ -1,11 +1,11 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useQueryStates } from "nuqs";
-
+import { parseAsString, useQueryStates } from "nuqs";
 import { X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -14,18 +14,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Sheet, SheetClose, SheetContent, SheetTitle } from "@/components/ui/sheet";
-import { PAYMENT_PROPERTIES, PAYMENT_SERVICES } from "@/app/(app)/payments/_data/mock";
-import { INITIAL_FILTERS, URL_FIELDS } from "../payments-table/constants";
-
-const PERIOD_OPTIONS = [
-  { id: "last3", name: "Last 3 months" },
-  { id: "last6", name: "Last 6 months" },
-  { id: "last12", name: "Last 12 months" },
-];
 
 type TProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  propertyOptions: { id: string; name: string }[];
+  serviceOptions: { id: string; name: string }[];
 };
 
 type TFilterSelectProps = {
@@ -55,12 +49,20 @@ const FilterSelect = ({ label, value, onChange, options, placeholder }: TFilterS
   </div>
 );
 
-export const FilterSheet = ({ open, onOpenChange }: TProps) => {
+export const FilterSheet = ({ open, onOpenChange, propertyOptions, serviceOptions }: TProps) => {
   const t = useTranslations("payments.list");
-  const [query, setQuery] = useQueryStates(URL_FIELDS);
+  const [query, setQuery] = useQueryStates(
+    {
+      propertyId: parseAsString,
+      service: parseAsString,
+      dateFrom: parseAsString,
+      dateTo: parseAsString,
+    },
+    { history: "replace", shallow: false },
+  );
 
   const handleClear = () => {
-    void setQuery(INITIAL_FILTERS);
+    void setQuery({ propertyId: null, service: null, dateFrom: null, dateTo: null });
     onOpenChange(false);
   };
 
@@ -84,25 +86,36 @@ export const FilterSheet = ({ open, onOpenChange }: TProps) => {
           <div className="flex flex-col gap-3.5">
             <FilterSelect
               label={t("filters.property")}
-              value={query.property}
-              onChange={(v) => void setQuery({ property: v })}
-              options={PAYMENT_PROPERTIES}
+              value={query.propertyId}
+              onChange={(v) => void setQuery({ propertyId: v })}
+              options={propertyOptions}
               placeholder={t("filters.allProperties")}
             />
             <FilterSelect
               label={t("filters.service")}
               value={query.service}
               onChange={(v) => void setQuery({ service: v })}
-              options={PAYMENT_SERVICES}
+              options={serviceOptions}
               placeholder={t("filters.allServices")}
             />
-            <FilterSelect
-              label={t("filters.period")}
-              value={query.paidAt}
-              onChange={(v) => void setQuery({ paidAt: v })}
-              options={PERIOD_OPTIONS}
-              placeholder={t("filters.periodLast12")}
-            />
+            <div className="flex flex-col gap-1.5">
+              <label className="text-sm font-medium">From</label>
+              <Input
+                type="date"
+                value={query.dateFrom ?? ""}
+                onChange={(e) => void setQuery({ dateFrom: e.target.value || null })}
+                className="h-9"
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-sm font-medium">To</label>
+              <Input
+                type="date"
+                value={query.dateTo ?? ""}
+                onChange={(e) => void setQuery({ dateTo: e.target.value || null })}
+                className="h-9"
+              />
+            </div>
           </div>
 
           <div className="mt-5 flex gap-2.5">

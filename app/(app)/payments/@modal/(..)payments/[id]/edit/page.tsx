@@ -1,6 +1,10 @@
 import { notFound } from "next/navigation";
 
 import { auth } from "@/lib/auth";
+import type { UserId } from "@/lib/db/schema/auth";
+import { accessibleProperties } from "@/lib/db/access/properties";
+import { paymentByIdForUser, servicesForPaymentForm } from "@/lib/db/access/payments";
+import type { PaymentId } from "@/lib/db/schema/payments";
 import { PaymentModal } from "@/features/payments";
 
 type TProps = {
@@ -12,6 +16,26 @@ export default async function InterceptedEditPaymentPage({ params }: TProps) {
   const session = await auth();
   if (!session) notFound();
 
-  // devnote: fetch payment by id and pass full TPaymentRecord when DB query is wired
-  return <PaymentModal payment={{ id, serviceId: "", paidAt: "", amount: 0 }} />;
+  const userId = session.user?.id as UserId;
+
+  const [paymentResult, serviceOptions, propertiesWithRole] = await Promise.all([
+    paymentByIdForUser(userId, id as PaymentId),
+    servicesForPaymentForm(userId),
+    accessibleProperties(userId),
+  ]);
+
+  if (!paymentResult.ok) notFound();
+
+  const propertyOptions = propertiesWithRole.map(({ property }) => ({
+    id: property.id,
+    name: property.name,
+  }));
+
+  return (
+    <PaymentModal
+      payment={paymentResult.value}
+      propertyOptions={propertyOptions}
+      serviceOptions={serviceOptions}
+    />
+  );
 }

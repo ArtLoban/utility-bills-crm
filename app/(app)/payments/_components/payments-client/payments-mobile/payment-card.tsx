@@ -11,20 +11,26 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { TPayment } from "@/app/(app)/payments/_data/mock";
 import { formatUAH } from "@/lib/format/currency";
+import { getServiceLabel } from "@/lib/constants/service-colors";
 import { getServiceTypeVisuals } from "@/features/services/service-type";
 import { IconBadge } from "@/components/icon-badge";
+import type { TPaymentGlobalRow } from "@/features/payments/types";
+import { usePaymentsTable } from "../payments-table/context";
 
 type TProps = {
-  payment: TPayment;
+  payment: TPaymentGlobalRow;
 };
 
 export const PaymentCard = ({ payment }: TProps) => {
   const router = useRouter();
   const t = useTranslations("dataTable.rowActions");
-  const { color, Icon: icon } = getServiceTypeVisuals(payment.service.id);
-  const shortDate = payment.paidAt.split(" ").slice(0, 2).join(" ");
+  const { requestDelete } = usePaymentsTable();
+  const { color, Icon: icon } = getServiceTypeVisuals(payment.serviceTypeCode);
+  const shortDate = new Date(`${payment.payment.paidAt}T00:00:00`).toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "short",
+  });
 
   return (
     <div
@@ -37,7 +43,7 @@ export const PaymentCard = ({ payment }: TProps) => {
         gap: 12,
         cursor: "pointer",
       }}
-      onClick={() => router.push(`/payments/${payment.id}/edit`)}
+      onClick={() => router.push(`/payments/${payment.payment.id}/edit`)}
     >
       <IconBadge icon={icon} color={color} />
       <div style={{ flex: 1, minWidth: 0 }}>
@@ -59,7 +65,7 @@ export const PaymentCard = ({ payment }: TProps) => {
               whiteSpace: "nowrap",
             }}
           >
-            {shortDate} · {payment.service.name}
+            {shortDate} · {getServiceLabel(payment.serviceTypeCode)}
           </span>
           <span
             className="text-green-600 dark:text-green-500"
@@ -70,7 +76,7 @@ export const PaymentCard = ({ payment }: TProps) => {
               flexShrink: 0,
             }}
           >
-            {formatUAH(payment.amount)}
+            {formatUAH(Number(payment.payment.amount))}
           </span>
         </div>
 
@@ -109,12 +115,18 @@ export const PaymentCard = ({ payment }: TProps) => {
           />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-40">
-          <DropdownMenuItem onClick={() => router.push(`/payments/${payment.id}/edit`)}>
+          <DropdownMenuItem onClick={() => router.push(`/payments/${payment.payment.id}/edit`)}>
             <Pencil size={14} />
             {t("edit")}
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem variant="destructive">
+          <DropdownMenuItem
+            variant="destructive"
+            onClick={(e) => {
+              e.stopPropagation();
+              requestDelete(payment);
+            }}
+          >
             <Trash2 size={14} />
             {t("delete")}
           </DropdownMenuItem>

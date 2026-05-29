@@ -1,25 +1,21 @@
-import { formatUAH } from "@/lib/format/currency";
+"use client";
+
 import { useTranslations } from "next-intl";
-import { TPayment } from "@/app/(app)/payments/_data/mock";
+
+import { formatUAH } from "@/lib/format/currency";
 
 type TProps = {
-  filteredData?: TPayment[];
+  totalAmount: string;
 };
 
-export const FooterMeta = ({ filteredData }: TProps) => {
+export const FooterMeta = ({ totalAmount }: TProps) => {
   const t = useTranslations("payments.list");
-
-  if (!filteredData) return;
-
-  const total = filteredData.reduce((sum, item) => {
-    return sum + item.amount;
-  }, 0);
 
   return (
     <span className="text-muted-foreground text-sm">
       {t("footer.totalPaid")}:{" "}
       <span className="font-semibold text-green-600 tabular-nums dark:text-green-500">
-        {formatUAH(total)}
+        {formatUAH(Number(totalAmount))}
       </span>
     </span>
   );

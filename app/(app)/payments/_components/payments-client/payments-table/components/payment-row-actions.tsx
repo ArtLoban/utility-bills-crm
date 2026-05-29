@@ -5,12 +5,12 @@ import { Pencil, Trash2 } from "lucide-react";
 
 import type { TRowAction } from "@/components/data-table/cells/row-actions/types";
 import { RowActions } from "@/components/data-table/cells/row-actions";
-import type { TPayment } from "@/lib/types/models/payment";
+import type { TPaymentGlobalRow } from "@/features/payments/types";
 
 import { usePaymentsTable } from "../context";
 
 type TProps = {
-  payment: TPayment;
+  payment: TPaymentGlobalRow;
 };
 
 export const PaymentRowActions = ({ payment }: TProps) => {
@@ -22,7 +22,7 @@ export const PaymentRowActions = ({ payment }: TProps) => {
       kind: "link",
       label: t("edit"),
       icon: <Pencil size={14} />,
-      href: `/payments/${payment.id}/edit`,
+      href: `/payments/${payment.payment.id}/edit`,
     },
     { kind: "separator" },
     {

@@ -5,35 +5,32 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 
+import { getServiceLabel } from "@/lib/constants/service-colors";
+import type { PropertyId } from "@/lib/db/schema/properties";
+import type { TServiceOption } from "@/lib/db/access/payments";
+import type { TPaymentGlobalRow } from "@/features/payments/types";
 import { paymentSchema } from "../schema";
-import type { TPaymentFormValues, TPaymentRecord, TPropertyOption, TServiceOption } from "../types";
-
-const MOCK_PROPERTIES: TPropertyOption[] = [
-  { id: "p1", name: "Квартира Центр" },
-  { id: "p2", name: "Дача" },
-];
-
-const MOCK_SERVICES: TServiceOption[] = [
-  { id: "s1", name: "Electricity", propertyId: "p1" },
-  { id: "s2", name: "Water", propertyId: "p1" },
-  { id: "s3", name: "Gas", propertyId: "p2" },
-];
+import type { TPaymentFormValues } from "../types";
+import { recordPayment, editPayment } from "../actions";
+import type { PaymentId } from "@/lib/db/schema/payments";
 
 const todayIso = (): string => new Date().toISOString().slice(0, 10);
 
-const makeDefaultValues = (payment?: TPaymentRecord): TPaymentFormValues => ({
-  serviceId: payment?.serviceId ?? "",
-  paidAt: payment?.paidAt ?? todayIso(),
-  amount: payment?.amount ?? (0 as number),
-  notes: payment?.notes ?? "",
+const makeDefaultValues = (payment?: TPaymentGlobalRow): TPaymentFormValues => ({
+  serviceId: payment?.payment.serviceId ?? "",
+  paidAt: payment?.payment.paidAt ?? todayIso(),
+  amount: payment?.payment.amount ? Number(payment.payment.amount) : (0 as number),
+  notes: payment?.payment.notes ?? "",
 });
 
 type TParams = {
-  payment?: TPaymentRecord;
+  payment?: TPaymentGlobalRow;
+  propertyOptions?: { id: PropertyId; name: string }[];
+  serviceOptions?: Record<PropertyId, TServiceOption[]>;
   onClose: () => void;
 };
 
-export const usePaymentForm = ({ payment, onClose }: TParams) => {
+export const usePaymentForm = ({ payment, propertyOptions, serviceOptions, onClose }: TParams) => {
   const isEditMode = payment !== undefined;
 
   const form = useForm<TPaymentFormValues>({
@@ -41,11 +38,17 @@ export const usePaymentForm = ({ payment, onClose }: TParams) => {
     defaultValues: makeDefaultValues(payment),
   });
 
-  const [selectedPropertyId, setSelectedPropertyId] = useState<string>("");
+  const initialPropertyId = payment?.property.id ?? "";
+  const [selectedPropertyId, setSelectedPropertyId] = useState<string>(initialPropertyId);
 
-  const filteredServices = selectedPropertyId
-    ? MOCK_SERVICES.filter((s) => s.propertyId === selectedPropertyId)
+  const filteredServices: Array<{ id: string; name: string }> = selectedPropertyId
+    ? (serviceOptions?.[selectedPropertyId as PropertyId] ?? []).map((s) => ({
+        id: s.id,
+        name: getServiceLabel(s.typeCode),
+      }))
     : [];
+
+  const propertyList = propertyOptions ?? [];
 
   const onPropertyChange = (id: string) => {
     setSelectedPropertyId(id);
@@ -53,17 +56,37 @@ export const usePaymentForm = ({ payment, onClose }: TParams) => {
   };
 
   const handleSave = form.handleSubmit(async (data) => {
-    // devnote: wire to server action when payments table exists
-    await new Promise<void>((resolve) => setTimeout(resolve, 400));
-    toast.success(isEditMode ? "Payment updated" : "Payment recorded");
-    console.log("Payment submitted:", data);
+    if (isEditMode) {
+      const result = await editPayment(payment.payment.id as PaymentId, {
+        paidAt: data.paidAt,
+        amount: data.amount,
+        notes: data.notes,
+      });
+      if (!result.ok) {
+        toast.error(result.error.message ?? "Failed to update payment.");
+        return;
+      }
+      toast.success("Payment updated");
+    } else {
+      const result = await recordPayment({
+        serviceId: data.serviceId,
+        paidAt: data.paidAt,
+        amount: data.amount,
+        notes: data.notes,
+      });
+      if (!result.ok) {
+        toast.error(result.error.message ?? "Failed to record payment.");
+        return;
+      }
+      toast.success("Payment recorded");
+    }
     onClose();
   });
 
   return {
     form,
     isSaving: form.formState.isSubmitting,
-    properties: MOCK_PROPERTIES,
+    properties: propertyList,
     filteredServices,
     selectedPropertyId,
     onPropertyChange,

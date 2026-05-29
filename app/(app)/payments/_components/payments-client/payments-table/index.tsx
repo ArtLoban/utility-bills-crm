@@ -1,45 +1,47 @@
 "use client";
 
+import type { SortingState, Updater } from "@tanstack/react-table";
 import { useTranslations } from "next-intl";
-import { useQueryStates } from "nuqs";
 
-import { TPayment } from "@/app/(app)/payments/_data/mock";
-import { DataTable } from "@/components/data-table/data-table";
-import { useDataTableFilters } from "@/components/data-table/data-table/hooks/use-data-table-filters";
+import { ServerDataTable } from "@/components/data-table/server-data-table";
+import type { TServerPagination } from "@/lib/types/data-table";
+import type { TPaymentGlobalRow } from "@/features/payments/types";
 
-import { URL_FIELDS } from "./constants";
-import { FiltersFormField } from "./types";
 import { getPaymentsColumns } from "./utils/get-table-columns";
-import { FiltersBar } from "./components/filters-bar";
 import { FooterMeta } from "./components/footer-meta";
-import { PaymentsTableActions } from "./context";
 
 type TProps = {
-  data: TPayment[];
-  filteredData: TPayment[] | null;
-  setFilteredData: (data: TPayment[]) => void;
+  data: TPaymentGlobalRow[];
+  pagination: TServerPagination;
+  totalAmount: string;
+  sorting: SortingState;
+  onSortingChange: (updater: Updater<SortingState>) => void;
+  onPageChange: (page: number) => void;
+  onPageSizeChange: (size: number) => void;
 };
 
-export const PaymentsTable = ({ data, filteredData, setFilteredData }: TProps) => {
-  const [query] = useQueryStates(URL_FIELDS);
+export const PaymentsTable = ({
+  data,
+  pagination,
+  totalAmount,
+  sorting,
+  onSortingChange,
+  onPageChange,
+  onPageSizeChange,
+}: TProps) => {
   const t = useTranslations("payments.list");
-
   const columns = getPaymentsColumns(t);
-  const columnFilters = useDataTableFilters(query);
 
   return (
-    <div className="hidden md:block">
-      <FiltersBar />
-      <PaymentsTableActions>
-        <DataTable
-          data={data}
-          columns={columns}
-          columnFilters={columnFilters}
-          defaultSorting={{ sortBy: FiltersFormField.PAID_AT }}
-          footerMeta={<FooterMeta filteredData={filteredData ?? undefined} />}
-          onRowsChange={setFilteredData}
-        />
-      </PaymentsTableActions>
-    </div>
+    <ServerDataTable
+      data={data}
+      columns={columns}
+      sorting={sorting}
+      onSortingChange={onSortingChange}
+      pagination={pagination}
+      onPageChange={onPageChange}
+      onPageSizeChange={onPageSizeChange}
+      footerMeta={<FooterMeta totalAmount={totalAmount} />}
+    />
   );
 };

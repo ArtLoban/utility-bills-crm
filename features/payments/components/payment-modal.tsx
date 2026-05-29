@@ -3,15 +3,19 @@
 import { useRouter } from "next/navigation";
 
 import { Modal } from "@/components/modal";
+import type { PropertyId } from "@/lib/db/schema/properties";
+import type { TServiceOption } from "@/lib/db/access/payments";
+import type { TPaymentGlobalRow } from "@/features/payments/types";
 import { PaymentForm } from "./payment-form";
 import { usePaymentForm } from "../hooks/use-payment-form";
-import type { TPaymentRecord } from "../types";
 
 type TProps = {
-  payment?: TPaymentRecord;
+  payment?: TPaymentGlobalRow;
+  propertyOptions?: { id: PropertyId; name: string }[];
+  serviceOptions?: Record<PropertyId, TServiceOption[]>;
 };
 
-export const PaymentModal = ({ payment }: TProps) => {
+export const PaymentModal = ({ payment, propertyOptions, serviceOptions }: TProps) => {
   const router = useRouter();
   const onClose = () => router.back();
 
@@ -24,7 +28,7 @@ export const PaymentModal = ({ payment }: TProps) => {
     onPropertyChange,
     handleSave,
     isEditMode,
-  } = usePaymentForm({ payment, onClose });
+  } = usePaymentForm({ payment, propertyOptions, serviceOptions, onClose });
 
   return (
     <Modal

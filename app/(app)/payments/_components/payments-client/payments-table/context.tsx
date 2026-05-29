@@ -6,10 +6,13 @@ import { toast } from "sonner";
 
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { createSafeContext } from "@/lib/utils/create-safe-context";
-import type { TPayment } from "@/lib/types/models/payment";
+import type { TPaymentGlobalRow } from "@/features/payments/types";
+import type { PaymentId } from "@/lib/db/schema/payments";
+import { getServiceLabel } from "@/lib/constants/service-colors";
+import { softDeletePayment } from "@/features/payments/actions";
 
 type TPaymentsTableContext = {
-  requestDelete: (payment: TPayment) => void;
+  requestDelete: (payment: TPaymentGlobalRow) => void;
 };
 
 const [PaymentsTableContext, usePaymentsTable] =
@@ -18,15 +21,18 @@ const [PaymentsTableContext, usePaymentsTable] =
 export { usePaymentsTable };
 
 export const PaymentsTableActions = ({ children }: { children: ReactNode }) => {
-  const [rowToDelete, setRowToDelete] = useState<TPayment | null>(null);
+  const [rowToDelete, setRowToDelete] = useState<TPaymentGlobalRow | null>(null);
   const [isPending, startTransition] = useTransition();
 
   const handleConfirm = () => {
     if (rowToDelete === null) return;
     startTransition(async () => {
-      // devnote: wire to deletePayment server action when payments table exists
-      await new Promise<void>((resolve) => setTimeout(resolve, 400));
-      toast.success("Payment deleted");
+      const result = await softDeletePayment(rowToDelete.payment.id as PaymentId);
+      if (!result.ok) {
+        toast.error("Failed to delete payment. Please try again.");
+      } else {
+        toast.success("Payment deleted");
+      }
       setRowToDelete(null);
     });
   };
@@ -42,8 +48,9 @@ export const PaymentsTableActions = ({ children }: { children: ReactNode }) => {
         icon={<Trash2 size={28} />}
         description={
           <>
-            Delete <strong>{rowToDelete?.service.name ?? ""}</strong> payment for{" "}
-            <strong>{rowToDelete?.property.name ?? ""}</strong>? This cannot be undone.
+            Delete{" "}
+            <strong>{rowToDelete ? getServiceLabel(rowToDelete.serviceTypeCode) : ""}</strong>{" "}
+            payment for <strong>{rowToDelete?.property.name ?? ""}</strong>? This cannot be undone.
           </>
         }
         confirmLabel="Delete"

@@ -1,38 +1,45 @@
-import { ColumnDef } from "@tanstack/react-table";
+import type { ColumnDef } from "@tanstack/react-table";
 import { useTranslations } from "next-intl";
 
-import { DateCell } from "@/components/data-table/cells/date-cell";
 import { AmountCell } from "@/components/data-table/cells/amount-cell";
+import { DateCell } from "@/components/data-table/cells/date-cell";
 import { ServiceCell } from "@/components/data-table/cells/service-cell";
-import { PaymentRowActions } from "@/app/(app)/payments/_components/payments-client/payments-table/components/payment-row-actions";
-import { PaymentField, TPayment } from "@/lib/types/models/payment";
+import type { TPaymentGlobalRow } from "@/features/payments/types";
+
+import { PaymentRowActions } from "../components/payment-row-actions";
 
 type TTranslateFn = ReturnType<typeof useTranslations<"payments.list">>;
 
-export const getPaymentsColumns = (t: TTranslateFn): ColumnDef<TPayment>[] => [
+export const getPaymentsColumns = (t: TTranslateFn): ColumnDef<TPaymentGlobalRow>[] => [
   {
-    accessorKey: PaymentField.PAID_AT,
+    id: "paidAt",
+    accessorFn: (row) => row.payment.paidAt,
     header: t("columns.date"),
-    cell: ({ row }) => <DateCell value={row.original.paidAt} />,
+    cell: ({ row }) => <DateCell value={row.original.payment.paidAt} />,
+    enableSorting: true,
   },
   {
-    id: PaymentField.PROPERTY,
-    accessorFn: (row) => row.property.id,
+    id: "property",
+    accessorFn: (row) => row.property.name,
     header: t("columns.property"),
     cell: ({ row }) => row.original.property.name,
-    filterFn: "equals",
+    enableSorting: false,
   },
   {
-    id: PaymentField.SERVICE,
-    accessorFn: (row) => row.service.id,
+    id: "service",
+    accessorFn: (row) => row.serviceTypeCode,
     header: t("columns.service"),
-    cell: ({ row }) => <ServiceCell type={row.original.service.id} />,
-    filterFn: "equals",
+    cell: ({ row }) => <ServiceCell type={row.original.serviceTypeCode} />,
+    enableSorting: false,
   },
   {
-    accessorKey: PaymentField.AMOUNT,
+    id: "amount",
+    accessorFn: (row) => row.payment.amount,
     header: t("columns.amount"),
-    cell: ({ row }) => <AmountCell value={row.original.amount} kind="payment" />,
+    cell: ({ row }) => (
+      <AmountCell value={parseFloat(row.original.payment.amount)} kind="payment" />
+    ),
+    enableSorting: true,
     meta: { align: "right" },
   },
   {

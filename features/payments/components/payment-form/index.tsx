@@ -20,12 +20,15 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import type { TPaymentFormValues, TPropertyOption, TServiceOption } from "../../types";
+import type { TPaymentFormValues } from "../../types";
+
+type TPropertyItem = { id: string; name: string };
+type TServiceItem = { id: string; name: string };
 
 type TProps = {
   form: UseFormReturn<TPaymentFormValues>;
-  properties: TPropertyOption[];
-  services: TServiceOption[];
+  properties: TPropertyItem[];
+  services: TServiceItem[];
   selectedPropertyId: string;
   onPropertyChange: (id: string) => void;
 };
@@ -39,7 +42,7 @@ export const PaymentForm = ({
 }: TProps) => (
   <Form {...form}>
     <div className="flex flex-col gap-3.5">
-      {/* Property is a UI-only filter — not saved, not validated */}
+      {/* Property is a UI-only filter — selects which services to show; not validated */}
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="payment-property">Property</Label>
         <Select
