@@ -1,3 +1,7 @@
+"use client";
+
+import { useTranslations } from "next-intl";
+
 import { TUserRole } from "../types";
 
 type TProps = { role: TUserRole };
@@ -8,8 +12,12 @@ const ROLE_CLASSES: Record<TUserRole, string> = {
   Viewer: "bg-[#f4f4f5] border border-[#e4e4e7] text-[#71717a]",
 };
 
-export const RoleBadge = ({ role }: TProps) => (
-  <span className={`rounded-full px-2 py-[2px] text-xs font-semibold ${ROLE_CLASSES[role]}`}>
-    {role}
-  </span>
-);
+export const RoleBadge = ({ role }: TProps) => {
+  const t = useTranslations("sharing");
+
+  return (
+    <span className={`rounded-full px-2 py-[2px] text-xs font-semibold ${ROLE_CLASSES[role]}`}>
+      {t(`roles.${role}`)}
+    </span>
+  );
+};

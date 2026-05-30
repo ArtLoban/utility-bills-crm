@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { X } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import { Dialog, DialogClose, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { TUserRole } from "../../types";
@@ -10,6 +11,7 @@ import { InviteRadio } from "./components/invite-radio";
 type TProps = { open: boolean; onOpenChange: (open: boolean) => void };
 
 export const InviteModal = ({ open, onOpenChange }: TProps) => {
+  const t = useTranslations("sharing");
   const [role, setRole] = useState<TUserRole>("Editor");
 
   return (
@@ -21,7 +23,7 @@ export const InviteModal = ({ open, onOpenChange }: TProps) => {
         {/* Header */}
         <div className="flex items-center justify-between border-b border-zinc-200 px-6 py-4">
           <DialogTitle className="text-md font-semibold tracking-[-0.2px]">
-            Invite person
+            {t("inviteModal.title")}
           </DialogTitle>
           <DialogClose className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-md border-0 bg-transparent p-0">
             <X size={15} className="text-zinc-500" />
@@ -32,43 +34,43 @@ export const InviteModal = ({ open, onOpenChange }: TProps) => {
         <div className="px-6 py-5">
           {/* Email field */}
           <div>
-            <label className="mb-1.5 block text-sm font-medium">Email</label>
+            <label className="mb-1.5 block text-sm font-medium">
+              {t("inviteModal.emailLabel")}
+            </label>
             <input
               type="email"
-              placeholder="name@example.com"
+              placeholder={t("inviteModal.emailPlaceholder")}
               className="h-9 w-full rounded-[6px] border border-zinc-200 px-3 text-sm outline-none focus:border-[#7c3aed]"
             />
-            <p className="mt-[6px] text-xs text-zinc-500">
-              The person must already have an account.
-            </p>
+            <p className="mt-[6px] text-xs text-zinc-500">{t("inviteModal.emailHint")}</p>
           </div>
 
           <div className="my-4 h-px bg-zinc-200" />
 
           {/* Role section */}
           <div>
-            <p className="mb-[10px] text-sm font-medium">Role</p>
+            <p className="mb-[10px] text-sm font-medium">{t("inviteModal.roleLabel")}</p>
             <div className="flex flex-col gap-2">
               <InviteRadio
                 value="Viewer"
                 selected={role}
                 onSelect={setRole}
-                label="Viewer"
-                helper="Can see everything, but can't make changes."
+                label={t("inviteModal.viewer.label")}
+                helper={t("inviteModal.viewer.helper")}
               />
               <InviteRadio
                 value="Editor"
                 selected={role}
                 onSelect={setRole}
-                label="Editor"
-                helper="Can add readings, bills, and payments."
+                label={t("inviteModal.editor.label")}
+                helper={t("inviteModal.editor.helper")}
               />
               <InviteRadio
                 value="Owner"
                 selected={role}
                 onSelect={setRole}
-                label="Owner"
-                helper="Full access, including inviting and removing others."
+                label={t("inviteModal.owner.label")}
+                helper={t("inviteModal.owner.helper")}
               />
             </div>
           </div>
@@ -80,11 +82,11 @@ export const InviteModal = ({ open, onOpenChange }: TProps) => {
           style={{ borderRadius: "0 0 10px 10px" }}
         >
           <DialogClose className="inline-flex h-[34px] cursor-pointer items-center rounded-[6px] border border-zinc-200 bg-white px-4 text-sm font-medium text-zinc-950">
-            Cancel
+            {t("actions.cancel")}
           </DialogClose>
           {/* devnote: wire Send invite to Server Action when invitation logic is implemented */}
           <button className="inline-flex h-[34px] cursor-pointer items-center rounded-[6px] border-0 bg-[#7c3aed] px-4 text-sm font-medium text-white">
-            Send invite
+            {t("actions.sendInvite")}
           </button>
         </div>
       </DialogContent>

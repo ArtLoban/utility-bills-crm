@@ -663,5 +663,58 @@
         "fixedAmount": "A flat amount billed each month regardless of usage."
       }
     }
+  },
+  "sharing": {
+    "section": {
+      "title": "People with access",
+      "subtitle": "Manage who can view or edit this property."
+    },
+    "youBadge": "You",
+    "meta": {
+      "addedBy": "Added by {name} on {date}",
+      "addedOn": "Added on {date}"
+    },
+    "roles": {
+      "Owner": "Owner",
+      "Editor": "Editor",
+      "Viewer": "Viewer"
+    },
+    "actions": {
+      "invite": "Invite person",
+      "leave": "Leave property",
+      "removeAccess": "Remove access",
+      "cancel": "Cancel",
+      "sendInvite": "Send invite",
+      "gotIt": "Got it"
+    },
+    "banner": {
+      "ownerInfo": "People you invite need an existing account. They will get immediate access — no email confirmation required in this version.",
+      "readOnly": "Only owners can invite people and change roles."
+    },
+    "inviteModal": {
+      "title": "Invite person",
+      "emailLabel": "Email",
+      "emailPlaceholder": "name@example.com",
+      "emailHint": "The person must already have an account.",
+      "roleLabel": "Role",
+      "viewer": { "label": "Viewer", "helper": "Can see everything, but can't make changes." },
+      "editor": { "label": "Editor", "helper": "Can add readings, bills, and payments." },
+      "owner": {
+        "label": "Owner",
+        "helper": "Full access, including inviting and removing others."
+      }
+    },
+    "lastOwnerModal": {
+      "title": "Can't leave as the last owner",
+      "body": "Every property needs at least one owner. You're currently the only owner of <strong>{propertyName}</strong>.",
+      "guidance": "To leave, you can either:",
+      "step1": "Promote someone else to Owner first, then leave.",
+      "step2": "Delete the property if it's no longer needed."
+    },
+    "removeModal": {
+      "title": "Remove access?",
+      "body": "Remove <strong>{name}</strong> from <strong>{propertyName}</strong>?",
+      "subtext": "They will immediately lose access to this property and all its data. This can be undone by inviting them again."
+    }
   }
 }

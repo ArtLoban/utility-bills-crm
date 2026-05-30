@@ -1,6 +1,7 @@
 "use client";
 
 import { UserMinus, X } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import { Dialog, DialogClose, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { TSharedUser } from "../types";
@@ -10,9 +11,12 @@ type TProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   user: TSharedUser | null;
+  propertyName: string;
 };
 
-export const RemoveUserModal = ({ open, onOpenChange, user }: TProps) => {
+export const RemoveUserModal = ({ open, onOpenChange, user, propertyName }: TProps) => {
+  const t = useTranslations("sharing");
+
   if (!user) return null;
 
   return (
@@ -24,7 +28,7 @@ export const RemoveUserModal = ({ open, onOpenChange, user }: TProps) => {
         {/* Header */}
         <div className="flex items-center justify-between border-b border-zinc-200 px-6 py-4">
           <DialogTitle className="text-md font-semibold tracking-[-0.2px]">
-            Remove access?
+            {t("removeModal.title")}
           </DialogTitle>
           <DialogClose className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-md border-0 bg-transparent p-0">
             <X size={15} className="text-zinc-500" />
@@ -46,22 +50,22 @@ export const RemoveUserModal = ({ open, onOpenChange, user }: TProps) => {
             <div>
               <div className="text-sm font-semibold">{user.name}</div>
               <div className="text-xs text-zinc-500">
-                {user.email} · {user.role}
+                {user.email} · {t(`roles.${user.role}`)}
               </div>
             </div>
           </div>
 
           {/* Confirmation text */}
-          {/* devnote: propertyName should come from props when connected to real data */}
           <p className="mb-[10px] text-sm leading-[1.55]">
-            Remove <strong>{user.name}</strong> from <strong>Apartment on Main St</strong>?
+            {t.rich("removeModal.body", {
+              name: user.name,
+              propertyName,
+              strong: (chunks) => <strong>{chunks}</strong>,
+            })}
           </p>
 
           {/* Sub-text */}
-          <p className="text-sm leading-[1.55] text-zinc-500">
-            They will immediately lose access to this property and all its data. This can be undone
-            by inviting them again.
-          </p>
+          <p className="text-sm leading-[1.55] text-zinc-500">{t("removeModal.subtext")}</p>
         </div>
 
         {/* Footer */}
@@ -70,11 +74,11 @@ export const RemoveUserModal = ({ open, onOpenChange, user }: TProps) => {
           style={{ borderRadius: "0 0 10px 10px" }}
         >
           <DialogClose className="inline-flex h-[34px] cursor-pointer items-center rounded-[6px] border border-zinc-200 bg-white px-4 text-sm font-medium text-zinc-950">
-            Cancel
+            {t("actions.cancel")}
           </DialogClose>
           {/* devnote: wire to Server Action when access management is implemented */}
           <button className="inline-flex h-[34px] cursor-pointer items-center rounded-[6px] border-0 bg-[#dc2626] px-4 text-sm font-medium text-white">
-            Remove access
+            {t("actions.removeAccess")}
           </button>
         </div>
       </DialogContent>
