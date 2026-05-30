@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { Calendar, ChevronDown, X } from "lucide-react";
 
 import { Dialog, DialogClose, DialogContent, DialogTitle } from "@/components/ui/dialog";
@@ -29,8 +30,6 @@ const INITIAL_STATE: TFormState = {
 };
 
 type TProps = {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
   propertyId: string;
   availableServiceTypes: TServiceType[];
 };
@@ -41,20 +40,11 @@ const ZONE_OPTIONS = [
   { value: "3", label: "Three zones (peak / shoulder / off-peak)" },
 ] as const;
 
-const AddMeterModal = ({ open, onOpenChange, propertyId, availableServiceTypes }: TProps) => {
+const AddMeterModal = ({ propertyId, availableServiceTypes }: TProps) => {
+  const router = useRouter();
   const [form, setForm] = useState<TFormState>(INITIAL_STATE);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
-
-  useEffect(() => {
-    if (!open) {
-      const timer = setTimeout(() => {
-        setForm(INITIAL_STATE);
-        setError(null);
-      }, 200);
-      return () => clearTimeout(timer);
-    }
-  }, [open]);
 
   const set = (key: keyof TFormState) => (value: string) =>
     setForm((f) => ({ ...f, [key]: value }));
@@ -82,12 +72,12 @@ const AddMeterModal = ({ open, onOpenChange, propertyId, availableServiceTypes }
         return;
       }
 
-      onOpenChange(false);
+      router.back();
     });
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open onOpenChange={(open) => !open && router.back()}>
       <DialogContent
         showCloseButton={false}
         className="max-w-[448px] gap-0 rounded-[12px] p-0 shadow-[0_20px_60px_rgba(9,9,11,0.18),0_4px_16px_rgba(9,9,11,0.10)] sm:max-w-[448px]"

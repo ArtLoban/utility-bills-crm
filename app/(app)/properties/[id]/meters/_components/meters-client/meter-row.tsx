@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import { IconBadge } from "@/components/icon-badge";
 import type { TMeter } from "@/lib/db/schema/meters";
@@ -10,7 +13,6 @@ type TProps = {
   serviceType: TServiceType;
   propertyId: string;
   canMutate: boolean;
-  onReplace?: () => void;
 };
 
 const ZONE_LABELS: Record<number, string> = {
@@ -19,7 +21,8 @@ const ZONE_LABELS: Record<number, string> = {
   3: "Three zones",
 };
 
-const MeterRow = ({ meter, serviceType, propertyId, canMutate, onReplace }: TProps) => {
+const MeterRow = ({ meter, serviceType, propertyId, canMutate }: TProps) => {
+  const router = useRouter();
   const { color, Icon } = getServiceTypeVisuals(serviceType.code as TServiceTypeCode);
   const isHistorical = meter.validTo !== null;
 
@@ -59,9 +62,9 @@ const MeterRow = ({ meter, serviceType, propertyId, canMutate, onReplace }: TPro
         </p>
       </Link>
 
-      {canMutate && !isHistorical && onReplace && (
+      {canMutate && !isHistorical && (
         <button
-          onClick={onReplace}
+          onClick={() => router.push(`/properties/${propertyId}/meters/${meter.id}/replace`)}
           className="shrink-0 cursor-pointer rounded-md border border-zinc-200 bg-transparent text-xs font-medium text-zinc-500 hover:border-zinc-300 hover:text-zinc-950 dark:border-zinc-700 dark:text-zinc-400 dark:hover:border-zinc-600 dark:hover:text-zinc-50"
           style={{ height: 28, padding: "0 10px" }}
         >

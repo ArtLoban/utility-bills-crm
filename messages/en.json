@@ -697,11 +697,17 @@
       "emailPlaceholder": "name@example.com",
       "emailHint": "The person must already have an account.",
       "roleLabel": "Role",
+      "sending": "Sending…",
       "viewer": { "label": "Viewer", "helper": "Can see everything, but can't make changes." },
       "editor": { "label": "Editor", "helper": "Can add readings, bills, and payments." },
       "owner": {
         "label": "Owner",
         "helper": "Full access, including inviting and removing others."
+      },
+      "errors": {
+        "userNotFound": "No account found for this email.",
+        "alreadyHasAccess": "This person already has access.",
+        "generic": "Failed to send invite. Please try again."
       }
     },
     "lastOwnerModal": {
@@ -714,7 +720,15 @@
     "removeModal": {
       "title": "Remove access?",
       "body": "Remove <strong>{name}</strong> from <strong>{propertyName}</strong>?",
-      "subtext": "They will immediately lose access to this property and all its data. This can be undone by inviting them again."
+      "subtext": "They will immediately lose access to this property and all its data. This can be undone by inviting them again.",
+      "removing": "Removing…",
+      "errors": {
+        "generic": "Failed to remove access. Please try again."
+      }
+    },
+    "toast": {
+      "leaveError": "Failed to leave property. Please try again.",
+      "roleChangeError": "Failed to update role. Please try again."
     }
   }
 }

@@ -1,49 +1,40 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { Plus } from "lucide-react";
 import { useTranslations, useFormatter } from "next-intl";
+import { toast } from "sonner";
 
-import type { TPropertyMember } from "@/features/sharing";
-import type { TPropertyRole } from "@/lib/db/schema/properties";
+import type { TPropertyMember } from "@/features/sharing/query";
+import { leaveProperty } from "@/features/sharing/actions";
+import type { PropertyId } from "@/lib/db/schema/properties";
 import type { UserId } from "@/lib/db/schema/auth";
-import { AVATAR_PALETTE } from "./constants";
-import type { TSharedUser, TUserRole } from "./types";
+import type { TSharedUser } from "./types";
+import { stableAvatarIdx, capitalizeRole } from "./utils";
 import { InfoBanner } from "./components/info-banner";
 import { UserCard } from "./components/user-card";
-import { InviteModal } from "./components/invite-modal";
 import { LastOwnerModal } from "./components/last-owner-modal";
-import { RemoveUserModal } from "./components/remove-user-modal";
 
 type TProps = {
+  propertyId: string;
   members: TPropertyMember[];
   currentUserId: UserId;
   propertyName: string;
 };
 
-const capitalizeRole = (r: TPropertyRole): TUserRole =>
-  (r.charAt(0).toUpperCase() + r.slice(1)) as TUserRole;
-
-// Deterministic avatar color derived from userId — stable across re-renders and re-fetches
-const stableAvatarIdx = (userId: string): number => {
-  let h = 0;
-  for (let i = 0; i < userId.length; i++) h = (h * 31 + userId.charCodeAt(i)) | 0;
-  return Math.abs(h) % AVATAR_PALETTE.length;
-};
-
-export const SharingTab = ({ members, currentUserId, propertyName }: TProps) => {
+export const SharingTab = ({ propertyId, members, currentUserId, propertyName }: TProps) => {
+  const router = useRouter();
   const t = useTranslations("sharing");
   const fmt = useFormatter();
+  const [isPending, startTransition] = useTransition();
 
-  const [inviteOpen, setInviteOpen] = useState(false);
   const [lastOwnerOpen, setLastOwnerOpen] = useState(false);
-  const [removeUser, setRemoveUser] = useState<TSharedUser | null>(null);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 
   const myMember = members.find((m) => m.userId === currentUserId);
-  const myRole: TPropertyRole = myMember?.role ?? "viewer";
+  const myRole = myMember?.role ?? "viewer";
   const isOwnerView = myRole === "owner";
-  // Sole-owner flag — used in 3b to route the Leave action to the informational modal
   const isSoleOwner = myRole === "owner" && members.filter((m) => m.role === "owner").length === 1;
 
   const users: TSharedUser[] = members.map((m) => {
@@ -66,8 +57,16 @@ export const SharingTab = ({ members, currentUserId, propertyName }: TProps) => 
   const handleLeave = () => {
     if (isSoleOwner) {
       setLastOwnerOpen(true);
+      return;
     }
-    // devnote: non-last-owner leave flow (confirmation modal or direct action) not yet implemented
+    startTransition(async () => {
+      const result = await leaveProperty(propertyId as PropertyId);
+      if (!result.ok) {
+        toast.error(t("toast.leaveError"));
+        return;
+      }
+      router.push("/properties");
+    });
   };
 
   return (
@@ -84,10 +83,11 @@ export const SharingTab = ({ members, currentUserId, propertyName }: TProps) => 
           <UserCard
             key={user.id}
             user={user}
+            propertyId={propertyId}
             isOwnerView={isOwnerView}
             menuOpen={openMenuId === user.id}
             onMenuToggle={() => setOpenMenuId(openMenuId === user.id ? null : user.id)}
-            onRemove={setRemoveUser}
+            onRemove={() => router.push(`/properties/${propertyId}/sharing/${user.id}/remove`)}
             onLeave={handleLeave}
           />
         ))}
@@ -97,8 +97,9 @@ export const SharingTab = ({ members, currentUserId, propertyName }: TProps) => 
       {isOwnerView && (
         <>
           <button
-            onClick={() => setInviteOpen(true)}
-            className="inline-flex h-9 cursor-pointer items-center gap-[6px] rounded-[6px] border-0 bg-[#7c3aed] px-4 text-sm font-medium text-white"
+            onClick={() => router.push(`/properties/${propertyId}/sharing/invite`)}
+            disabled={isPending}
+            className="inline-flex h-9 cursor-pointer items-center gap-[6px] rounded-[6px] border-0 bg-[#7c3aed] px-4 text-sm font-medium text-white disabled:cursor-default disabled:opacity-60"
           >
             <Plus size={14} color="#fff" />
             {t("actions.invite")}
@@ -112,18 +113,9 @@ export const SharingTab = ({ members, currentUserId, propertyName }: TProps) => 
       {/* Editor/Viewer: read-only banner */}
       {!isOwnerView && <InfoBanner text={t("banner.readOnly")} />}
 
-      <InviteModal open={inviteOpen} onOpenChange={setInviteOpen} />
       <LastOwnerModal
         open={lastOwnerOpen}
         onOpenChange={setLastOwnerOpen}
-        propertyName={propertyName}
-      />
-      <RemoveUserModal
-        open={removeUser !== null}
-        onOpenChange={(open) => {
-          if (!open) setRemoveUser(null);
-        }}
-        user={removeUser}
         propertyName={propertyName}
       />
     </div>

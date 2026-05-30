@@ -1,21 +1,55 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { toast } from "sonner";
 
 import { Dialog, DialogClose, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { TUserRole } from "../../types";
+import { inviteToProperty } from "@/features/sharing/actions";
+import type { PropertyId, TPropertyRole } from "@/lib/db/schema/properties";
+import type { TUserRole } from "../../types";
 import { InviteRadio } from "./components/invite-radio";
 
-type TProps = { open: boolean; onOpenChange: (open: boolean) => void };
+type TProps = { propertyId: string };
 
-export const InviteModal = ({ open, onOpenChange }: TProps) => {
+export const InviteModal = ({ propertyId }: TProps) => {
+  const router = useRouter();
   const t = useTranslations("sharing");
   const [role, setRole] = useState<TUserRole>("Editor");
+  const [email, setEmail] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
+
+  const canSubmit = email.trim() !== "" && !isPending;
+
+  const handleSubmit = () => {
+    setError(null);
+    startTransition(async () => {
+      const result = await inviteToProperty(propertyId as PropertyId, {
+        email: email.trim(),
+        role: role.toLowerCase() as TPropertyRole,
+      });
+
+      if (!result.ok) {
+        const msg = result.error.message;
+        if (msg === "USER_NOT_FOUND") {
+          setError(t("inviteModal.errors.userNotFound"));
+        } else if (msg === "ALREADY_HAS_ACCESS") {
+          setError(t("inviteModal.errors.alreadyHasAccess"));
+        } else {
+          toast.error(t("inviteModal.errors.generic"));
+        }
+        return;
+      }
+
+      router.back();
+    });
+  };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open onOpenChange={(open) => !open && router.back()}>
       <DialogContent
         showCloseButton={false}
         className="max-w-[460px] gap-0 rounded-[10px] p-0 shadow-[0_20px_60px_rgba(9,9,11,0.18),0_4px_16px_rgba(9,9,11,0.10)] sm:max-w-[460px]"
@@ -39,10 +73,21 @@ export const InviteModal = ({ open, onOpenChange }: TProps) => {
             </label>
             <input
               type="email"
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                setError(null);
+              }}
               placeholder={t("inviteModal.emailPlaceholder")}
               className="h-9 w-full rounded-[6px] border border-zinc-200 px-3 text-sm outline-none focus:border-[#7c3aed]"
             />
-            <p className="mt-[6px] text-xs text-zinc-500">{t("inviteModal.emailHint")}</p>
+            {error ? (
+              <p className="mt-[6px] text-xs" style={{ color: "#dc2626" }}>
+                {error}
+              </p>
+            ) : (
+              <p className="mt-[6px] text-xs text-zinc-500">{t("inviteModal.emailHint")}</p>
+            )}
           </div>
 
           <div className="my-4 h-px bg-zinc-200" />
@@ -84,9 +129,16 @@ export const InviteModal = ({ open, onOpenChange }: TProps) => {
           <DialogClose className="inline-flex h-[34px] cursor-pointer items-center rounded-[6px] border border-zinc-200 bg-white px-4 text-sm font-medium text-zinc-950">
             {t("actions.cancel")}
           </DialogClose>
-          {/* devnote: wire Send invite to Server Action when invitation logic is implemented */}
-          <button className="inline-flex h-[34px] cursor-pointer items-center rounded-[6px] border-0 bg-[#7c3aed] px-4 text-sm font-medium text-white">
-            {t("actions.sendInvite")}
+          <button
+            onClick={handleSubmit}
+            disabled={!canSubmit}
+            className={
+              canSubmit
+                ? "inline-flex h-[34px] cursor-pointer items-center rounded-[6px] border-0 bg-[#7c3aed] px-4 text-sm font-medium text-white"
+                : "inline-flex h-[34px] cursor-default items-center rounded-[6px] border-0 bg-zinc-200 px-4 text-sm font-medium text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400"
+            }
+          >
+            {isPending ? t("inviteModal.sending") : t("actions.sendInvite")}
           </button>
         </div>
       </DialogContent>

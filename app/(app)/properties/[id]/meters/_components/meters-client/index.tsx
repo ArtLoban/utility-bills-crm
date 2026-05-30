@@ -1,27 +1,22 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { ChevronDown, ChevronUp, Plus } from "lucide-react";
 
 import { ACCENT } from "@/lib/constants/ui-tokens";
-import type { TMeter } from "@/lib/db/schema/meters";
-import type { TServiceType } from "@/lib/db/schema/service-types";
 import type { TPropertyRole } from "@/lib/db/schema/properties";
 import type { TPropertyMeterRow } from "../../_data/queries";
-import { AddMeterModal } from "../add-meter-modal";
-import { ReplaceMeterModal } from "../replace-meter-modal";
 import { MeterRow } from "./meter-row";
 
 type TProps = {
   propertyId: string;
   meters: TPropertyMeterRow[];
-  availableServiceTypes: TServiceType[];
   role: TPropertyRole;
 };
 
-const MetersClient = ({ propertyId, meters, availableServiceTypes, role }: TProps) => {
-  const [addOpen, setAddOpen] = useState(false);
-  const [replacingMeter, setReplacingMeter] = useState<TMeter | null>(null);
+const MetersClient = ({ propertyId, meters, role }: TProps) => {
+  const router = useRouter();
   const [historyExpanded, setHistoryExpanded] = useState(false);
 
   const canMutate = role === "owner" || role === "editor";
@@ -40,7 +35,7 @@ const MetersClient = ({ propertyId, meters, availableServiceTypes, role }: TProp
         </h1>
         {canMutate && (
           <button
-            onClick={() => setAddOpen(true)}
+            onClick={() => router.push(`/properties/${propertyId}/meters/new`)}
             className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border-0 text-sm font-medium text-white"
             style={{ height: 36, padding: "0 14px", background: ACCENT }}
           >
@@ -64,7 +59,6 @@ const MetersClient = ({ propertyId, meters, availableServiceTypes, role }: TProp
               serviceType={r.serviceType}
               propertyId={propertyId}
               canMutate={canMutate}
-              onReplace={() => setReplacingMeter(r.meter)}
             />
           ))}
         </div>
@@ -97,23 +91,6 @@ const MetersClient = ({ propertyId, meters, availableServiceTypes, role }: TProp
             </div>
           )}
         </div>
-      )}
-
-      <AddMeterModal
-        open={addOpen}
-        onOpenChange={setAddOpen}
-        propertyId={propertyId}
-        availableServiceTypes={availableServiceTypes}
-      />
-
-      {replacingMeter && (
-        <ReplaceMeterModal
-          open
-          onOpenChange={(open) => {
-            if (!open) setReplacingMeter(null);
-          }}
-          meter={replacingMeter}
-        />
       )}
     </>
   );

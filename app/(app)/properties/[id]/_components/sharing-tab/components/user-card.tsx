@@ -10,15 +10,17 @@ import { KebabMenu } from "./kebab-menu";
 
 type TProps = {
   user: TSharedUser;
+  propertyId: string;
   isOwnerView: boolean;
   menuOpen: boolean;
   onMenuToggle: () => void;
-  onRemove: (user: TSharedUser) => void;
+  onRemove: () => void;
   onLeave: () => void;
 };
 
 export const UserCard = ({
   user,
+  propertyId,
   isOwnerView,
   menuOpen,
   onMenuToggle,
@@ -33,7 +35,6 @@ export const UserCard = ({
   const showKebab = isOwnerView && !user.isYou && user.role !== "Owner";
   const showLeave = user.isYou;
 
-  // devnote: leave flow (with or without last-owner check) to be wired to Server Action when implemented
   return (
     <div className="flex flex-row gap-[14px] rounded-lg border border-zinc-200 bg-white px-5 py-4 shadow-[0_1px_2px_rgba(24,24,27,0.05)]">
       <Avatar size={40} idx={user.avatarIdx} name={user.name} />
@@ -54,7 +55,9 @@ export const UserCard = ({
 
       <div className="flex shrink-0 items-center gap-[6px]">
         {showRightBadge && <RoleBadge role={user.role} />}
-        {showRoleDropdown && <RoleDropdown value={user.role} />}
+        {showRoleDropdown && (
+          <RoleDropdown value={user.role} userId={user.id} propertyId={propertyId} />
+        )}
         {showKebab && (
           <KebabMenu
             open={menuOpen}
@@ -63,7 +66,7 @@ export const UserCard = ({
               {
                 label: t("actions.removeAccess"),
                 destructive: true,
-                onClick: () => onRemove(user),
+                onClick: () => onRemove(),
               },
             ]}
           />

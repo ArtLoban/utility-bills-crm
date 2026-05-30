@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { Calendar, ChevronDown, Info, X } from "lucide-react";
 
 import { Dialog, DialogClose, DialogContent, DialogTitle } from "@/components/ui/dialog";
@@ -21,8 +22,6 @@ type TFormState = {
 };
 
 type TProps = {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
   meter: TMeter;
 };
 
@@ -32,7 +31,8 @@ const ZONE_OPTIONS = [
   { value: "3", label: "Three zones (peak / shoulder / off-peak)" },
 ] as const;
 
-const ReplaceMeterModal = ({ open, onOpenChange, meter }: TProps) => {
+const ReplaceMeterModal = ({ meter }: TProps) => {
+  const router = useRouter();
   const initialZone = String(meter.zoneCount) as TZoneCount;
 
   const [form, setForm] = useState<TFormState>({
@@ -44,22 +44,6 @@ const ReplaceMeterModal = ({ open, onOpenChange, meter }: TProps) => {
   });
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
-
-  useEffect(() => {
-    if (!open) {
-      const timer = setTimeout(() => {
-        setForm({
-          replacementDate: "",
-          serialNumber: "",
-          zoneCount: initialZone,
-          installedAt: "",
-          notes: "",
-        });
-        setError(null);
-      }, 200);
-      return () => clearTimeout(timer);
-    }
-  }, [open, initialZone]);
 
   const set = (key: keyof TFormState) => (value: string) =>
     setForm((f) => ({ ...f, [key]: value }));
@@ -83,12 +67,12 @@ const ReplaceMeterModal = ({ open, onOpenChange, meter }: TProps) => {
         return;
       }
 
-      onOpenChange(false);
+      router.back();
     });
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open onOpenChange={(open) => !open && router.back()}>
       <DialogContent
         showCloseButton={false}
         className="max-w-[448px] gap-0 rounded-[12px] p-0 shadow-[0_20px_60px_rgba(9,9,11,0.18),0_4px_16px_rgba(9,9,11,0.10)] sm:max-w-[448px]"

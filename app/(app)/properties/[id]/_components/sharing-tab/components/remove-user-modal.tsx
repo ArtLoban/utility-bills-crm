@@ -1,26 +1,50 @@
 "use client";
 
+import { useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { UserMinus, X } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { toast } from "sonner";
 
 import { Dialog, DialogClose, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { TSharedUser } from "../types";
+import { removePropertyAccess } from "@/features/sharing/actions";
+import type { TPropertyMember } from "@/features/sharing/query";
+import type { PropertyId } from "@/lib/db/schema/properties";
+import { stableAvatarIdx, capitalizeRole } from "../utils";
 import { Avatar } from "./avatar";
 
 type TProps = {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  user: TSharedUser | null;
+  member: TPropertyMember;
+  propertyId: string;
   propertyName: string;
 };
 
-export const RemoveUserModal = ({ open, onOpenChange, user, propertyName }: TProps) => {
+export const RemoveUserModal = ({ member, propertyId, propertyName }: TProps) => {
+  const router = useRouter();
   const t = useTranslations("sharing");
+  const [isPending, startTransition] = useTransition();
 
-  if (!user) return null;
+  const avatarIdx = stableAvatarIdx(member.userId);
+  const displayRole = capitalizeRole(member.role);
+  const displayName = member.name ?? member.email;
+
+  const handleConfirm = () => {
+    startTransition(async () => {
+      const result = await removePropertyAccess(propertyId as PropertyId, {
+        targetUserId: member.userId,
+      });
+
+      if (!result.ok) {
+        toast.error(t("removeModal.errors.generic"));
+        return;
+      }
+
+      router.back();
+    });
+  };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open onOpenChange={(open) => !open && router.back()}>
       <DialogContent
         showCloseButton={false}
         className="max-w-[460px] gap-0 rounded-[10px] p-0 shadow-[0_20px_60px_rgba(9,9,11,0.18),0_4px_16px_rgba(9,9,11,0.10)] sm:max-w-[460px]"
@@ -46,11 +70,11 @@ export const RemoveUserModal = ({ open, onOpenChange, user, propertyName }: TPro
 
           {/* User preview */}
           <div className="mb-4 flex items-center gap-3 rounded-lg border border-zinc-200 bg-zinc-100 px-[14px] py-3">
-            <Avatar size={36} idx={user.avatarIdx} name={user.name} />
+            <Avatar size={36} idx={avatarIdx} name={displayName} />
             <div>
-              <div className="text-sm font-semibold">{user.name}</div>
+              <div className="text-sm font-semibold">{displayName}</div>
               <div className="text-xs text-zinc-500">
-                {user.email} · {t(`roles.${user.role}`)}
+                {member.email} · {t(`roles.${displayRole}`)}
               </div>
             </div>
           </div>
@@ -58,7 +82,7 @@ export const RemoveUserModal = ({ open, onOpenChange, user, propertyName }: TPro
           {/* Confirmation text */}
           <p className="mb-[10px] text-sm leading-[1.55]">
             {t.rich("removeModal.body", {
-              name: user.name,
+              name: displayName,
               propertyName,
               strong: (chunks) => <strong>{chunks}</strong>,
             })}
@@ -76,9 +100,16 @@ export const RemoveUserModal = ({ open, onOpenChange, user, propertyName }: TPro
           <DialogClose className="inline-flex h-[34px] cursor-pointer items-center rounded-[6px] border border-zinc-200 bg-white px-4 text-sm font-medium text-zinc-950">
             {t("actions.cancel")}
           </DialogClose>
-          {/* devnote: wire to Server Action when access management is implemented */}
-          <button className="inline-flex h-[34px] cursor-pointer items-center rounded-[6px] border-0 bg-[#dc2626] px-4 text-sm font-medium text-white">
-            {t("actions.removeAccess")}
+          <button
+            onClick={handleConfirm}
+            disabled={isPending}
+            className={
+              isPending
+                ? "inline-flex h-[34px] cursor-default items-center rounded-[6px] border-0 bg-zinc-200 px-4 text-sm font-medium text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400"
+                : "inline-flex h-[34px] cursor-pointer items-center rounded-[6px] border-0 bg-[#dc2626] px-4 text-sm font-medium text-white"
+            }
+          >
+            {isPending ? t("removeModal.removing") : t("actions.removeAccess")}
           </button>
         </div>
       </DialogContent>

@@ -16,7 +16,7 @@ import { PageContainer } from "@/components/page-container";
 import { ROUTES } from "@/lib/routes";
 import { PropertyMeta } from "./_components/property-meta";
 import { PropertyActions } from "./_components/property-actions";
-import { getPropertyMeters, getAvailableServiceTypesForMeter } from "./meters/_data/queries";
+import { getPropertyMeters } from "./meters/_data/queries";
 import { MetersClient } from "./meters/_components/meters-client";
 import { SharingTab } from "./_components/sharing-tab";
 import type { PropertyId } from "@/lib/db/schema/properties";
@@ -74,21 +74,11 @@ export default async function PropertyPage({ params, searchParams }: TProps) {
       />
     );
   } else if (activeTab === TABS.METERS) {
-    const [metersResult, availableServiceTypes] = await Promise.all([
-      getPropertyMeters(propertyId),
-      getAvailableServiceTypesForMeter(propertyId),
-    ]);
+    const metersResult = await getPropertyMeters(propertyId);
 
     if (!metersResult.ok) notFound();
 
-    tabContent = (
-      <MetersClient
-        propertyId={id}
-        meters={metersResult.value}
-        availableServiceTypes={availableServiceTypes}
-        role={property.role}
-      />
-    );
+    tabContent = <MetersClient propertyId={id} meters={metersResult.value} role={property.role} />;
   } else {
     // TABS.SHARING
     if (!userId) notFound();
@@ -97,6 +87,7 @@ export default async function PropertyPage({ params, searchParams }: TProps) {
 
     tabContent = (
       <SharingTab
+        propertyId={id}
         members={membersResult.value}
         currentUserId={userId}
         propertyName={property.name}
