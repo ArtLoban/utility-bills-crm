@@ -5,7 +5,7 @@ import { useLocale } from "next-intl";
 import { useRouter } from "next/navigation";
 import { locales, LOCALE_CONFIG } from "@/lib/locale/constants";
 import type { TLocale } from "@/lib/locale/constants";
-import { setLocaleCookie } from "@/lib/locale/actions";
+import { setLocale } from "@/lib/locale/actions";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,7 +20,7 @@ export const LanguageSwitcher = () => {
   const currentLocale = useLocale();
 
   const handleSelect = async (locale: TLocale) => {
-    await setLocaleCookie(locale);
+    await setLocale(locale);
     router.refresh();
   };
 

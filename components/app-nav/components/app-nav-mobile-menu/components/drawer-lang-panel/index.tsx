@@ -5,7 +5,7 @@ import { useLocale } from "next-intl";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { locales, LOCALE_CONFIG } from "@/lib/locale/constants";
-import { setLocaleCookie } from "@/lib/locale/actions";
+import { setLocale } from "@/lib/locale/actions";
 import { LocaleFlag } from "@/components/app-nav/components/locale-flag";
 
 type TProps = {
@@ -17,7 +17,7 @@ export const DrawerLangPanel = ({ onBack }: TProps) => {
   const currentLocale = useLocale();
 
   const handleSelect = async (locale: string) => {
-    await setLocaleCookie(locale);
+    await setLocale(locale as Parameters<typeof setLocale>[0]);
     router.refresh();
     onBack();
   };

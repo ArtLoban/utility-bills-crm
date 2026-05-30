@@ -1,17 +1,16 @@
 "use client";
 
-import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import dynamic from "next/dynamic";
-
-import { Button } from "@/components/ui/button";
-
+import { useLocale, useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
+import { locales, LOCALE_CONFIG } from "@/lib/locale/constants";
+import { setLocale } from "@/lib/locale/actions";
 import {
   FieldHint,
   FieldLabel,
   SettingsCard,
   SettingsCardBody,
-  SettingsCardFooter,
   SettingsCardHeader,
 } from "./settings-card";
 
@@ -19,23 +18,14 @@ const ThemeRadio = dynamic(() => import("./theme-radio").then((m) => m.ThemeRadi
   ssr: false,
 });
 
-const LANGUAGE_OPTIONS = [
-  { value: "en", label: "English" },
-  { value: "uk", label: "Українська" },
-  { value: "ru", label: "Русский" },
-];
-
-const NativeSelect = ({
-  options,
-  value,
-  onChange,
-  disabled,
-}: {
+type TNativeSelectProps = {
   options: { value: string; label: string }[];
   value: string;
   onChange?: (value: string) => void;
   disabled?: boolean;
-}) => (
+};
+
+const NativeSelect = ({ options, value, onChange, disabled }: TNativeSelectProps) => (
   <div className="relative">
     <select
       value={value}
@@ -55,51 +45,50 @@ const NativeSelect = ({
   </div>
 );
 
-const PreferencesSection = () => {
-  const [language, setLanguage] = useState("en");
-  const [savedLanguage, setSavedLanguage] = useState("en");
-  const dirty = language !== savedLanguage;
+const LANGUAGE_OPTIONS = locales.map((l) => ({ value: l, label: LOCALE_CONFIG[l].label }));
 
-  const handleSave = () => setSavedLanguage(language);
+const PreferencesSection = () => {
+  const t = useTranslations("settings.preferences");
+  const router = useRouter();
+  const currentLocale = useLocale();
+
+  const handleLocaleChange = async (locale: string) => {
+    await setLocale(locale as (typeof locales)[number]);
+    router.refresh();
+  };
 
   return (
     <SettingsCard>
-      <SettingsCardHeader
-        title="Preferences"
-        description="How the app looks and behaves for you."
-      />
+      <SettingsCardHeader title={t("title")} description={t("description")} />
       <SettingsCardBody>
         {/* Language */}
         <div>
-          <FieldLabel>Language</FieldLabel>
-          <NativeSelect options={LANGUAGE_OPTIONS} value={language} onChange={setLanguage} />
-          <FieldHint>The language of the app interface.</FieldHint>
+          <FieldLabel>{t("language.label")}</FieldLabel>
+          <NativeSelect
+            options={LANGUAGE_OPTIONS}
+            value={currentLocale}
+            onChange={handleLocaleChange}
+          />
+          <FieldHint>{t("language.hint")}</FieldHint>
         </div>
 
         {/* Theme */}
         <div>
-          <FieldLabel>Theme</FieldLabel>
+          <FieldLabel>{t("theme.label")}</FieldLabel>
           <ThemeRadio />
         </div>
 
         {/* Timezone */}
         <div>
-          <FieldLabel>Timezone</FieldLabel>
+          <FieldLabel>{t("timezone.label")}</FieldLabel>
           <NativeSelect
             options={[{ value: "kyiv", label: "Europe/Kyiv (UTC+2)" }]}
             value="kyiv"
             disabled
           />
-          <FieldHint>
-            Timezone selection comes in a future release. Times are shown in Europe/Kyiv for now.
-          </FieldHint>
+          <FieldHint>{t("timezone.hint")}</FieldHint>
         </div>
       </SettingsCardBody>
-      <SettingsCardFooter>
-        <Button disabled={!dirty} onClick={handleSave} style={{ height: 36 }}>
-          Save changes
-        </Button>
-      </SettingsCardFooter>
     </SettingsCard>
   );
 };

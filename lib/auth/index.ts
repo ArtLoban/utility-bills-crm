@@ -7,7 +7,12 @@ import { accounts, sessions, users, verificationTokens } from "@/lib/db/schema";
 
 declare module "next-auth" {
   interface Session {
-    user: { id: string; systemRole: "user" | "admin" } & DefaultSession["user"];
+    user: {
+      id: string;
+      systemRole: "user" | "admin";
+      locale: "en" | "uk" | "ru";
+      theme: "light" | "dark" | "system";
+    } & DefaultSession["user"];
   }
 }
 
@@ -16,6 +21,8 @@ declare module "next-auth" {
 declare module "@auth/core/adapters" {
   interface AdapterUser {
     systemRole: "user" | "admin";
+    locale: "en" | "uk" | "ru";
+    theme: "light" | "dark" | "system";
   }
 }
 
@@ -43,6 +50,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     session: ({ session, user }) => {
       session.user.id = user.id;
       session.user.systemRole = user.systemRole;
+      session.user.locale = user.locale;
+      session.user.theme = user.theme;
       return session;
     },
     // Idempotent: promotes to admin if email is in ADMIN_EMAILS, demotes otherwise.

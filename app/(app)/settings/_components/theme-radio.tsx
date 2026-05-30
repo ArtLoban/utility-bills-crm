@@ -2,24 +2,31 @@
 
 import { Monitor, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
-
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
+import { setTheme as setThemeAction } from "@/lib/theme/actions";
+import type { TTheme } from "@/lib/theme/constants";
 
 type TOption = {
-  value: string;
-  label: string;
+  value: TTheme;
   icon: React.ReactNode;
 };
 
 const OPTIONS: TOption[] = [
-  { value: "light", label: "Light", icon: <Sun className="size-[14px]" /> },
-  { value: "dark", label: "Dark", icon: <Moon className="size-[14px]" /> },
-  { value: "system", label: "System", icon: <Monitor className="size-[14px]" /> },
+  { value: "light", icon: <Sun className="size-[14px]" /> },
+  { value: "dark", icon: <Moon className="size-[14px]" /> },
+  { value: "system", icon: <Monitor className="size-[14px]" /> },
 ];
 
 const ThemeRadio = () => {
   const { theme, setTheme } = useTheme();
+  const t = useTranslations("settings.preferences.theme");
   const activeTheme = theme ?? "system";
+
+  const handleSelect = (value: TTheme) => {
+    setTheme(value);
+    void setThemeAction(value);
+  };
 
   return (
     <div className="flex flex-wrap gap-1.5">
@@ -29,7 +36,7 @@ const ThemeRadio = () => {
           <button
             key={opt.value}
             type="button"
-            onClick={() => setTheme(opt.value)}
+            onClick={() => handleSelect(opt.value)}
             className={cn(
               "inline-flex h-9 items-center gap-1.5 rounded-md border px-[14px] text-sm transition-colors duration-[120ms]",
               active
@@ -38,7 +45,7 @@ const ThemeRadio = () => {
             )}
           >
             {opt.icon}
-            {opt.label}
+            {t(opt.value)}
           </button>
         );
       })}

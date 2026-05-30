@@ -1,14 +1,14 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { locales } from "@/lib/locale/constants";
-import { setLocaleCookie } from "@/lib/locale/actions";
+import { locales, type TLocale } from "@/lib/locale/constants";
+import { setLocale } from "@/lib/locale/actions";
 
 export const LocaleSwitcher = () => {
   const router = useRouter();
 
-  const handleLocaleChange = async (locale: string) => {
-    await setLocaleCookie(locale);
+  const handleLocaleChange = async (locale: TLocale) => {
+    await setLocale(locale);
     router.refresh();
   };
 

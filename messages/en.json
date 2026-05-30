@@ -698,8 +698,14 @@
       "emailHint": "The person must already have an account.",
       "roleLabel": "Role",
       "sending": "Sending…",
-      "viewer": { "label": "Viewer", "helper": "Can see everything, but can't make changes." },
-      "editor": { "label": "Editor", "helper": "Can add readings, bills, and payments." },
+      "viewer": {
+        "label": "Viewer",
+        "helper": "Can see everything, but can't make changes."
+      },
+      "editor": {
+        "label": "Editor",
+        "helper": "Can add readings, bills, and payments."
+      },
       "owner": {
         "label": "Owner",
         "helper": "Full access, including inviting and removing others."
@@ -742,6 +748,26 @@
       "title": "Leave property?",
       "body": "You will immediately lose access to <strong>{propertyName}</strong> and all its data.",
       "leaving": "Leaving…"
+    }
+  },
+  "settings": {
+    "preferences": {
+      "title": "Preferences",
+      "description": "How the app looks and behaves for you.",
+      "language": {
+        "label": "Language",
+        "hint": "The language of the app interface."
+      },
+      "theme": {
+        "label": "Theme",
+        "light": "Light",
+        "dark": "Dark",
+        "system": "System"
+      },
+      "timezone": {
+        "label": "Timezone",
+        "hint": "Timezone selection comes in a future release. Times are shown in Europe/Kyiv for now."
+      }
     }
   }
 }

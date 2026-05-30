@@ -5,20 +5,15 @@ import { cookies } from "next/headers";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db/client";
 import { users, type UserId } from "@/lib/db/schema";
-import {
-  locales,
-  LOCALE_COOKIE_NAME,
-  LOCALE_COOKIE_MAX_AGE_SECONDS,
-  type TLocale,
-} from "./constants";
+import { themes, THEME_COOKIE_NAME, THEME_COOKIE_MAX_AGE_SECONDS, type TTheme } from "./constants";
 
-export const setLocale = async (locale: TLocale) => {
-  if (!locales.includes(locale)) return;
+export const setTheme = async (theme: TTheme) => {
+  if (!themes.includes(theme)) return;
 
   const cookieStore = await cookies();
-  cookieStore.set(LOCALE_COOKIE_NAME, locale, {
+  cookieStore.set(THEME_COOKIE_NAME, theme, {
     path: "/",
-    maxAge: LOCALE_COOKIE_MAX_AGE_SECONDS,
+    maxAge: THEME_COOKIE_MAX_AGE_SECONDS,
   });
 
   const session = await auth();
@@ -26,6 +21,6 @@ export const setLocale = async (locale: TLocale) => {
 
   await db
     .update(users)
-    .set({ locale })
+    .set({ theme })
     .where(eq(users.id, session.user.id as UserId));
 };
