@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
@@ -5,18 +6,26 @@ import { auth } from "@/lib/auth";
 import { servicesByPropertyId } from "@/lib/db/access/services";
 import { balancesForServices } from "@/features/ledger";
 import type { TBalance } from "@/features/ledger";
+import { propertyMembers } from "@/features/sharing";
 import { getPropertyDetail } from "./_data/queries";
 import { OverviewTab } from "./_components/overview-tab";
+import { PropertyTabsNav } from "./_components/property-tabs-nav";
+import { TABS } from "./_components/constants";
+import { resolveTab } from "./_utils/resolve-tab";
 import { PageContainer } from "@/components/page-container";
 import { ROUTES } from "@/lib/routes";
 import { PropertyMeta } from "./_components/property-meta";
 import { PropertyActions } from "./_components/property-actions";
+import { getPropertyMeters, getAvailableServiceTypesForMeter } from "./meters/_data/queries";
+import { MetersClient } from "./meters/_components/meters-client";
+import { SharingTab } from "./_components/sharing-tab";
 import type { PropertyId } from "@/lib/db/schema/properties";
 import type { TServiceId } from "@/lib/db/schema/services";
 import type { UserId } from "@/lib/db/schema/auth";
 
 type TProps = {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ tab?: string }>;
 };
 
 export async function generateMetadata({ params }: TProps): Promise<Metadata> {
@@ -30,24 +39,70 @@ export async function generateMetadata({ params }: TProps): Promise<Metadata> {
   };
 }
 
-export default async function PropertyPage({ params }: TProps) {
+export default async function PropertyPage({ params, searchParams }: TProps) {
   const { id } = await params;
-  const [session, result] = await Promise.all([auth(), getPropertyDetail(id as PropertyId)]);
+  const { tab } = await searchParams;
+  const propertyId = id as PropertyId;
+  const activeTab = resolveTab(tab);
+
+  const [session, result] = await Promise.all([auth(), getPropertyDetail(propertyId)]);
 
   if (!result.ok) notFound();
 
   const property = result.value;
-
-  // auth() is memoized per request via React cache — no extra round-trip.
   const userId = session?.user?.id as UserId | undefined;
-  const servicesResult = userId
-    ? await servicesByPropertyId(userId, id as PropertyId)
-    : { ok: false as const };
-  const services = servicesResult.ok ? servicesResult.value : [];
 
-  const serviceIds = services.map((s) => s.service.id as TServiceId);
-  const serviceBalances =
-    serviceIds.length > 0 ? await balancesForServices(serviceIds) : new Map<TServiceId, TBalance>();
+  let tabContent: ReactNode;
+
+  if (activeTab === TABS.OVERVIEW) {
+    const servicesResult = userId
+      ? await servicesByPropertyId(userId, propertyId)
+      : { ok: false as const };
+    const services = servicesResult.ok ? servicesResult.value : [];
+    const serviceIds = services.map((s) => s.service.id as TServiceId);
+    const serviceBalances =
+      serviceIds.length > 0
+        ? await balancesForServices(serviceIds)
+        : new Map<TServiceId, TBalance>();
+
+    tabContent = (
+      <OverviewTab
+        services={services}
+        role={property.role}
+        propertyId={id}
+        serviceBalances={serviceBalances}
+      />
+    );
+  } else if (activeTab === TABS.METERS) {
+    const [metersResult, availableServiceTypes] = await Promise.all([
+      getPropertyMeters(propertyId),
+      getAvailableServiceTypesForMeter(propertyId),
+    ]);
+
+    if (!metersResult.ok) notFound();
+
+    tabContent = (
+      <MetersClient
+        propertyId={id}
+        meters={metersResult.value}
+        availableServiceTypes={availableServiceTypes}
+        role={property.role}
+      />
+    );
+  } else {
+    // TABS.SHARING
+    if (!userId) notFound();
+    const membersResult = await propertyMembers(userId, propertyId);
+    if (!membersResult.ok) notFound();
+
+    tabContent = (
+      <SharingTab
+        members={membersResult.value}
+        currentUserId={userId}
+        propertyName={property.name}
+      />
+    );
+  }
 
   return (
     <PageContainer
@@ -56,12 +111,8 @@ export default async function PropertyPage({ params }: TProps) {
       breadcrumbs={[{ label: "Properties", href: ROUTES.properties }, { label: property.name }]}
       actions={<PropertyActions property={property} />}
     >
-      <OverviewTab
-        services={services}
-        role={property.role}
-        propertyId={id}
-        serviceBalances={serviceBalances}
-      />
+      <PropertyTabsNav propertyId={id} activeTab={activeTab} />
+      {tabContent}
     </PageContainer>
   );
 }

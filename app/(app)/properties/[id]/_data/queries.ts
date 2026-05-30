@@ -1,3 +1,5 @@
+import { cache } from "react";
+
 import { auth } from "@/lib/auth";
 import { propertyByIdForUser } from "@/lib/db/access/properties";
 import type { UserId } from "@/lib/db/schema/auth";
@@ -11,15 +13,15 @@ export type TPropertyDetail = TProperty & {
   role: TPropertyRole;
 };
 
-export const getPropertyDetail = async (
-  propertyId: PropertyId,
-): Promise<Result<TPropertyDetail, NotFoundError>> => {
-  const session = await auth();
-  if (!session?.user.id) return err(new NotFoundError("property", propertyId));
+export const getPropertyDetail = cache(
+  async (propertyId: PropertyId): Promise<Result<TPropertyDetail, NotFoundError>> => {
+    const session = await auth();
+    if (!session?.user.id) return err(new NotFoundError("property", propertyId));
 
-  const userId = session.user.id as UserId;
-  const result = await propertyByIdForUser(userId, propertyId);
-  if (!result.ok) return result;
+    const userId = session.user.id as UserId;
+    const result = await propertyByIdForUser(userId, propertyId);
+    if (!result.ok) return result;
 
-  return ok({ ...result.value.property, role: result.value.role });
-};
+    return ok({ ...result.value.property, role: result.value.role });
+  },
+);
