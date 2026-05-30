@@ -4,7 +4,7 @@ import { Check, ChevronLeft } from "lucide-react";
 import { useLocale } from "next-intl";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { locales, LOCALE_CONFIG } from "@/lib/locale/constants";
+import { LOCALE_LIST, LOCALE_CONFIG } from "@/lib/locale/constants";
 import { setLocale } from "@/lib/locale/actions";
 import { LocaleFlag } from "@/components/app-nav/components/locale-flag";
 
@@ -34,7 +34,7 @@ export const DrawerLangPanel = ({ onBack }: TProps) => {
 
       <p className="px-3 pb-3 text-[17px] font-semibold tracking-tight">Choose language</p>
 
-      {locales.map((locale) => {
+      {LOCALE_LIST.map((locale) => {
         const config = LOCALE_CONFIG[locale];
         const active = locale === currentLocale;
 

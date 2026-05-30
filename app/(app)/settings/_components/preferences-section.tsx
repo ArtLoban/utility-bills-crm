@@ -4,7 +4,7 @@ import { ChevronDown } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import { locales, LOCALE_CONFIG } from "@/lib/locale/constants";
+import { LOCALE_LIST, LOCALE_CONFIG, type TLocale } from "@/lib/locale/constants";
 import { setLocale } from "@/lib/locale/actions";
 import {
   FieldHint,
@@ -45,7 +45,7 @@ const NativeSelect = ({ options, value, onChange, disabled }: TNativeSelectProps
   </div>
 );
 
-const LANGUAGE_OPTIONS = locales.map((l) => ({ value: l, label: LOCALE_CONFIG[l].label }));
+const LANGUAGE_OPTIONS = LOCALE_LIST.map((l) => ({ value: l, label: LOCALE_CONFIG[l].label }));
 
 const PreferencesSection = () => {
   const t = useTranslations("settings.preferences");
@@ -53,7 +53,7 @@ const PreferencesSection = () => {
   const currentLocale = useLocale();
 
   const handleLocaleChange = async (locale: string) => {
-    await setLocale(locale as (typeof locales)[number]);
+    await setLocale(locale as TLocale);
     router.refresh();
   };
 

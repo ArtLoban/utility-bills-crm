@@ -10,6 +10,8 @@ import {
   timestamp,
   uuid,
 } from "drizzle-orm/pg-core";
+import { LOCALE_LIST, LOCALES } from "@/lib/locale/constants";
+import { textEnum } from "./helpers";
 
 // Branded nominal type: prevents mixing up plain strings with UserId.
 // $type<UserId>() propagates it through Drizzle's inferred query result types.
@@ -32,9 +34,7 @@ export const users = pgTable(
     systemRole: text("system_role", { enum: ["user", "admin"] })
       .notNull()
       .default("user"),
-    locale: text("locale", { enum: ["en", "uk", "ru"] })
-      .notNull()
-      .default("en"),
+    locale: textEnum("locale", LOCALE_LIST).notNull().default(LOCALES.EN),
     theme: text("theme", { enum: ["light", "dark", "system"] })
       .notNull()
       .default("system"),

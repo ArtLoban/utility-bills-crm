@@ -1,9 +1,14 @@
 import { cookies } from "next/headers";
 import { getRequestConfig } from "next-intl/server";
 import { auth } from "@/lib/auth";
-import { locales, DEFAULT_LOCALE, LOCALE_COOKIE_NAME, type TLocale } from "@/lib/locale/constants";
+import {
+  LOCALE_LIST,
+  DEFAULT_LOCALE,
+  LOCALE_COOKIE_NAME,
+  type TLocale,
+} from "@/lib/locale/constants";
 
-const isValidLocale = (value?: string): value is TLocale => locales.includes(value as TLocale);
+const isValidLocale = (value?: string): value is TLocale => LOCALE_LIST.includes(value as TLocale);
 
 export default getRequestConfig(async () => {
   const cookieStore = await cookies();

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { locales, type TLocale } from "@/lib/locale/constants";
+import { LOCALE_LIST, type TLocale } from "@/lib/locale/constants";
 import { setLocale } from "@/lib/locale/actions";
 
 export const LocaleSwitcher = () => {
@@ -14,7 +14,7 @@ export const LocaleSwitcher = () => {
 
   return (
     <div className="flex gap-2">
-      {locales.map((locale) => (
+      {LOCALE_LIST.map((locale) => (
         <button
           key={locale}
           onClick={() => handleLocaleChange(locale)}
