@@ -44,6 +44,7 @@ export const InviteModal = ({ propertyId }: TProps) => {
         return;
       }
 
+      toast.success(t("toast.inviteSuccess"));
       router.back();
     });
   };

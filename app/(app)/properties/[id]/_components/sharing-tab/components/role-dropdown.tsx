@@ -18,6 +18,7 @@ export const RoleDropdown = ({ value, userId, propertyId }: TProps) => {
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newRole = e.target.value as TUserRole;
+    if (newRole === optimisticValue) return;
     const prev = optimisticValue;
     setOptimisticValue(newRole);
 
@@ -29,7 +30,12 @@ export const RoleDropdown = ({ value, userId, propertyId }: TProps) => {
 
       if (!result.ok) {
         setOptimisticValue(prev);
-        toast.error(t("toast.roleChangeError"));
+        const msg = result.error.message;
+        if (msg === "OWNER_PROTECTED") toast.error(t("errors.OWNER_PROTECTED"));
+        else if (msg === "LAST_OWNER") toast.error(t("errors.LAST_OWNER"));
+        else toast.error(t("toast.roleChangeError"));
+      } else {
+        toast.success(t("toast.roleChangeSuccess"));
       }
     });
   };
@@ -42,9 +48,9 @@ export const RoleDropdown = ({ value, userId, propertyId }: TProps) => {
         disabled={isPending}
         className="h-7 cursor-pointer appearance-none rounded-[6px] border border-[#ede9fe] bg-[#f5f3ff] py-0 pr-[26px] pl-[10px] text-xs font-medium text-[#7c3aed] disabled:cursor-default disabled:opacity-60"
       >
-        <option value="Owner">Owner</option>
-        <option value="Editor">Editor</option>
-        <option value="Viewer">Viewer</option>
+        <option value="Owner">{t("roles.Owner")}</option>
+        <option value="Editor">{t("roles.Editor")}</option>
+        <option value="Viewer">{t("roles.Viewer")}</option>
       </select>
       <ChevronDown size={12} color="#7c3aed" className="pointer-events-none absolute right-[7px]" />
     </div>

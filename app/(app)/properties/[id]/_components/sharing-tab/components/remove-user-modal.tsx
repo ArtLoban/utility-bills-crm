@@ -35,10 +35,13 @@ export const RemoveUserModal = ({ member, propertyId, propertyName }: TProps) =>
       });
 
       if (!result.ok) {
-        toast.error(t("removeModal.errors.generic"));
+        const msg = result.error.message;
+        if (msg === "OWNER_PROTECTED") toast.error(t("errors.OWNER_PROTECTED"));
+        else toast.error(t("removeModal.errors.generic"));
         return;
       }
 
+      toast.success(t("toast.removeSuccess"));
       router.back();
     });
   };

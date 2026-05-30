@@ -15,6 +15,7 @@ import { stableAvatarIdx, capitalizeRole } from "./utils";
 import { InfoBanner } from "./components/info-banner";
 import { UserCard } from "./components/user-card";
 import { LastOwnerModal } from "./components/last-owner-modal";
+import { LeaveConfirmModal } from "./components/leave-confirm-modal";
 
 type TProps = {
   propertyId: string;
@@ -30,6 +31,7 @@ export const SharingTab = ({ propertyId, members, currentUserId, propertyName }:
   const [isPending, startTransition] = useTransition();
 
   const [lastOwnerOpen, setLastOwnerOpen] = useState(false);
+  const [leaveConfirmOpen, setLeaveConfirmOpen] = useState(false);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 
   const myMember = members.find((m) => m.userId === currentUserId);
@@ -59,12 +61,17 @@ export const SharingTab = ({ propertyId, members, currentUserId, propertyName }:
       setLastOwnerOpen(true);
       return;
     }
+    setLeaveConfirmOpen(true);
+  };
+
+  const handleLeaveConfirm = () => {
     startTransition(async () => {
       const result = await leaveProperty(propertyId as PropertyId);
       if (!result.ok) {
         toast.error(t("toast.leaveError"));
         return;
       }
+      toast.success(t("toast.leaveSuccess"));
       router.push("/properties");
     });
   };
@@ -116,6 +123,13 @@ export const SharingTab = ({ propertyId, members, currentUserId, propertyName }:
       <LastOwnerModal
         open={lastOwnerOpen}
         onOpenChange={setLastOwnerOpen}
+        propertyName={propertyName}
+      />
+      <LeaveConfirmModal
+        open={leaveConfirmOpen}
+        onOpenChange={setLeaveConfirmOpen}
+        onConfirm={handleLeaveConfirm}
+        isPending={isPending}
         propertyName={propertyName}
       />
     </div>

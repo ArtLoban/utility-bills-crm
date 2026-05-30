@@ -728,7 +728,20 @@
     },
     "toast": {
       "leaveError": "Failed to leave property. Please try again.",
-      "roleChangeError": "Failed to update role. Please try again."
+      "roleChangeError": "Failed to update role. Please try again.",
+      "inviteSuccess": "Person invited successfully.",
+      "roleChangeSuccess": "Role updated.",
+      "removeSuccess": "Access removed.",
+      "leaveSuccess": "You've left the property."
+    },
+    "errors": {
+      "OWNER_PROTECTED": "Cannot change an owner's role. Owners must leave or transfer ownership themselves.",
+      "LAST_OWNER": "This is the last owner. Transfer ownership before making this change."
+    },
+    "leaveConfirmModal": {
+      "title": "Leave property?",
+      "body": "You will immediately lose access to <strong>{propertyName}</strong> and all its data.",
+      "leaving": "Leaving…"
     }
   }
 }
