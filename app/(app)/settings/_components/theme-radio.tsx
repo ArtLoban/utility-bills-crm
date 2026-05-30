@@ -5,7 +5,7 @@ import { useTheme } from "next-themes";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { setTheme as setThemeAction } from "@/lib/theme/actions";
-import type { TTheme } from "@/lib/theme/constants";
+import { THEMES, DEFAULT_THEME, type TTheme } from "@/lib/theme/constants";
 
 type TOption = {
   value: TTheme;
@@ -13,15 +13,15 @@ type TOption = {
 };
 
 const OPTIONS: TOption[] = [
-  { value: "light", icon: <Sun className="size-[14px]" /> },
-  { value: "dark", icon: <Moon className="size-[14px]" /> },
-  { value: "system", icon: <Monitor className="size-[14px]" /> },
+  { value: THEMES.LIGHT, icon: <Sun className="size-[14px]" /> },
+  { value: THEMES.DARK, icon: <Moon className="size-[14px]" /> },
+  { value: THEMES.SYSTEM, icon: <Monitor className="size-[14px]" /> },
 ];
 
 const ThemeRadio = () => {
   const { theme, setTheme } = useTheme();
   const t = useTranslations("settings.preferences.theme");
-  const activeTheme = theme ?? "system";
+  const activeTheme = theme ?? DEFAULT_THEME;
 
   const handleSelect = (value: TTheme) => {
     setTheme(value);

@@ -3,6 +3,7 @@ import { Home, Building2, MapPin, TreePine, ChevronRight, type LucideIcon } from
 
 import { cn } from "@/lib/utils";
 import type { TPropertyType } from "@/lib/db/schema/properties";
+import { RECORD_STATUS } from "@/lib/types/record-status";
 import { type TUserPropertyAccess } from "../../../_data/mock";
 import { PropertyRoleBadge } from "./property-role-badge";
 
@@ -17,7 +18,7 @@ type TProps = { property: TUserPropertyAccess; isLast: boolean };
 
 export const PropertyRow = ({ property, isLast }: TProps) => {
   const Icon = PROPERTY_ICONS[property.type];
-  const isActive = property.status === "active";
+  const isActive = property.status === RECORD_STATUS.ACTIVE;
   const serviceLabel = property.servicesCount === 1 ? "service" : "services";
 
   return (

@@ -1,6 +1,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 
 import { Badge } from "@/components/ui/badge";
+import { RECORD_STATUS } from "@/lib/types/record-status";
 import { TAdminUser } from "../../../../_data/mock";
 import { RoleBadge } from "../../../../_components/role-badge";
 import { UserRowActions } from "../components/user-row-actions";
@@ -55,7 +56,7 @@ export const getUserColumns = (): ColumnDef<TAdminUser>[] => [
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) =>
-      row.original.status === "deleted" ? (
+      row.original.status === RECORD_STATUS.DELETED ? (
         <Badge
           variant="outline"
           className="border-red-200 text-red-600 dark:border-red-900 dark:text-red-400"

@@ -1,17 +1,19 @@
-export type TUserSystemRole = "admin" | "user";
-export type TUserStatus = "active" | "deleted";
+import type { TSystemRole } from "@/lib/auth/constants";
+import { RECORD_STATUS, type TRecordStatus } from "@/lib/types/record-status";
+
+export type { TRecordStatus as TUserStatus };
 
 export type TAdminUser = {
   id: string;
   email: string;
   name: string;
-  systemRole: TUserSystemRole;
+  systemRole: TSystemRole;
   propertiesCount: number;
   createdSort: number;
   createdDisplay: string;
   lastLoginSort: number;
   lastLoginDisplay: string;
-  status: TUserStatus;
+  status: TRecordStatus;
 };
 
 const now = Date.now();
@@ -168,5 +170,5 @@ export const ALL_USERS: TAdminUser[] = [
   },
 ];
 
-export const ACTIVE_COUNT = ALL_USERS.filter((u) => u.status === "active").length;
+export const ACTIVE_COUNT = ALL_USERS.filter((u) => u.status === RECORD_STATUS.ACTIVE).length;
 export const ADMIN_COUNT = ALL_USERS.filter((u) => u.systemRole === "admin").length;

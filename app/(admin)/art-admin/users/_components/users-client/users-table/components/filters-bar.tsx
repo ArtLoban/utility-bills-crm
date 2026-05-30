@@ -8,18 +8,20 @@ import { FIRST_PAGE_INDEX_DEFAULT } from "@/components/data-table/data-table/con
 import { DATA_TABLE_PARAMS } from "@/components/data-table/data-table/types";
 import { getInitialValuesFromUrl } from "@/components/data-table/data-table/utils/get-initial-values-from-url";
 import { TSelectableEntity } from "@/components/select-input/types";
+import { SYSTEM_ROLES } from "@/lib/auth/constants";
+import { RECORD_STATUS } from "@/lib/types/record-status";
 
 import { INITIAL_FILTERS, URL_FIELDS } from "../constants";
 import { FiltersFormField, TFiltersFormValues } from "../types";
 
 const ROLE_OPTIONS: TSelectableEntity[] = [
-  { id: "admin", name: "Admin" },
-  { id: "user", name: "User" },
+  { id: SYSTEM_ROLES.ADMIN, name: "Admin" },
+  { id: SYSTEM_ROLES.USER, name: "User" },
 ];
 
 const STATUS_OPTIONS: TSelectableEntity[] = [
-  { id: "active", name: "Active" },
-  { id: "deleted", name: "Deleted" },
+  { id: RECORD_STATUS.ACTIVE, name: "Active" },
+  { id: RECORD_STATUS.DELETED, name: "Deleted" },
 ];
 
 export const FiltersBar = () => {

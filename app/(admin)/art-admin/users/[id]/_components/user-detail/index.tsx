@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
 import { PageContainer } from "@/components/page-container";
 import { PageMeta } from "@/components/page-meta";
+import { RECORD_STATUS } from "@/lib/types/record-status";
 
 import { type TAdminUserDetail } from "../../_data/mock";
 import { RoleBadge } from "../../../_components/role-badge";
@@ -11,7 +12,7 @@ import { UserPropertiesCard } from "./components/user-properties-card";
 type TProps = { user: TAdminUserDetail };
 
 export const UserDetail = ({ user }: TProps) => {
-  const isDeleted = user.status === "deleted";
+  const isDeleted = user.status === RECORD_STATUS.DELETED;
 
   const metaItems = [
     user.email,

@@ -1,5 +1,6 @@
 import { ChevronDown } from "lucide-react";
 
+import { RECORD_STATUS } from "@/lib/types/record-status";
 import { PROPERTY_OWNERS, TFilterState } from "@/app/(admin)/art-admin/properties/_data/mock";
 import { ACCENT, TINT_BG, TINT_BORDER } from "@/lib/constants/ui-tokens";
 
@@ -103,8 +104,8 @@ const FilterBar = ({ filters, onFilterChange, anyFilter }: TProps) => {
         onChange={set("status")}
       >
         <option value="all">Status: All</option>
-        <option value="active">Active</option>
-        <option value="deleted">Deleted</option>
+        <option value={RECORD_STATUS.ACTIVE}>Active</option>
+        <option value={RECORD_STATUS.DELETED}>Deleted</option>
       </FilterSelect>
 
       <FilterSelect value={filters.type} isActive={filters.type !== "all"} onChange={set("type")}>

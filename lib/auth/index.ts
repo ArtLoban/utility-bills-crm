@@ -1,6 +1,8 @@
 import { eq } from "drizzle-orm";
 import NextAuth, { type DefaultSession } from "next-auth";
+import type { TSystemRole } from "@/lib/auth/constants";
 import type { TLocale } from "@/lib/locale/constants";
+import type { TTheme } from "@/lib/theme/constants";
 import Google from "next-auth/providers/google";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { db } from "@/lib/db/client";
@@ -10,9 +12,9 @@ declare module "next-auth" {
   interface Session {
     user: {
       id: string;
-      systemRole: "user" | "admin";
+      systemRole: TSystemRole;
       locale: TLocale;
-      theme: "light" | "dark" | "system";
+      theme: TTheme;
     } & DefaultSession["user"];
   }
 }
@@ -21,9 +23,9 @@ declare module "next-auth" {
 // The base AdapterUser type from @auth/core doesn't know about them, so we extend it.
 declare module "@auth/core/adapters" {
   interface AdapterUser {
-    systemRole: "user" | "admin";
+    systemRole: TSystemRole;
     locale: TLocale;
-    theme: "light" | "dark" | "system";
+    theme: TTheme;
   }
 }
 

@@ -4,6 +4,7 @@ import { useState } from "react";
 
 import { PageContainer } from "@/components/page-container";
 import { PageMeta } from "@/components/page-meta";
+import { RECORD_STATUS } from "@/lib/types/record-status";
 import { ALL_USERS, TAdminUser } from "../../_data/mock";
 
 import { UsersTable } from "./users-table";
@@ -16,7 +17,7 @@ export const UsersClient = () => {
     filteredRows !== null
       ? [
           `${filteredRows.length} users`,
-          `${filteredRows.filter((u) => u.status === "active").length} active`,
+          `${filteredRows.filter((u) => u.status === RECORD_STATUS.ACTIVE).length} active`,
         ]
       : null;
 

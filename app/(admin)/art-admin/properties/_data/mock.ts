@@ -1,6 +1,7 @@
 import type { TPropertyType } from "@/lib/db/schema/properties";
+import { RECORD_STATUS, type TRecordStatus } from "@/lib/types/record-status";
 export type { TPropertyType };
-export type TPropertyStatus = "active" | "deleted";
+export type { TRecordStatus as TPropertyStatus };
 export type TSortColumn = "name" | "created";
 export type TSortDir = "asc" | "desc";
 
@@ -9,7 +10,7 @@ export type TProperty = {
   name: string;
   owners: { name: string }[];
   type: TPropertyType;
-  status: TPropertyStatus;
+  status: TRecordStatus;
   servicesCount: number;
   createdSort: number;
   createdDisplay: string;
@@ -166,5 +167,7 @@ export const ALL_PROPERTIES: TProperty[] = [
   },
 ];
 
-export const ACTIVE_COUNT = ALL_PROPERTIES.filter((p) => p.status === "active").length;
-export const DELETED_COUNT = ALL_PROPERTIES.filter((p) => p.status === "deleted").length;
+export const ACTIVE_COUNT = ALL_PROPERTIES.filter((p) => p.status === RECORD_STATUS.ACTIVE).length;
+export const DELETED_COUNT = ALL_PROPERTIES.filter(
+  (p) => p.status === RECORD_STATUS.DELETED,
+).length;

@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
+import { RECORD_STATUS } from "@/lib/types/record-status";
 import { TProperty } from "@/app/(admin)/art-admin/properties/_data/mock";
 
 type TProps = {
@@ -24,7 +25,7 @@ const formatOwners = (owners: TProperty["owners"]): string => {
 };
 
 const PropertyRow = ({ row, isLast }: TProps) => {
-  const isDeleted = row.status === "deleted";
+  const isDeleted = row.status === RECORD_STATUS.DELETED;
   const tdBorderClass = isLast ? "" : "border-b border-zinc-200 dark:border-zinc-800";
   const tdBaseClass = `${tdBorderClass} text-zinc-950 dark:text-zinc-50`;
 

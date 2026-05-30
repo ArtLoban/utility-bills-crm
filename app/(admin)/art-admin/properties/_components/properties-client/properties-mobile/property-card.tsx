@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
+import { RECORD_STATUS } from "@/lib/types/record-status";
 import { TProperty } from "@/app/(admin)/art-admin/properties/_data/mock";
 
 type TProps = { row: TProperty };
@@ -21,7 +22,7 @@ const formatOwners = (owners: TProperty["owners"]): string => {
 };
 
 const PropertyCard = ({ row }: TProps) => {
-  const isDeleted = row.status === "deleted";
+  const isDeleted = row.status === RECORD_STATUS.DELETED;
 
   return (
     <div

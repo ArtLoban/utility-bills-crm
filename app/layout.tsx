@@ -9,7 +9,7 @@ import "./globals.css";
 import { auth } from "@/lib/auth";
 import { ThemeProvider } from "@/components/theme-provider";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
-import { THEME_COOKIE_NAME, type TTheme } from "@/lib/theme/constants";
+import { THEME_COOKIE_NAME, DEFAULT_THEME, type TTheme } from "@/lib/theme/constants";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -30,7 +30,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
   ]);
 
   const cookieTheme = cookieStore.get(THEME_COOKIE_NAME)?.value as TTheme | undefined;
-  const resolvedTheme: TTheme = cookieTheme ?? session?.user?.theme ?? "system";
+  const resolvedTheme: TTheme = cookieTheme ?? session?.user?.theme ?? DEFAULT_THEME;
 
   // Syncs localStorage.theme with the server-resolved theme before next-themes'
   // own script reads it. Prevents FOUC when a logged-in user reloads the page.

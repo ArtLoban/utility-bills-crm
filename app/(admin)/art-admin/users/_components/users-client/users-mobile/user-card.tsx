@@ -8,6 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
+import { RECORD_STATUS } from "@/lib/types/record-status";
 import { TAdminUser } from "../../../_data/mock";
 import { RoleBadge } from "../../../_components/role-badge";
 
@@ -16,7 +17,7 @@ type TProps = {
 };
 
 export const UserCard = ({ user }: TProps) => {
-  const isDeleted = user.status === "deleted";
+  const isDeleted = user.status === RECORD_STATUS.DELETED;
 
   return (
     <div

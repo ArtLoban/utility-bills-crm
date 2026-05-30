@@ -1,7 +1,7 @@
-import { type TUserSystemRole } from "../_data/mock";
+import type { TSystemRole } from "@/lib/auth/constants";
 
 type TProps = {
-  role: TUserSystemRole;
+  role: TSystemRole;
 };
 
 export const RoleBadge = ({ role }: TProps) => {

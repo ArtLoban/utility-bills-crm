@@ -1,5 +1,6 @@
 import type { TSystemRole } from "@/lib/auth/constants";
 import type { TPropertyRole, TPropertyType } from "@/lib/db/schema/properties";
+import type { TRecordStatus } from "@/lib/types/record-status";
 
 export type TAuthProvider = "google" | "email";
 
@@ -9,7 +10,7 @@ export type TUserPropertyAccess = {
   type: TPropertyType;
   servicesCount: number;
   role: TPropertyRole;
-  status: "active" | "deleted";
+  status: TRecordStatus;
 };
 
 type TBaseAdminUserDetail = {

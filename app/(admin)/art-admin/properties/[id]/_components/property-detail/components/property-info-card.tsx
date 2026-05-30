@@ -1,5 +1,6 @@
 import { DataCard } from "@/components/data-card";
 import { InfoGrid } from "@/components/info-grid";
+import { RECORD_STATUS } from "@/lib/types/record-status";
 import { type TPropertyDetail } from "../../../_data/mock";
 
 type TProps = { property: TPropertyDetail };
@@ -20,14 +21,14 @@ export const PropertyInfoCard = ({ property }: TProps) => {
     {
       label: "Services",
       value:
-        property.status === "deleted"
+        property.status === RECORD_STATUS.DELETED
           ? `${property.servicesCount} — ${property.serviceNames.join(", ")}`
           : String(property.servicesCount),
     },
     {
       label: "Created",
       value:
-        property.status === "active"
+        property.status === RECORD_STATUS.ACTIVE
           ? `${property.createdDisplay} by ${property.createdBy}`
           : property.createdDisplay,
     },
@@ -35,7 +36,7 @@ export const PropertyInfoCard = ({ property }: TProps) => {
   ];
 
   const statusRows =
-    property.status === "deleted"
+    property.status === RECORD_STATUS.DELETED
       ? [
           { label: "Soft-deleted at", value: property.deletedAt },
           { label: "Soft-deleted by", value: `${property.deletedBy} (owner)` },

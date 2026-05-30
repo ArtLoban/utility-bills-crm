@@ -11,6 +11,8 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 import { LOCALE_LIST, LOCALES } from "@/lib/locale/constants";
+import { SYSTEM_ROLE_LIST, SYSTEM_ROLES } from "@/lib/auth/constants";
+import { THEME_LIST, THEMES } from "@/lib/theme/constants";
 import { textEnum } from "./helpers";
 
 // Branded nominal type: prevents mixing up plain strings with UserId.
@@ -31,13 +33,9 @@ export const users = pgTable(
       withTimezone: true,
     }),
     image: text("image"),
-    systemRole: text("system_role", { enum: ["user", "admin"] })
-      .notNull()
-      .default("user"),
+    systemRole: textEnum("system_role", SYSTEM_ROLE_LIST).notNull().default(SYSTEM_ROLES.USER),
     locale: textEnum("locale", LOCALE_LIST).notNull().default(LOCALES.EN),
-    theme: text("theme", { enum: ["light", "dark", "system"] })
-      .notNull()
-      .default("system"),
+    theme: textEnum("theme", THEME_LIST).notNull().default(THEMES.SYSTEM),
     timezone: text("timezone").notNull().default("Europe/Kyiv"),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true })

@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
 import { PageContainer } from "@/components/page-container";
 import { PageMeta } from "@/components/page-meta";
+import { RECORD_STATUS } from "@/lib/types/record-status";
 
 import { type TPropertyDetail } from "../../_data/mock";
 import { SoftDeleteBanner } from "./components/soft-delete-banner";
@@ -13,7 +14,7 @@ type TProps = { property: TPropertyDetail };
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
 export const PropertyDetail = ({ property }: TProps) => {
-  const isDeleted = property.status === "deleted";
+  const isDeleted = property.status === RECORD_STATUS.DELETED;
 
   const metaItems = [
     capitalize(property.type),
