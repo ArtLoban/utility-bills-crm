@@ -1,13 +1,14 @@
+import type { TSystemRole } from "@/lib/auth/constants";
+import type { TPropertyRole, TPropertyType } from "@/lib/db/schema/properties";
+
 export type TAuthProvider = "google" | "email";
-export type TPropertyAccessRole = "owner" | "editor" | "viewer";
-export type TPropertyType = "apartment" | "house" | "cottage";
 
 export type TUserPropertyAccess = {
   id: string;
   name: string;
   type: TPropertyType;
   servicesCount: number;
-  role: TPropertyAccessRole;
+  role: TPropertyRole;
   status: "active" | "deleted";
 };
 
@@ -15,7 +16,7 @@ type TBaseAdminUserDetail = {
   id: string;
   email: string;
   name: string;
-  systemRole: "admin" | "user";
+  systemRole: TSystemRole;
   createdDisplay: string;
   lastLoginDisplay: string;
   authProvider: TAuthProvider;

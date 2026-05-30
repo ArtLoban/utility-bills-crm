@@ -1,5 +1,5 @@
 import { SERVICE_COLORS, SERVICE_LABELS, type TServiceKey } from "@/lib/constants/service-colors";
-import { TPropertyType } from "@/features/properties/types";
+import type { TPropertyType } from "@/lib/db/schema/properties";
 
 export { SERVICE_COLORS, SERVICE_LABELS };
 export type { TServiceKey };

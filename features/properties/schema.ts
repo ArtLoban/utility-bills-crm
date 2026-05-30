@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { PROPERTY_TYPE_LIST } from "@/lib/db/schema/properties";
 
 export const PROPERTY_LIMITS = {
   name: 100,
@@ -14,7 +15,7 @@ export const propertySchema = z.object({
     .trim()
     .min(1, "validation.name.required")
     .max(PROPERTY_LIMITS.name, "validation.name.tooLong"),
-  type: z.enum(["apartment", "house", "cottage", "other"]),
+  type: z.enum(PROPERTY_TYPE_LIST),
   address: z
     .string()
     .trim()

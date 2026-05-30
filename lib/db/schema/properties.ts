@@ -14,13 +14,37 @@ export type PropertyAccessId = string & {
   readonly [propertyAccessIdBrand]: typeof propertyAccessIdBrand;
 };
 
-// --- Enum value tuples (single source of truth for column + CHECK constraint) ---
+// --- Enum const-objects (canonical source for column + CHECK constraint + domain logic) ---
 
-export const PROPERTY_TYPES = ["apartment", "house", "cottage", "other"] as const;
-export type TPropertyType = (typeof PROPERTY_TYPES)[number];
+export const PROPERTY_TYPES = {
+  APARTMENT: "apartment",
+  HOUSE: "house",
+  COTTAGE: "cottage",
+  OTHER: "other",
+} as const;
 
-export const PROPERTY_ROLES = ["owner", "editor", "viewer"] as const;
-export type TPropertyRole = (typeof PROPERTY_ROLES)[number];
+export type TPropertyType = (typeof PROPERTY_TYPES)[keyof typeof PROPERTY_TYPES];
+
+export const PROPERTY_TYPE_LIST = [
+  PROPERTY_TYPES.APARTMENT,
+  PROPERTY_TYPES.HOUSE,
+  PROPERTY_TYPES.COTTAGE,
+  PROPERTY_TYPES.OTHER,
+] as const;
+
+export const PROPERTY_ROLES = {
+  OWNER: "owner",
+  EDITOR: "editor",
+  VIEWER: "viewer",
+} as const;
+
+export type TPropertyRole = (typeof PROPERTY_ROLES)[keyof typeof PROPERTY_ROLES];
+
+export const PROPERTY_ROLE_LIST = [
+  PROPERTY_ROLES.OWNER,
+  PROPERTY_ROLES.EDITOR,
+  PROPERTY_ROLES.VIEWER,
+] as const;
 
 // --- Tables ---
 
@@ -29,7 +53,7 @@ export const properties = pgTable(
   {
     id: brandedUuidPk<PropertyId>(),
     name: text("name").notNull(),
-    type: textEnum("type", PROPERTY_TYPES).notNull(),
+    type: textEnum("type", PROPERTY_TYPE_LIST).notNull(),
     address: text("address"),
     notes: text("notes"),
     ...timestamps(),
@@ -53,7 +77,7 @@ export const propertyAccess = pgTable(
       .notNull()
       .$type<UserId>()
       .references(() => users.id, { onDelete: "cascade" }),
-    propertyRole: textEnum("property_role", PROPERTY_ROLES).notNull(),
+    propertyRole: textEnum("property_role", PROPERTY_ROLE_LIST).notNull(),
     grantedAt: timestamp("granted_at", { withTimezone: true }).notNull().defaultNow(),
     // Nullable: granter becomes unknown if their account is deleted (ON DELETE SET NULL)
     grantedBy: uuid("granted_by")

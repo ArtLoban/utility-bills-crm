@@ -1,4 +1,5 @@
-export type TPropertyType = "apartment" | "house" | "cottage";
+import type { TPropertyType } from "@/lib/db/schema/properties";
+export type { TPropertyType };
 export type TPropertyStatus = "active" | "deleted";
 export type TSortColumn = "name" | "created";
 export type TSortDir = "asc" | "desc";

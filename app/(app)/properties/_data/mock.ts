@@ -1,4 +1,4 @@
-import type { TPropertyRole, TPropertyType } from "@/features/properties/types";
+import type { TPropertyRole, TPropertyType } from "@/lib/db/schema/properties";
 import { SERVICE_COLORS, type TServiceKey } from "@/lib/constants/service-colors";
 
 export { SERVICE_COLORS };

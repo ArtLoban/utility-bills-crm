@@ -1,14 +1,16 @@
 import Link from "next/link";
-import { Home, Building2, TreePine, ChevronRight, type LucideIcon } from "lucide-react";
+import { Home, Building2, MapPin, TreePine, ChevronRight, type LucideIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import { type TPropertyType, type TUserPropertyAccess } from "../../../_data/mock";
+import type { TPropertyType } from "@/lib/db/schema/properties";
+import { type TUserPropertyAccess } from "../../../_data/mock";
 import { PropertyRoleBadge } from "./property-role-badge";
 
 const PROPERTY_ICONS: Record<TPropertyType, LucideIcon> = {
   apartment: Building2,
   house: Home,
   cottage: TreePine,
+  other: MapPin,
 };
 
 type TProps = { property: TUserPropertyAccess; isLast: boolean };

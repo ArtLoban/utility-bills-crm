@@ -1,10 +1,10 @@
-import { type TPropertyAccessRole } from "../../../_data/mock";
+import type { TPropertyRole } from "@/lib/db/schema/properties";
 
 type TProps = {
-  role: TPropertyAccessRole;
+  role: TPropertyRole;
 };
 
-const ROLE_LABELS: Record<TPropertyAccessRole, string> = {
+const ROLE_LABELS: Record<TPropertyRole, string> = {
   owner: "Owner",
   editor: "Editor",
   viewer: "Viewer",

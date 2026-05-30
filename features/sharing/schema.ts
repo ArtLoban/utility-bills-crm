@@ -1,9 +1,9 @@
 import { z } from "zod";
 
-import { PROPERTY_ROLES } from "@/lib/db/schema/properties";
+import { PROPERTY_ROLE_LIST } from "@/lib/db/schema/properties";
 
-// Reuses the DB-layer tuple as the single source of truth for valid role values.
-export const propertyRoleEnum = z.enum(PROPERTY_ROLES);
+// Reuses the DB-layer list as the single source of truth for valid role values.
+export const propertyRoleEnum = z.enum(PROPERTY_ROLE_LIST);
 
 export const inviteSchema = z.object({
   email: z.string().email("validation.email.invalid"),

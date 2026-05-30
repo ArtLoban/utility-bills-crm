@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { TYPE_OPTIONS } from "@/features/properties/constants";
-import type { TPropertyType } from "@/features/properties/types";
+import type { TPropertyType } from "@/lib/db/schema/properties";
 
 type TProps = {
   value: TPropertyType | "";
