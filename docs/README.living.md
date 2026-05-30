@@ -459,6 +459,8 @@ Rationale: the "product-first" framing had begun to systematically under-scope f
 | 120 | List-page filtering, sorting, and pagination run on the backend; URL is the source of truth for query state     | Client-side data operations via TanStack Table row models                    | Backend-driven, URL-synced      |
 | 121 | List-page filtered totals: domain aggregate separate from pagination                                            | Extending `pagination` with the sum                                          | `totals: { amount }` separate   |
 | 122 | Ledger as a dedicated `features/ledger/` slice                                                                  | Inside `features/bills/` or `features/payments/`; in `lib/` as utility       | Dedicated slice                 |
+| 123 | Sharing as a dedicated `features/sharing/` slice                                                                | Inside `features/properties/`                                                | Dedicated slice                 |
+| 124 | i18n error-code pattern: two-tier namespace within feature namespace                                            | Flat error namespace; HTTP-status-based surfacing; ad hoc per component      | Two-tier feature namespace      |
 
 > **#122 — Ledger as a dedicated `features/ledger/` slice.** Balance, expected amount, and current debt computations live in their own feature slice, not inside `features/bills/` or `features/payments/` and not in `lib/`. Rationale: balance is a cross-domain concept — it arithmetically combines bills and payments and draws on tariffs and readings — and belongs to neither owning slice. A dedicated slice keeps domain boundaries honest and gives the pure, unit-testable computation core a clear home. Alternatives considered: placing it in one of the owning slices (rejected — blurs boundaries, forces cross-slice imports); placing it in `lib/` as a domain-agnostic utility (rejected — balance is domain logic, not a generic helper).
 
@@ -494,6 +496,29 @@ Rationale: the "product-first" framing had begun to systematically under-scope f
 
 > **#121 — List-page filtered totals: domain aggregate separate from pagination.** List pages that show a filtered total amount (bills, payments) compute that sum on the backend over the full filtered set (same filters, no pagination) and return it as `totals: { amount }`, separate from `pagination`. Rationale: row count is a property of pagination (`pagination.total`); a domain amount aggregate is a page-specific fact and does not belong inside pagination metadata. A frontend sum over the received page is incorrect once the filtered set exceeds one page. Alternative considered: extending `pagination` with the sum (rejected — conflates pagination with domain data).
 
+> **#123 — Sharing as a dedicated `features/sharing/` slice.** Access management logic — the `property_access` member-list query, Zod schemas, the four Server Actions (`inviteToProperty`, `removePropertyAccess`, `changePropertyRole`, `leaveProperty`), and the active-owner-count helper — lives in a dedicated `features/sharing/` slice, not inside `features/properties/`. The code was first implemented inside `features/properties/` and extracted before Step 3a landed.
+>
+> Alternatives considered: keeping it in `features/properties/` (where it was first prototyped).
+>
+> Rationale: access management is a self-contained feature with its own invariants (last-owner protection, role change constraints) and is expected to grow in v2 (accept/decline flow, email invitations, pending state). Drawing the slice boundary while the code is small is cheaper than after it spreads. Mirrors the ledger reasoning (#122): cohesive feature logic gets its own slice.
+>
+> Note the intentional asymmetry with ledger worth recording: ledger was extracted because it is _cross-domain_ (combines bills + payments + tariffs + readings); sharing was extracted despite being _single-domain_ (`property_access` only), on growth-anticipation grounds. Both extractions are correct, but for different reasons.
+>
+> Dependency direction: `features/sharing/` imports `requirePropertyRole` and `propertyByIdForUser` from the properties access helpers. This direction — sharing depends on properties, not vice versa — is correct and expected; it is not a circular boundary smell.
+
+> **#124 — i18n error-code surfacing pattern: two-tier namespace within the feature namespace.** Sharing was the first feature to surface server-side error codes in the UI, establishing the standard used by all subsequent features.
+>
+> **The pattern as implemented in Step 3b:**
+>
+> All translations for a feature live under a single next-intl namespace (e.g. `sharing`, called via `useTranslations("sharing")`). Error messages are split into two tiers by display context:
+>
+> - **Feature-level errors** (`sharing.errors.CODE`): codes that surface as sonner toast notifications and are not specific to a single form field. The i18n key name matches the server error code verbatim in SCREAMING_SNAKE_CASE (e.g. `sharing.errors.OWNER_PROTECTED`, `sharing.errors.LAST_OWNER`). The component reads `result.error.message` directly and calls `t("errors.OWNER_PROTECTED")`.
+> - **Component-level errors** (`sharing.<componentName>.errors.camelCaseName`): codes that surface as inline validation messages inside a specific component. Keys are camelCase descriptors, not the raw server code (e.g. `sharing.inviteModal.errors.userNotFound`, `sharing.inviteModal.errors.alreadyHasAccess`). The component maps the raw code to the key in a local `if/else if` chain and stores the resolved string in component state for inline rendering.
+>
+> The choice between tiers is driven by display location: toast → feature-level, inline field error → component-level. A catch-all `generic` key handles unknown codes in both tiers.
+>
+> Alternatives considered: none were formally weighed — the pattern was established ad hoc during Step 3b implementation and is now ratified as the project standard for all features that surface server error codes.
+
 ## Open Questions
 
 Carried forward to Phase 7 (implementation) and beyond.
@@ -502,7 +527,7 @@ Carried forward to Phase 7 (implementation) and beyond.
 
 - Test database strategy: dedicated Neon branch vs. in-memory alternatives.
 - Translation workflow: author, wife, AI-assisted, review process.
-- Error code catalog structure in i18n files.
+- ~~Error code catalog structure in i18n files.~~ Resolved by Decision #124.
 - Cron job for expired session cleanup (timing, location).
 - Seed script for `service_types` catalog and landing CMS baseline content (CMS data model is implemented; seed content is pending).
 - Demo account seed: one-time deployment pipeline, idempotent re-seed procedure.
