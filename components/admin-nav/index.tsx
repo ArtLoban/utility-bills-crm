@@ -24,7 +24,7 @@ const NAV_LINKS = [
   { key: "adminProperties", href: ROUTES.admin.properties },
   { key: "adminUsers", href: ROUTES.admin.users },
   { key: "adminLanding", href: ROUTES.admin.landing },
-];
+] as const;
 
 type TProps = {
   user: { image: string | null };

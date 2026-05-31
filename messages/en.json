@@ -876,5 +876,101 @@
         "note": "Internal record. For support reference only."
       }
     }
+  },
+  "adminProperties": {
+    "title": "All properties",
+    "meta": {
+      "total": "{count, plural, one {# property} other {# properties}}"
+    },
+    "columns": {
+      "name": "Name",
+      "owners": "Owner(s)",
+      "type": "Type",
+      "status": "Status",
+      "services": "Services",
+      "created": "Created"
+    },
+    "filters": {
+      "status": "Status",
+      "statusDeleted": "Deleted",
+      "statusAll": "All",
+      "type": "Type",
+      "typeApartment": "Apartment",
+      "typeHouse": "House",
+      "typeCottage": "Cottage",
+      "typeOther": "Other",
+      "owner": "Owner",
+      "clearOwner": "Clear owner filter",
+      "mobile": {
+        "filters": "Filters",
+        "apply": "Apply",
+        "activeDefault": "Active (default)",
+        "allTypes": "All types"
+      }
+    },
+    "status": {
+      "active": "Active",
+      "deleted": "Deleted"
+    },
+    "footer": {
+      "properties": "{count, plural, one {# property} other {# properties}}"
+    },
+    "empty": {
+      "filtered": {
+        "title": "No properties match your filters",
+        "cta": "Clear filters"
+      }
+    },
+    "rowActions": {
+      "viewDetails": "View details",
+      "goToProperty": "Go to property",
+      "restore": "Restore",
+      "hardDelete": "Delete permanently"
+    },
+    "detail": {
+      "softDeletedTitle": "This property is soft-deleted",
+      "softDeletedDesc": "Soft-deleted on {date}. The owner sees this property as gone. You can restore it or delete it permanently.",
+      "goToProperty": "Go to property",
+      "infoCard": {
+        "title": "Property info"
+      },
+      "fields": {
+        "owner": "Owner(s)",
+        "type": "Type",
+        "address": "Address",
+        "notes": "Notes",
+        "services": "Active services",
+        "created": "Created",
+        "updated": "Updated",
+        "status": "Status"
+      },
+      "sharingCard": {
+        "title": "Users with access",
+        "deletedNote": "These users no longer see this property. Restoring it brings access back.",
+        "activeNote": "Sharing changes are made by the property owner, not by admin."
+      }
+    },
+    "restoreDialog": {
+      "title": "Restore this property?",
+      "description": "{name} will become active again. Users who had access will see it restored.",
+      "confirm": "Restore",
+      "cancel": "Cancel"
+    },
+    "hardDeleteDialog": {
+      "title": "Delete this property permanently?",
+      "description": "{name} and all its data will be permanently erased. This cannot be undone.",
+      "warning": "This action is irreversible.",
+      "confirm": "Delete permanently",
+      "cancel": "Cancel"
+    },
+    "errors": {
+      "NOT_DELETED": "This property is not deleted — nothing to restore.",
+      "NOT_SOFT_DELETED": "Hard delete requires the property to be soft-deleted first.",
+      "generic": "Something went wrong. Please try again."
+    },
+    "success": {
+      "restored": "Property restored successfully.",
+      "hardDeleted": "Property permanently deleted."
+    }
   }
 }

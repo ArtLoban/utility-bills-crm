@@ -1,55 +1,59 @@
+import { format } from "date-fns";
+import { useTranslations } from "next-intl";
+
 import { DataCard } from "@/components/data-card";
 import { InfoGrid } from "@/components/info-grid";
-import { RECORD_STATUS } from "@/lib/types/record-status";
-import { type TPropertyDetail } from "../../../_data/mock";
+import type { TAdminPropertyDetail } from "@/features/admin-properties";
 
-type TProps = { property: TPropertyDetail };
+type TProps = { property: TAdminPropertyDetail };
 
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
-const formatOwners = (owners: TPropertyDetail["owners"]): string => {
-  const primary = owners[0];
-  if (!primary) return "—";
-  return owners.length === 1 ? primary.name : `${primary.name} (+${owners.length - 1})`;
+const formatOwners = (owners: TAdminPropertyDetail["owners"]): string => {
+  if (owners.length === 0) return "—";
+  return (
+    owners
+      .filter((o) => o.propertyRole === "owner")
+      .map((o) => o.name ?? o.email)
+      .join(", ") || "—"
+  );
 };
 
 export const PropertyInfoCard = ({ property }: TProps) => {
-  const baseRows = [
-    { label: "Owner(s)", value: formatOwners(property.owners) },
-    { label: "Type", value: capitalize(property.type) },
-    { label: "Address", value: property.address },
-    {
-      label: "Services",
-      value:
-        property.status === RECORD_STATUS.DELETED
-          ? `${property.servicesCount} — ${property.serviceNames.join(", ")}`
-          : String(property.servicesCount),
-    },
-    {
-      label: "Created",
-      value:
-        property.status === RECORD_STATUS.ACTIVE
-          ? `${property.createdDisplay} by ${property.createdBy}`
-          : property.createdDisplay,
-    },
-    { label: "Last activity", value: property.lastActivity },
-  ];
+  const t = useTranslations("adminProperties");
 
-  const statusRows =
-    property.status === RECORD_STATUS.DELETED
-      ? [
-          { label: "Soft-deleted at", value: property.deletedAt },
-          { label: "Soft-deleted by", value: `${property.deletedBy} (owner)` },
-        ]
-      : [{ label: "Status", value: "Active" }];
+  const rows = [
+    { label: t("detail.fields.owner"), value: formatOwners(property.owners) },
+    { label: t("detail.fields.type"), value: capitalize(property.type) },
+    { label: t("detail.fields.address"), value: property.address ?? "—" },
+    { label: t("detail.fields.notes"), value: property.notes ?? "—" },
+    {
+      label: t("detail.fields.services"),
+      value: String(property.servicesCount),
+    },
+    {
+      label: t("detail.fields.created"),
+      value: format(property.createdAt, "MMMM d, yyyy"),
+    },
+    {
+      label: t("detail.fields.updated"),
+      value: format(property.updatedAt, "MMMM d, yyyy"),
+    },
+    {
+      label: t("detail.fields.status"),
+      value: property.deletedAt
+        ? `${t("status.deleted")} — ${format(property.deletedAt, "MMMM d, yyyy")}`
+        : t("status.active"),
+    },
+  ];
 
   return (
     <DataCard className="overflow-hidden">
       <div className="border-border border-b px-6 py-4">
-        <h3 className="text-sm font-semibold">Property info</h3>
+        <h3 className="text-sm font-semibold">{t("detail.infoCard.title")}</h3>
       </div>
       <div className="px-6">
-        <InfoGrid rows={[...baseRows, ...statusRows]} />
+        <InfoGrid rows={rows} />
       </div>
     </DataCard>
   );

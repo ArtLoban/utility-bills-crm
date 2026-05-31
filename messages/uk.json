@@ -836,5 +836,101 @@
         "note": "Внутрішній запис. Лише для довідки служби підтримки."
       }
     }
+  },
+  "adminProperties": {
+    "title": "Всі обʼєкти",
+    "meta": {
+      "total": "{count, plural, one {# обʼєкт} few {# обʼєкти} many {# обʼєктів} other {# обʼєкта}}"
+    },
+    "columns": {
+      "name": "Назва",
+      "owners": "Власник(и)",
+      "type": "Тип",
+      "status": "Статус",
+      "services": "Послуги",
+      "created": "Створено"
+    },
+    "filters": {
+      "status": "Статус",
+      "statusDeleted": "Видалено",
+      "statusAll": "Всі",
+      "type": "Тип",
+      "typeApartment": "Квартира",
+      "typeHouse": "Будинок",
+      "typeCottage": "Котедж",
+      "typeOther": "Інше",
+      "owner": "Власник",
+      "clearOwner": "Очистити фільтр по власнику",
+      "mobile": {
+        "filters": "Фільтри",
+        "apply": "Застосувати",
+        "activeDefault": "Активні (за замовч.)",
+        "allTypes": "Всі типи"
+      }
+    },
+    "status": {
+      "active": "Активний",
+      "deleted": "Видалено"
+    },
+    "footer": {
+      "properties": "{count, plural, one {# обʼєкт} few {# обʼєкти} many {# обʼєктів} other {# обʼєкта}}"
+    },
+    "empty": {
+      "filtered": {
+        "title": "Жодного обʼєкту не відповідає вашим фільтрам",
+        "cta": "Очистити фільтри"
+      }
+    },
+    "rowActions": {
+      "viewDetails": "Деталі",
+      "goToProperty": "Перейти до обʼєкту",
+      "restore": "Відновити",
+      "hardDelete": "Видалити назавжди"
+    },
+    "detail": {
+      "softDeletedTitle": "Цей обʼєкт є soft-deleted",
+      "softDeletedDesc": "Soft-deleted {date}. Власник бачить цей обʼєкт як видалений. Ви можете відновити або видалити назавжди.",
+      "goToProperty": "Перейти до обʼєкту",
+      "infoCard": {
+        "title": "Інформація про обʼєкт"
+      },
+      "fields": {
+        "owner": "Власник(и)",
+        "type": "Тип",
+        "address": "Адреса",
+        "notes": "Нотатки",
+        "services": "Активні послуги",
+        "created": "Створено",
+        "updated": "Оновлено",
+        "status": "Статус"
+      },
+      "sharingCard": {
+        "title": "Користувачі з доступом",
+        "deletedNote": "Ці користувачі більше не бачать цей обʼєкт. Відновлення поверне доступ.",
+        "activeNote": "Зміни в доступі робить власник обʼєкту, а не адмін."
+      }
+    },
+    "restoreDialog": {
+      "title": "Відновити цей обʼєкт?",
+      "description": "{name} стане активним. Користувачі, що мали доступ, знову побачать його.",
+      "confirm": "Відновити",
+      "cancel": "Скасувати"
+    },
+    "hardDeleteDialog": {
+      "title": "Видалити цей обʼєкт назавжди?",
+      "description": "{name} та всі його дані будуть назавжди видалені. Це незворотньо.",
+      "warning": "Ця дія незворотна.",
+      "confirm": "Видалити назавжди",
+      "cancel": "Скасувати"
+    },
+    "errors": {
+      "NOT_DELETED": "Цей обʼєкт не видалено — нема що відновлювати.",
+      "NOT_SOFT_DELETED": "Остаточне видалення вимагає попереднього soft-delete.",
+      "generic": "Щось пішло не так. Спробуйте ще раз."
+    },
+    "success": {
+      "restored": "Обʼєкт успішно відновлено.",
+      "hardDeleted": "Обʼєкт остаточно видалено."
+    }
   }
 }

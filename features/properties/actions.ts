@@ -5,12 +5,16 @@ import { and, eq, inArray, isNull } from "drizzle-orm";
 
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db/client";
+import { accountNumbers } from "@/lib/db/schema/account-numbers";
+import { contracts } from "@/lib/db/schema/contracts";
 import { meters } from "@/lib/db/schema/meters";
+import { paymentDetails } from "@/lib/db/schema/payment-details";
 import { readings } from "@/lib/db/schema/readings";
 import { bills } from "@/lib/db/schema/bills";
 import { payments } from "@/lib/db/schema/payments";
 import { properties, propertyAccess } from "@/lib/db/schema/properties";
 import { services } from "@/lib/db/schema/services";
+import { tariffs } from "@/lib/db/schema/tariffs";
 import type { PropertyId, TProperty } from "@/lib/db/schema/properties";
 import type { UserId } from "@/lib/db/schema/auth";
 import { requirePropertyRole } from "@/lib/db/access/properties";
@@ -113,6 +117,35 @@ export const softDeleteProperty = async (
       .update(meters)
       .set({ deletedAt: now })
       .where(and(eq(meters.propertyId, propertyId), isNull(meters.deletedAt)));
+    // Tariffs, accountNumbers, paymentDetails are grandchildren of services (via contracts).
+    const serviceSubquery = db
+      .select({ id: services.id })
+      .from(services)
+      .where(eq(services.propertyId, propertyId));
+    const contractSubquery = db
+      .select({ id: contracts.id })
+      .from(contracts)
+      .where(inArray(contracts.serviceId, serviceSubquery));
+    await tx
+      .update(tariffs)
+      .set({ deletedAt: now })
+      .where(and(inArray(tariffs.contractId, contractSubquery), isNull(tariffs.deletedAt)));
+    await tx
+      .update(accountNumbers)
+      .set({ deletedAt: now })
+      .where(
+        and(inArray(accountNumbers.contractId, contractSubquery), isNull(accountNumbers.deletedAt)),
+      );
+    await tx
+      .update(paymentDetails)
+      .set({ deletedAt: now })
+      .where(
+        and(inArray(paymentDetails.contractId, contractSubquery), isNull(paymentDetails.deletedAt)),
+      );
+    await tx
+      .update(contracts)
+      .set({ deletedAt: now })
+      .where(and(inArray(contracts.serviceId, serviceSubquery), isNull(contracts.deletedAt)));
     // Payments and bills are children of services — must be deleted before services.
     await tx
       .update(payments)

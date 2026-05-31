@@ -1,37 +1,120 @@
 "use client";
 
+import { useState } from "react";
+import { FilterX, Home } from "lucide-react";
+import { parseAsString, useQueryStates } from "nuqs";
+import { useTranslations } from "next-intl";
+
+import { Button } from "@/components/ui/button";
+import { EmptyStateCard } from "@/components/empty-state-card";
 import { PageContainer } from "@/components/page-container";
 import { PageMeta } from "@/components/page-meta";
-import { ACTIVE_COUNT, DELETED_COUNT } from "@/app/(admin)/art-admin/properties/_data/mock";
-import { usePropertiesList } from "./hooks/use-properties-list";
+import { useServerListParams } from "@/lib/hooks/use-server-list-params";
+import type { TAdminPropertyRow } from "@/features/admin-properties";
+import type { TServerPagination } from "@/lib/types/data-table";
+
+import { RestoreDialog } from "@/app/(admin)/art-admin/properties/[id]/_components/restore-dialog";
+import { HardDeleteDialog } from "@/app/(admin)/art-admin/properties/[id]/_components/hard-delete-dialog";
+import { PropertiesTableProvider } from "./context";
 import { FilterBar } from "./filter-bar";
 import { PropertiesTable } from "./properties-table";
-import { PropertiesFooter } from "./properties-footer";
 import { PropertiesMobile } from "./properties-mobile";
 
-export const PropertiesClient = () => {
-  const { filters, sortCol, sortDir, rows, anyFilter, handleFilterChange, handleSort } =
-    usePropertiesList();
+type TProps = {
+  data: TAdminPropertyRow[];
+  pagination: TServerPagination;
+  ownerName: string | null;
+};
+
+export const PropertiesClient = ({ data, pagination, ownerName }: TProps) => {
+  const t = useTranslations("adminProperties");
+  const { sorting, onSortingChange, setPage, setPageSize } = useServerListParams({
+    defaultSortBy: "createdAt",
+    defaultSortOrder: "desc",
+  });
+
+  const [filterParams, setFilterParams] = useQueryStates(
+    { status: parseAsString, type: parseAsString, owner: parseAsString },
+    { history: "replace", shallow: false },
+  );
+  const anyFilter = Boolean(filterParams.status || filterParams.type || filterParams.owner);
+
+  const handleClearFilters = () => void setFilterParams({ status: null, type: null, owner: null });
+
+  const [selectedRow, setSelectedRow] = useState<TAdminPropertyRow | null>(null);
+  const [restoreOpen, setRestoreOpen] = useState(false);
+  const [hardDeleteOpen, setHardDeleteOpen] = useState(false);
+
+  const openRestore = (row: TAdminPropertyRow) => {
+    setSelectedRow(row);
+    setRestoreOpen(true);
+  };
+
+  const openHardDelete = (row: TAdminPropertyRow) => {
+    setSelectedRow(row);
+    setHardDeleteOpen(true);
+  };
 
   return (
-    <PageContainer
-      title="All properties"
-      meta={<PageMeta items={[`${ACTIVE_COUNT} active`, `${DELETED_COUNT} soft-deleted`]} />}
-    >
-      {/* Desktop layout */}
-      <div className="hidden md:block">
-        <FilterBar filters={filters} onFilterChange={handleFilterChange} anyFilter={anyFilter} />
+    <PropertiesTableProvider value={{ openRestore, openHardDelete }}>
+      <PageContainer
+        title={t("title")}
+        meta={<PageMeta items={[t("meta.total", { count: pagination.total })]} />}
+      >
+        {/* Desktop */}
+        <div className="hidden md:block">
+          {(data.length > 0 || anyFilter) && <FilterBar ownerName={ownerName} />}
 
-        <div className="overflow-hidden rounded-lg border border-zinc-200 shadow-[0_1px_2px_0_rgba(24,24,27,0.05)] dark:border-zinc-800 dark:shadow-none">
-          <PropertiesTable rows={rows} sortCol={sortCol} sortDir={sortDir} onSort={handleSort} />
-          <PropertiesFooter />
+          {data.length === 0 && !anyFilter && (
+            <EmptyStateCard icon={Home} title={t("title")} body="" />
+          )}
+
+          {data.length === 0 && anyFilter && (
+            <EmptyStateCard
+              icon={FilterX}
+              title={t("empty.filtered.title")}
+              cta={
+                <Button variant="outline" className="h-9" onClick={handleClearFilters}>
+                  {t("empty.filtered.cta")}
+                </Button>
+              }
+            />
+          )}
+
+          {data.length > 0 && (
+            <PropertiesTable
+              data={data}
+              pagination={pagination}
+              sorting={sorting}
+              onSortingChange={onSortingChange}
+              onPageChange={setPage}
+              onPageSizeChange={setPageSize}
+            />
+          )}
         </div>
-      </div>
 
-      {/* Mobile layout */}
-      <div className="-mx-8 md:hidden">
-        <PropertiesMobile rows={rows} />
-      </div>
-    </PageContainer>
+        {/* Mobile */}
+        <div className="-mx-8 md:hidden">
+          <PropertiesMobile data={data} pagination={pagination} onPageChange={setPage} />
+        </div>
+      </PageContainer>
+
+      {selectedRow && (
+        <>
+          <RestoreDialog
+            open={restoreOpen}
+            onOpenChange={setRestoreOpen}
+            propertyId={selectedRow.id}
+            propertyName={selectedRow.name}
+          />
+          <HardDeleteDialog
+            open={hardDeleteOpen}
+            onOpenChange={setHardDeleteOpen}
+            propertyId={selectedRow.id}
+            propertyName={selectedRow.name}
+          />
+        </>
+      )}
+    </PropertiesTableProvider>
   );
 };

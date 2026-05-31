@@ -1,5 +1,8 @@
-import { MoreHorizontal } from "lucide-react";
+"use client";
+
 import Link from "next/link";
+import { MoreHorizontal } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import {
   DropdownMenu,
@@ -9,61 +12,38 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
-import { RECORD_STATUS } from "@/lib/types/record-status";
-import { TProperty } from "@/app/(admin)/art-admin/properties/_data/mock";
+import type { TAdminPropertyRow } from "@/features/admin-properties";
 
-type TProps = { row: TProperty };
+import { usePropertiesTable } from "../context";
 
-const formatOwners = (owners: TProperty["owners"]): string => {
+type TProps = { row: TAdminPropertyRow };
+
+const formatOwners = (owners: TAdminPropertyRow["owners"]): string => {
   const primary = owners[0];
-  if (!primary) return "";
-  if (owners.length === 1) return primary.name;
-  return `${primary.name} (+${owners.length - 1})`;
+  if (!primary) return "—";
+  return owners.length === 1
+    ? (primary.name ?? primary.email)
+    : `${primary.name ?? primary.email} (+${owners.length - 1})`;
 };
 
-const PropertyCard = ({ row }: TProps) => {
-  const isDeleted = row.status === RECORD_STATUS.DELETED;
+export const PropertyCard = ({ row }: TProps) => {
+  const t = useTranslations("adminProperties");
+  const { openRestore, openHardDelete } = usePropertiesTable();
+  const isDeleted = row.deletedAt !== null;
 
   return (
     <div
-      className={`border border-zinc-200 bg-white shadow-[0_1px_2px_rgba(24,24,27,0.04)] dark:border-zinc-800 dark:bg-zinc-900 dark:shadow-none ${isDeleted ? "opacity-60" : ""}`}
-      style={{ borderRadius: 8, padding: 14 }}
+      className={`rounded-lg border border-zinc-200 bg-white p-3.5 shadow-[0_1px_2px_rgba(24,24,27,0.04)] dark:border-zinc-800 dark:bg-zinc-900 dark:shadow-none ${isDeleted ? "opacity-60" : ""}`}
     >
-      {/* Top row: name + kebab */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "flex-start",
-          justifyContent: "space-between",
-          gap: 8,
-        }}
-      >
-        <span
-          style={{
-            fontSize: 14,
-            fontWeight: 600,
-            letterSpacing: -0.1,
-            textDecoration: isDeleted ? "line-through" : "none",
-          }}
+      <div className="flex items-start justify-between gap-2">
+        <Link
+          href={`/art-admin/properties/${row.id}`}
+          className={`truncate text-sm font-semibold tracking-tight hover:underline ${isDeleted ? "line-through" : ""}`}
         >
           {row.name}
-        </span>
+        </Link>
         <DropdownMenu>
-          <DropdownMenuTrigger
-            style={{
-              width: 28,
-              height: 28,
-              borderRadius: 5,
-              border: "1px solid transparent",
-              background: "transparent",
-              cursor: "pointer",
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center",
-              flexShrink: 0,
-            }}
-            className="data-[state=open]:border-zinc-200 data-[state=open]:bg-zinc-100 dark:data-[state=open]:border-zinc-700 dark:data-[state=open]:bg-zinc-800"
-          >
+          <DropdownMenuTrigger className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded border border-transparent data-[state=open]:border-zinc-200 data-[state=open]:bg-zinc-100 dark:data-[state=open]:border-zinc-700 dark:data-[state=open]:bg-zinc-800">
             <MoreHorizontal
               size={15}
               strokeWidth={1.75}
@@ -72,47 +52,46 @@ const PropertyCard = ({ row }: TProps) => {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-44">
             <DropdownMenuItem asChild>
-              <Link href={`/art-admin/properties/${row.id}`}>View details</Link>
+              <Link href={`/art-admin/properties/${row.id}`}>{t("rowActions.viewDetails")}</Link>
             </DropdownMenuItem>
             {!isDeleted && (
               <DropdownMenuItem asChild>
-                <Link href={`/properties/${row.id}`}>Go to property</Link>
+                <Link href={`/properties/${row.id}`}>{t("rowActions.goToProperty")}</Link>
               </DropdownMenuItem>
             )}
             {isDeleted && (
               <>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>Restore</DropdownMenuItem>
-                <DropdownMenuItem variant="destructive">Delete permanently</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => openRestore(row)}>
+                  {t("rowActions.restore")}
+                </DropdownMenuItem>
+                <DropdownMenuItem variant="destructive" onClick={() => openHardDelete(row)}>
+                  {t("rowActions.hardDelete")}
+                </DropdownMenuItem>
               </>
             )}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
 
-      {/* Owner */}
-      <p className="text-zinc-500 dark:text-zinc-400" style={{ fontSize: 12.5, marginTop: 3 }}>
+      <p className="mt-0.5 text-[12.5px] text-zinc-500 dark:text-zinc-400">
         {formatOwners(row.owners)}
       </p>
-
-      {/* Meta row: type · services · created */}
-      <p className="text-zinc-400 dark:text-zinc-600" style={{ fontSize: 12, marginTop: 2 }}>
-        {row.type} · {row.servicesCount} services · {row.createdDisplay}
+      <p className="mt-0.5 text-xs text-zinc-400 tabular-nums dark:text-zinc-600">
+        {row.type} · {row.servicesCount} {row.servicesCount === 1 ? "service" : "services"} ·{" "}
+        {row.createdAt.toLocaleDateString("en-US", { month: "short", year: "numeric" })}
       </p>
 
-      {/* Deleted badge */}
       {isDeleted && (
-        <div style={{ marginTop: 8 }}>
+        <div className="mt-2">
           <Badge
             variant="outline"
             className="border-red-200 text-red-600 dark:border-red-900 dark:text-red-400"
           >
-            Deleted
+            {t("status.deleted")}
           </Badge>
         </div>
       )}
     </div>
   );
 };
-
-export { PropertyCard };

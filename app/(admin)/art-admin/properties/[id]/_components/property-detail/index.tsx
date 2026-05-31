@@ -1,27 +1,31 @@
+import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
+import { useTranslations } from "next-intl";
+
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import { PageContainer } from "@/components/page-container";
 import { PageMeta } from "@/components/page-meta";
-import { RECORD_STATUS } from "@/lib/types/record-status";
+import type { TAdminPropertyDetail } from "@/features/admin-properties";
 
-import { type TPropertyDetail } from "../../_data/mock";
 import { SoftDeleteBanner } from "./components/soft-delete-banner";
 import { PropertyInfoCard } from "./components/property-info-card";
-import { ServicesCard } from "./components/services-card";
 import { SharingCard } from "./components/sharing-card";
 
-type TProps = { property: TPropertyDetail };
+type TProps = { property: TAdminPropertyDetail };
 
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
 export const PropertyDetail = ({ property }: TProps) => {
-  const isDeleted = property.status === RECORD_STATUS.DELETED;
+  const t = useTranslations("adminProperties");
+  const isDeleted = property.deletedAt !== null;
 
   const metaItems = [
     capitalize(property.type),
-    property.address,
+    property.address ?? null,
     `${property.servicesCount} ${property.servicesCount === 1 ? "service" : "services"}`,
-    ...(!isDeleted ? ["Active"] : []),
-  ];
+    isDeleted ? t("status.deleted") : t("status.active"),
+  ].filter(Boolean) as string[];
 
   return (
     <PageContainer
@@ -38,20 +42,32 @@ export const PropertyDetail = ({ property }: TProps) => {
       ]}
       banner={
         isDeleted ? (
-          <SoftDeleteBanner propertyId={property.id} deletedAt={property.deletedAt} />
+          <SoftDeleteBanner
+            propertyId={property.id}
+            propertyName={property.name}
+            deletedAt={property.deletedAt!}
+          />
         ) : undefined
       }
     >
+      {!isDeleted && (
+        <div className="mb-4 flex justify-end">
+          <Button asChild variant="outline" size="sm">
+            <Link href={`/properties/${property.id}`}>
+              <ArrowUpRight size={14} strokeWidth={1.75} />
+              {t("detail.goToProperty")}
+            </Link>
+          </Button>
+        </div>
+      )}
+
       <div className="flex flex-col gap-4">
         <PropertyInfoCard property={property} />
-        {!isDeleted && <ServicesCard services={property.services} />}
-        <SharingCard sharing={property.sharing} isDeleted={isDeleted} />
+        <SharingCard owners={property.owners} isDeleted={isDeleted} />
       </div>
 
       <div className="border-border mt-8 border-t pt-4">
-        <p className="text-muted-foreground font-mono text-xs">
-          Property ID: {property.propertyId}
-        </p>
+        <p className="text-muted-foreground font-mono text-xs">Property ID: {property.id}</p>
         <p className="text-muted-foreground mt-0.5 text-xs">
           Internal record. For support reference only.
         </p>

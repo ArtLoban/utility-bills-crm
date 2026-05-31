@@ -1,43 +1,58 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useTransition } from "react";
+import { RotateCcw } from "lucide-react";
+import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogClose,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/confirm-dialog";
+import { restoreProperty } from "@/features/admin-properties/actions";
 
 type TProps = {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  propertyId: string;
   propertyName: string;
-  sharingNames: string[];
+  onSuccess?: () => void;
 };
 
-export const RestoreDialogContent = ({ propertyName, sharingNames }: TProps) => {
-  const router = useRouter();
-  const dismiss = () => router.back();
+export const RestoreDialog = ({
+  open,
+  onOpenChange,
+  propertyId,
+  propertyName,
+  onSuccess,
+}: TProps) => {
+  const t = useTranslations("adminProperties");
+  const [isPending, startTransition] = useTransition();
+
+  const handleConfirm = () => {
+    startTransition(async () => {
+      const result = await restoreProperty(propertyId);
+      if (result.ok) {
+        toast.success(t("success.restored"));
+        onOpenChange(false);
+        onSuccess?.();
+      } else {
+        const code = result.error.message as string;
+        const key = `errors.${code}` as Parameters<typeof t>[0];
+        toast.error(t.has(key) ? t(key) : t("errors.generic"));
+      }
+    });
+  };
 
   return (
-    <Dialog open onOpenChange={dismiss}>
-      <DialogContent showCloseButton={false}>
-        <DialogHeader>
-          <DialogTitle>Restore this property?</DialogTitle>
-        </DialogHeader>
-        <p className="text-muted-foreground text-sm leading-relaxed">
-          <strong className="text-foreground font-medium">{propertyName}</strong> will become active
-          again. {sharingNames.join(" and ")} will see it and have access restored.
-        </p>
-        <DialogFooter>
-          <DialogClose asChild>
-            <Button variant="outline">Cancel</Button>
-          </DialogClose>
-          <Button onClick={dismiss}>Restore</Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+    <ConfirmDialog
+      open={open}
+      onOpenChange={onOpenChange}
+      tone="warning"
+      icon={<RotateCcw size={22} strokeWidth={1.75} />}
+      title={t("restoreDialog.title")}
+      description={t("restoreDialog.description", { name: propertyName })}
+      confirmLabel={t("restoreDialog.confirm")}
+      cancelLabel={t("restoreDialog.cancel")}
+      isPending={isPending}
+      onConfirm={handleConfirm}
+    />
   );
 };
