@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { DETAIL_MOCK } from "./_data/mock";
+import { requireAdmin } from "@/lib/auth/guards";
+import { shouldHideAsNotFound } from "@/lib/errors";
+import { getAdminUserDetail } from "@/features/admin-users";
+
 import { UserDetail } from "./_components/user-detail";
 
 type TProps = {
@@ -10,15 +13,26 @@ type TProps = {
 
 export async function generateMetadata({ params }: TProps): Promise<Metadata> {
   const { id } = await params;
-  const user = DETAIL_MOCK[id];
+
+  const guard = await requireAdmin();
+  if (!guard.ok) return { title: "Not Found — Admin" };
+
+  const user = await getAdminUserDetail(id);
   if (!user) return { title: "Not Found — Admin" };
 
-  return { title: `${user.name} — Admin` };
+  return { title: `${user.name ?? user.email} — Admin` };
 }
 
 export default async function AdminUserDetailPage({ params }: TProps) {
   const { id } = await params;
-  const user = DETAIL_MOCK[id];
+
+  const guard = await requireAdmin();
+  if (!guard.ok) {
+    if (shouldHideAsNotFound(guard.error)) notFound();
+    throw guard.error;
+  }
+
+  const user = await getAdminUserDetail(id);
   if (!user) notFound();
 
   return <UserDetail user={user} />;

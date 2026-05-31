@@ -1,29 +1,33 @@
+import { format } from "date-fns";
+import { formatDistanceToNow } from "date-fns";
+import { getTranslations } from "next-intl/server";
+
 import { DataCard } from "@/components/data-card";
 import { InfoGrid } from "@/components/info-grid";
+import type { TAdminUserDetailResult } from "@/features/admin-users/types";
 import { RoleBadge } from "../../../../_components/role-badge";
-import { type TAdminUserDetail } from "../../../_data/mock";
 
-type TProps = { user: TAdminUserDetail };
+type TProps = { user: TAdminUserDetailResult };
 
-const AUTH_PROVIDER_LABELS: Record<TAdminUserDetail["authProvider"], string> = {
-  google: "Google",
-  email: "Email / password",
-};
+export const UserInfoCard = async ({ user }: TProps) => {
+  const t = await getTranslations("adminUsers.detail");
 
-export const UserInfoCard = ({ user }: TProps) => {
+  const lastLoginValue = user.lastLoginAt
+    ? formatDistanceToNow(user.lastLoginAt, { addSuffix: true })
+    : t("fields.lastLoginNever");
+
   const rows = [
-    { label: "Email", value: user.email },
-    { label: "Name", value: user.name },
-    { label: "System role", value: <RoleBadge role={user.systemRole} /> },
-    { label: "Created", value: user.createdDisplay },
-    { label: "Last login", value: user.lastLoginDisplay },
-    { label: "Auth provider", value: AUTH_PROVIDER_LABELS[user.authProvider] },
+    { label: t("fields.email"), value: user.email },
+    { label: t("fields.name"), value: user.name ?? "—" },
+    { label: t("fields.systemRole"), value: <RoleBadge role={user.systemRole} /> },
+    { label: t("fields.created"), value: format(user.createdAt, "MMMM d, yyyy") },
+    { label: t("fields.lastLogin"), value: lastLoginValue },
   ];
 
   return (
     <DataCard className="overflow-hidden">
       <div className="border-border border-b px-6 py-4">
-        <h3 className="text-sm font-semibold">User info</h3>
+        <h3 className="text-sm font-semibold">{t("userInfo")}</h3>
       </div>
       <div className="px-6">
         <InfoGrid rows={rows} />

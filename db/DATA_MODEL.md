@@ -167,20 +167,21 @@ Key relationships:
 
 Application users.
 
-| Column          | Type                                        | Null | Default             | Notes                                                 |
-| --------------- | ------------------------------------------- | ---- | ------------------- | ----------------------------------------------------- |
-| `id`            | `uuid`                                      | NO   | `gen_random_uuid()` | Branded `UserId`.                                     |
-| `name`          | `text`                                      | YES  | —                   | From Google profile or manual.                        |
-| `email`         | `text`                                      | NO   | —                   | Required by Auth.js.                                  |
-| `emailVerified` | `timestamptz`                               | YES  | —                   | Required by Auth.js. NULL if never verified.          |
-| `image`         | `text`                                      | YES  | —                   | Avatar URL.                                           |
-| `systemRole`    | `text` enum `'user' \| 'admin'`             | NO   | `'user'`            | Application-level role. Admin via `ADMIN_EMAILS` env. |
-| `locale`        | `text` enum `'en' \| 'uk' \| 'ru'`          | NO   | `'en'`              | UI language.                                          |
-| `theme`         | `text` enum `'light' \| 'dark' \| 'system'` | NO   | `'system'`          | UI theme preference.                                  |
-| `timezone`      | `text`                                      | NO   | `'Europe/Kyiv'`     | IANA timezone. Hardcoded default in MVP.              |
-| `createdAt`     | `timestamptz`                               | NO   | `now()`             |                                                       |
-| `updatedAt`     | `timestamptz`                               | NO   | `now()`             |                                                       |
-| `deletedAt`     | `timestamptz`                               | YES  | —                   |                                                       |
+| Column          | Type                                        | Null | Default             | Notes                                                                                                          |
+| --------------- | ------------------------------------------- | ---- | ------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `id`            | `uuid`                                      | NO   | `gen_random_uuid()` | Branded `UserId`.                                                                                              |
+| `name`          | `text`                                      | YES  | —                   | From Google profile or manual.                                                                                 |
+| `email`         | `text`                                      | NO   | —                   | Required by Auth.js.                                                                                           |
+| `emailVerified` | `timestamptz`                               | YES  | —                   | Required by Auth.js. NULL if never verified.                                                                   |
+| `image`         | `text`                                      | YES  | —                   | Avatar URL.                                                                                                    |
+| `systemRole`    | `text` enum `'user' \| 'admin'`             | NO   | `'user'`            | Application-level role. Admin via `ADMIN_EMAILS` env.                                                          |
+| `lastLoginAt`   | `timestamptz`                               | YES  | —                   | Set on each sign-in event (not session refresh). NULL = never logged in since column was added. Decision #127. |
+| `locale`        | `text` enum `'en' \| 'uk' \| 'ru'`          | NO   | `'en'`              | UI language.                                                                                                   |
+| `theme`         | `text` enum `'light' \| 'dark' \| 'system'` | NO   | `'system'`          | UI theme preference.                                                                                           |
+| `timezone`      | `text`                                      | NO   | `'Europe/Kyiv'`     | IANA timezone. Hardcoded default in MVP.                                                                       |
+| `createdAt`     | `timestamptz`                               | NO   | `now()`             |                                                                                                                |
+| `updatedAt`     | `timestamptz`                               | NO   | `now()`             |                                                                                                                |
+| `deletedAt`     | `timestamptz`                               | YES  | —                   |                                                                                                                |
 
 **Indexes:**
 

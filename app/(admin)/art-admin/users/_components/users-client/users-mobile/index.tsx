@@ -1,14 +1,112 @@
-import { TAdminUser } from "../../../_data/mock";
+"use client";
+
+import { useState } from "react";
+import { parseAsString, useQueryStates } from "nuqs";
+import { useTranslations } from "next-intl";
+
+import type { TAdminUserRow } from "@/features/admin-users/types";
+import type { TServerPagination } from "@/lib/types/data-table";
+import { SYSTEM_ROLES } from "@/lib/auth/constants";
+
 import { UserCard } from "./user-card";
+import { MobilePager } from "./mobile-pager";
+import { FilterChip } from "./filter-chip";
+import { FilterSheet } from "./filter-sheet";
 
 type TProps = {
-  users: TAdminUser[];
+  data: TAdminUserRow[];
+  pagination: TServerPagination;
+  onPageChange: (page: number) => void;
 };
 
-export const UsersMobile = ({ users }: TProps) => (
-  <div className="flex flex-col gap-2 px-3.5 pt-3 pb-8">
-    {users.map((user) => (
-      <UserCard key={user.id} user={user} />
-    ))}
-  </div>
-);
+export const UsersMobile = ({ data, pagination, onPageChange }: TProps) => {
+  const t = useTranslations("adminUsers");
+  const [sheetOpen, setSheetOpen] = useState(false);
+
+  const [query, setQuery] = useQueryStates(
+    { systemRole: parseAsString, status: parseAsString },
+    { history: "replace", shallow: false },
+  );
+
+  const activeCount = [query.systemRole, query.status].filter(Boolean).length;
+
+  const roleLabel =
+    query.systemRole === SYSTEM_ROLES.ADMIN
+      ? t("filters.roleAdmin")
+      : query.systemRole === SYSTEM_ROLES.USER
+        ? t("filters.roleUser")
+        : null;
+
+  const statusLabel =
+    query.status === "deleted"
+      ? t("filters.statusDeleted")
+      : query.status === "all"
+        ? t("filters.statusAll")
+        : null;
+
+  return (
+    <div className="px-3.5 pt-3 pb-8">
+      <div className={`flex items-center justify-between ${activeCount > 0 ? "mb-2.5" : "mb-3.5"}`}>
+        <button
+          onClick={() => setSheetOpen(true)}
+          className={
+            activeCount === 0
+              ? "border border-zinc-200 bg-white text-zinc-950 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50"
+              : "border-brand bg-brand-bg text-brand border"
+          }
+          style={{
+            height: 32,
+            padding: "0 12px",
+            fontSize: 13,
+            fontWeight: 500,
+            borderRadius: 6,
+            cursor: "pointer",
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 6,
+            fontFamily: "inherit",
+          }}
+        >
+          {t("filters.mobile.filters")}
+          {activeCount > 0 && (
+            <span className="bg-brand inline-flex min-w-4 items-center justify-center rounded-full px-1 text-[10.5px] font-bold text-white">
+              {activeCount}
+            </span>
+          )}
+        </button>
+
+        <span className="text-muted-foreground text-xs">
+          {t("meta.total", { count: pagination.total })}
+        </span>
+      </div>
+
+      {activeCount > 0 && (
+        <div className="mb-3.5 flex flex-wrap gap-1.5">
+          {roleLabel && (
+            <FilterChip label={roleLabel} onRemove={() => void setQuery({ systemRole: null })} />
+          )}
+          {statusLabel && (
+            <FilterChip label={statusLabel} onRemove={() => void setQuery({ status: null })} />
+          )}
+        </div>
+      )}
+
+      <div className="flex flex-col gap-2">
+        {data.map((user) => (
+          <UserCard key={user.id} user={user} />
+        ))}
+      </div>
+
+      {pagination.totalPages > 1 && (
+        <MobilePager
+          page={pagination.page}
+          totalPages={pagination.totalPages}
+          onPrev={() => onPageChange(pagination.page - 1)}
+          onNext={() => onPageChange(pagination.page + 1)}
+        />
+      )}
+
+      <FilterSheet open={sheetOpen} onOpenChange={setSheetOpen} />
+    </div>
+  );
+};

@@ -1,38 +1,45 @@
 "use client";
 
-import { useQueryStates } from "nuqs";
+import type { SortingState, Updater } from "@tanstack/react-table";
+import { useTranslations } from "next-intl";
 
-import { DataTable } from "@/components/data-table/data-table";
-import { useDataTableFilters } from "@/components/data-table/data-table/hooks/use-data-table-filters";
+import { ServerDataTable } from "@/components/data-table/server-data-table";
+import type { TServerPagination } from "@/lib/types/data-table";
+import type { TAdminUserRow } from "@/features/admin-users/types";
 
-import { TAdminUser } from "../../../_data/mock";
-import { URL_FIELDS } from "./constants";
 import { getUserColumns } from "./utils/get-user-columns";
-import { FiltersBar } from "./components/filters-bar";
 import { FooterMeta } from "./components/footer-meta";
 
 type TProps = {
-  data: TAdminUser[];
-  filteredData: TAdminUser[] | null;
-  setFilteredData: (data: TAdminUser[]) => void;
+  data: TAdminUserRow[];
+  pagination: TServerPagination;
+  sorting: SortingState;
+  onSortingChange: (updater: Updater<SortingState>) => void;
+  onPageChange: (page: number) => void;
+  onPageSizeChange: (size: number) => void;
 };
 
-export const UsersTable = ({ data, filteredData, setFilteredData }: TProps) => {
-  const [query] = useQueryStates(URL_FIELDS);
-  const columns = getUserColumns();
-  const columnFilters = useDataTableFilters(query);
+export const UsersTable = ({
+  data,
+  pagination,
+  sorting,
+  onSortingChange,
+  onPageChange,
+  onPageSizeChange,
+}: TProps) => {
+  const t = useTranslations("adminUsers");
+  const columns = getUserColumns(t);
 
   return (
-    <div className="hidden md:block">
-      <FiltersBar />
-      <DataTable
-        data={data}
-        columns={columns}
-        columnFilters={columnFilters}
-        defaultSorting={{ sortBy: "lastLoginSort" }}
-        footerMeta={<FooterMeta filteredData={filteredData ?? undefined} />}
-        onRowsChange={setFilteredData}
-      />
-    </div>
+    <ServerDataTable
+      data={data}
+      columns={columns}
+      sorting={sorting}
+      onSortingChange={onSortingChange}
+      pagination={pagination}
+      onPageChange={onPageChange}
+      onPageSizeChange={onPageSizeChange}
+      footerMeta={<FooterMeta total={pagination.total} />}
+    />
   );
 };

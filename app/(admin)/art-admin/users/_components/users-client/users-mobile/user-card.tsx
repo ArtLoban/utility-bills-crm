@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { MoreHorizontal } from "lucide-react";
+import { formatDistanceToNow } from "date-fns";
 
 import {
   DropdownMenu,
@@ -8,16 +9,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
-import { RECORD_STATUS } from "@/lib/types/record-status";
-import { TAdminUser } from "../../../_data/mock";
+import type { TAdminUserRow } from "@/features/admin-users/types";
 import { RoleBadge } from "../../../_components/role-badge";
 
 type TProps = {
-  user: TAdminUser;
+  user: TAdminUserRow;
 };
 
 export const UserCard = ({ user }: TProps) => {
-  const isDeleted = user.status === RECORD_STATUS.DELETED;
+  const isDeleted = user.deletedAt !== null;
 
   return (
     <div
@@ -41,11 +41,15 @@ export const UserCard = ({ user }: TProps) => {
         </DropdownMenu>
       </div>
 
-      <p className="mt-0.5 text-[12.5px] text-zinc-500 dark:text-zinc-400">{user.name}</p>
+      {user.name && (
+        <p className="mt-0.5 text-[12.5px] text-zinc-500 dark:text-zinc-400">{user.name}</p>
+      )}
 
       <p className="mt-0.5 text-xs text-zinc-400 tabular-nums dark:text-zinc-600">
         {user.propertiesCount} {user.propertiesCount === 1 ? "property" : "properties"} ·{" "}
-        {user.createdDisplay}
+        {user.lastLoginAt
+          ? formatDistanceToNow(user.lastLoginAt, { addSuffix: true })
+          : "never logged in"}
       </p>
 
       <div className="mt-2 flex items-center gap-1.5">

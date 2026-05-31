@@ -1,58 +1,71 @@
-import { useEffect } from "react";
+"use client";
+
+import { useEffect, useRef } from "react";
 import { useForm, useWatch } from "react-hook-form";
-import { parseAsInteger, useQueryStates } from "nuqs";
+import { parseAsInteger, parseAsString, useQueryStates } from "nuqs";
+import { useTranslations } from "next-intl";
 
 import { TableFilters } from "@/components/data-table/table-filters";
 import { SelectInput } from "@/components/select-input";
 import { FIRST_PAGE_INDEX_DEFAULT } from "@/components/data-table/data-table/constants";
-import { DATA_TABLE_PARAMS } from "@/components/data-table/data-table/types";
-import { getInitialValuesFromUrl } from "@/components/data-table/data-table/utils/get-initial-values-from-url";
-import { TSelectableEntity } from "@/components/select-input/types";
 import { SYSTEM_ROLES } from "@/lib/auth/constants";
-import { RECORD_STATUS } from "@/lib/types/record-status";
 
-import { INITIAL_FILTERS, URL_FIELDS } from "../constants";
-import { FiltersFormField, TFiltersFormValues } from "../types";
+type TFilterForm = {
+  systemRole: string | null;
+  status: string | null;
+};
 
-const ROLE_OPTIONS: TSelectableEntity[] = [
-  { id: SYSTEM_ROLES.ADMIN, name: "Admin" },
-  { id: SYSTEM_ROLES.USER, name: "User" },
-];
-
-const STATUS_OPTIONS: TSelectableEntity[] = [
-  { id: RECORD_STATUS.ACTIVE, name: "Active" },
-  { id: RECORD_STATUS.DELETED, name: "Deleted" },
-];
+const EMPTY_FILTERS: TFilterForm = { systemRole: null, status: null };
 
 export const FiltersBar = () => {
-  const [query, setQuery] = useQueryStates({
-    ...URL_FIELDS,
-    [DATA_TABLE_PARAMS.PAGE]: parseAsInteger.withDefault(FIRST_PAGE_INDEX_DEFAULT),
-  });
+  const t = useTranslations("adminUsers");
 
-  const form = useForm<TFiltersFormValues>({
-    defaultValues: getInitialValuesFromUrl(query, Object.values(FiltersFormField), INITIAL_FILTERS),
+  const [query, setQuery] = useQueryStates(
+    {
+      systemRole: parseAsString,
+      status: parseAsString,
+      page: parseAsInteger.withDefault(FIRST_PAGE_INDEX_DEFAULT),
+    },
+    { history: "replace", shallow: false },
+  );
+
+  const form = useForm<TFilterForm>({
+    defaultValues: { systemRole: query.systemRole, status: query.status },
   });
 
   const values = useWatch({ control: form.control });
 
+  const isFirstRender = useRef(true);
   useEffect(() => {
-    void setQuery({ ...values, [DATA_TABLE_PARAMS.PAGE]: FIRST_PAGE_INDEX_DEFAULT });
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    void setQuery({
+      systemRole: values.systemRole ?? null,
+      status: values.status ?? null,
+      page: FIRST_PAGE_INDEX_DEFAULT,
+    });
   }, [values, setQuery]);
 
-  const handleClear = () => form.reset(INITIAL_FILTERS);
+  const hasActiveFilters = Boolean(values.systemRole || values.status);
+  const handleClear = () => form.reset(EMPTY_FILTERS);
 
-  const hasActiveFilters = Object.values(values).some(Boolean);
+  const roleOptions = [
+    { id: SYSTEM_ROLES.ADMIN, name: t("filters.roleAdmin") },
+    { id: SYSTEM_ROLES.USER, name: t("filters.roleUser") },
+  ];
+
+  // null = "Active" (default, no explicit param). Options expose non-default statuses only.
+  const statusOptions = [
+    { id: "deleted", name: t("filters.statusDeleted") },
+    { id: "all", name: t("filters.statusAll") },
+  ];
 
   return (
     <TableFilters hasActiveFilters={hasActiveFilters} onClear={handleClear}>
-      <SelectInput form={form} field={FiltersFormField.ROLE} label="Role" options={ROLE_OPTIONS} />
-      <SelectInput
-        form={form}
-        field={FiltersFormField.STATUS}
-        label="Status"
-        options={STATUS_OPTIONS}
-      />
+      <SelectInput form={form} field="systemRole" label={t("filters.role")} options={roleOptions} />
+      <SelectInput form={form} field="status" label={t("filters.status")} options={statusOptions} />
     </TableFilters>
   );
 };

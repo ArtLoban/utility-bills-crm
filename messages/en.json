@@ -815,5 +815,66 @@
         }
       }
     }
+  },
+  "adminUsers": {
+    "title": "All users",
+    "meta": {
+      "total": "{count, plural, one {# user} other {# users}}"
+    },
+    "columns": {
+      "email": "Email",
+      "name": "Name",
+      "role": "Role",
+      "properties": "Properties",
+      "created": "Created",
+      "lastLogin": "Last login",
+      "status": "Status"
+    },
+    "filters": {
+      "role": "Role",
+      "roleAdmin": "Admin",
+      "roleUser": "User",
+      "status": "Status",
+      "statusDeleted": "Deleted",
+      "statusAll": "All users",
+      "mobile": {
+        "filters": "Filters",
+        "apply": "Apply",
+        "allRoles": "All roles",
+        "activeDefault": "Active (default)"
+      }
+    },
+    "footer": {
+      "users": "{count, plural, one {# user} other {# users}}"
+    },
+    "empty": {
+      "filtered": {
+        "title": "No users match your filters",
+        "cta": "Clear filters"
+      }
+    },
+    "detail": {
+      "joinedMeta": "Joined {date}",
+      "userInfo": "User info",
+      "fields": {
+        "email": "Email",
+        "name": "Name",
+        "systemRole": "System role",
+        "created": "Created",
+        "lastLogin": "Last login",
+        "lastLoginNever": "Never"
+      },
+      "properties": "Properties",
+      "propertiesDescription": "{count, plural, one {# property accessible to this user} other {# properties accessible to this user}}",
+      "propertiesEmpty": "This user has no access to any properties.",
+      "deletedBanner": {
+        "title": "This account is deleted",
+        "description": "Deleted on {date}. The user can no longer sign in. Account management is not available in the current version."
+      },
+      "footer": {
+        "userId": "User ID:",
+        "note": "Internal record. For support reference only."
+      }
+    }
   }
 }

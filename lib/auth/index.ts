@@ -65,7 +65,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     signIn: async ({ user }) => {
       if (!user.email) return true;
       const role = getAdminEmails().includes(user.email) ? "admin" : "user";
-      await db.update(users).set({ systemRole: role }).where(eq(users.email, user.email));
+      await db
+        .update(users)
+        .set({ systemRole: role, lastLoginAt: new Date() })
+        .where(eq(users.email, user.email));
       return true;
     },
   },
