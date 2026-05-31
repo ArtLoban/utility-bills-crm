@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { LayoutDashboard } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -25,7 +26,11 @@ const NAV_LINKS = [
   { key: "adminLanding", href: ROUTES.admin.landing },
 ];
 
-export const AdminNav = () => {
+type TProps = {
+  user: { image: string | null };
+};
+
+export const AdminNav = ({ user }: TProps) => {
   const pathname = usePathname();
   const router = useRouter();
   const t = useTranslations("nav");
@@ -60,7 +65,17 @@ export const AdminNav = () => {
 
             <DropdownMenu>
               <DropdownMenuTrigger aria-label="User menu" className="cursor-pointer">
-                <UserAvatarStub />
+                {user.image ? (
+                  <Image
+                    src={user.image}
+                    alt="Avatar"
+                    width={32}
+                    height={32}
+                    className="size-8 rounded-full object-cover"
+                  />
+                ) : (
+                  <UserAvatarStub />
+                )}
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
                 <DropdownMenuSeparator />
