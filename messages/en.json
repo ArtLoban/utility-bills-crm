@@ -981,6 +981,35 @@
       "properties": "Active properties",
       "bills": "Bills recorded",
       "deletedProperties": "Deleted properties"
+    },
+    "activity": {
+      "heading": "Recent activity",
+      "subheading": "Last 20 across the system.",
+      "property": {
+        "label": "New property",
+        "detail": "{name}"
+      },
+      "user": {
+        "label": "New user",
+        "detail": "{name}"
+      },
+      "service": {
+        "label": "{service} added",
+        "detail": "to {property}"
+      },
+      "bill": {
+        "label": "Bill recorded",
+        "detail": "{service} · {property}"
+      },
+      "payment": {
+        "label": "Payment recorded",
+        "detail": "{service} · {property}"
+      },
+      "reading": {
+        "label": "Reading submitted",
+        "detail": "{service} · {property}"
+      },
+      "empty": "No recent activity"
     }
   }
 }

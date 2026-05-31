@@ -466,7 +466,21 @@ Rationale: the "product-first" framing had begun to systematically under-scope f
 | 127 | `users.lastLoginAt` added to back the admin "Last login" column                                                        | derive from most recent session (unreliable); drop the column for MVP                                           | nullable column, written on sign-in |
 | 128 | Admin restore cascade scoped by the soft-delete event timestamp                                                        | blanket un-delete all currently-deleted children; dedicated cascade-id column                                   | `WHERE deletedAt = stamp` scoping   |
 | 129 | Admin restore / hard-delete modals reconciled from intercepting-route to `<ConfirmDialog>` pattern (#117)              | keep as intercepting-route modals                                                                               | ConfirmDialog + createSafeContext   |
+| 130 | Admin dashboard "recent activity" derived from `createdAt`, not an event table                                         | a real event/audit table; leaving the feed mocked                                                               | UNION ALL over 6 entity tables      |
 | 131 | Admin dashboard "soft-deleted" stat counts soft-deleted properties only, not all `deletedAt` rows                      | sum all `deletedAt` tables; count a curated subset of top-level entities                                        | soft-deleted properties count only  |
+
+> **#130 — admin dashboard "recent activity" derived from `createdAt`, not an event table.**
+> The dashboard's recent-activity feed has no backing audit/event table (consciously, per #25).
+> For MVP it is derived: the 20 most recent `createdAt` events across the core domain entities
+> (property, service, bill, payment, reading, user), newest first, rendered as localized
+> one-liners, display-only (no drill-down). Deletions and edits are excluded — deletions would
+> flood the feed via the soft-delete cascade (#128) and are already surfaced by the soft-deleted
+> stat and the Properties oversight list; `updatedAt` edits are uninformative without a diff we
+> don't store. Plumbing entities (contracts, tariffs, providers, account/payment details) are
+> excluded as low-signal. Alternatives: a real event/audit table (rejected — scope creep against
+> #25); leaving the feed mocked (rejected — cheap to derive and makes the dashboard real). Scale
+> note: at MVP volume the union + sort is trivial; a `createdAt` index per source table is the
+> lever if data grows, not MVP work.
 
 > **#122 — Ledger as a dedicated `features/ledger/` slice.** Balance, expected amount, and current debt computations live in their own feature slice, not inside `features/bills/` or `features/payments/` and not in `lib/`. Rationale: balance is a cross-domain concept — it arithmetically combines bills and payments and draws on tariffs and readings — and belongs to neither owning slice. A dedicated slice keeps domain boundaries honest and gives the pure, unit-testable computation core a clear home. Alternatives considered: placing it in one of the owning slices (rejected — blurs boundaries, forces cross-slice imports); placing it in `lib/` as a domain-agnostic utility (rejected — balance is domain logic, not a generic helper).
 

@@ -5,7 +5,7 @@ import { getFormatter, getTranslations } from "next-intl/server";
 
 import { requireAdmin } from "@/lib/auth/guards";
 import { shouldHideAsNotFound } from "@/lib/errors";
-import { getAdminDashboardStats } from "@/features/admin-dashboard";
+import { getAdminActivityFeed, getAdminDashboardStats } from "@/features/admin-dashboard";
 import { PageContainer } from "@/components/page-container";
 import { ActivityFeed } from "./_components/activity-feed";
 import { StatCard } from "./_components/stat-card";
@@ -22,8 +22,9 @@ export default async function AdminDashboardPage() {
     throw guard.error;
   }
 
-  const [stats, t, format] = await Promise.all([
+  const [stats, activityItems, t, format] = await Promise.all([
     getAdminDashboardStats(),
+    getAdminActivityFeed(),
     getTranslations("adminDashboard"),
     getFormatter(),
   ]);
@@ -60,7 +61,7 @@ export default async function AdminDashboardPage() {
             label={t("stats.deletedProperties")}
           />
         </div>
-        <ActivityFeed />
+        <ActivityFeed items={activityItems} />
       </div>
     </PageContainer>
   );

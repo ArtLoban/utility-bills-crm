@@ -941,6 +941,35 @@
       "properties": "Активные объекты",
       "bills": "Счета",
       "deletedProperties": "Удалённые объекты"
+    },
+    "activity": {
+      "heading": "Последняя активность",
+      "subheading": "Последние 20 событий в системе.",
+      "property": {
+        "label": "Новый объект",
+        "detail": "{name}"
+      },
+      "user": {
+        "label": "Новый пользователь",
+        "detail": "{name}"
+      },
+      "service": {
+        "label": "Добавлена услуга {service}",
+        "detail": "к {property}"
+      },
+      "bill": {
+        "label": "Счёт добавлен",
+        "detail": "{service} · {property}"
+      },
+      "payment": {
+        "label": "Платёж записан",
+        "detail": "{service} · {property}"
+      },
+      "reading": {
+        "label": "Показание внесено",
+        "detail": "{service} · {property}"
+      },
+      "empty": "Нет последней активности"
     }
   }
 }

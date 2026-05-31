@@ -941,6 +941,35 @@
       "properties": "Активні об'єкти",
       "bills": "Рахунки",
       "deletedProperties": "Видалені об'єкти"
+    },
+    "activity": {
+      "heading": "Остання активність",
+      "subheading": "Останні 20 подій у системі.",
+      "property": {
+        "label": "Новий об'єкт",
+        "detail": "{name}"
+      },
+      "user": {
+        "label": "Новий користувач",
+        "detail": "{name}"
+      },
+      "service": {
+        "label": "Додано послугу {service}",
+        "detail": "до {property}"
+      },
+      "bill": {
+        "label": "Рахунок додано",
+        "detail": "{service} · {property}"
+      },
+      "payment": {
+        "label": "Платіж записано",
+        "detail": "{service} · {property}"
+      },
+      "reading": {
+        "label": "Показник внесено",
+        "detail": "{service} · {property}"
+      },
+      "empty": "Немає останньої активності"
     }
   }
 }
