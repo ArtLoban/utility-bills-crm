@@ -14,6 +14,11 @@ const getSessionToken = (req: NextRequest) =>
 
 export const proxy = (req: NextRequest) => {
   if (!getSessionToken(req)) {
+    if (req.nextUrl.pathname.startsWith(ROUTES.admin.root)) {
+      // Anonymous requests to /art-admin get a 404, not a login redirect.
+      // This hides the section's existence (#108).
+      return NextResponse.rewrite(new URL("/_not-found", req.url));
+    }
     return NextResponse.redirect(new URL(ROUTES.login, req.url));
   }
 
@@ -33,5 +38,5 @@ export const proxy = (req: NextRequest) => {
 };
 
 export const config = {
-  matcher: ["/dashboard/:path*"],
+  matcher: ["/dashboard/:path*", "/art-admin/:path*"],
 };
