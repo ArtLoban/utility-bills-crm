@@ -972,5 +972,15 @@
       "restored": "Property restored successfully.",
       "hardDeleted": "Property permanently deleted."
     }
+  },
+  "adminDashboard": {
+    "title": "Admin dashboard",
+    "meta": "System-wide overview.",
+    "stats": {
+      "users": "Total users",
+      "properties": "Active properties",
+      "bills": "Bills recorded",
+      "deletedProperties": "Deleted properties"
+    }
   }
 }
