@@ -15,6 +15,7 @@ declare module "next-auth" {
       systemRole: TSystemRole;
       locale: TLocale;
       theme: TTheme;
+      ruLocaleEnabled: boolean;
     } & DefaultSession["user"];
   }
 }
@@ -26,6 +27,7 @@ declare module "@auth/core/adapters" {
     systemRole: TSystemRole;
     locale: TLocale;
     theme: TTheme;
+    ruLocaleEnabled: boolean;
   }
 }
 
@@ -55,6 +57,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       session.user.systemRole = user.systemRole;
       session.user.locale = user.locale;
       session.user.theme = user.theme;
+      session.user.ruLocaleEnabled = user.ruLocaleEnabled;
       return session;
     },
     // Idempotent: promotes to admin if email is in ADMIN_EMAILS, demotes otherwise.

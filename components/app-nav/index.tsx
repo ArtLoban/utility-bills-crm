@@ -50,7 +50,7 @@ export const AppNav = ({ user }: TProps) => {
 
         <div className="ml-auto flex items-center gap-1">
           <div className="hidden items-center gap-1 md:flex">
-            <LanguageSwitcher />
+            <LanguageSwitcher ruEnabled={user.ruLocaleEnabled} />
             <ThemeToggle />
             <div className="bg-border mx-2 h-5 w-px" />
           </div>

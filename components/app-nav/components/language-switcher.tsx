@@ -3,7 +3,7 @@
 import { Check, Globe } from "lucide-react";
 import { useLocale } from "next-intl";
 import { useRouter } from "next/navigation";
-import { LOCALE_LIST, LOCALE_CONFIG } from "@/lib/locale/constants";
+import { LOCALE_CONFIG, getAvailableLocales } from "@/lib/locale/constants";
 import type { TLocale } from "@/lib/locale/constants";
 import { setLocale } from "@/lib/locale/actions";
 import {
@@ -15,9 +15,18 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { LocaleFlag } from "./locale-flag";
 
-export const LanguageSwitcher = () => {
+type TProps = {
+  ruEnabled: boolean;
+};
+
+export const LanguageSwitcher = ({ ruEnabled }: TProps) => {
   const router = useRouter();
   const currentLocale = useLocale();
+
+  const availableLocales = getAvailableLocales({
+    ruEnabled,
+    activeLocale: currentLocale as TLocale,
+  });
 
   const handleSelect = async (locale: TLocale) => {
     await setLocale(locale);
@@ -36,7 +45,7 @@ export const LanguageSwitcher = () => {
         <DropdownMenuLabel className="px-3 pt-2.5 pb-2 text-[11px] tracking-wider uppercase">
           Language
         </DropdownMenuLabel>
-        {LOCALE_LIST.map((locale) => {
+        {availableLocales.map((locale) => {
           const config = LOCALE_CONFIG[locale];
           const active = locale === currentLocale;
           return (

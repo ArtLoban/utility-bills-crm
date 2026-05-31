@@ -4,8 +4,9 @@ import { ChevronDown } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import { LOCALE_LIST, LOCALE_CONFIG, type TLocale } from "@/lib/locale/constants";
-import { setLocale } from "@/lib/locale/actions";
+import { LOCALE_CONFIG, getAvailableLocales, type TLocale } from "@/lib/locale/constants";
+import { setLocale, setRuLocaleEnabled } from "@/lib/locale/actions";
+import { Switch } from "@/components/ui/switch";
 import {
   FieldHint,
   FieldLabel,
@@ -45,15 +46,31 @@ const NativeSelect = ({ options, value, onChange, disabled }: TNativeSelectProps
   </div>
 );
 
-const LANGUAGE_OPTIONS = LOCALE_LIST.map((l) => ({ value: l, label: LOCALE_CONFIG[l].label }));
+type TProps = {
+  ruLocaleEnabled: boolean;
+};
 
-const PreferencesSection = () => {
+const PreferencesSection = ({ ruLocaleEnabled }: TProps) => {
   const t = useTranslations("settings.preferences");
   const router = useRouter();
   const currentLocale = useLocale();
 
+  const availableLocales = getAvailableLocales({
+    ruEnabled: ruLocaleEnabled,
+    activeLocale: currentLocale as TLocale,
+  });
+  const languageOptions = availableLocales.map((l) => ({
+    value: l,
+    label: LOCALE_CONFIG[l].label,
+  }));
+
   const handleLocaleChange = async (locale: string) => {
     await setLocale(locale as TLocale);
+    router.refresh();
+  };
+
+  const handleRuLocaleToggle = async (enabled: boolean) => {
+    await setRuLocaleEnabled(enabled);
     router.refresh();
   };
 
@@ -65,11 +82,17 @@ const PreferencesSection = () => {
         <div>
           <FieldLabel>{t("language.label")}</FieldLabel>
           <NativeSelect
-            options={LANGUAGE_OPTIONS}
+            options={languageOptions}
             value={currentLocale}
             onChange={handleLocaleChange}
           />
           <FieldHint>{t("language.hint")}</FieldHint>
+          <label className="mt-3 flex cursor-pointer items-center justify-between gap-3">
+            <span className="text-sm text-zinc-700 dark:text-zinc-300">
+              {t("language.showRussian")}
+            </span>
+            <Switch checked={ruLocaleEnabled} onCheckedChange={handleRuLocaleToggle} />
+          </label>
         </div>
 
         {/* Theme */}

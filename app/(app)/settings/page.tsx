@@ -17,7 +17,7 @@ export default async function SettingsPage() {
   const session = await auth();
   if (!session) redirect(ROUTES.login);
 
-  const { name, email, image } = session.user;
+  const { name, email, image, ruLocaleEnabled } = session.user;
 
   return (
     <div className="flex-1 bg-zinc-50 dark:bg-zinc-950">
@@ -31,7 +31,7 @@ export default async function SettingsPage() {
 
         <div style={{ maxWidth: 640, display: "flex", flexDirection: "column", gap: 28 }}>
           <ProfileSection name={name ?? null} email={email ?? null} image={image ?? null} />
-          <PreferencesSection />
+          <PreferencesSection ruLocaleEnabled={ruLocaleEnabled} />
           <AccountSection email={email ?? null} />
         </div>
       </div>

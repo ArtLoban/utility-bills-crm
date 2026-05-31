@@ -12,7 +12,7 @@ export default async function AppLayout({ children }: Props) {
   const session = await auth();
   if (!session) redirect(ROUTES.login);
 
-  const { id, name, email, image, systemRole } = session.user;
+  const { id, name, email, image, systemRole, ruLocaleEnabled } = session.user;
 
   return (
     <div className="flex min-h-full flex-col">
@@ -23,6 +23,7 @@ export default async function AppLayout({ children }: Props) {
           email: email ?? null,
           image: image ?? null,
           systemRole,
+          ruLocaleEnabled,
         }}
       />
       <div className="flex flex-1 flex-col">{children}</div>

@@ -756,7 +756,8 @@
       "description": "How the app looks and behaves for you.",
       "language": {
         "label": "Language",
-        "hint": "The language of the app interface."
+        "hint": "The language of the app interface.",
+        "showRussian": "Show Russian in the language list"
       },
       "theme": {
         "label": "Theme",

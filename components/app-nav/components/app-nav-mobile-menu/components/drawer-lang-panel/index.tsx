@@ -4,20 +4,27 @@ import { Check, ChevronLeft } from "lucide-react";
 import { useLocale } from "next-intl";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { LOCALE_LIST, LOCALE_CONFIG } from "@/lib/locale/constants";
+import { LOCALE_CONFIG, getAvailableLocales } from "@/lib/locale/constants";
+import type { TLocale } from "@/lib/locale/constants";
 import { setLocale } from "@/lib/locale/actions";
 import { LocaleFlag } from "@/components/app-nav/components/locale-flag";
 
 type TProps = {
+  ruEnabled: boolean;
   onBack: () => void;
 };
 
-export const DrawerLangPanel = ({ onBack }: TProps) => {
+export const DrawerLangPanel = ({ ruEnabled, onBack }: TProps) => {
   const router = useRouter();
   const currentLocale = useLocale();
 
+  const availableLocales = getAvailableLocales({
+    ruEnabled,
+    activeLocale: currentLocale as TLocale,
+  });
+
   const handleSelect = async (locale: string) => {
-    await setLocale(locale as Parameters<typeof setLocale>[0]);
+    await setLocale(locale as TLocale);
     router.refresh();
     onBack();
   };
@@ -34,7 +41,7 @@ export const DrawerLangPanel = ({ onBack }: TProps) => {
 
       <p className="px-3 pb-3 text-[17px] font-semibold tracking-tight">Choose language</p>
 
-      {LOCALE_LIST.map((locale) => {
+      {availableLocales.map((locale) => {
         const config = LOCALE_CONFIG[locale];
         const active = locale === currentLocale;
 

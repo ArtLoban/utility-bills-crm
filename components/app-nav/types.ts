@@ -6,6 +6,7 @@ export type TNavUser = {
   email: string | null;
   image: string | null;
   systemRole: TSystemRole;
+  ruLocaleEnabled: boolean;
 };
 
 export type TLink = {

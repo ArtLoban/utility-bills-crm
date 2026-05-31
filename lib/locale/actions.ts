@@ -29,3 +29,13 @@ export const setLocale = async (locale: TLocale) => {
     .set({ locale })
     .where(eq(users.id, session.user.id as UserId));
 };
+
+export const setRuLocaleEnabled = async (enabled: boolean) => {
+  const session = await auth();
+  if (!session?.user?.id) return;
+
+  await db
+    .update(users)
+    .set({ ruLocaleEnabled: enabled })
+    .where(eq(users.id, session.user.id as UserId));
+};

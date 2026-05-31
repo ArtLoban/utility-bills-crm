@@ -48,7 +48,7 @@ export const AppNavMobileMenu = ({ links, user }: TProps) => {
             </div>
           </>
         ) : (
-          <DrawerLangPanel onBack={() => setView("main")} />
+          <DrawerLangPanel ruEnabled={user.ruLocaleEnabled} onBack={() => setView("main")} />
         )}
       </SheetContent>
     </Sheet>
