@@ -791,6 +791,29 @@
         "label": "Timezone",
         "hint": "Timezone selection comes in a future release. Times are shown in Europe/Kyiv for now."
       }
+    },
+    "account": {
+      "title": "Account",
+      "description": "Sign-in and session management.",
+      "google": {
+        "badge": "Signed in with Google"
+      },
+      "sessions": {
+        "title": "Active sessions",
+        "comingSoon": "Per-device session management is coming in a future release."
+      },
+      "signOutEverywhere": {
+        "title": "Sign out everywhere",
+        "description": "This signs you out on all browsers and devices, including this one. You'll need to sign in again.",
+        "button": "Sign out of all devices",
+        "dialog": {
+          "title": "Sign out of all devices?",
+          "description": "This will end your sessions on every browser and device, including this one.",
+          "secondaryText": "You'll be redirected to the sign-in page.",
+          "confirm": "Sign out everywhere",
+          "cancel": "Cancel"
+        }
+      }
     }
   }
 }

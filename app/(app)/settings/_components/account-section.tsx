@@ -1,9 +1,12 @@
 "use client";
 
-import { signOut } from "next-auth/react";
+import { useState, useTransition } from "react";
+import { LogOut } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
-import { ROUTES } from "@/lib/routes";
+import { ConfirmDialog } from "@/components/confirm-dialog";
+import { signOutAllDevices } from "@/lib/auth/actions";
 
 import { SettingsCard, SettingsCardBody, SettingsCardHeader } from "./settings-card";
 
@@ -32,50 +35,79 @@ const GoogleGIcon = () => (
   </svg>
 );
 
-const AccountSection = ({ email }: TProps) => (
-  <SettingsCard>
-    <SettingsCardHeader title="Account" description="Sign-in and session management." />
-    <SettingsCardBody>
-      {/* Google info row */}
-      <div className="flex items-center gap-3 rounded-lg border border-zinc-200 bg-zinc-50 p-3 dark:border-zinc-800 dark:bg-zinc-800/50">
-        <GoogleGIcon />
-        <div>
-          <div className="text-xs text-zinc-500 dark:text-zinc-400">Signed in with Google</div>
-          <div className="text-sm font-medium text-zinc-950 dark:text-zinc-50">{email ?? "—"}</div>
-        </div>
-      </div>
+const AccountSection = ({ email }: TProps) => {
+  const t = useTranslations("settings.account");
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
-      {/* Active sessions */}
-      <div>
-        <div className="mb-1 text-sm font-medium text-zinc-950 dark:text-zinc-50">
-          Active sessions
-        </div>
-        <p className="text-sm leading-[1.6] text-zinc-500 dark:text-zinc-400">
-          Per-device session management is coming in a future release.
-        </p>
-      </div>
+  const handleConfirm = () => {
+    startTransition(async () => {
+      await signOutAllDevices();
+    });
+  };
 
-      <hr className="border-zinc-200 dark:border-zinc-700" />
+  return (
+    <>
+      <SettingsCard>
+        <SettingsCardHeader title={t("title")} description={t("description")} />
+        <SettingsCardBody>
+          {/* Google info row */}
+          <div className="flex items-center gap-3 rounded-lg border border-zinc-200 bg-zinc-50 p-3 dark:border-zinc-800 dark:bg-zinc-800/50">
+            <GoogleGIcon />
+            <div>
+              <div className="text-xs text-zinc-500 dark:text-zinc-400">{t("google.badge")}</div>
+              <div className="text-sm font-medium text-zinc-950 dark:text-zinc-50">
+                {email ?? "—"}
+              </div>
+            </div>
+          </div>
 
-      {/* Sign out everywhere */}
-      <div>
-        <div className="mb-1.5 text-sm font-semibold text-zinc-950 dark:text-zinc-50">
-          Sign out everywhere
-        </div>
-        <p className="mb-3.5 text-sm leading-[1.65] text-zinc-500 dark:text-zinc-400">
-          This signs you out on all browsers and devices, including this one. You&apos;ll need to
-          sign in again.
-        </p>
-        <Button
-          variant="destructive"
-          onClick={() => signOut({ callbackUrl: ROUTES.login })}
-          style={{ height: 36 }}
-        >
-          Sign out of all devices
-        </Button>
-      </div>
-    </SettingsCardBody>
-  </SettingsCard>
-);
+          {/* Active sessions */}
+          <div>
+            <div className="mb-1 text-sm font-medium text-zinc-950 dark:text-zinc-50">
+              {t("sessions.title")}
+            </div>
+            <p className="text-sm leading-[1.6] text-zinc-500 dark:text-zinc-400">
+              {t("sessions.comingSoon")}
+            </p>
+          </div>
+
+          <hr className="border-zinc-200 dark:border-zinc-700" />
+
+          {/* Sign out everywhere */}
+          <div>
+            <div className="mb-1.5 text-sm font-semibold text-zinc-950 dark:text-zinc-50">
+              {t("signOutEverywhere.title")}
+            </div>
+            <p className="mb-3.5 text-sm leading-[1.65] text-zinc-500 dark:text-zinc-400">
+              {t("signOutEverywhere.description")}
+            </p>
+            <Button
+              variant="destructive"
+              onClick={() => setDialogOpen(true)}
+              style={{ height: 36 }}
+            >
+              {t("signOutEverywhere.button")}
+            </Button>
+          </div>
+        </SettingsCardBody>
+      </SettingsCard>
+
+      <ConfirmDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        title={t("signOutEverywhere.dialog.title")}
+        tone="destructive"
+        icon={<LogOut size={22} />}
+        description={t("signOutEverywhere.dialog.description")}
+        secondaryText={t("signOutEverywhere.dialog.secondaryText")}
+        confirmLabel={t("signOutEverywhere.dialog.confirm")}
+        cancelLabel={t("signOutEverywhere.dialog.cancel")}
+        isPending={isPending}
+        onConfirm={handleConfirm}
+      />
+    </>
+  );
+};
 
 export { AccountSection };
