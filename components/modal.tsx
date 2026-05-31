@@ -9,7 +9,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
+import { Loader2, type LucideIcon } from "lucide-react";
 
 type TSize = "sm" | "md" | "lg";
 
@@ -25,11 +25,13 @@ export type TProps = {
   children?: ReactNode;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSubmit?: () => void;
-  submitText?: string;
+  onConfirm?: () => void;
+  confirmLabel?: string;
+  confirmIcon?: LucideIcon;
   canSave?: boolean;
   isSaving?: boolean;
   size?: TSize;
+  variant?: "default" | "warning" | "destructive" | "strongDestructive";
 };
 
 export const Modal = (props: TProps) => {
@@ -39,11 +41,13 @@ export const Modal = (props: TProps) => {
     children,
     open,
     onOpenChange,
-    onSubmit,
-    submitText = "Save",
+    onConfirm,
+    confirmLabel = "Save",
+    confirmIcon: ConfirmIcon,
     canSave = true,
     isSaving = false,
     size = "md",
+    variant = "default",
   } = props;
 
   return (
@@ -58,15 +62,18 @@ export const Modal = (props: TProps) => {
           <Button variant="outline" asChild>
             <DialogClose>Cancel</DialogClose>
           </Button>
-          <Button type="button" onClick={onSubmit} disabled={isSaving || !canSave}>
+          <Button
+            type="button"
+            onClick={onConfirm}
+            disabled={isSaving || !canSave}
+            variant={variant}
+          >
             {isSaving ? (
-              <>
-                <Loader2 size={14} className="animate-spin" />
-                Saving…
-              </>
+              <Loader2 size={14} className="animate-spin" />
             ) : (
-              submitText
+              ConfirmIcon && <ConfirmIcon />
             )}
+            {confirmLabel}
           </Button>
         </DialogFooter>
       </DialogContent>

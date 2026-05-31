@@ -36,8 +36,8 @@ export const PaymentModal = ({ payment, propertyOptions, serviceOptions }: TProp
       open={true}
       onOpenChange={(open) => !open && onClose()}
       title={isEditMode ? "Edit Payment" : "Record Payment"}
-      submitText={isEditMode ? "Update" : "Record Payment"}
-      onSubmit={handleSave}
+      confirmLabel={isEditMode ? "Update" : "Record Payment"}
+      onConfirm={handleSave}
       isSaving={isSaving}
     >
       <PaymentForm

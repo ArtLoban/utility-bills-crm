@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { MoreHorizontal, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
-import { ConfirmDialog } from "@/components/confirm-dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,6 +13,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { softDeleteService } from "@/features/services";
 import type { TServiceId } from "@/lib/db/schema/services";
+import { IconBadge } from "@/components/icon-badge";
+import { Modal } from "@/components/modal";
 
 type TProps = {
   serviceId: TServiceId;
@@ -63,24 +64,26 @@ const DeleteServiceAction = ({ serviceId, propertyId, serviceName }: TProps) => 
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-
-      <ConfirmDialog
+      <Modal
+        title="Delete service"
         open={confirmOpen}
         onOpenChange={setConfirmOpen}
-        title="Delete service"
-        tone="destructive"
-        icon={<Trash2 size={28} />}
-        description={
-          <>
-            Delete <strong>{serviceName}</strong> from this property?
-          </>
-        }
-        warningText="All linked contracts, meters, readings, bills, and payments will also be removed."
-        confirmLabel="Delete"
-        confirmIcon={<Trash2 size={14} />}
-        isPending={isDeleting}
         onConfirm={handleDelete}
-      />
+        variant="strongDestructive"
+        confirmIcon={Trash2}
+        confirmLabel="Delete"
+        isSaving={isDeleting}
+      >
+        <div className="my-3 flex flex-col items-center gap-4">
+          <IconBadge icon={Trash2} color="var(--destructive)" size="lg" border={true} />
+          <p className="text-center text-sm">
+            Delete <strong>{serviceName}</strong> from this property?
+          </p>
+          <p className="text-destructive text-center text-sm leading-snug font-semibold">
+            All linked contracts, meters, readings, bills, and payments will also be removed.
+          </p>
+        </div>
+      </Modal>
     </>
   );
 };

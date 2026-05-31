@@ -31,8 +31,8 @@ export const ChangeProviderModal = ({ serviceId, currentProviderId, providers }:
       open
       onOpenChange={(open) => !open && onClose()}
       title={t("modal.changeProvider.title")}
-      submitText={t("modal.changeProvider.submit")}
-      onSubmit={handleSave}
+      confirmLabel={t("modal.changeProvider.submit")}
+      onConfirm={handleSave}
       isSaving={isSaving}
       canSave={canSave && availableProviders.length > 0}
     >

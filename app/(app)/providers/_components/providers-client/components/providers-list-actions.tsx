@@ -1,12 +1,13 @@
 import { createSafeContext } from "@/lib/utils/create-safe-context";
 import type { TProvider } from "@/lib/db/schema";
 import { ReactNode, useState } from "react";
-import { ConfirmDialog } from "@/components/confirm-dialog";
 import { Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { softDeleteProvider } from "@/features/providers";
 import { toast } from "sonner";
+import { IconBadge } from "@/components/icon-badge";
+import { Modal } from "@/components/modal";
 
 type TProviderActionsContext = {
   requestDelete: (provider: TProvider) => void;
@@ -52,23 +53,26 @@ export const ProvidersListActions = ({ children }: { children: ReactNode }) => {
   return (
     <ProviderActionsContext value={{ requestDelete: setItemToDelete }}>
       {children}
-      <ConfirmDialog
+      <Modal
+        title={t("delete.title")}
         open={itemToDelete !== null}
         onOpenChange={(open) => !open && setItemToDelete(null)}
-        title={t("delete.title")}
-        tone="destructive"
-        icon={<Trash2 size={28} />}
-        description={
-          <>
-            {t("delete.descriptionPrefix")} <strong>{itemToDelete?.name}</strong>?
-          </>
-        }
-        warningText={t("delete.description")}
-        confirmLabel={t("delete.menuItem")}
-        confirmIcon={<Trash2 size={14} />}
-        isPending={isDeleting}
         onConfirm={handleDelete}
-      />
+        variant="strongDestructive"
+        confirmIcon={Trash2}
+        confirmLabel={t("delete.menuItem")}
+        isSaving={isDeleting}
+      >
+        <div className="my-3 flex flex-col items-center gap-4">
+          <IconBadge icon={Trash2} color="var(--destructive)" size="lg" border={true} />
+          <p className="text-center text-sm">
+            {t("delete.descriptionPrefix")} <strong>{itemToDelete?.name}</strong>?
+          </p>
+          <p className="text-destructive text-sm leading-snug font-semibold">
+            {t("delete.description")}
+          </p>
+        </div>
+      </Modal>
     </ProviderActionsContext>
   );
 };

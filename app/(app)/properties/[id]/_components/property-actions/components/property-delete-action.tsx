@@ -13,10 +13,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ConfirmDialog } from "@/components/confirm-dialog";
 import { softDeleteProperty } from "@/features/properties";
 import { ROUTES } from "@/lib/routes";
 import type { PropertyId, TPropertyRole } from "@/lib/db/schema/properties";
+import { IconBadge } from "@/components/icon-badge";
+import { Modal } from "@/components/modal";
 
 type TProps = {
   propertyId: PropertyId;
@@ -67,23 +68,26 @@ export const PropertyDeleteAction = ({ propertyId, propertyName, role }: TProps)
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <ConfirmDialog
+      <Modal
+        title={t("delete.title")}
         open={confirmOpen}
         onOpenChange={setConfirmOpen}
-        title={t("delete.title")}
-        tone="destructive"
-        icon={<Trash2 size={28} />}
-        description={
-          <>
-            {t("delete.descriptionPrefix")} <strong>{propertyName}</strong>?
-          </>
-        }
-        warningText={t("delete.description")}
-        confirmLabel={t("delete.menuItem")}
-        confirmIcon={<Trash2 size={14} />}
-        isPending={isDeleting}
         onConfirm={handleDelete}
-      />
+        variant="strongDestructive"
+        confirmIcon={Trash2}
+        confirmLabel={t("delete.menuItem")}
+        isSaving={isDeleting}
+      >
+        <div className="my-3 flex flex-col items-center gap-4">
+          <IconBadge icon={Trash2} color="var(--destructive)" size="lg" border={true} />
+          <p className="text-center text-sm">
+            {t("delete.descriptionPrefix")} <strong>{propertyName}</strong>?
+          </p>
+          <p className="text-destructive text-sm leading-snug font-semibold">
+            This action cannot be undone.
+          </p>
+        </div>
+      </Modal>
     </>
   );
 };

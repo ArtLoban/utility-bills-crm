@@ -76,6 +76,7 @@
     --accent-foreground: var(--neutral-900);
     --destructive: var(--red-600);
     --success: var(--green-500);
+    --warning: var(--amber-500);
     --border: var(--neutral-200);
     --input: var(--neutral-200);
     --ring: var(--purple-600);
@@ -110,7 +111,7 @@
     --service-intercom: var(--sky-500);
     --service-hoa-fees: var(--lime-500);
 
-    /* Brand: DevNote. Custom */
+    /* Brand: DevNote. Custom TODO: reuse this where needed! */
     --brand: var(--purple-600);
     --brand-bg: var(--purple-50);
     --brand-border: var(--purple-100);
@@ -127,7 +128,12 @@
     /* Landing: hero glow (hero-section.tsx — one consumer, kept global) */
     --hero-glow: oklch(0.498 0.258 292.3 / 10%);
 
-    /* ConfirmDialog tone tokens (Layer 3: component) */
+    /* ConfirmDialog. DevNote. Custom */
+    --confirm-default: var(--purple-600);
+    --confirm-warning: var(--amber-500);
+    --confirm-destructive: var(--destructive);
+
+    /* ConfirmDialog tone tokens (Layer 3: component) TODO: Remove! */
     --confirm-destructive-icon-bg: color-mix(in oklch, var(--destructive) 12%, transparent);
     --confirm-destructive-icon-border: color-mix(in oklch, var(--destructive) 28%, transparent);
     --confirm-warning-icon-bg: color-mix(in oklch, var(--amber-500) 12%, transparent);

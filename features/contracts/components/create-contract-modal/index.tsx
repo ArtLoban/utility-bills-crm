@@ -28,8 +28,8 @@ export const CreateContractModal = ({ serviceId, providers }: TProps) => {
       open
       onOpenChange={(open) => !open && onClose()}
       title={t("modal.add.title")}
-      submitText={t("modal.add.submit")}
-      onSubmit={handleSave}
+      confirmLabel={t("modal.add.submit")}
+      onConfirm={handleSave}
       isSaving={isSaving}
       canSave={canSave && providers.length > 0}
     >

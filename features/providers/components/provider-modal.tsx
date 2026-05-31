@@ -25,8 +25,8 @@ export const ProviderModal = ({ provider }: TProps) => {
       open
       onOpenChange={(open) => !open && onClose()}
       title={t(isEditMode ? "modal.edit.title" : "modal.add.title")}
-      submitText={t(isEditMode ? "modal.edit.submit" : "modal.add.submit")}
-      onSubmit={handleSave}
+      confirmLabel={t(isEditMode ? "modal.edit.submit" : "modal.add.submit")}
+      onConfirm={handleSave}
       isSaving={isSaving}
       canSave={canSave}
     >
