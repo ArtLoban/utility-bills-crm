@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
+import { Loader2 } from "lucide-react";
 
+import { PROFILE_LIMITS } from "@/features/profile";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -13,7 +15,8 @@ import {
   SettingsCardBody,
   SettingsCardFooter,
   SettingsCardHeader,
-} from "./settings-card";
+} from "../settings-card";
+import { useProfileForm } from "./hooks/use-profile-form";
 
 type TProps = {
   name: string | null;
@@ -22,18 +25,15 @@ type TProps = {
 };
 
 const ProfileSection = ({ name, email, image }: TProps) => {
-  const initialName = name ?? "";
-  const [currentName, setCurrentName] = useState(initialName);
-  const [savedName, setSavedName] = useState(initialName);
-  const dirty = currentName !== savedName;
-
+  const t = useTranslations("settings.profile");
   const initials = (name ?? "?").charAt(0).toUpperCase();
-
-  const handleSave = () => setSavedName(currentName);
+  const { currentName, nameError, isSaving, dirty, handleNameChange, handleSave } = useProfileForm(
+    name ?? "",
+  );
 
   return (
     <SettingsCard>
-      <SettingsCardHeader title="Profile" description="Your basic information." />
+      <SettingsCardHeader title={t("title")} description={t("description")} />
       <SettingsCardBody>
         {/* Avatar row */}
         <div className="flex items-center gap-4">
@@ -51,30 +51,33 @@ const ProfileSection = ({ name, email, image }: TProps) => {
             </div>
           )}
           <p className="max-w-[340px] text-sm leading-[1.6] text-zinc-500 dark:text-zinc-400">
-            Your avatar comes from Google. Sign in with a different Google account to change it.
+            {t("avatarHint")}
           </p>
         </div>
 
         {/* Name */}
         <div>
-          <FieldLabel>Name</FieldLabel>
+          <FieldLabel>{t("name.label")}</FieldLabel>
           <Input
             value={currentName}
-            onChange={(e) => setCurrentName(e.target.value)}
+            onChange={(e) => handleNameChange(e.target.value)}
+            maxLength={PROFILE_LIMITS.name}
             className="h-9"
           />
+          {nameError && <p className="text-destructive mt-[5px] text-xs">{nameError}</p>}
         </div>
 
         {/* Email */}
         <div>
-          <FieldLabel>Email</FieldLabel>
+          <FieldLabel>{t("email.label")}</FieldLabel>
           <Input value={email ?? ""} disabled className="h-9" />
-          <FieldHint>Managed by Google. Sign in with a different account to change.</FieldHint>
+          <FieldHint>{t("email.hint")}</FieldHint>
         </div>
       </SettingsCardBody>
       <SettingsCardFooter>
-        <Button disabled={!dirty} onClick={handleSave} style={{ height: 36 }}>
-          Save changes
+        <Button disabled={!dirty || isSaving} onClick={handleSave} className="h-9">
+          {isSaving && <Loader2 className="size-4 animate-spin" />}
+          {t("saveButton")}
         </Button>
       </SettingsCardFooter>
     </SettingsCard>

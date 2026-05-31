@@ -751,6 +751,28 @@
     }
   },
   "settings": {
+    "profile": {
+      "title": "Profile",
+      "description": "Your basic information.",
+      "avatarHint": "Your avatar comes from Google. Sign in with a different Google account to change it.",
+      "name": {
+        "label": "Name"
+      },
+      "email": {
+        "label": "Email",
+        "hint": "Managed by Google. Sign in with a different account to change."
+      },
+      "saveButton": "Save changes",
+      "validation": {
+        "name": {
+          "required": "Name is required.",
+          "tooLong": "Name must be 100 characters or less."
+        }
+      },
+      "toast": {
+        "saved": "Name updated."
+      }
+    },
     "preferences": {
       "title": "Preferences",
       "description": "How the app looks and behaves for you.",
