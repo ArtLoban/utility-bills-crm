@@ -31,7 +31,7 @@ export const PropertiesClient = ({ properties }: TProps) => {
         <Properties properties={properties} />
       ) : (
         <EmptyStateCard
-          icon={<Home size={40} className="text-zinc-500" />}
+          icon={Home}
           title={t("empty.title")}
           body={t("empty.body")}
           cta={addButton}

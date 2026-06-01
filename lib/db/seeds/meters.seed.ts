@@ -12,7 +12,7 @@ import { meters } from "../schema/meters";
 import { properties } from "../schema/properties";
 import { serviceTypes } from "../schema/service-types";
 import { propertyAccess } from "../schema/properties";
-import type { TServiceTypeCode } from "@/lib/constants/service-types";
+import { TServiceTypeCode } from "@/features/services/service-type";
 
 type TSeedEntry = {
   propertyName: string;

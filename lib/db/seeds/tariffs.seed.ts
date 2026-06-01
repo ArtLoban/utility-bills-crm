@@ -13,7 +13,7 @@ import { tariffs } from "../schema/tariffs";
 import { properties } from "../schema/properties";
 import { serviceTypes } from "../schema/service-types";
 import { services } from "../schema/services";
-import type { TServiceTypeCode } from "@/lib/constants/service-types";
+import { TServiceTypeCode } from "@/features/services/service-type";
 
 // Two tariff records per contract: one closed, one current (validTo = NULL).
 // For metered services both metered and fixed shapes are represented in history.

@@ -12,7 +12,7 @@ import { bills } from "../schema/bills";
 import { properties, propertyAccess } from "../schema/properties";
 import { services } from "../schema/services";
 import { serviceTypes } from "../schema/service-types";
-import type { TServiceTypeCode } from "@/lib/constants/service-types";
+import { TServiceTypeCode } from "@/features/services/service-type";
 
 type TSeedEntry = {
   propertyName: string;

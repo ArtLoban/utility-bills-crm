@@ -13,7 +13,7 @@ import { properties } from "../schema/properties";
 import { providers } from "../schema/providers";
 import { serviceTypes } from "../schema/service-types";
 import { services } from "../schema/services";
-import type { TServiceTypeCode } from "@/lib/constants/service-types";
+import { TServiceTypeCode } from "@/features/services/service-type";
 
 type TSeedEntry = {
   propertyName: string;

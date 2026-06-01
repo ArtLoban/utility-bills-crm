@@ -1,6 +1,6 @@
 // devnote TODO: Move types to proper place
 
-import type { TServiceTypeCode } from "@/lib/constants/service-types";
+import { TServiceTypeCode } from "@/features/services/service-type";
 
 export type TPaymentProperty = {
   id: string;
