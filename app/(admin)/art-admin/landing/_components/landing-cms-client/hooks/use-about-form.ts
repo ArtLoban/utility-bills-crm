@@ -1,18 +1,32 @@
-import { useState } from "react";
+"use client";
 
-import { INITIAL_ABOUT } from "../constants";
-import type { TAboutContent } from "../types";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslations } from "next-intl";
+import { toast } from "sonner";
 
-export const useAboutForm = () => {
-  const [saved, setSaved] = useState<TAboutContent>(INITIAL_ABOUT);
-  const [form, setForm] = useState<TAboutContent>(INITIAL_ABOUT);
+import { aboutSchema, saveAboutCms } from "@/features/landing-cms";
+import type { TAboutPayload } from "@/features/landing-cms";
 
-  const isDirty = JSON.stringify(form) !== JSON.stringify(saved);
+export const useAboutForm = (initial: TAboutPayload) => {
+  const t = useTranslations();
 
-  const set = <K extends keyof TAboutContent>(field: K, value: TAboutContent[K]) =>
-    setForm((prev) => ({ ...prev, [field]: value }));
+  const form = useForm<TAboutPayload>({
+    resolver: zodResolver(aboutSchema),
+    defaultValues: initial,
+  });
 
-  const save = () => setSaved(form);
+  const { isDirty, isSubmitting } = form.formState;
 
-  return { form, isDirty, set, save };
+  const handleSave = form.handleSubmit(async (data) => {
+    const result = await saveAboutCms(data);
+    if (!result.ok) {
+      toast.error(t(result.error.message as Parameters<typeof t>[0]));
+      return;
+    }
+    form.reset(data);
+    toast.success(t("landingCms.about.saveSuccess" as Parameters<typeof t>[0]));
+  });
+
+  return { form, isDirty, isSaving: isSubmitting, handleSave };
 };

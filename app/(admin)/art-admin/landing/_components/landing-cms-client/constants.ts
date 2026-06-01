@@ -1,12 +1,13 @@
 import type {
-  TAboutContent,
-  TCmsTab,
-  TGlobalContent,
-  THomeContent,
-  TProjectContent,
-} from "./types";
+  TAboutPayload,
+  TGlobalPayload,
+  THomePayload,
+  TProjectPayload,
+} from "@/features/landing-cms";
 
-export const INITIAL_HOME: THomeContent = {
+import type { TCmsTab } from "./types";
+
+export const INITIAL_HOME: THomePayload = {
   heroTitle: "Utility Bills CRM",
   heroDesc:
     "A multi-tenant web application for tracking utility bills across multiple properties — apartments, houses, summer homes. Log meter readings, record bills and payments, see balances and consumption analytics over time.",
@@ -36,7 +37,7 @@ export const INITIAL_HOME: THomeContent = {
     "Built with Next.js, TypeScript, PostgreSQL, Drizzle ORM, Auth.js, shadcn/ui, and Tailwind.",
 };
 
-export const INITIAL_ABOUT: TAboutContent = {
+export const INITIAL_ABOUT: TAboutPayload = {
   heroGreeting: "Hi, I'm Art.",
   heroDesc:
     "Frontend developer. React, TypeScript, complex UIs. Working remotely, based in Ukraine.",
@@ -47,7 +48,7 @@ Comfortable with: state management at scale (Redux Toolkit, RTK Query), forms an
 Most of the last few years went into building a payment orchestration platform — a large back-office admin panel that grew to 50+ pages and a few thousand TypeScript files. This CRM is the next thing I'm building.`,
 };
 
-export const INITIAL_PROJECT: TProjectContent = {
+export const INITIAL_PROJECT: TProjectPayload = {
   heroTitle: "Utility Bills CRM",
   heroDesc:
     "A multi-tenant web application for utility bill tracking, built as both a real product and a senior-level engineering practice ground. The page below walks through the stack, architecture, and the decisions behind them.",
@@ -86,7 +87,7 @@ Beyond v1. File storage (Google Drive), Telegram notifications, custom services,
 Hosted on Vercel (app) and Neon (database).`,
 };
 
-export const INITIAL_GLOBAL: TGlobalContent = {
+export const INITIAL_GLOBAL: TGlobalPayload = {
   linkedinUrl: "https://linkedin.com/in/artem-loban",
   githubUrl: "https://github.com/artloban",
   projectRepoUrl: "https://github.com/artloban/utility-bills-crm",

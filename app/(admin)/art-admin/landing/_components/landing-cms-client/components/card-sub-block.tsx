@@ -9,9 +9,19 @@ type TProps = {
   body: string;
   onTitle: (v: string) => void;
   onBody: (v: string) => void;
+  titleError?: string;
+  bodyError?: string;
 };
 
-export const CardSubBlock = ({ index, title, body, onTitle, onBody }: TProps) => (
+export const CardSubBlock = ({
+  index,
+  title,
+  body,
+  onTitle,
+  onBody,
+  titleError,
+  bodyError,
+}: TProps) => (
   <div className="border-border rounded-lg border bg-zinc-50 p-[14px_16px_16px] dark:bg-zinc-900">
     <div className="mb-3 flex items-center gap-2">
       <span className="border-border bg-background text-muted-foreground inline-flex h-[22px] w-[22px] items-center justify-center rounded-[6px] border text-[11.5px] font-semibold tabular-nums">
@@ -29,6 +39,7 @@ export const CardSubBlock = ({ index, title, body, onTitle, onBody }: TProps) =>
         onChange={(e) => onTitle(e.target.value)}
         className="h-9 text-[13.5px]"
       />
+      {titleError && <p className="text-destructive mt-1 text-xs">{titleError}</p>}
     </div>
     <div>
       <FieldLabel htmlFor={`card-${index}-body`}>Body</FieldLabel>
@@ -39,6 +50,7 @@ export const CardSubBlock = ({ index, title, body, onTitle, onBody }: TProps) =>
         rows={3}
         className="text-[13.5px] leading-[1.55]"
       />
+      {bodyError && <p className="text-destructive mt-1 text-xs">{bodyError}</p>}
     </div>
   </div>
 );

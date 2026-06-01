@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
 
 import { PageContainer } from "@/components/page-container";
@@ -9,7 +10,7 @@ import { useGlobalForm } from "./hooks/use-global-form";
 import { useHomeForm } from "./hooks/use-home-form";
 import { useProjectForm } from "./hooks/use-project-form";
 import { CMS_TABS } from "./constants";
-import type { TCmsTab } from "./types";
+import type { TCmsInitialData, TCmsTab } from "./types";
 import { AboutTab } from "./components/about-tab";
 import { CmsTabBar } from "./components/cms-tab-bar";
 import { EditingBanner } from "./components/editing-banner";
@@ -17,16 +18,31 @@ import { GlobalTab } from "./components/global-tab";
 import { HomeTab } from "./components/home-tab";
 import { ProjectTab } from "./components/project-tab";
 
-export const LandingCmsClient = () => {
+type TProps = {
+  initialData: TCmsInitialData;
+};
+
+export const LandingCmsClient = ({ initialData }: TProps) => {
   const [activeTab, setActiveTab] = useQueryState(
     "tab",
     parseAsStringLiteral(CMS_TABS).withDefault("home"),
   );
 
-  const home = useHomeForm();
-  const about = useAboutForm();
-  const project = useProjectForm();
-  const global = useGlobalForm();
+  const home = useHomeForm(initialData.home);
+  const about = useAboutForm(initialData.about);
+  const project = useProjectForm(initialData.project);
+  const global = useGlobalForm(initialData.global);
+
+  const anyDirty = home.isDirty || about.isDirty || project.isDirty || global.isDirty;
+
+  useEffect(() => {
+    if (!anyDirty) return;
+    const handler = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+    };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [anyDirty]);
 
   const dirtyTabs = (
     [
@@ -35,7 +51,23 @@ export const LandingCmsClient = () => {
       project.isDirty && "project",
       global.isDirty && "global",
     ] as (TCmsTab | false)[]
-  ).filter((t): t is TCmsTab => t !== false);
+  ).filter((tab): tab is TCmsTab => tab !== false);
+
+  const handleTabChange = (newTab: TCmsTab) => {
+    const isDirtyMap: Record<TCmsTab, boolean> = {
+      home: home.isDirty,
+      about: about.isDirty,
+      project: project.isDirty,
+      global: global.isDirty,
+    };
+    if (
+      isDirtyMap[activeTab] &&
+      !window.confirm("You have unsaved changes on this tab. Switch anyway?")
+    ) {
+      return;
+    }
+    void setActiveTab(newTab);
+  };
 
   return (
     <PageContainer
@@ -49,46 +81,18 @@ export const LandingCmsClient = () => {
     >
       <div>
         <div className="-mx-4 overflow-x-auto px-4 sm:-mx-6 sm:px-6 md:mx-0 md:overflow-visible md:px-0">
-          <CmsTabBar active={activeTab} onChange={setActiveTab} dirtyTabs={dirtyTabs} />
+          <CmsTabBar active={activeTab} onChange={handleTabChange} dirtyTabs={dirtyTabs} />
         </div>
 
         <div className="mt-5 max-w-[672px]">
           <EditingBanner activeTab={activeTab} />
 
-          {activeTab === "home" && (
-            <HomeTab
-              form={home.form}
-              isDirty={home.isDirty}
-              set={home.set}
-              setCard={home.setCard}
-              onSave={home.save}
-            />
-          )}
-          {activeTab === "about" && (
-            <AboutTab
-              form={about.form}
-              isDirty={about.isDirty}
-              set={about.set}
-              onSave={about.save}
-            />
-          )}
+          {activeTab === "home" && <HomeTab form={home.form} onSave={home.handleSave} />}
+          {activeTab === "about" && <AboutTab form={about.form} onSave={about.handleSave} />}
           {activeTab === "project" && (
-            <ProjectTab
-              form={project.form}
-              isDirty={project.isDirty}
-              set={project.set}
-              setCard={project.setCard}
-              onSave={project.save}
-            />
+            <ProjectTab form={project.form} onSave={project.handleSave} />
           )}
-          {activeTab === "global" && (
-            <GlobalTab
-              form={global.form}
-              isDirty={global.isDirty}
-              set={global.set}
-              onSave={global.save}
-            />
-          )}
+          {activeTab === "global" && <GlobalTab form={global.form} onSave={global.handleSave} />}
         </div>
       </div>
     </PageContainer>

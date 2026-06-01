@@ -1,26 +1,32 @@
-import { useState } from "react";
+"use client";
 
-import { INITIAL_HOME } from "../constants";
-import type { TFeatureCard, THomeContent } from "../types";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslations } from "next-intl";
+import { toast } from "sonner";
 
-export const useHomeForm = () => {
-  const [saved, setSaved] = useState<THomeContent>(INITIAL_HOME);
-  const [form, setForm] = useState<THomeContent>(INITIAL_HOME);
+import { homeSchema, saveHomeCms } from "@/features/landing-cms";
+import type { THomePayload } from "@/features/landing-cms";
 
-  const isDirty = JSON.stringify(form) !== JSON.stringify(saved);
+export const useHomeForm = (initial: THomePayload) => {
+  const t = useTranslations();
 
-  const set = <K extends keyof THomeContent>(field: K, value: THomeContent[K]) =>
-    setForm((prev) => ({ ...prev, [field]: value }));
+  const form = useForm<THomePayload>({
+    resolver: zodResolver(homeSchema),
+    defaultValues: initial,
+  });
 
-  const setCard = (index: number, field: keyof TFeatureCard, value: string) =>
-    setForm((prev) => ({
-      ...prev,
-      featureCards: prev.featureCards.map((c, i) =>
-        i === index ? { ...c, [field]: value } : c,
-      ) as THomeContent["featureCards"],
-    }));
+  const { isDirty, isSubmitting } = form.formState;
 
-  const save = () => setSaved(form);
+  const handleSave = form.handleSubmit(async (data) => {
+    const result = await saveHomeCms(data);
+    if (!result.ok) {
+      toast.error(t(result.error.message as Parameters<typeof t>[0]));
+      return;
+    }
+    form.reset(data);
+    toast.success(t("landingCms.home.saveSuccess" as Parameters<typeof t>[0]));
+  });
 
-  return { form, isDirty, set, setCard, save };
+  return { form, isDirty, isSaving: isSubmitting, handleSave };
 };

@@ -1,18 +1,32 @@
-import { useState } from "react";
+"use client";
 
-import { INITIAL_GLOBAL } from "../constants";
-import type { TGlobalContent } from "../types";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslations } from "next-intl";
+import { toast } from "sonner";
 
-export const useGlobalForm = () => {
-  const [saved, setSaved] = useState<TGlobalContent>(INITIAL_GLOBAL);
-  const [form, setForm] = useState<TGlobalContent>(INITIAL_GLOBAL);
+import { globalSchema, saveGlobalCms } from "@/features/landing-cms";
+import type { TGlobalPayload } from "@/features/landing-cms";
 
-  const isDirty = JSON.stringify(form) !== JSON.stringify(saved);
+export const useGlobalForm = (initial: TGlobalPayload) => {
+  const t = useTranslations();
 
-  const set = <K extends keyof TGlobalContent>(field: K, value: TGlobalContent[K]) =>
-    setForm((prev) => ({ ...prev, [field]: value }));
+  const form = useForm<TGlobalPayload>({
+    resolver: zodResolver(globalSchema),
+    defaultValues: initial,
+  });
 
-  const save = () => setSaved(form);
+  const { isDirty, isSubmitting } = form.formState;
 
-  return { form, isDirty, set, save };
+  const handleSave = form.handleSubmit(async (data) => {
+    const result = await saveGlobalCms(data);
+    if (!result.ok) {
+      toast.error(t(result.error.message as Parameters<typeof t>[0]));
+      return;
+    }
+    form.reset(data);
+    toast.success(t("landingCms.global.saveSuccess" as Parameters<typeof t>[0]));
+  });
+
+  return { form, isDirty, isSaving: isSubmitting, handleSave };
 };

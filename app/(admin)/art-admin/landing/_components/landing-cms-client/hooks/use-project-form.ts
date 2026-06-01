@@ -1,26 +1,32 @@
-import { useState } from "react";
+"use client";
 
-import { INITIAL_PROJECT } from "../constants";
-import type { TFeatureCard, TProjectContent } from "../types";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslations } from "next-intl";
+import { toast } from "sonner";
 
-export const useProjectForm = () => {
-  const [saved, setSaved] = useState<TProjectContent>(INITIAL_PROJECT);
-  const [form, setForm] = useState<TProjectContent>(INITIAL_PROJECT);
+import { projectSchema, saveProjectCms } from "@/features/landing-cms";
+import type { TProjectPayload } from "@/features/landing-cms";
 
-  const isDirty = JSON.stringify(form) !== JSON.stringify(saved);
+export const useProjectForm = (initial: TProjectPayload) => {
+  const t = useTranslations();
 
-  const set = <K extends keyof TProjectContent>(field: K, value: TProjectContent[K]) =>
-    setForm((prev) => ({ ...prev, [field]: value }));
+  const form = useForm<TProjectPayload>({
+    resolver: zodResolver(projectSchema),
+    defaultValues: initial,
+  });
 
-  const setCard = (index: number, field: keyof TFeatureCard, value: string) =>
-    setForm((prev) => ({
-      ...prev,
-      archCards: prev.archCards.map((c, i) =>
-        i === index ? { ...c, [field]: value } : c,
-      ) as TProjectContent["archCards"],
-    }));
+  const { isDirty, isSubmitting } = form.formState;
 
-  const save = () => setSaved(form);
+  const handleSave = form.handleSubmit(async (data) => {
+    const result = await saveProjectCms(data);
+    if (!result.ok) {
+      toast.error(t(result.error.message as Parameters<typeof t>[0]));
+      return;
+    }
+    form.reset(data);
+    toast.success(t("landingCms.project.saveSuccess" as Parameters<typeof t>[0]));
+  });
 
-  return { form, isDirty, set, setCard, save };
+  return { form, isDirty, isSaving: isSubmitting, handleSave };
 };

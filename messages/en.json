@@ -1011,5 +1011,49 @@
       },
       "empty": "No recent activity"
     }
+  },
+  "landingCms": {
+    "errors": {
+      "generic": "Something went wrong. Please try again."
+    },
+    "home": {
+      "saveSuccess": "Home content saved.",
+      "errors": {
+        "heroTitle": "Hero title is required.",
+        "heroDesc": "Hero description is required.",
+        "dashboardCaption": "Dashboard caption is required.",
+        "propertyCaption": "Property caption is required.",
+        "techHighlights": "Tech highlights line is required.",
+        "featureTitle": "Feature card title is required.",
+        "featureBody": "Feature card body is required."
+      }
+    },
+    "about": {
+      "saveSuccess": "About content saved.",
+      "errors": {
+        "heroGreeting": "Greeting is required.",
+        "heroDesc": "Description is required.",
+        "worksWith": "\"What I work with\" section is required."
+      }
+    },
+    "project": {
+      "saveSuccess": "Project content saved.",
+      "errors": {
+        "heroTitle": "Hero title is required.",
+        "heroDesc": "Hero description is required.",
+        "archTitle": "Architecture card title is required.",
+        "archBody": "Architecture card body is required.",
+        "status": "Status section is required."
+      }
+    },
+    "global": {
+      "saveSuccess": "Global settings saved.",
+      "errors": {
+        "invalidLinkedinUrl": "Enter a valid LinkedIn URL.",
+        "invalidGithubUrl": "Enter a valid GitHub URL.",
+        "invalidProjectRepoUrl": "Enter a valid project repository URL.",
+        "invalidLiveDemoUrl": "Enter a valid live demo URL."
+      }
+    }
   }
 }
