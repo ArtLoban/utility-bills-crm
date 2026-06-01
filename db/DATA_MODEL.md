@@ -756,6 +756,142 @@ CREATE EXTENSION IF NOT EXISTS btree_gist;
 
 ---
 
+## Block 7: Landing CMS
+
+Five singleton-row tables that back the admin Landing CMS (`/art-admin/landing`). Each table
+holds exactly one row of fixed-shape content. Field set is derived from the scaffold's
+`INITIAL_*` form constants (authoritative) and cross-checked against `UI_ARCHITECTURE.md`
+(no discrepancies found). Realized by Decision #132 (closes deferred #60, realizes #97).
+
+### Convention exceptions
+
+- **No `deletedAt`** — CMS tables are singleton configuration, not lifecycle data. Soft-delete
+  is meaningless for rows that cannot be deleted. Same exception class as `service_types` and
+  the Auth.js service tables. See #6.4 in the main Conventions block.
+- **No locale dimension** — landing content is English-only in MVP (#88). The admin field
+  labels go through `t()` in the UI, but the content being edited is single-language. No
+  `locale` columns on any CMS table.
+
+### Singleton enforcement
+
+All five tables use the same `oneRow` lock-column pattern:
+
+```ts
+oneRow: boolean("one_row").notNull().default(true),
+// constraints:
+uniqueIndex("<table>_one_row_unique_idx").on(t.oneRow),
+check("<table>_one_row_check", sql`${t.oneRow} = true`),
+```
+
+- `CHECK (one_row = true)` — the value can never be false.
+- `UNIQUE (one_row)` — only one row with value `true` can exist.
+- Together: at most one row ever. Inserting a second row raises a unique constraint violation.
+- Idempotent baseline seed uses `ON CONFLICT (one_row) DO NOTHING`.
+
+### `home_hero`
+
+Home tab — hero content, screenshot captions, and tech highlights line.
+Feature cards are stored separately in `features` (see below).
+
+| Column             | Type          | Null | Default | Notes                  |
+| ------------------ | ------------- | ---- | ------- | ---------------------- |
+| `id`               | `uuid`        | NO   | random  | Branded `THomeHeroId`. |
+| `heroTitle`        | `text`        | NO   | —       |                        |
+| `heroDesc`         | `text`        | NO   | —       |                        |
+| `dashboardCaption` | `text`        | NO   | —       | Screenshot caption 1.  |
+| `propertyCaption`  | `text`        | NO   | —       | Screenshot caption 2.  |
+| `techHighlights`   | `text`        | NO   | —       | Stack one-liner.       |
+| `oneRow`           | `boolean`     | NO   | `true`  | Singleton lock.        |
+| `createdAt`        | `timestamptz` | NO   | `now()` |                        |
+| `updatedAt`        | `timestamptz` | NO   | `now()` |                        |
+
+### `features`
+
+Home tab — exactly 4 feature cards, stored as fixed columns (not a multi-row child table).
+
+| Column          | Type          | Null | Default | Notes                  |
+| --------------- | ------------- | ---- | ------- | ---------------------- |
+| `id`            | `uuid`        | NO   | random  | Branded `TFeaturesId`. |
+| `feature1Title` | `text`        | NO   | —       |                        |
+| `feature1Body`  | `text`        | NO   | —       |                        |
+| `feature2Title` | `text`        | NO   | —       |                        |
+| `feature2Body`  | `text`        | NO   | —       |                        |
+| `feature3Title` | `text`        | NO   | —       |                        |
+| `feature3Body`  | `text`        | NO   | —       |                        |
+| `feature4Title` | `text`        | NO   | —       |                        |
+| `feature4Body`  | `text`        | NO   | —       |                        |
+| `oneRow`        | `boolean`     | NO   | `true`  | Singleton lock.        |
+| `createdAt`     | `timestamptz` | NO   | `now()` |                        |
+| `updatedAt`     | `timestamptz` | NO   | `now()` |                        |
+
+### `about_hero`
+
+About tab — hero greeting/description and "What I work with" multiline body.
+
+| Column         | Type          | Null | Default | Notes                   |
+| -------------- | ------------- | ---- | ------- | ----------------------- |
+| `id`           | `uuid`        | NO   | random  | Branded `TAboutHeroId`. |
+| `heroGreeting` | `text`        | NO   | —       |                         |
+| `heroDesc`     | `text`        | NO   | —       |                         |
+| `worksWith`    | `text`        | NO   | —       | Multiline plain text.   |
+| `oneRow`       | `boolean`     | NO   | `true`  | Singleton lock.         |
+| `createdAt`    | `timestamptz` | NO   | `now()` |                         |
+| `updatedAt`    | `timestamptz` | NO   | `now()` |                         |
+
+### `project_hero`
+
+Project tab — hero, 6 architecture highlight cards (fixed columns), and current status text.
+
+| Column       | Type          | Null | Default | Notes                     |
+| ------------ | ------------- | ---- | ------- | ------------------------- |
+| `id`         | `uuid`        | NO   | random  | Branded `TProjectHeroId`. |
+| `heroTitle`  | `text`        | NO   | —       |                           |
+| `heroDesc`   | `text`        | NO   | —       |                           |
+| `arch1Title` | `text`        | NO   | —       |                           |
+| `arch1Body`  | `text`        | NO   | —       |                           |
+| `arch2Title` | `text`        | NO   | —       |                           |
+| `arch2Body`  | `text`        | NO   | —       |                           |
+| `arch3Title` | `text`        | NO   | —       |                           |
+| `arch3Body`  | `text`        | NO   | —       |                           |
+| `arch4Title` | `text`        | NO   | —       |                           |
+| `arch4Body`  | `text`        | NO   | —       |                           |
+| `arch5Title` | `text`        | NO   | —       |                           |
+| `arch5Body`  | `text`        | NO   | —       |                           |
+| `arch6Title` | `text`        | NO   | —       |                           |
+| `arch6Body`  | `text`        | NO   | —       |                           |
+| `status`     | `text`        | NO   | —       | Current status / roadmap. |
+| `oneRow`     | `boolean`     | NO   | `true`  | Singleton lock.           |
+| `createdAt`  | `timestamptz` | NO   | `now()` |                           |
+| `updatedAt`  | `timestamptz` | NO   | `now()` |                           |
+
+### `links`
+
+Global tab — external URLs and About/Project page visibility toggles (#100).
+The four visibility booleans live here; there is no sixth table.
+
+| Column                 | Type          | Null | Default | Notes                                     |
+| ---------------------- | ------------- | ---- | ------- | ----------------------------------------- |
+| `id`                   | `uuid`        | NO   | random  | Branded `TLinksId`.                       |
+| `linkedinUrl`          | `text`        | NO   | —       |                                           |
+| `githubUrl`            | `text`        | NO   | —       |                                           |
+| `projectRepoUrl`       | `text`        | NO   | —       |                                           |
+| `liveDemoUrl`          | `text`        | NO   | —       |                                           |
+| `aboutNavVisible`      | `boolean`     | NO   | `true`  | About page: show link in public header.   |
+| `aboutUrlAccessible`   | `boolean`     | NO   | `true`  | About page: accessible directly by URL.   |
+| `projectNavVisible`    | `boolean`     | NO   | `true`  | Project page: show link in public header. |
+| `projectUrlAccessible` | `boolean`     | NO   | `true`  | Project page: accessible directly by URL. |
+| `oneRow`               | `boolean`     | NO   | `true`  | Singleton lock.                           |
+| `createdAt`            | `timestamptz` | NO   | `now()` |                                           |
+| `updatedAt`            | `timestamptz` | NO   | `now()` |                                           |
+
+### Baseline seed
+
+Migration `0016` creates all five tables and seeds one row per table, populated with
+the current `INITIAL_*` values from the scaffold. Seed is idempotent via
+`ON CONFLICT (one_row) DO NOTHING`. Pattern identical to `service_types` (#118).
+
+---
+
 ## Open Questions
 
 Carried forward to later phases.

@@ -1,4 +1,5 @@
 export * from "./auth";
+export * from "./cms";
 export * from "./health-check";
 export * from "./helpers";
 export * from "./properties";
