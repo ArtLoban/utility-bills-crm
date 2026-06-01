@@ -952,7 +952,7 @@
     },
     "restoreDialog": {
       "title": "Restore this property?",
-      "description": "{name} will become active again. Users who had access will see it restored.",
+      "description": "will become active again. Users who had access will see it restored.",
       "confirm": "Restore",
       "cancel": "Cancel"
     },

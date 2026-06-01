@@ -1,12 +1,14 @@
 "use client";
 
 import { useTransition } from "react";
-import { RotateCcw } from "lucide-react";
+import { RotateCcw, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { restoreProperty } from "@/features/admin-properties/actions";
+import { IconBadge } from "@/components/icon-badge";
+import { Modal } from "@/components/modal";
 
 type TProps = {
   open: boolean;
@@ -42,17 +44,22 @@ export const RestoreDialog = ({
   };
 
   return (
-    <ConfirmDialog
+    <Modal
+      title={t("restoreDialog.title")}
       open={open}
       onOpenChange={onOpenChange}
-      tone="warning"
-      icon={<RotateCcw size={22} strokeWidth={1.75} />}
-      title={t("restoreDialog.title")}
-      description={t("restoreDialog.description", { name: propertyName })}
-      confirmLabel={t("restoreDialog.confirm")}
-      cancelLabel={t("restoreDialog.cancel")}
-      isPending={isPending}
       onConfirm={handleConfirm}
-    />
+      variant="warning"
+      confirmIcon={RotateCcw}
+      confirmLabel={t("restoreDialog.confirm")}
+      isSaving={isPending}
+    >
+      <div className="my-3 flex flex-col items-center gap-4">
+        <IconBadge icon={RotateCcw} color="var(--warning)" size="lg" border={true} />
+        <p className="text-center text-sm">
+          <strong>{propertyName}</strong> {t("restoreDialog.description")}
+        </p>
+      </div>
+    </Modal>
   );
 };

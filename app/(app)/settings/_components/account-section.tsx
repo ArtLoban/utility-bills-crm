@@ -5,10 +5,11 @@ import { LogOut } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
-import { ConfirmDialog } from "@/components/confirm-dialog";
 import { signOutAllDevices } from "@/lib/auth/actions";
 
 import { SettingsCard, SettingsCardBody, SettingsCardHeader } from "./settings-card";
+import { IconBadge } from "@/components/icon-badge";
+import { Modal } from "@/components/modal";
 
 type TProps = {
   email: string | null;
@@ -93,19 +94,23 @@ const AccountSection = ({ email }: TProps) => {
         </SettingsCardBody>
       </SettingsCard>
 
-      <ConfirmDialog
+      <Modal
+        title={t("signOutEverywhere.dialog.title")}
         open={dialogOpen}
         onOpenChange={setDialogOpen}
-        title={t("signOutEverywhere.dialog.title")}
-        tone="destructive"
-        icon={<LogOut size={22} />}
-        description={t("signOutEverywhere.dialog.description")}
-        secondaryText={t("signOutEverywhere.dialog.secondaryText")}
+        variant="warning"
+        confirmIcon={LogOut}
         confirmLabel={t("signOutEverywhere.dialog.confirm")}
-        cancelLabel={t("signOutEverywhere.dialog.cancel")}
-        isPending={isPending}
-        onConfirm={handleConfirm}
-      />
+        isSaving={isPending}
+      >
+        <div className="my-3 flex flex-col items-center gap-4">
+          <IconBadge icon={LogOut} color="var(--warning)" size="lg" border={true} />
+          <p className="text-center text-sm">{t("signOutEverywhere.dialog.description")}</p>
+          <p className="text-muted-foreground text-sm">
+            {t("signOutEverywhere.dialog.secondaryText")}
+          </p>
+        </div>
+      </Modal>
     </>
   );
 };
