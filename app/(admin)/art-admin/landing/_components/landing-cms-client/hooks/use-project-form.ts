@@ -5,8 +5,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
-import { projectSchema, saveProjectCms } from "@/features/landing-cms";
-import type { TProjectPayload } from "@/features/landing-cms";
+import { saveProjectCms } from "@/features/landing-cms/actions";
+import { projectSchema } from "@/features/landing-cms/schema";
+import type { TProjectPayload } from "@/features/landing-cms/types";
 
 export const useProjectForm = (initial: TProjectPayload) => {
   const t = useTranslations();

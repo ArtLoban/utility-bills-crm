@@ -29,25 +29,14 @@ vi.mock("sonner", () => ({
   },
 }));
 
-// Mock @/features/landing-cms — schemas come from schema.ts (no DB deps);
-// save actions are replaced with test doubles.
-vi.mock("@/features/landing-cms", async () => {
-  const schema = await import("@/features/landing-cms/schema");
-  return {
-    globalSchema: schema.globalSchema,
-    homeSchema: schema.homeSchema,
-    aboutSchema: schema.aboutSchema,
-    projectSchema: schema.projectSchema,
-    saveGlobalCms: mockSaveGlobalCms,
-    saveHomeCms: vi.fn(),
-    saveAboutCms: vi.fn(),
-    saveProjectCms: vi.fn(),
-    getHomeCms: vi.fn(),
-    getAboutCms: vi.fn(),
-    getProjectCms: vi.fn(),
-    getGlobalCms: vi.fn(),
-  };
-});
+// Mock @/features/landing-cms/actions — hooks import save actions from this path directly.
+// The schemas are imported from @/features/landing-cms/schema (no DB deps, no mock needed).
+vi.mock("@/features/landing-cms/actions", () => ({
+  saveGlobalCms: mockSaveGlobalCms,
+  saveHomeCms: vi.fn(),
+  saveAboutCms: vi.fn(),
+  saveProjectCms: vi.fn(),
+}));
 
 // ---------------------------------------------------------------------------
 // Imports — after mock setup

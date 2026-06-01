@@ -5,8 +5,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
-import { aboutSchema, saveAboutCms } from "@/features/landing-cms";
-import type { TAboutPayload } from "@/features/landing-cms";
+import { saveAboutCms } from "@/features/landing-cms/actions";
+import { aboutSchema } from "@/features/landing-cms/schema";
+import type { TAboutPayload } from "@/features/landing-cms/types";
 
 export const useAboutForm = (initial: TAboutPayload) => {
   const t = useTranslations();

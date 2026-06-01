@@ -5,8 +5,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
-import { homeSchema, saveHomeCms } from "@/features/landing-cms";
-import type { THomePayload } from "@/features/landing-cms";
+import { saveHomeCms } from "@/features/landing-cms/actions";
+import { homeSchema } from "@/features/landing-cms/schema";
+import type { THomePayload } from "@/features/landing-cms/types";
 
 export const useHomeForm = (initial: THomePayload) => {
   const t = useTranslations();

@@ -5,8 +5,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
-import { globalSchema, saveGlobalCms } from "@/features/landing-cms";
-import type { TGlobalPayload } from "@/features/landing-cms";
+import { saveGlobalCms } from "@/features/landing-cms/actions";
+import { globalSchema } from "@/features/landing-cms/schema";
+import type { TGlobalPayload } from "@/features/landing-cms/types";
 
 export const useGlobalForm = (initial: TGlobalPayload) => {
   const t = useTranslations();
