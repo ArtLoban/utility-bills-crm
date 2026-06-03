@@ -22,32 +22,21 @@ export default async function DashboardPage() {
   const firstName = session.user.name?.split(" ")[0] ?? null;
 
   return (
-    <div
-      style={{
-        maxWidth: 1360,
-        margin: "0 auto",
-        padding: "32px 32px 48px",
-        width: "100%",
-      }}
-    >
+    <div className="mx-auto w-full max-w-[1360px] px-3.5 pt-5 pb-9 md:px-8 md:pt-8 md:pb-12">
       {!MOCK_HAS_PROPERTIES ? (
         <DashboardEmptyState firstName={firstName} />
       ) : (
         <>
-          <h2
-            style={{
-              margin: 0,
-              marginBottom: 28,
-              fontSize: 28,
-              fontWeight: 600,
-              letterSpacing: -0.6,
-            }}
-            className="text-zinc-950 dark:text-zinc-50"
-          >
-            {firstName ? `Hi, ${firstName}` : "Hello!"}
-          </h2>
+          <div className="mb-5 md:mb-7">
+            <h2 className="m-0 text-2xl font-semibold tracking-[-0.6px] text-zinc-950 md:text-[28px] dark:text-zinc-50">
+              {firstName ? `Hi, ${firstName}` : "Hello!"}
+            </h2>
+            <p className="text-muted-foreground mt-[3px] text-[13px] md:hidden">
+              {data.charts.periodLabel}
+            </p>
+          </div>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+          <div className="flex flex-col gap-3.5 md:gap-5">
             {data.attention !== null && <AttentionBlock data={data.attention} />}
             <BalanceBlock data={data.balance} />
             <ChartsSection data={data.charts} />

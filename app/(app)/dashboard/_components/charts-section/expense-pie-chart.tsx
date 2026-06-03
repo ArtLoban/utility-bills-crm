@@ -58,111 +58,52 @@ export const ExpensePieChart = ({ services }: TProps) => {
   const total = arcs.reduce((sum, a) => sum + a.value, 0);
 
   return (
-    <DataCard style={{ padding: 24 }}>
-      <h3
-        className="text-zinc-950 dark:text-zinc-50"
-        style={{ margin: 0, fontSize: 14, fontWeight: 600, letterSpacing: -0.1 }}
-      >
+    <DataCard className="p-6">
+      <h3 className="m-0 text-[14px] font-semibold tracking-[-0.1px] text-zinc-950 dark:text-zinc-50">
         Expenses by service
       </h3>
-      <p className="text-zinc-500" style={{ margin: "2px 0 0", fontSize: 12 }}>
-        Last 12 months
-      </p>
+      <p className="mt-[2px] mb-0 text-[12px] text-zinc-500">Last 12 months</p>
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "220px 1fr",
-          gap: 24,
-          alignItems: "center",
-          marginTop: 20,
-        }}
-      >
-        {/* Donut SVG */}
-        <div style={{ position: "relative", width: 220, height: 220 }}>
-          <svg width="220" height="220" viewBox="0 0 220 220">
+      {/* Donut + legend — flex row, responsive container sizes the donut via CSS */}
+      <div className="mt-4 flex items-center gap-3 px-1 md:mt-5 md:gap-6">
+        {/* SVG container: 170px mobile, 220px desktop */}
+        <div className="relative h-[170px] w-[170px] shrink-0 md:h-[220px] md:w-[220px]">
+          <svg width="100%" height="100%" viewBox="0 0 220 220">
             {arcs.map((a) => (
               <path key={a.serviceKey} d={a.path} fill={a.color} stroke="#fff" strokeWidth="1.5" />
             ))}
           </svg>
 
           {/* Center label */}
-          <div
-            style={{
-              position: "absolute",
-              inset: 0,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <div
-              className="text-zinc-500"
-              style={{
-                fontSize: 10.5,
-                textTransform: "uppercase",
-                letterSpacing: 0.4,
-                fontWeight: 500,
-              }}
-            >
+          <div className="absolute inset-0 flex flex-col items-center justify-center">
+            <div className="text-[10.5px] font-medium tracking-[0.4px] text-zinc-500 uppercase">
               Total
             </div>
             <div
-              className="text-zinc-950 dark:text-zinc-50"
-              style={{
-                fontSize: 24,
-                fontWeight: 600,
-                letterSpacing: -0.5,
-                fontVariantNumeric: "tabular-nums",
-                fontFeatureSettings: '"tnum" 1',
-                marginTop: 2,
-              }}
+              className="mt-[2px] text-2xl font-semibold tracking-[-0.5px] text-zinc-950 dark:text-zinc-50"
+              style={{ fontVariantNumeric: "tabular-nums", fontFeatureSettings: '"tnum" 1' }}
             >
               {total.toLocaleString("uk-UA")}
             </div>
-            <div className="text-zinc-500" style={{ fontSize: 11, marginTop: 1 }}>
-              UAH
-            </div>
+            <div className="mt-[1px] text-[11px] text-zinc-500">UAH</div>
           </div>
         </div>
 
         {/* Legend */}
-        <ul
-          style={{
-            margin: 0,
-            padding: 0,
-            listStyle: "none",
-            display: "flex",
-            flexDirection: "column",
-            gap: 10,
-            maxWidth: 220,
-          }}
-        >
+        <ul className="m-0 flex max-w-[220px] flex-col gap-2.5 p-0 [list-style:none]">
           {arcs.map((a) => (
-            <li
-              key={a.serviceKey}
-              style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 13 }}
-            >
+            <li key={a.serviceKey} className="flex items-center gap-2.5 text-[13px]">
               <span
-                style={{
-                  width: 9,
-                  height: 9,
-                  borderRadius: 2,
-                  background: a.color,
-                  flexShrink: 0,
-                }}
+                className="h-[9px] w-[9px] shrink-0 rounded-[2px]"
+                style={{ background: a.color }}
               />
-              <span className="text-zinc-950 dark:text-zinc-50" style={{ flex: 1 }}>
-                {a.label}
-              </span>
+              <span className="flex-1 text-zinc-950 dark:text-zinc-50">{a.label}</span>
               <span
-                className="text-zinc-500"
+                className="ml-auto font-medium text-zinc-500"
                 style={{
                   fontSize: 12.5,
                   fontVariantNumeric: "tabular-nums",
                   fontFeatureSettings: '"tnum" 1',
-                  fontWeight: 500,
                 }}
               >
                 {a.pct}%

@@ -16,21 +16,18 @@ export const ChartsSection = ({ data }: TProps) => {
   const [service, setService] = useState("All services");
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-      {/* Filter bar */}
-      <div
-        className="border bg-white shadow transition-shadow duration-150 hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900 dark:shadow-none dark:hover:shadow-none"
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 8,
-          padding: "10px 12px",
-          borderRadius: 8,
-        }}
-      >
-        <span className="text-zinc-500" style={{ fontSize: 12.5, paddingLeft: 4, marginRight: 4 }}>
-          Filter
+    <div className="flex flex-col gap-4">
+      {/* Mobile analytics section header */}
+      <div className="flex items-center justify-between md:hidden">
+        <span className="text-muted-foreground text-[11.5px] font-semibold tracking-[0.6px] uppercase">
+          Analytics
         </span>
+        <span className="text-muted-foreground text-xs">{data.periodLabel}</span>
+      </div>
+
+      {/* Filter bar — desktop only */}
+      <div className="hidden items-center gap-2 rounded-[8px] border bg-white px-3 py-2.5 shadow transition-shadow duration-150 hover:shadow-md md:flex dark:border-zinc-800 dark:bg-zinc-900 dark:shadow-none dark:hover:shadow-none">
+        <span className="pr-1 pl-1 text-[12.5px] text-zinc-500">Filter</span>
 
         <select
           value={period}
@@ -85,20 +82,12 @@ export const ChartsSection = ({ data }: TProps) => {
           <option>All services</option>
         </select>
 
-        <div style={{ flex: 1 }} />
-        <span className="text-zinc-500" style={{ fontSize: 12 }}>
-          {data.periodLabel}
-        </span>
+        <div className="flex-1" />
+        <span className="text-[12px] text-zinc-500">{data.periodLabel}</span>
       </div>
 
       {/* Top row: Pie + Bar */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1.4fr",
-          gap: 16,
-        }}
-      >
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-[1fr_1.4fr]">
         <ExpensePieChart services={data.services} />
         <MonthlyBarChart services={data.services} months={data.months} />
       </div>

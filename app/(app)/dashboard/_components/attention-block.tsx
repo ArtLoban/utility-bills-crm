@@ -11,107 +11,49 @@ export const AttentionBlock = ({ data }: TProps) => {
   const { totalDebt, debtServicesCount, readingsDueCount, readingsDueDate } = data;
 
   return (
-    <DataCard
-      style={{
-        borderLeft: "4px solid #f59e0b",
-        padding: "20px 24px",
-        display: "flex",
-        flexDirection: "column",
-        gap: 12,
-      }}
-    >
-      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-        <AlertTriangle size={18} color="#f59e0b" />
-        <h3
-          className="text-zinc-950 dark:text-zinc-50"
-          style={{ margin: 0, fontSize: 14.5, fontWeight: 600, letterSpacing: -0.1 }}
-        >
+    <DataCard className="border-l-warning flex flex-col gap-3 border-l-4 px-6 py-5">
+      <div className="flex items-center gap-2.5">
+        <AlertTriangle size={18} className="text-warning" />
+        <h3 className="m-0 text-[14.5px] font-semibold tracking-[-0.1px] text-zinc-950 dark:text-zinc-50">
           Attention required
         </h3>
       </div>
 
-      <ul
-        style={{
-          margin: 0,
-          padding: 0,
-          listStyle: "none",
-          display: "flex",
-          flexDirection: "column",
-          gap: 8,
-        }}
-      >
+      <ul className="m-0 flex flex-col gap-2 p-0 [list-style:none]">
         {debtServicesCount > 0 && (
-          <li
-            className="text-zinc-950 dark:text-zinc-50"
-            style={{
-              display: "flex",
-              alignItems: "baseline",
-              gap: 10,
-              fontSize: 13.5,
-            }}
-          >
-            <span className="text-zinc-500" style={{ width: 8 }}>
-              •
-            </span>
-            <span style={{ flex: 1 }}>
+          <li className="flex items-baseline gap-2.5 text-[13.5px] text-zinc-950 dark:text-zinc-50">
+            <span className="w-2 text-zinc-500">•</span>
+            <span className="flex-1">
               {"Debt: "}
-              <strong style={{ color: "#dc2626", fontWeight: 600 }}>
+              <strong className="text-destructive font-semibold">
                 {Math.abs(totalDebt).toLocaleString("uk-UA")} UAH
               </strong>
               <span className="text-zinc-500"> total ({debtServicesCount} services)</span>
             </span>
             <Link
               href="/bills"
-              style={{
-                color: "#7c3aed",
-                fontSize: 13,
-                fontWeight: 500,
-                textDecoration: "none",
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 2,
-                flexShrink: 0,
-              }}
+              className="text-primary inline-flex shrink-0 items-center gap-0.5 text-[13px] font-medium no-underline"
             >
               View details
-              <ChevronRight size={14} color="#7c3aed" />
+              <ChevronRight size={14} />
             </Link>
           </li>
         )}
 
         {readingsDueCount > 0 && (
-          <li
-            className="text-zinc-950 dark:text-zinc-50"
-            style={{
-              display: "flex",
-              alignItems: "baseline",
-              gap: 10,
-              fontSize: 13.5,
-            }}
-          >
-            <span className="text-zinc-500" style={{ width: 8 }}>
-              •
-            </span>
-            <span style={{ flex: 1 }}>
+          <li className="flex items-baseline gap-2.5 text-[13.5px] text-zinc-950 dark:text-zinc-50">
+            <span className="w-2 text-zinc-500">•</span>
+            <span className="flex-1">
               {"Submit readings by "}
-              <strong style={{ fontWeight: 600 }}>{readingsDueDate}</strong>
+              <strong className="font-semibold">{readingsDueDate}</strong>
               <span className="text-zinc-500"> ({readingsDueCount} meters)</span>
             </span>
             <Link
               href="/properties"
-              style={{
-                color: "#7c3aed",
-                fontSize: 13,
-                fontWeight: 500,
-                textDecoration: "none",
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 2,
-                flexShrink: 0,
-              }}
+              className="text-primary inline-flex shrink-0 items-center gap-0.5 text-[13px] font-medium no-underline"
             >
               Go to meters
-              <ChevronRight size={14} color="#7c3aed" />
+              <ChevronRight size={14} />
             </Link>
           </li>
         )}
