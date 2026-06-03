@@ -1,47 +1,34 @@
-"use client";
-
-import type { SortingState, Updater } from "@tanstack/react-table";
-import { useTranslations } from "next-intl";
-
-import { ServerDataTable } from "@/components/data-table/server-data-table";
-import type { TServerPagination } from "@/lib/types/data-table";
-import type { TPaymentGlobalRow } from "@/features/payments/types";
-
-import { getPaymentsColumns } from "./utils/get-table-columns";
-import { FooterMeta } from "./components/footer-meta";
+import { useServerListParams } from "@/components/data-table/server-table-group/hooks/use-server-list-params";
+import { PaymentsTableDesktop } from "./components/TableDesktop";
+import { PaymentsTableMobile } from "./components/TableMobile";
+import type { TPaymentsListResult } from "@/features/payments";
+import { useQueryFilters } from "@/lib/hooks/use-query-filters";
+import { URL_FIELDS, INITIAL_FILTERS } from "./constants";
 
 type TProps = {
-  data: TPaymentGlobalRow[];
-  pagination: TServerPagination;
-  totalAmount: string;
-  sorting: SortingState;
-  onSortingChange: (updater: Updater<SortingState>) => void;
-  onPageChange: (page: number) => void;
-  onPageSizeChange: (size: number) => void;
+  paymentsList: TPaymentsListResult;
 };
 
-export const PaymentsTable = ({
-  data,
-  pagination,
-  totalAmount,
-  sorting,
-  onSortingChange,
-  onPageChange,
-  onPageSizeChange,
-}: TProps) => {
-  const t = useTranslations("payments.list");
-  const columns = getPaymentsColumns(t);
+export const PaymentsTable = ({ paymentsList }: TProps) => {
+  const listParams = useServerListParams();
+  const queryFilters = useQueryFilters(URL_FIELDS, INITIAL_FILTERS);
 
   return (
-    <ServerDataTable
-      data={data}
-      columns={columns}
-      sorting={sorting}
-      onSortingChange={onSortingChange}
-      pagination={pagination}
-      onPageChange={onPageChange}
-      onPageSizeChange={onPageSizeChange}
-      footerMeta={<FooterMeta totalAmount={totalAmount} />}
-    />
+    <div>
+      <div className="hidden md:block">
+        <PaymentsTableDesktop
+          paymentsList={paymentsList}
+          listParams={listParams}
+          queryFilters={queryFilters}
+        />
+      </div>
+      <div className="-mx-8 md:hidden">
+        <PaymentsTableMobile
+          paymentsList={paymentsList}
+          listParams={listParams}
+          queryFilters={queryFilters}
+        />
+      </div>
+    </div>
   );
 };

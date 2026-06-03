@@ -12,10 +12,10 @@ export type TBillsListParams = {
   pageSize: number;
   sortBy: TBillSortColumn;
   sortOrder: "asc" | "desc";
-  propertyId?: string;
-  services?: string[];
-  dateFrom?: string; // YYYY-MM-DD, inclusive
-  dateTo?: string; // YYYY-MM-DD, inclusive
+  propertyId?: string | null;
+  services?: string[] | null;
+  dateFrom?: string | null; // YYYY-MM-DD, inclusive
+  dateTo?: string | null; // YYYY-MM-DD, inclusive
 };
 
 // Re-export shared pagination type under the bills-scoped name.

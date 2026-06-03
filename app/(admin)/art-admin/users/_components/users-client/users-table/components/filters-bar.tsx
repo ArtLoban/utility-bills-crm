@@ -7,8 +7,8 @@ import { useTranslations } from "next-intl";
 
 import { TableFilters } from "@/components/data-table/table-filters";
 import { SelectInput } from "@/components/select-input";
-import { FIRST_PAGE_INDEX_DEFAULT } from "@/components/data-table/data-table/constants";
 import { SYSTEM_ROLES } from "@/lib/auth/constants";
+import { PAGE_DEFAULT } from "@/components/data-table/constants";
 
 type TFilterForm = {
   systemRole: string | null;
@@ -24,7 +24,7 @@ export const FiltersBar = () => {
     {
       systemRole: parseAsString,
       status: parseAsString,
-      page: parseAsInteger.withDefault(FIRST_PAGE_INDEX_DEFAULT),
+      page: parseAsInteger.withDefault(PAGE_DEFAULT),
     },
     { history: "replace", shallow: false },
   );
@@ -44,7 +44,7 @@ export const FiltersBar = () => {
     void setQuery({
       systemRole: values.systemRole ?? null,
       status: values.status ?? null,
-      page: FIRST_PAGE_INDEX_DEFAULT,
+      page: PAGE_DEFAULT,
     });
   }, [values, setQuery]);
 

@@ -9,24 +9,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-import { useDataTablePagination } from "../../../hooks/use-data-table-pagination";
-import { DEFAULT_PAGE_SIZE, PAGE_SIZE_OPTIONS } from "@/components/data-table/constants";
+import { PAGE_SIZE_OPTIONS } from "@/components/data-table/constants";
 
 type TProps = {
   value: number;
+  onChange: (size: number) => void;
 };
 
-export const PageSizeSelector = ({ value }: TProps) => {
+export const PageSizeSelector = ({ value, onChange }: TProps) => {
   const t = useTranslations("dataTable.pagination");
-  const { setPageSize } = useDataTablePagination();
-
-  const handleSizeChange = (size: string | null) => {
-    setPageSize(size ? Number(size) : DEFAULT_PAGE_SIZE);
-  };
 
   return (
-    <Select value={String(value)} onValueChange={handleSizeChange}>
+    <Select value={String(value)} onValueChange={(v) => onChange(Number(v))}>
       <SelectTrigger size="sm" className="w-auto" aria-label={t("perPageLabel")}>
         <SelectValue />
       </SelectTrigger>

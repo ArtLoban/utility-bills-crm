@@ -8,7 +8,7 @@ import { X } from "lucide-react";
 
 import { TableFilters } from "@/components/data-table/table-filters";
 import { SelectInput } from "@/components/select-input";
-import { FIRST_PAGE_INDEX_DEFAULT } from "@/components/data-table/data-table/constants";
+import { PAGE_DEFAULT } from "@/components/data-table/constants";
 
 type TFilterForm = {
   status: string | null;
@@ -29,7 +29,7 @@ export const FilterBar = ({ ownerName }: TProps) => {
       status: parseAsString,
       type: parseAsString,
       owner: parseAsString,
-      page: parseAsInteger.withDefault(FIRST_PAGE_INDEX_DEFAULT),
+      page: parseAsInteger.withDefault(PAGE_DEFAULT),
     },
     { history: "replace", shallow: false },
   );
@@ -49,7 +49,7 @@ export const FilterBar = ({ ownerName }: TProps) => {
     void setQuery({
       status: values.status ?? null,
       type: values.type ?? null,
-      page: FIRST_PAGE_INDEX_DEFAULT,
+      page: PAGE_DEFAULT,
     });
   }, [values, setQuery]);
 
@@ -57,7 +57,7 @@ export const FilterBar = ({ ownerName }: TProps) => {
 
   const handleClear = () => {
     form.reset(EMPTY_FILTERS);
-    void setQuery({ status: null, type: null, owner: null, page: FIRST_PAGE_INDEX_DEFAULT });
+    void setQuery({ status: null, type: null, owner: null, page: PAGE_DEFAULT });
   };
 
   const statusOptions = [
@@ -85,7 +85,7 @@ export const FilterBar = ({ ownerName }: TProps) => {
           <button
             type="button"
             aria-label={t("filters.clearOwner")}
-            onClick={() => void setQuery({ owner: null, page: FIRST_PAGE_INDEX_DEFAULT })}
+            onClick={() => void setQuery({ owner: null, page: PAGE_DEFAULT })}
             className="hover:opacity-70"
           >
             <X size={12} strokeWidth={2} />

@@ -5,5 +5,7 @@ declare module "@tanstack/react-table" {
   interface ColumnMeta<TData, TValue> {
     align?: "left" | "right" | "center";
     width?: number;
+    cellClassName?: string;
+    headerClassName?: string;
   }
 }

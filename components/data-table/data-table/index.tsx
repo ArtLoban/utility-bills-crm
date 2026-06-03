@@ -3,7 +3,6 @@
 import { ReactNode, useEffect } from "react";
 import {
   type ColumnDef,
-  type SortingState,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
@@ -16,11 +15,10 @@ import { Table } from "@/components/ui/table";
 
 import { Body } from "./components/body";
 import { Header } from "./components/header";
-import { DEFAULT_PAGE_SIZE } from "./constants";
 import { Footer } from "./components/footer";
 import { useDataTablePagination } from "./hooks/use-data-table-pagination";
 import { useDataTableSorting } from "./hooks/use-data-table-sorting";
-import { TDefaultSorting } from "@/components/data-table/data-table/types";
+import { TDefaultSorting } from "@/components/data-table/types";
 import { EmptyState } from "./components/empty-state";
 
 type TDataTableProps<T> = {
@@ -48,6 +46,7 @@ export const DataTable = <T,>(props: TDataTableProps<T>) => {
   const { pagination } = useDataTablePagination();
   const { sorting, setSorting } = useDataTableSorting(defaultSorting);
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable<T>({
     data,
     columns,

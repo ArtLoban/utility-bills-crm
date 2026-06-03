@@ -8,6 +8,6 @@ export const DATE_PARAMS = {
 export type TDateParam = (typeof DATE_PARAMS)[keyof typeof DATE_PARAMS];
 
 export type TDateParams = {
-  [DATE_PARAMS.DATE_FROM]?: string;
-  [DATE_PARAMS.DATE_TO]?: string;
+  [DATE_PARAMS.DATE_FROM]?: TStringOrNull;
+  [DATE_PARAMS.DATE_TO]?: TStringOrNull;
 };

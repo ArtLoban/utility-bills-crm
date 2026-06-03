@@ -11,21 +11,19 @@ import {
 } from "@/components/ui/pagination";
 import { cn } from "@/lib/utils";
 import { getPaginationRange } from "./utils/get-pagination-range";
-import { useDataTablePagination } from "@/components/data-table/data-table/hooks/use-data-table-pagination";
 import { ELLIPSIS } from "@/components/data-table/constants";
 
 type TProps = {
   page: number;
-  pageCount: number;
-  canPreviousPage: boolean;
-  canNextPage: boolean;
+  totalPages: number;
+  onChange: (page: number) => void;
 };
 
-export const TablePagination = ({ page, pageCount, canPreviousPage, canNextPage }: TProps) => {
-  const range = getPaginationRange(page, pageCount);
-  const { setPageIndex } = useDataTablePagination();
+export const TablePagination = ({ page, totalPages, onChange }: TProps) => {
+  const range = getPaginationRange(page, totalPages);
 
-  const handlePageChange = (page: number) => setPageIndex(page);
+  const canPrev = page > 1;
+  const canNext = page < totalPages;
 
   return (
     <Pagination className="mx-0 w-auto">
@@ -35,9 +33,9 @@ export const TablePagination = ({ page, pageCount, canPreviousPage, canNextPage 
             href="#"
             onClick={(e) => {
               e.preventDefault();
-              handlePageChange(page - 1);
+              onChange(page - 1);
             }}
-            className={cn(!canPreviousPage && "pointer-events-none opacity-50")}
+            className={cn(!canPrev && "pointer-events-none opacity-50")}
           />
         </PaginationItem>
 
@@ -53,7 +51,7 @@ export const TablePagination = ({ page, pageCount, canPreviousPage, canNextPage 
                 isActive={item === page}
                 onClick={(e) => {
                   e.preventDefault();
-                  handlePageChange(item);
+                  onChange(item);
                 }}
               >
                 {item}
@@ -67,9 +65,9 @@ export const TablePagination = ({ page, pageCount, canPreviousPage, canNextPage 
             href="#"
             onClick={(e) => {
               e.preventDefault();
-              handlePageChange(page + 1);
+              onChange(page + 1);
             }}
-            className={cn(!canNextPage && "pointer-events-none opacity-50")}
+            className={cn(!canNext && "pointer-events-none opacity-50")}
           />
         </PaginationItem>
       </PaginationContent>

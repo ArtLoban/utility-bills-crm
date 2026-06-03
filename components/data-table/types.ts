@@ -1,3 +1,5 @@
+import { SortingState, Updater } from "@tanstack/react-table";
+
 export const DATA_TABLE_PARAMS = {
   PAGE: "page",
   PAGE_SIZE: "pageSize",
@@ -24,4 +26,11 @@ export type TDataTableParams = {
   [DATA_TABLE_PARAMS.PAGE_SIZE]: number;
   [DATA_TABLE_PARAMS.SORT_BY]: string;
   [DATA_TABLE_PARAMS.SORT_ORDER]: TSortOrder;
+};
+
+export type TListParams = {
+  setPage: (page: number) => void;
+  setPageSize: (size: number) => void;
+  sorting: SortingState;
+  onSortingChange: (updater: Updater<SortingState>) => void;
 };

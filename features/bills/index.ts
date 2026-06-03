@@ -1,7 +1,7 @@
 export { createBill, editBill, softDeleteBill } from "./actions";
 export { getBillsList, billByIdForUser, servicesForBillForm } from "@/lib/db/access/bills";
 export type { TBillGlobalRow, TBillsListResult, TServiceOption } from "@/lib/db/access/bills";
-export { parseBillsParams } from "./query-params";
+export { billsSearchParams, loadBillsParams } from "./query-params";
 export { BILLS_SORT_COLUMNS } from "./types";
 export type { TBillSortColumn, TBillsListParams, TBillsPagination } from "./types";
 export { BILL_LIMITS, createBillSchema, updateBillSchema } from "./schema";

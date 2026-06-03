@@ -4,29 +4,22 @@ import { useState } from "react";
 import { format, parseISO } from "date-fns";
 import { parseAsString, useQueryStates } from "nuqs";
 
-import {
-  SERVICE_COLORS,
-  dbCodeToServiceKey,
-  getServiceLabel,
-} from "@/lib/constants/service-colors";
+import { SERVICE_COLORS, dbCodeToServiceKey } from "@/lib/constants/service-colors";
 import { ACCENT, TINT_BG, TINT_BORDER } from "@/lib/constants/ui-tokens";
 import { formatUAH } from "@/lib/format/currency";
-import type { PropertyId } from "@/lib/db/schema/properties";
 import type { TBillGlobalRow } from "@/lib/db/access/bills";
 import type { TServerPagination } from "@/lib/types/data-table";
 import { BillCard } from "./bill-card";
 import { FilterChip } from "./filter-chip";
 import { FilterSheet } from "./filter-sheet";
 import { MobilePager } from "./mobile-pager";
-
-type TFilterOption = { id: string; name: string };
+import { TSelectableEntity } from "@/components/select-input/types";
 
 type TProps = {
   data: TBillGlobalRow[];
   pagination: TServerPagination;
   totalAmount: string;
-  propertyOptions: { id: PropertyId; name: string }[];
-  serviceOptions: TFilterOption[];
+  propertyOptions: TSelectableEntity[];
   onPageChange: (page: number) => void;
 };
 
@@ -38,14 +31,7 @@ const formatDateRangeChip = (dateFrom: string | null, dateTo: string | null): st
   return `To ${fmtDate(dateTo!)}`;
 };
 
-const BillsMobile = ({
-  data,
-  pagination,
-  totalAmount,
-  propertyOptions,
-  serviceOptions,
-  onPageChange,
-}: TProps) => {
+const BillsMobile = ({ data, pagination, totalAmount, propertyOptions, onPageChange }: TProps) => {
   const [sheetOpen, setSheetOpen] = useState(false);
 
   const [filters, setFilters] = useQueryStates(
@@ -68,11 +54,9 @@ const BillsMobile = ({
     ? (propertyOptions.find((p) => p.id === filters.propertyId)?.name ?? filters.propertyId)
     : null;
 
-  const serviceOption = filters.service
-    ? serviceOptions.find((s) => s.id === filters.service)
-    : null;
-  const serviceName =
-    serviceOption?.name ?? (filters.service ? getServiceLabel(filters.service) : null);
+  // const serviceName =
+  //   serviceOption?.name ?? (filters.service ? getServiceLabel(filters.service) : null);
+  const serviceName = "serviceName";
   const serviceKey = filters.service ? dbCodeToServiceKey(filters.service) : undefined;
   const serviceColor = serviceKey ? SERVICE_COLORS[serviceKey] : undefined;
 
@@ -194,7 +178,6 @@ const BillsMobile = ({
         filters={filters}
         onFilterChange={(updated) => void setFilters(updated)}
         propertyOptions={propertyOptions}
-        serviceOptions={serviceOptions}
       />
     </div>
   );

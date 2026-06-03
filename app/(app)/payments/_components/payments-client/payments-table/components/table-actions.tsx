@@ -1,27 +1,20 @@
-"use client";
-
-import { useState, useTransition, type ReactNode } from "react";
-import { Trash2 } from "lucide-react";
+import { ReactNode, useState, useTransition } from "react";
+import { softDeletePayment, TPaymentGlobalRow } from "@/features/payments";
+import type { PaymentId } from "@/lib/db/schema";
 import { toast } from "sonner";
-
-import { createSafeContext } from "@/lib/utils/create-safe-context";
-import type { TPaymentGlobalRow } from "@/features/payments/types";
-import type { PaymentId } from "@/lib/db/schema/payments";
-import { getServiceLabel } from "@/lib/constants/service-colors";
-import { softDeletePayment } from "@/features/payments/actions";
 import { Modal } from "@/components/modal";
+import { Trash2 } from "lucide-react";
 import { IconBadge } from "@/components/icon-badge";
+import { getServiceLabel } from "@/lib/constants/service-colors";
+import { PaymentsTableContext } from "../../context";
+import type { TSelectableEntity } from "@/components/select-input/types";
 
-type TPaymentsTableContext = {
-  requestDelete: (payment: TPaymentGlobalRow) => void;
+type TProps = {
+  children: ReactNode;
+  properties: TSelectableEntity[];
 };
 
-const [PaymentsTableContext, usePaymentsTable] =
-  createSafeContext<TPaymentsTableContext>("PaymentsTable");
-
-export { usePaymentsTable };
-
-export const PaymentsTableActions = ({ children }: { children: ReactNode }) => {
+export const PaymentsTableActions = ({ children, properties }: TProps) => {
   const [rowToDelete, setRowToDelete] = useState<TPaymentGlobalRow | null>(null);
   const [isPending, startTransition] = useTransition();
 
@@ -39,7 +32,7 @@ export const PaymentsTableActions = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <PaymentsTableContext value={{ requestDelete: setRowToDelete }}>
+    <PaymentsTableContext value={{ requestDelete: setRowToDelete, properties }}>
       {children}
       <Modal
         title="Delete Payment"

@@ -3,7 +3,7 @@ import type { TPayment } from "@/lib/db/schema/payments";
 import type { PropertyId, TPropertyRole } from "@/lib/db/schema/properties";
 import type { TServiceTypeCode } from "@/features/services/service-type";
 import type { TServiceTypeUnit } from "@/lib/db/schema/service-types";
-import { TDataTableParams } from "@/components/data-table/data-table/types";
+import { TDataTableParams } from "@/components/data-table/types";
 import { TDateParams } from "@/lib/types/common";
 
 // --- Sort allow-list ---
@@ -15,8 +15,8 @@ export type TPaymentSortColumn = (typeof PAYMENTS_SORT_COLUMNS)[number];
 
 export type TPaymentsListParams = TDataTableParams &
   TDateParams & {
-    propertyId?: string;
-    services?: string[]; // serviceType codes, ;-separated in URL
+    propertyId?: string | null;
+    services?: string[] | null; // serviceType codes, ;-separated in URL
   };
 
 // --- Row shape returned from getPaymentsList ---

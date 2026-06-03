@@ -3,11 +3,7 @@ import { useCallback, useMemo } from "react";
 import { parseAsString, useQueryStates } from "nuqs";
 import { Updater } from "@tanstack/table-core";
 import { SortingState } from "@tanstack/react-table";
-import {
-  DATA_TABLE_PARAMS,
-  SORT_ORDER,
-  TDefaultSorting,
-} from "@/components/data-table/data-table/types";
+import { DATA_TABLE_PARAMS, SORT_ORDER, TDefaultSorting } from "@/components/data-table/types";
 
 const DEFAULT_SORT_ORDER = SORT_ORDER.DESC;
 

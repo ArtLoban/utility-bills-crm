@@ -16,7 +16,7 @@ import { getServiceLabel } from "@/lib/constants/service-colors";
 import { getServiceTypeVisuals } from "@/features/services/service-type";
 import { IconBadge } from "@/components/icon-badge";
 import type { TPaymentGlobalRow } from "@/features/payments/types";
-import { usePaymentsTable } from "../payments-table/context";
+import { usePaymentsTable } from "../../../../context";
 
 type TProps = {
   payment: TPaymentGlobalRow;

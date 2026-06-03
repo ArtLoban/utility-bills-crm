@@ -30,20 +30,20 @@ type TProps<T> = {
   emptyState?: ReactNode;
 };
 
-// Render-only TanStack Table for server-paginated data.
-// Uses getCoreRowModel() only — no getFilteredRowModel, getSortedRowModel, or getPaginationRowModel.
-// All data operations (filtering, sorting, pagination) run on the backend.
-export const ServerDataTable = <T,>({
-  data,
-  columns,
-  sorting,
-  onSortingChange,
-  pagination,
-  onPageChange,
-  onPageSizeChange,
-  footerMeta,
-  emptyState,
-}: TProps<T>) => {
+export const ServerDataTable = <T,>(props: TProps<T>) => {
+  const {
+    data,
+    columns,
+    sorting,
+    onSortingChange,
+    pagination,
+    onPageChange,
+    onPageSizeChange,
+    footerMeta,
+    emptyState,
+  } = props;
+
+  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable<T>({
     data,
     columns,

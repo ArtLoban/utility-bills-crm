@@ -3,8 +3,8 @@ import type { Metadata } from "next";
 import { auth } from "@/lib/auth";
 import type { UserId } from "@/lib/db/schema/auth";
 import { accessibleProperties } from "@/lib/db/access/properties";
-import { getBillsList, servicesForBillForm } from "@/lib/db/access/bills";
-import { parseBillsParams } from "@/features/bills/query-params";
+import { getBillsList } from "@/lib/db/access/bills";
+import { loadBillsParams } from "@/features/bills/query-params";
 import { BillsClient } from "./_components/bills-client";
 
 export const metadata: Metadata = {
@@ -20,12 +20,10 @@ export default async function BillsPage({
   const session = await auth();
   const userId = session?.user?.id as UserId;
 
-  const raw = await searchParams;
-  const params = parseBillsParams(raw);
+  const params = await loadBillsParams(searchParams);
 
-  const [result, serviceOptions, propertiesWithRole] = await Promise.all([
+  const [result, propertiesWithRole] = await Promise.all([
     getBillsList(userId, params),
-    servicesForBillForm(userId),
     accessibleProperties(userId),
   ]);
 
@@ -34,13 +32,5 @@ export default async function BillsPage({
     name: property.name,
   }));
 
-  return (
-    <BillsClient
-      data={result.data}
-      pagination={result.pagination}
-      totalAmount={result.totals.amount}
-      serviceOptions={serviceOptions}
-      propertyOptions={propertyOptions}
-    />
-  );
+  return <BillsClient billsList={result} properties={propertyOptions} />;
 }

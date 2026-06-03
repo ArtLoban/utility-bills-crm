@@ -3,8 +3,8 @@ import type { Metadata } from "next";
 import { auth } from "@/lib/auth";
 import type { UserId } from "@/lib/db/schema/auth";
 import { accessibleProperties } from "@/lib/db/access/properties";
-import { getPaymentsList, servicesForPaymentForm } from "@/lib/db/access/payments";
-import { parsePaymentsParams } from "@/features/payments/query-params";
+import { getPaymentsList } from "@/lib/db/access/payments";
+import { loadPaymentsParams } from "@/features/payments/query-params";
 import { PaymentsClient } from "./_components/payments-client";
 
 export const metadata: Metadata = {
@@ -20,12 +20,10 @@ export default async function PaymentsPage({
   const session = await auth();
   const userId = session?.user?.id as UserId;
 
-  const raw = await searchParams;
-  const params = parsePaymentsParams(raw);
+  const params = await loadPaymentsParams(searchParams);
 
-  const [result, serviceOptions, propertiesWithRole] = await Promise.all([
+  const [result, propertiesWithRole] = await Promise.all([
     getPaymentsList(userId, params),
-    servicesForPaymentForm(userId),
     accessibleProperties(userId),
   ]);
 
@@ -34,13 +32,5 @@ export default async function PaymentsPage({
     name: property.name,
   }));
 
-  return (
-    <PaymentsClient
-      data={result.data}
-      pagination={result.pagination}
-      totalAmount={result.totals.amount}
-      serviceOptions={serviceOptions}
-      propertyOptions={propertyOptions}
-    />
-  );
+  return <PaymentsClient paymentsList={result} properties={propertyOptions} />;
 }

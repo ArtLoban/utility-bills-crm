@@ -1,39 +1,34 @@
 "use client";
 
 import { FilterX, Receipt } from "lucide-react";
-import { useMemo } from "react";
 import { parseAsString, useQueryStates } from "nuqs";
 
 import { Button } from "@/components/ui/button";
 import { EmptyStateCard } from "@/components/empty-state-card";
 import { PageContainer } from "@/components/page-container";
 import { PageMeta } from "@/components/page-meta";
-import { getServiceLabel } from "@/lib/constants/service-colors";
 import { useServerListParams } from "@/lib/hooks/use-server-list-params";
-import type { PropertyId } from "@/lib/db/schema/properties";
-import type { TBillGlobalRow, TServiceOption } from "@/lib/db/access/bills";
-import type { TServerPagination } from "@/lib/types/data-table";
+import { TBillsListResult } from "@/lib/db/access/bills";
 import { FilterBar } from "./filter-bar";
 import { BillsTable } from "./bills-table";
 import { BillsMobile } from "./bills-mobile";
-import { BillsActions } from "../bills-actions";
 import { BillsTableActions } from "./context";
+import { formatUAH } from "@/lib/format/currency";
+import { useTranslations } from "next-intl";
+import { TSelectableEntity } from "@/components/select-input/types";
+import { AddButton } from "@/components/add-button";
+import { ROUTES } from "@/lib/routes";
 
 type TProps = {
-  data: TBillGlobalRow[];
-  pagination: TServerPagination;
-  totalAmount: string;
-  serviceOptions: Record<PropertyId, TServiceOption[]>;
-  propertyOptions: { id: PropertyId; name: string }[];
+  billsList: TBillsListResult;
+  properties: TSelectableEntity[];
 };
 
-export const BillsClient = ({
-  data,
-  pagination,
-  totalAmount,
-  serviceOptions,
-  propertyOptions,
-}: TProps) => {
+export const BillsClient = ({ billsList, properties }: TProps) => {
+  const { data, pagination, totals } = billsList;
+  const t = useTranslations("bills.list");
+  const meta = [t("meta.records", { count: pagination.total }), formatUAH(Number(totals.amount))];
+
   const { sorting, onSortingChange, setPage, setPageSize } = useServerListParams({
     defaultSortBy: "periodMonth",
   });
@@ -52,21 +47,6 @@ export const BillsClient = ({
     filterParams.propertyId || filterParams.service || filterParams.dateFrom || filterParams.dateTo,
   );
 
-  // Derive unique service type options from all accessible services (not from current page data).
-  const serviceFilterOptions = useMemo(() => {
-    const seen = new Set<string>();
-    const result: { id: string; name: string }[] = [];
-    for (const options of Object.values(serviceOptions)) {
-      for (const opt of options) {
-        if (!seen.has(opt.typeCode)) {
-          seen.add(opt.typeCode);
-          result.push({ id: opt.typeCode, name: getServiceLabel(opt.typeCode) });
-        }
-      }
-    }
-    return result;
-  }, [serviceOptions]);
-
   const handleClearFilters = () =>
     void setFilterParams({ propertyId: null, service: null, dateFrom: null, dateTo: null });
 
@@ -74,14 +54,12 @@ export const BillsClient = ({
     <BillsTableActions>
       <PageContainer
         title="Bills"
-        meta={<PageMeta items={[`${pagination.total} records`]} />}
-        actions={<BillsActions />}
+        meta={<PageMeta items={meta} />}
+        actions={<AddButton href={`${ROUTES.bills}/new`} text="Add Bill" />}
       >
         {/* Desktop layout */}
         <div className="hidden md:block">
-          {(data.length > 0 || anyFilter) && (
-            <FilterBar propertyOptions={propertyOptions} serviceOptions={serviceFilterOptions} />
-          )}
+          {(data.length > 0 || anyFilter) && <FilterBar propertyOptions={properties} />}
 
           {data.length === 0 && !anyFilter && (
             <EmptyStateCard
@@ -108,7 +86,7 @@ export const BillsClient = ({
             <BillsTable
               data={data}
               pagination={pagination}
-              totalAmount={totalAmount}
+              totalAmount={totals.amount}
               sorting={sorting}
               onSortingChange={onSortingChange}
               onPageChange={setPage}
@@ -122,9 +100,8 @@ export const BillsClient = ({
           <BillsMobile
             data={data}
             pagination={pagination}
-            totalAmount={totalAmount}
-            propertyOptions={propertyOptions}
-            serviceOptions={serviceFilterOptions}
+            totalAmount={totals.amount}
+            propertyOptions={properties}
             onPageChange={setPage}
           />
         </div>

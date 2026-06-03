@@ -6,6 +6,7 @@ import { PRESETS } from "@/components/date-range-filter/constants";
 import type { TTimePeriod } from "@/components/date-range-filter/types";
 import { resolvePreset } from "@/components/date-range-filter/utils";
 import { ACCENT } from "@/lib/constants/ui-tokens";
+import { useServiceOptions } from "@/features/services/hooks/use-service-options";
 
 type TFilterOption = { id: string; name: string };
 
@@ -22,7 +23,6 @@ type TProps = {
   filters: TFilters;
   onFilterChange: (filters: TFilters) => void;
   propertyOptions: TFilterOption[];
-  serviceOptions: TFilterOption[];
 };
 
 type TSheetSelectProps = {
@@ -103,15 +103,9 @@ const SheetDateInput = ({ label, value, onChange }: TSheetDateInputProps) => (
   </div>
 );
 
-const FilterSheet = ({
-  open,
-  onOpenChange,
-  filters,
-  onFilterChange,
-  propertyOptions,
-  serviceOptions,
-}: TProps) => {
+const FilterSheet = ({ open, onOpenChange, filters, onFilterChange, propertyOptions }: TProps) => {
   const [timePeriod, setTimePeriod] = useState<TTimePeriod | null>(null);
+  const serviceOptions = useServiceOptions();
 
   const setField =
     (key: keyof Pick<TFilters, "propertyId" | "service">) =>

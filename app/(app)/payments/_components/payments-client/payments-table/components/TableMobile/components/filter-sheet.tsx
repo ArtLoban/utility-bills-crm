@@ -14,12 +14,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Sheet, SheetClose, SheetContent, SheetTitle } from "@/components/ui/sheet";
+import { useServiceOptions } from "@/features/services/hooks/use-service-options";
+import { usePaymentsTable } from "../../../../context";
 
 type TProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  propertyOptions: { id: string; name: string }[];
-  serviceOptions: { id: string; name: string }[];
 };
 
 type TFilterSelectProps = {
@@ -49,8 +49,11 @@ const FilterSelect = ({ label, value, onChange, options, placeholder }: TFilterS
   </div>
 );
 
-export const FilterSheet = ({ open, onOpenChange, propertyOptions, serviceOptions }: TProps) => {
+export const FilterSheet = ({ open, onOpenChange }: TProps) => {
   const t = useTranslations("payments.list");
+  const { properties } = usePaymentsTable();
+  const serviceOptions = useServiceOptions();
+
   const [query, setQuery] = useQueryStates(
     {
       propertyId: parseAsString,
@@ -88,7 +91,7 @@ export const FilterSheet = ({ open, onOpenChange, propertyOptions, serviceOption
               label={t("filters.property")}
               value={query.propertyId}
               onChange={(v) => void setQuery({ propertyId: v })}
-              options={propertyOptions}
+              options={properties}
               placeholder={t("filters.allProperties")}
             />
             <FilterSelect

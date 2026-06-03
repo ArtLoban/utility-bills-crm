@@ -1,7 +1,7 @@
 export { PaymentModal } from "./components/payment-modal";
 export { PaymentFormContent } from "./components/payment-form-content";
 export { recordPayment, editPayment, softDeletePayment } from "./actions";
-export { parsePaymentsParams } from "./query-params";
+export { paymentsSearchParams, loadPaymentsParams } from "./query-params";
 export { PAYMENTS_SORT_COLUMNS } from "./types";
 export type {
   TPaymentSortColumn,

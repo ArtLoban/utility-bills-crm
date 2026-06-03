@@ -18,9 +18,9 @@ type TProps = {
   className?: string;
 };
 
-// devnote. сделать проверку на несуществующее значение
 export const DateCell = ({ value, format: fmt = "short", className }: TProps) => {
   const formatter = useFormatter();
+  if (!value) return null;
   const date = typeof value === "string" ? new Date(value) : value;
 
   const formatted =

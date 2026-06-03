@@ -10,31 +10,27 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { SERVICE_COLORS } from "@/lib/constants/service-colors";
 import { formatUAH } from "@/lib/format/currency";
-import type { TPaymentGlobalRow } from "@/features/payments/types";
-import type { TServerPagination } from "@/lib/types/data-table";
+import type { TPaymentsListResult } from "@/features/payments/types";
 
-import { FilterChip } from "./filter-chip";
-import { FilterSheet } from "./filter-sheet";
-import { MobilePager } from "./mobile-pager";
-import { PaymentCard } from "./payment-card";
+import { FilterChip } from "./components/filter-chip";
+import { FilterSheet } from "./components/filter-sheet";
+import { MobilePager } from "./components/mobile-pager";
+import { PaymentCard } from "./components/payment-card";
+import { TListParams } from "@/components/data-table/types";
+import { usePaymentsTable } from "../../../context";
+
+import type { TQueryFilters } from "../../types";
 
 type TProps = {
-  data: TPaymentGlobalRow[];
-  pagination: TServerPagination;
-  totalAmount: string;
-  propertyOptions: { id: string; name: string }[];
-  serviceOptions: { id: string; name: string }[];
-  onPageChange: (page: number) => void;
+  paymentsList: TPaymentsListResult;
+  listParams: TListParams;
+  queryFilters: TQueryFilters;
 };
 
-export const PaymentsMobile = ({
-  data,
-  pagination,
-  totalAmount,
-  propertyOptions,
-  serviceOptions,
-  onPageChange,
-}: TProps) => {
+export const PaymentsTableMobile = (props: TProps) => {
+  const { paymentsList, listParams, queryFilters } = props;
+  const { properties } = usePaymentsTable();
+  const { data, pagination, totals } = paymentsList;
   const t = useTranslations("payments.list");
   const [sheetOpen, setSheetOpen] = useState(false);
   const [query, setQuery] = useQueryStates(
@@ -47,12 +43,14 @@ export const PaymentsMobile = ({
     { history: "replace", shallow: false },
   );
 
+  const { setPage } = listParams;
+
   const propertyLabel = query.propertyId
-    ? (propertyOptions.find((p) => p.id === query.propertyId)?.name ?? null)
+    ? (properties.find((p) => p.id === query.propertyId)?.name ?? null)
     : null;
-  const serviceLabel = query.service
-    ? (serviceOptions.find((s) => s.id === query.service)?.name ?? null)
-    : null;
+  // const serviceLabel = query.service
+  //   ? (serviceOptions.find((s) => s.id === query.service)?.name ?? null)
+  //   : null;
   const serviceColor = query.service
     ? SERVICE_COLORS[query.service as keyof typeof SERVICE_COLORS]
     : undefined;
@@ -60,6 +58,8 @@ export const PaymentsMobile = ({
   const activeCount = [query.propertyId, query.service, query.dateFrom, query.dateTo].filter(
     Boolean,
   ).length;
+
+  const { hasActiveFilters } = queryFilters;
 
   return (
     <div className="px-3.5 pt-5 pb-8">
@@ -77,7 +77,7 @@ export const PaymentsMobile = ({
       </div>
 
       <div
-        className={cn("flex items-center justify-between", activeCount > 0 ? "mb-2.5" : "mb-3.5")}
+        className={cn("flex items-center justify-between", hasActiveFilters ? "mb-2.5" : "mb-3.5")}
       >
         <button
           onClick={() => setSheetOpen(true)}
@@ -110,9 +110,9 @@ export const PaymentsMobile = ({
               onRemove={() => void setQuery({ propertyId: null })}
             />
           )}
-          {serviceLabel && (
+          {query.service && (
             <FilterChip
-              label={serviceLabel}
+              label={query.service}
               color={serviceColor}
               onRemove={() => void setQuery({ service: null })}
             />
@@ -142,24 +142,19 @@ export const PaymentsMobile = ({
         <MobilePager
           page={pagination.page}
           totalPages={pagination.totalPages}
-          onPrev={() => onPageChange(pagination.page - 1)}
-          onNext={() => onPageChange(pagination.page + 1)}
+          onPrev={() => setPage(pagination.page - 1)}
+          onNext={() => setPage(pagination.page + 1)}
         />
       )}
 
       <div className="mt-4 flex items-center justify-between rounded-lg border border-zinc-200 bg-white p-3.5 dark:border-zinc-800 dark:bg-zinc-900">
         <span className="text-muted-foreground text-sm">{t("footer.totalPaid")}</span>
         <span className="text-[15px] font-bold text-green-600 tabular-nums dark:text-green-500">
-          {formatUAH(Number(totalAmount))}
+          {formatUAH(Number(totals.amount))}
         </span>
       </div>
 
-      <FilterSheet
-        open={sheetOpen}
-        onOpenChange={setSheetOpen}
-        propertyOptions={propertyOptions}
-        serviceOptions={serviceOptions}
-      />
+      <FilterSheet open={sheetOpen} onOpenChange={setSheetOpen} />
     </div>
   );
 };
