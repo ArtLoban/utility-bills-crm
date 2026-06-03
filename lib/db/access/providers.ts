@@ -1,6 +1,7 @@
-import { and, eq, isNull } from "drizzle-orm";
+import { and, countDistinct, eq, getTableColumns, isNull } from "drizzle-orm";
 
 import { db } from "@/lib/db/client";
+import { contracts } from "@/lib/db/schema/contracts";
 import { providers } from "@/lib/db/schema/providers";
 import type { ProviderId, TProvider } from "@/lib/db/schema/providers";
 import type { UserId } from "@/lib/db/schema/auth";
@@ -9,6 +10,20 @@ import type { Result } from "@/lib/errors";
 
 // Pure functions: userId is always a parameter. Never read the auth session internally.
 // All helpers filter deletedAt IS NULL — soft-deleted providers are invisible.
+
+export type TProviderWithUsage = TProvider & { usageCount: number };
+
+// Returns providers with a per-row usage count: number of distinct services that have
+// at least one active (non-soft-deleted) contract referencing this provider.
+// Uses a single LEFT JOIN + GROUP BY — no N+1.
+// groupBy(providers.id) is sufficient in PostgreSQL: PK functionally determines all columns.
+export const providersByUserIdWithUsage = (userId: UserId): Promise<TProviderWithUsage[]> =>
+  db
+    .select({ ...getTableColumns(providers), usageCount: countDistinct(contracts.serviceId) })
+    .from(providers)
+    .leftJoin(contracts, and(eq(contracts.providerId, providers.id), isNull(contracts.deletedAt)))
+    .where(and(eq(providers.ownerId, userId), isNull(providers.deletedAt)))
+    .groupBy(providers.id);
 
 export const providersByUserId = (userId: UserId): Promise<TProvider[]> =>
   db

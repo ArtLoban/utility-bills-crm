@@ -6,24 +6,27 @@ import { useTranslations } from "next-intl";
 import { EmptyStateCard } from "@/components/empty-state-card";
 import { PageContainer } from "@/components/page-container";
 import { ROUTES } from "@/lib/routes";
-import type { TProvider } from "@/lib/db/schema/providers";
 import { AddButton } from "@/components/add-button";
 import { PageMeta } from "@/components/page-meta";
+import type { TProviderWithUsage } from "@/app/(app)/providers/_data/queries";
 import { Providers } from "@/app/(app)/providers/_components/providers-client/components/providers";
 
 type TProps = {
-  providers: TProvider[];
+  providers: TProviderWithUsage[];
 };
 
 export const ProvidersClient = ({ providers }: TProps) => {
   const t = useTranslations("providers");
   const hasProviders = providers.length > 0;
+  const inUseCount = providers.filter((p) => p.usageCount > 0).length;
 
   return (
     <PageContainer
       title={t("list.title")}
       actions={<AddButton href={`${ROUTES.providers}/new`} text={t("list.addButton")} />}
-      meta={<PageMeta items={["todo", "todo"]} />}
+      meta={
+        <PageMeta items={[t("list.subtitle", { count: providers.length, inUse: inUseCount })]} />
+      }
     >
       {hasProviders ? (
         <Providers providers={providers} />

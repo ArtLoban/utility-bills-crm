@@ -1,17 +1,17 @@
-import { ProviderRow } from "@/app/(app)/providers/_components/providers-client/components/provider-row";
-import type { TProvider } from "@/lib/db/schema";
+import { ProviderCard } from "@/app/(app)/providers/_components/providers-client/components/provider-card";
+import type { TProviderWithUsage } from "@/app/(app)/providers/_data/queries";
 import { ProvidersListActions } from "@/app/(app)/providers/_components/providers-client/components/providers-list-actions";
 
 type TProps = {
-  providers: TProvider[];
+  providers: TProviderWithUsage[];
 };
 
 export const Providers = ({ providers }: TProps) => {
   return (
     <ProvidersListActions>
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-2.5">
         {providers.map((provider) => (
-          <ProviderRow key={provider.id} provider={provider} />
+          <ProviderCard key={provider.id} provider={provider} />
         ))}
       </div>
     </ProvidersListActions>

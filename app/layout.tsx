@@ -8,6 +8,7 @@ import { Toaster } from "sonner";
 import "./globals.css";
 import { auth } from "@/lib/auth";
 import { ThemeProvider } from "@/components/theme-provider";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { THEME_COOKIE_NAME, DEFAULT_THEME, type TTheme } from "@/lib/theme/constants";
 
@@ -49,7 +50,9 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
             enableSystem
             disableTransitionOnChange
           >
-            <NuqsAdapter>{children}</NuqsAdapter>
+            <TooltipProvider delayDuration={300}>
+              <NuqsAdapter>{children}</NuqsAdapter>
+            </TooltipProvider>
             <Toaster position="bottom-right" />
           </ThemeProvider>
         </NextIntlClientProvider>

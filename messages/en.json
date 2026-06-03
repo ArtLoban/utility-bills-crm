@@ -410,7 +410,8 @@
   "providers": {
     "list": {
       "title": "Providers",
-      "addButton": "Add provider"
+      "addButton": "Add provider",
+      "subtitle": "{count, plural, one {1 provider} other {# providers}} · {inUse, plural, one {1 in use} other {# in use}}"
     },
     "empty": {
       "title": "No providers yet",
@@ -453,11 +454,20 @@
       "saveError": "Something went wrong. Please try again.",
       "deleteError": "Failed to delete provider"
     },
+    "usage": {
+      "used": "{count, plural, one {Used by 1 service} other {Used by # services}}",
+      "notInUse": "Not in use"
+    },
+    "notes": {
+      "showMore": "Show more",
+      "showLess": "Show less"
+    },
     "delete": {
       "menuItem": "Delete provider",
       "title": "Delete provider",
       "description": "This action cannot be undone.",
-      "descriptionPrefix": "Delete"
+      "descriptionPrefix": "Delete",
+      "inUseTooltip": "In use — can't delete"
     },
     "validation": {
       "name": {
