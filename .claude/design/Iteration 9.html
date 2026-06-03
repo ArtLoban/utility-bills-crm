@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Utility Bills CRM — Iteration 9 · System states</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; padding: 0; height: 100%; background: #f4f1ee; }
+  body { font-family: 'Inter', system-ui, -apple-system, sans-serif; -webkit-font-smoothing: antialiased; }
+  * { box-sizing: border-box; }
+  button, input, textarea, select { font-family: inherit; }
+  @keyframes i9pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#7c3aed"/><g transform="translate(50,50)" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="-3" cy="-3" r="11"/><path d="m6 6 9 9"/></g></svg></template>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script type="text/babel" src="iteration9.jsx"></script>
+<script type="text/babel" src="iteration9-skeletons.jsx"></script>
+<script type="text/babel" src="iteration9-toasts.jsx"></script>
+
+<script type="text/babel" data-presets="react">
+  const AW = 1280, AH = 720;
+
+  function App() {
+    const DCanvas = window.DesignCanvas;
+    const DCSec   = window.DCSection;
+    const DCBoard = window.DCArtboard;
+    const NotFound = window.I9NotFound;
+    const NotFoundM = window.I9NotFoundMobile;
+    const FatalError = window.I9FatalError;
+    const FatalErrorM = window.I9FatalErrorMobile;
+    const SkelDash = window.I9SkeletonDashboard;
+    const SkelDashM = window.I9SkeletonDashboardMobile;
+    const SkelBills = window.I9SkeletonBills;
+    const SkelBillsM = window.I9SkeletonBillsMobile;
+    const ToastStack = window.I9ToastStack;
+    const ToastStackM = window.I9ToastStackMobile;
+
+    return (
+      <DCanvas>
+        <DCSec
+          id="s1-404"
+          title="404 / Not found"
+          subtitle="SearchX in the muted icon-chip, matching the Bills / Dashboard empty states. Bare centered block on the app shell — no card."
+        >
+          <DCBoard id="404-light" label="404 · Light" width={AW} height={AH}>
+            <NotFound theme="light" iconKey="searchx" height={AH} />
+          </DCBoard>
+          <DCBoard id="404-dark" label="404 · Dark" width={AW} height={AH}>
+            <NotFound theme="dark" iconKey="searchx" height={AH} />
+          </DCBoard>
+          <DCBoard id="404-mobile-light" label="404 · Mobile (light)" width={390} height={780}>
+            <NotFoundM theme="light" iconKey="searchx" height={780} />
+          </DCBoard>
+        </DCSec>
+
+        <DCSec
+          id="s2-fatal"
+          title="Fatal error"
+          subtitle="Full-page crash state — no top bar / nav (the whole app is down, not just a route). TriangleAlert in a calm destructive-tint chip, never full red. Try again (default) + Go home (outline)."
+        >
+          <DCBoard id="fatal-light" label="Fatal error · Light" width={AW} height={AH}>
+            <FatalError theme="light" height={AH} />
+          </DCBoard>
+          <DCBoard id="fatal-dark" label="Fatal error · Dark" width={AW} height={AH}>
+            <FatalError theme="dark" height={AH} />
+          </DCBoard>
+          <DCBoard id="fatal-mobile-light" label="Fatal error · Mobile (light)" width={390} height={780}>
+            <FatalErrorM theme="light" height={780} />
+          </DCBoard>
+        </DCSec>
+
+        <DCSec
+          id="s3-skel-dash"
+          title="Loading skeleton · Dashboard"
+          subtitle="Inside the real app shell — only the content area is skeleton. Shapes echo the Dashboard: greeting bar, balance card, filter row, pie + bar, line chart. shadcn Skeleton with a subtle pulse."
+        >
+          <DCBoard id="skel-dash-light" label="Dashboard loading · Light" width={AW} height={1140}>
+            <SkelDash theme="light" height={1140} />
+          </DCBoard>
+          <DCBoard id="skel-dash-dark" label="Dashboard loading · Dark" width={AW} height={1140}>
+            <SkelDash theme="dark" height={1140} />
+          </DCBoard>
+          <DCBoard id="skel-dash-mobile-light" label="Dashboard loading · Mobile (light)" width={390} height={1320}>
+            <SkelDashM theme="light" height={1320} />
+          </DCBoard>
+        </DCSec>
+
+        <DCSec
+          id="s4-skel-bills"
+          title="Loading skeleton · Bills list"
+          subtitle="Sets the skeleton language for all table pages (Bills / Payments / Meters / Admin). Header + count, filter row, header row, ~8 shimmer rows echoing Date / Property / Service / Period / Amount / actions, footer total + pagination."
+        >
+          <DCBoard id="skel-bills-light" label="Bills loading · Light" width={AW} height={900}>
+            <SkelBills theme="light" height={900} />
+          </DCBoard>
+          <DCBoard id="skel-bills-dark" label="Bills loading · Dark" width={AW} height={900}>
+            <SkelBills theme="dark" height={900} />
+          </DCBoard>
+          <DCBoard id="skel-bills-mobile-light" label="Bills loading · Mobile (light)" width={390} height={980}>
+            <SkelBillsM theme="light" height={980} />
+          </DCBoard>
+        </DCSec>
+
+        <DCSec
+          id="s5-toasts"
+          title="Toast stack"
+          subtitle="sonner New-York toasts, anchored bottom-right over a dimmed Dashboard. Success / non-critical error / session-expired. Icon left, message, dismiss ×. Reference for aligning Code's existing toasts."
+        >
+          <DCBoard id="toasts-light" label="Toast stack · Light" width={AW} height={760}>
+            <ToastStack theme="light" height={760} />
+          </DCBoard>
+          <DCBoard id="toasts-dark" label="Toast stack · Dark" width={AW} height={760}>
+            <ToastStack theme="dark" height={760} />
+          </DCBoard>
+          <DCBoard id="toasts-mobile-light" label="Toast stack · Mobile (light)" width={390} height={800}>
+            <ToastStackM theme="light" height={800} />
+          </DCBoard>
+        </DCSec>
+      </DCanvas>
+    );
+  }
+
+  const start = () => {
+    if (window.DesignCanvas && window.I9NotFound && window.I9NotFoundMobile && window.I9FatalError && window.I9FatalErrorMobile && window.I9SkeletonDashboard && window.I9SkeletonBills && window.I9ToastStack) {
+      ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    } else {
+      setTimeout(start, 30);
+    }
+  };
+  start();
+</script>
+</body>
+</html>
