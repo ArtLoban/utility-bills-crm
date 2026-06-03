@@ -1,5 +1,8 @@
 // --- Sort allow-list ---
 
+import { TDataTableParams } from "@/components/data-table/types";
+import { TDateParams } from "@/lib/types/common";
+
 export const BILLS_SORT_COLUMNS = {
   PERIOD_MONTH: "periodMonth",
   AMOUNT: "amount",
@@ -9,14 +12,13 @@ export const BILLS_SORT_COLUMNS = {
 export type TBillSortColumn = (typeof BILLS_SORT_COLUMNS)[keyof typeof BILLS_SORT_COLUMNS];
 
 // --- List query contract ---
+export const BILLS_FILTERS = {
+  PROPERTY_ID: "propertyId",
+  SERVICES: "services",
+} as const;
 
-export type TBillsListParams = {
-  page: number;
-  pageSize: number;
-  sortBy: TBillSortColumn;
-  sortOrder: "asc" | "desc";
-  propertyId?: string | null;
-  services?: string[] | null;
-  dateFrom?: string | null; // YYYY-MM-DD, inclusive
-  dateTo?: string | null; // YYYY-MM-DD, inclusive
-};
+export type TBillsListParams = TDataTableParams &
+  TDateParams & {
+    [BILLS_FILTERS.PROPERTY_ID]?: string | null;
+    [BILLS_FILTERS.SERVICES]?: string[] | null;
+  };

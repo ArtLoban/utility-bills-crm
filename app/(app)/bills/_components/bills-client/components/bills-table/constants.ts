@@ -1,16 +1,17 @@
 import { FiltersFormField, TFiltersFormValues } from "./types";
+import { DATE_PARAMS } from "@/lib/types/common";
 import { parseAsString } from "nuqs";
 
 export const INITIAL_FILTERS: TFiltersFormValues = {
   [FiltersFormField.PROPERTY_ID]: null,
-  [FiltersFormField.SERVICE]: null,
-  [FiltersFormField.DATE_FROM]: null,
-  [FiltersFormField.DATE_TO]: null,
+  [FiltersFormField.SERVICES]: null,
+  [DATE_PARAMS.DATE_FROM]: null,
+  [DATE_PARAMS.DATE_TO]: null,
 };
 
 export const URL_FIELDS = {
   [FiltersFormField.PROPERTY_ID]: parseAsString,
-  [FiltersFormField.SERVICE]: parseAsString,
-  [FiltersFormField.DATE_FROM]: parseAsString,
-  [FiltersFormField.DATE_TO]: parseAsString,
+  [FiltersFormField.SERVICES]: parseAsString,
+  [DATE_PARAMS.DATE_FROM]: parseAsString,
+  [DATE_PARAMS.DATE_TO]: parseAsString,
 };

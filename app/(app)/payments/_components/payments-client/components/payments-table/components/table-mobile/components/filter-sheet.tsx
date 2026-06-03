@@ -57,7 +57,7 @@ export const FilterSheet = ({ open, onOpenChange }: TProps) => {
   const [query, setQuery] = useQueryStates(
     {
       propertyId: parseAsString,
-      service: parseAsString,
+      services: parseAsString,
       dateFrom: parseAsString,
       dateTo: parseAsString,
     },
@@ -65,7 +65,7 @@ export const FilterSheet = ({ open, onOpenChange }: TProps) => {
   );
 
   const handleClear = () => {
-    void setQuery({ propertyId: null, service: null, dateFrom: null, dateTo: null });
+    void setQuery({ propertyId: null, services: null, dateFrom: null, dateTo: null });
     onOpenChange(false);
   };
 
@@ -96,8 +96,8 @@ export const FilterSheet = ({ open, onOpenChange }: TProps) => {
             />
             <FilterSelect
               label={t("filters.service")}
-              value={query.service}
-              onChange={(v) => void setQuery({ service: v })}
+              value={query.services}
+              onChange={(v) => void setQuery({ services: v })}
               options={serviceOptions}
               placeholder={t("filters.allServices")}
             />

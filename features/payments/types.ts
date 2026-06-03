@@ -18,10 +18,15 @@ export type TPaymentSortColumn = (typeof PAYMENT_SORT_COLUMNS)[keyof typeof PAYM
 
 // --- List query contract (Decision #120) ---
 
+export const PAYMENTS_FILTERS = {
+  PROPERTY_ID: "propertyId",
+  SERVICES: "services",
+} as const;
+
 export type TPaymentsListParams = TDataTableParams &
   TDateParams & {
-    propertyId?: string | null;
-    services?: string[] | null; // serviceType codes, ;-separated in URL
+    [PAYMENTS_FILTERS.PROPERTY_ID]?: string | null;
+    [PAYMENTS_FILTERS.SERVICES]?: string[] | null; // serviceType codes, ;-separated in URL
   };
 
 // --- Row shape returned from getPaymentsList ---

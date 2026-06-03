@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
-import { ArrowDown, Plus } from "lucide-react";
+import { ArrowDown } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { parseAsString, useQueryStates } from "nuqs";
 
@@ -36,7 +35,7 @@ export const PaymentsTableMobile = (props: TProps) => {
   const [query, setQuery] = useQueryStates(
     {
       propertyId: parseAsString,
-      service: parseAsString,
+      services: parseAsString,
       dateFrom: parseAsString,
       dateTo: parseAsString,
     },
@@ -48,14 +47,14 @@ export const PaymentsTableMobile = (props: TProps) => {
   const propertyLabel = query.propertyId
     ? (properties.find((p) => p.id === query.propertyId)?.name ?? null)
     : null;
-  // const serviceLabel = query.service
-  //   ? (serviceOptions.find((s) => s.id === query.service)?.name ?? null)
+  // const serviceLabel = query.services
+  //   ? (serviceOptions.find((s) => s.id === query.services)?.name ?? null)
   //   : null;
-  const serviceColor = query.service
-    ? SERVICE_COLORS[query.service as keyof typeof SERVICE_COLORS]
+  const serviceColor = query.services
+    ? SERVICE_COLORS[query.services as keyof typeof SERVICE_COLORS]
     : undefined;
 
-  const activeCount = [query.propertyId, query.service, query.dateFrom, query.dateTo].filter(
+  const activeCount = [query.propertyId, query.services, query.dateFrom, query.dateTo].filter(
     Boolean,
   ).length;
 
@@ -63,38 +62,17 @@ export const PaymentsTableMobile = (props: TProps) => {
 
   return (
     <div className="px-3.5 pt-5 pb-8">
-      <div className="mb-3.5 flex items-start justify-between">
-        <div>
-          <h2 className="text-[22px] font-bold tracking-tight">{t("title")}</h2>
-          <p className="text-muted-foreground mt-0.5 text-xs">{pagination.total}</p>
-        </div>
-        <Button asChild>
-          <Link href="/payments/new">
-            <Plus size={14} />
-            {t("mobile.add")}
-          </Link>
-        </Button>
-      </div>
-
       <div
         className={cn("flex items-center justify-between", hasActiveFilters ? "mb-2.5" : "mb-3.5")}
       >
-        <button
-          onClick={() => setSheetOpen(true)}
-          className={cn(
-            "inline-flex h-8 cursor-pointer items-center gap-1.5 rounded-md border px-3 text-[13px] font-medium",
-            activeCount === 0
-              ? "border-zinc-200 bg-white text-zinc-950 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50"
-              : "border-brand bg-brand-bg text-brand",
-          )}
-        >
+        <Button variant={activeCount > 0 ? "active" : "outline"} onClick={() => setSheetOpen(true)}>
           {t("mobile.filters")}
           {activeCount > 0 && (
             <span className="bg-brand inline-flex min-w-4 items-center justify-center rounded-full px-1 text-[10.5px] font-bold text-white">
               {activeCount}
             </span>
           )}
-        </button>
+        </Button>
 
         <span className="text-muted-foreground flex items-center gap-1 text-xs">
           <ArrowDown size={13} />
@@ -110,11 +88,11 @@ export const PaymentsTableMobile = (props: TProps) => {
               onRemove={() => void setQuery({ propertyId: null })}
             />
           )}
-          {query.service && (
+          {query.services && (
             <FilterChip
-              label={query.service}
+              label={query.services}
               color={serviceColor}
-              onRemove={() => void setQuery({ service: null })}
+              onRemove={() => void setQuery({ services: null })}
             />
           )}
           {query.dateFrom && (

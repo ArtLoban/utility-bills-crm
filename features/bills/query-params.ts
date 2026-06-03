@@ -9,7 +9,7 @@ export const billsSearchParams = {
     BILLS_SORT_COLUMNS.PERIOD_MONTH,
   ),
   propertyId: parseAsString,
-  service: parseAsSemicolonArray,
+  services: parseAsSemicolonArray,
 };
 
 export const loadBillsParams = createLoader(billsSearchParams);

@@ -1,6 +1,7 @@
 import { createParser, parseAsInteger, parseAsStringLiteral } from "nuqs/server";
 import { PAGE_SIZE_DEFAULT, PAGE_SIZE_MAX } from "@/components/data-table/constants";
-import { SORT_ORDER } from "@/components/data-table/types";
+import { DATA_TABLE_PARAMS, SORT_ORDER } from "@/components/data-table/types";
+import { DATE_PARAMS } from "@/lib/types/common";
 
 export const parseAsPageSize = createParser({
   parse: (v) => {
@@ -24,9 +25,11 @@ export const parseAsSemicolonArray = createParser<string[]>({
 });
 
 export const baseListSearchParams = {
-  page: parseAsInteger.withDefault(1),
-  pageSize: parseAsPageSize,
-  sortOrder: parseAsStringLiteral(Object.values(SORT_ORDER)).withDefault(SORT_ORDER.DESC),
-  dateFrom: parseAsYYYYMMDD,
-  dateTo: parseAsYYYYMMDD,
+  [DATA_TABLE_PARAMS.PAGE]: parseAsInteger.withDefault(1),
+  [DATA_TABLE_PARAMS.PAGE_SIZE]: parseAsPageSize,
+  [DATA_TABLE_PARAMS.SORT_ORDER]: parseAsStringLiteral(Object.values(SORT_ORDER)).withDefault(
+    SORT_ORDER.DESC,
+  ),
+  [DATE_PARAMS.DATE_FROM]: parseAsYYYYMMDD,
+  [DATE_PARAMS.DATE_TO]: parseAsYYYYMMDD,
 };

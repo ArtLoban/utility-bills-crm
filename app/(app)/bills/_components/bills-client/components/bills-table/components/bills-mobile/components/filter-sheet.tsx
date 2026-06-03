@@ -12,7 +12,7 @@ type TFilterOption = { id: string; name: string };
 
 type TFilters = {
   propertyId: string | null;
-  service: string | null;
+  services: string | null;
   dateFrom: string | null;
   dateTo: string | null;
 };
@@ -108,7 +108,7 @@ const FilterSheet = ({ open, onOpenChange, filters, onFilterChange, propertyOpti
   const serviceOptions = useServiceOptions();
 
   const setField =
-    (key: keyof Pick<TFilters, "propertyId" | "service">) =>
+    (key: keyof Pick<TFilters, "propertyId" | "services">) =>
     (value: string): void => {
       onFilterChange({ ...filters, [key]: value === "" ? null : value });
     };
@@ -137,7 +137,7 @@ const FilterSheet = ({ open, onOpenChange, filters, onFilterChange, propertyOpti
 
   const handleClear = () => {
     setTimePeriod(null);
-    onFilterChange({ propertyId: null, service: null, dateFrom: null, dateTo: null });
+    onFilterChange({ propertyId: null, services: null, dateFrom: null, dateTo: null });
     onOpenChange(false);
   };
 
@@ -199,8 +199,8 @@ const FilterSheet = ({ open, onOpenChange, filters, onFilterChange, propertyOpti
 
             <SheetSelect
               label="Service"
-              value={filters.service ?? ""}
-              onChange={setField("service")}
+              value={filters.services ?? ""}
+              onChange={setField("services")}
             >
               <option value="">All services</option>
               {serviceOptions.map((s) => (

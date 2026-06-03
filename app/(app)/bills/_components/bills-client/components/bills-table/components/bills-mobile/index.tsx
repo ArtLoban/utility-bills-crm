@@ -40,7 +40,7 @@ export const BillsTableMobile = (props: TProps) => {
   const [filters, setFilters] = useQueryStates(
     {
       propertyId: parseAsString,
-      service: parseAsString,
+      services: parseAsString,
       dateFrom: parseAsString,
       dateTo: parseAsString,
     },
@@ -49,18 +49,20 @@ export const BillsTableMobile = (props: TProps) => {
 
   const hasDateFilter = filters.dateFrom !== null || filters.dateTo !== null;
 
-  const activeCount = [filters.propertyId !== null, filters.service !== null, hasDateFilter].filter(
-    Boolean,
-  ).length;
+  const activeCount = [
+    filters.propertyId !== null,
+    filters.services !== null,
+    hasDateFilter,
+  ].filter(Boolean).length;
 
   const propertyName = filters.propertyId
     ? (properties.find((p) => p.id === filters.propertyId)?.name ?? filters.propertyId)
     : null;
 
   // const serviceName =
-  //   serviceOption?.name ?? (filters.service ? getServiceLabel(filters.service) : null);
+  //   serviceOption?.name ?? (filters.services ? getServiceLabel(filters.services) : null);
   const serviceName = "serviceName";
-  const serviceKey = filters.service ? dbCodeToServiceKey(filters.service) : undefined;
+  const serviceKey = filters.services ? dbCodeToServiceKey(filters.services) : undefined;
   const serviceColor = serviceKey ? SERVICE_COLORS[serviceKey] : undefined;
 
   const { hasActiveFilters } = queryFilters;
@@ -143,7 +145,7 @@ export const BillsTableMobile = (props: TProps) => {
             <FilterChip
               label={serviceName}
               color={serviceColor}
-              onRemove={() => void setFilters({ service: null })}
+              onRemove={() => void setFilters({ services: null })}
             />
           )}
           {hasDateFilter && (
