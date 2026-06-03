@@ -21,7 +21,7 @@ const buttonVariants = cva(
         strongDestructive: "bg-destructive text-primary-foreground hover:bg-destructive/80",
         warning: "bg-warning text-primary-foreground hover:bg-warning/80",
         link: "text-primary underline-offset-4 hover:underline",
-        pagination: "text-brand border-brand bg-brand-bg cursor-default",
+        active: "text-brand border-brand bg-brand-bg",
         strong:
           "bg-foreground text-background shadow-sm hover:bg-foreground/90 disabled:opacity-100 disabled:bg-muted disabled:text-muted-foreground disabled:border-border",
       },

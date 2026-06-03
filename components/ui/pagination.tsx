@@ -39,9 +39,13 @@ const PaginationLink = ({ className, isActive, size = "icon", ...props }: TPagin
   return (
     <Button
       asChild
-      variant={isActive ? "pagination" : "ghost"}
+      variant={isActive ? "active" : "ghost"}
       size={size}
-      className={cn("size-7 rounded-sm font-normal", className)}
+      className={cn(
+        "size-7 rounded-sm font-normal",
+        className,
+        isActive ? "cursor-default" : undefined,
+      )}
     >
       <a
         aria-current={isActive ? "page" : undefined}
