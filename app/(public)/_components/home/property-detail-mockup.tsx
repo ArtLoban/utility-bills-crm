@@ -1,344 +1,214 @@
-const services = [
+const NAV_ITEMS = ["Dashboard", "Properties", "Meters", "Bills", "Payments", "Settings"] as const;
+
+const SERVICES = [
   {
     name: "Electricity",
     provider: "YASNO",
-    color: "var(--mockup-accent)",
-    colorHex: "#7c3aed",
-    balance: "−€148",
-    due: "Due 3 days",
+    color: "oklch(0.558 0.288 293)",
+    balance: "−₴1,180",
+    status: "Due in 3 days",
+    statusColor: "#f87171",
   },
   {
     name: "Gas",
     provider: "Naftogaz",
     color: "#f59e0b",
-    colorHex: "#f59e0b",
-    balance: "−€62",
-    due: "Due 12 days",
+    balance: "−₴640",
+    status: "Due in 12 days",
+    statusColor: "#f87171",
   },
   {
-    name: "Water",
+    name: "Cold water",
     provider: "Kyivvodokanal",
     color: "#0d9488",
-    colorHex: "#0d9488",
-    balance: "+€14",
-    due: "Overpaid",
+    balance: "+₴90",
+    status: "Overpaid",
+    statusColor: "#4ade80",
   },
   {
     name: "Internet",
     provider: "Kyivstar",
     color: "#3b82f6",
-    colorHex: "#3b82f6",
-    balance: "€0",
-    due: "Clear",
+    balance: "₴0",
+    status: "Settled",
+    statusColor: "var(--mockup-muted-fg)",
   },
 ] as const;
 
-const balanceColor = (balance: string) => {
-  if (balance.startsWith("−")) return "#dc2626";
-  if (balance.startsWith("+")) return "#16a34a";
-  return "var(--mockup-fg-sub)";
-};
-
 export const PropertyDetailMockup = () => {
-  const cardStyle: React.CSSProperties = {
-    background: "var(--mockup-card)",
-    border: "1px solid var(--mockup-border)",
-    borderRadius: 7,
-    boxShadow: "0 1px 2px rgba(0,0,0,0.04)",
-  };
-
   return (
     <div
-      style={{
-        fontFamily: "Inter, sans-serif",
-        background: "var(--mockup-bg)",
-        userSelect: "none",
-      }}
+      className="select-none"
+      style={{ fontFamily: "Inter, -apple-system, sans-serif", background: "var(--mockup-bg)" }}
     >
-      {/* Top bar */}
+      {/* Top navigation — Properties tab active */}
       <div
+        className="flex h-12 items-center gap-1 px-5"
         style={{
-          height: 44,
           borderBottom: "1px solid var(--mockup-border)",
-          display: "flex",
-          alignItems: "center",
-          padding: "0 18px",
-          gap: 20,
-          background: "var(--mockup-bg)",
+          background: "var(--mockup-frame-bg)",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+        <div className="mr-4 flex shrink-0 items-center gap-[7px]">
           <div
-            style={{
-              width: 18,
-              height: 18,
-              background: "var(--mockup-accent)",
-              borderRadius: 3,
-            }}
+            className="size-5 shrink-0 rounded-[4px]"
+            style={{ background: "var(--mockup-accent)" }}
           />
           <span
-            style={{
-              fontSize: 12,
-              fontWeight: 600,
-              color: "var(--mockup-fg)",
-            }}
+            className="text-xs font-semibold whitespace-nowrap"
+            style={{ color: "var(--mockup-fg)" }}
           >
             Utility Bills CRM
           </span>
         </div>
-        <div style={{ flex: 1 }} />
-        {["Dashboard", "Properties", "Bills"].map((label) => (
-          <span
-            key={label}
-            style={{
-              fontSize: 11,
-              color: "var(--mockup-muted-fg)",
-              padding: "3px 6px",
-            }}
-          >
-            {label}
-          </span>
-        ))}
-        <div
-          style={{
-            width: 24,
-            height: 24,
-            borderRadius: "50%",
-            background: "var(--mockup-muted)",
-            border: "1px solid var(--mockup-border)",
-          }}
-        />
-      </div>
 
-      {/* Layout */}
-      <div style={{ display: "flex" }}>
-        {/* Sidebar */}
-        <div
-          style={{
-            width: 180,
-            borderRight: "1px solid var(--mockup-border)",
-            padding: "14px 10px",
-            minHeight: 360,
-            background: "var(--mockup-bg)",
-          }}
-        >
-          {(
-            [
-              ["Dashboard", false],
-              ["Properties", true],
-              ["Bills", false],
-              ["Reports", false],
-            ] as const
-          ).map(([label, active]) => (
+        {NAV_ITEMS.map((label) => {
+          const active = label === "Properties";
+          return (
             <div
               key={label}
+              className="rounded-[5px] px-[10px] py-1 text-[11px] whitespace-nowrap"
               style={{
-                padding: "6px 8px",
-                borderRadius: 5,
-                background: active ? "var(--mockup-muted)" : "transparent",
+                fontWeight: active ? 600 : 400,
                 color: active ? "var(--mockup-fg)" : "var(--mockup-muted-fg)",
-                fontSize: 11,
-                fontWeight: active ? 500 : 400,
-                marginBottom: 2,
+                background: active ? "var(--mockup-muted)" : "transparent",
               }}
             >
               {label}
             </div>
+          );
+        })}
+
+        <div className="flex-1" />
+
+        <div
+          className="flex items-center gap-[5px] rounded-md px-[10px] py-1"
+          style={{ border: "1px solid var(--mockup-border)", background: "var(--mockup-muted)" }}
+        >
+          <span className="text-[11px]" style={{ color: "var(--mockup-fg)" }}>
+            Apartment · Kyiv
+          </span>
+          <span className="text-[9px]" style={{ color: "var(--mockup-muted-fg)" }}>
+            ▾
+          </span>
+        </div>
+
+        <div
+          className="ml-1 flex size-7 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold text-white"
+          style={{ background: "var(--mockup-accent)" }}
+        >
+          A
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="px-6 py-5">
+        {/* Breadcrumb */}
+        <div
+          className="mb-[14px] flex items-center gap-[5px] text-[10px]"
+          style={{ color: "var(--mockup-muted-fg)" }}
+        >
+          <span>Properties</span>
+          <span>/</span>
+          <span className="font-medium" style={{ color: "var(--mockup-fg)" }}>
+            Apartment · Kyiv
+          </span>
+        </div>
+
+        {/* Page header */}
+        <div className="mb-[18px] flex items-start justify-between">
+          <div>
+            <div className="mb-1 text-lg font-semibold" style={{ color: "var(--mockup-fg)" }}>
+              Apartment · Kyiv
+            </div>
+            <div className="text-[10px]" style={{ color: "var(--mockup-muted-fg)" }}>
+              Shevchenko St 14, Kyiv · <span style={{ color: "var(--mockup-accent)" }}>Owner</span>
+            </div>
+          </div>
+          <div className="flex gap-[7px]">
+            <div
+              className="rounded-md px-3 py-[5px] text-[10px]"
+              style={{
+                background: "var(--mockup-muted)",
+                border: "1px solid var(--mockup-border)",
+                color: "var(--mockup-fg)",
+              }}
+            >
+              Share
+            </div>
+            <div
+              className="rounded-md px-3 py-[5px] text-[10px] font-medium text-white"
+              style={{ background: "var(--mockup-accent)" }}
+            >
+              + Add service
+            </div>
+          </div>
+        </div>
+
+        {/* Tabs */}
+        <div className="mb-4 flex" style={{ borderBottom: "1px solid var(--mockup-border)" }}>
+          {(["Overview", "Meters", "Sharing"] as const).map((tab, i) => (
+            <div
+              key={tab}
+              className="-mb-px px-[14px] py-[6px] text-[11px]"
+              style={{
+                fontWeight: i === 0 ? 500 : 400,
+                color: i === 0 ? "var(--mockup-fg)" : "var(--mockup-muted-fg)",
+                borderBottom: i === 0 ? "2px solid var(--mockup-accent)" : "2px solid transparent",
+              }}
+            >
+              {tab}
+            </div>
           ))}
         </div>
 
-        {/* Main content */}
-        <div
-          style={{
-            flex: 1,
-            padding: "18px 20px",
-            background: "var(--mockup-bg)",
-          }}
-        >
-          {/* Breadcrumb */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 5,
-              fontSize: 10,
-              color: "var(--mockup-muted-fg)",
-              marginBottom: 12,
-            }}
-          >
-            <span>Properties</span>
-            <span>/</span>
-            <span
+        {/* Service rows */}
+        <div className="flex flex-col gap-2">
+          {SERVICES.map(({ name, provider, color, balance, status, statusColor }) => (
+            <div
+              key={name}
+              className="flex items-center gap-3 rounded-lg px-[14px] py-3"
               style={{
-                color: "var(--mockup-fg)",
-                fontWeight: 500,
+                background: "var(--mockup-card)",
+                border: "1px solid var(--mockup-border)",
               }}
             >
-              Apartment · Kyiv
-            </span>
-          </div>
+              <div
+                className="flex size-8 shrink-0 items-center justify-center rounded-[7px]"
+                style={{
+                  background: `color-mix(in srgb, ${color} 14%, transparent)`,
+                  border: `1px solid color-mix(in srgb, ${color} 25%, transparent)`,
+                }}
+              >
+                <div className="size-[11px] rounded-[3px]" style={{ background: color }} />
+              </div>
 
-          {/* Page header */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "flex-start",
-              justifyContent: "space-between",
-              marginBottom: 14,
-            }}
-          >
-            <div>
-              <div
-                style={{
-                  fontSize: 18,
-                  fontWeight: 600,
-                  color: "var(--mockup-fg)",
-                  marginBottom: 4,
-                }}
-              >
-                Apartment · Kyiv
+              <div className="flex-1">
+                <div className="text-xs font-medium" style={{ color: "var(--mockup-fg)" }}>
+                  {name}
+                </div>
+                <div className="mt-px text-[9px]" style={{ color: "var(--mockup-muted-fg)" }}>
+                  {provider}
+                </div>
               </div>
-              <div
-                style={{
-                  fontSize: 10,
-                  color: "var(--mockup-muted-fg)",
-                }}
-              >
-                Shevchenko St 14, Kyiv · Owner
-              </div>
-            </div>
-            <div style={{ display: "flex", gap: 6 }}>
-              <div
-                style={{
-                  padding: "5px 10px",
-                  background: "var(--mockup-muted)",
-                  border: "1px solid var(--mockup-border)",
-                  borderRadius: 5,
-                  fontSize: 10,
-                  color: "var(--mockup-fg)",
-                }}
-              >
-                Share
-              </div>
-              <div
-                style={{
-                  padding: "5px 10px",
-                  background: "var(--mockup-accent)",
-                  borderRadius: 5,
-                  fontSize: 10,
-                  color: "#fff",
-                  fontWeight: 500,
-                }}
-              >
-                Add service
-              </div>
-            </div>
-          </div>
 
-          {/* Tabs */}
-          <div
-            style={{
-              display: "flex",
-              borderBottom: "1px solid var(--mockup-border)",
-              marginBottom: 14,
-            }}
-          >
-            {["Overview", "Bills", "Readings", "Sharing"].map((tab, i) => (
-              <div
-                key={tab}
-                style={{
-                  fontSize: 11,
-                  fontWeight: i === 0 ? 500 : 400,
-                  color: i === 0 ? "var(--mockup-fg)" : "var(--mockup-muted-fg)",
-                  padding: "6px 12px",
-                  borderBottom:
-                    i === 0 ? "2px solid var(--mockup-accent)" : "2px solid transparent",
-                  marginBottom: -1,
-                }}
-              >
-                {tab}
-              </div>
-            ))}
-          </div>
-
-          {/* Service rows */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            {services.map(({ name, provider, color, colorHex, balance, due }) => (
-              <div
-                key={name}
-                style={{
-                  ...cardStyle,
-                  padding: "10px 14px",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 10,
-                }}
-              >
+              <div className="text-right">
                 <div
-                  style={{
-                    width: 28,
-                    height: 28,
-                    borderRadius: 6,
-                    background: `${colorHex}18`,
-                    border: `1px solid ${colorHex}30`,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    flexShrink: 0,
-                  }}
+                  className="text-[13px] font-semibold"
+                  style={{ color: statusColor === "#f87171" ? statusColor : "var(--mockup-fg)" }}
                 >
-                  <div
-                    style={{
-                      width: 10,
-                      height: 10,
-                      borderRadius: 2,
-                      background: color,
-                      opacity: 0.8,
-                    }}
-                  />
+                  {balance}
                 </div>
-                <div style={{ flex: 1 }}>
-                  <div
-                    style={{
-                      fontSize: 12,
-                      fontWeight: 500,
-                      color: "var(--mockup-fg)",
-                    }}
-                  >
-                    {name}
-                  </div>
-                  <div
-                    style={{
-                      fontSize: 9,
-                      color: "var(--mockup-muted-fg)",
-                    }}
-                  >
-                    {provider}
-                  </div>
-                </div>
-                <div style={{ textAlign: "right" }}>
-                  <div
-                    style={{
-                      fontSize: 13,
-                      fontWeight: 600,
-                      color: balanceColor(balance),
-                    }}
-                  >
-                    {balance}
-                  </div>
-                  <div
-                    style={{
-                      fontSize: 9,
-                      color: "var(--mockup-muted-fg)",
-                      marginTop: 1,
-                    }}
-                  >
-                    {due}
-                  </div>
+                <div className="mt-px text-[9px]" style={{ color: statusColor }}>
+                  {status}
                 </div>
               </div>
-            ))}
-          </div>
+
+              <div className="ml-1 text-xs" style={{ color: "var(--mockup-muted-fg)" }}>
+                ›
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>

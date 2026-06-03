@@ -13,7 +13,7 @@ export const BrowserFrame = ({ url, children }: TProps) => {
       className={`overflow-hidden rounded-[10px] ${styles.mockup}`}
       style={{
         border: "1px solid var(--mockup-border)",
-        boxShadow: "0 4px 24px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.06)",
+        boxShadow: "0 0 0 1px rgba(255,255,255,0.06), 0 24px 60px rgba(0,0,0,0.5)",
       }}
     >
       {/* Chrome bar */}

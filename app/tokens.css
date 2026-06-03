@@ -125,8 +125,10 @@
     --field-tint-border: var(--purple-100);
     --field-tint-fg: var(--purple-600);
 
-    /* Landing: hero glow (hero-section.tsx — one consumer, kept global) */
-    --hero-glow: oklch(0.498 0.258 292.3 / 10%);
+    /* Landing: decorative glows (hero-section, features-section, tech-section) */
+    --hero-glow: oklch(0.498 0.258 292.3 / 18%);
+    --hero-glow-sub: oklch(0.397 0.221 293 / 12%);
+    --section-glow: oklch(0.498 0.258 292.3 / 16%);
 
     /* ConfirmDialog. DevNote. Custom */
     --confirm-default: var(--purple-600);
@@ -189,6 +191,8 @@
     --field-tint-border: color-mix(in oklch, var(--purple-500) 40%, transparent);
     --field-tint-fg: var(--purple-400);
 
-    --hero-glow: oklch(0.498 0.258 292.3 / 18%);
+    --hero-glow: oklch(0.498 0.258 292.3 / 22%);
+    --hero-glow-sub: oklch(0.397 0.221 293 / 16%);
+    --section-glow: oklch(0.498 0.258 292.3 / 20%);
   }
 }

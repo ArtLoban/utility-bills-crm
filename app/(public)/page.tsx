@@ -16,9 +16,7 @@ export default async function LandingPage() {
       <MockupSection
         url="app.utilitybills.dev/dashboard"
         caption={t.rich("dashboardSection.caption", {
-          strong: (chunks) => (
-            <strong className="text-zinc-900 dark:text-zinc-200">{chunks}</strong>
-          ),
+          strong: (chunks) => <strong className="text-zinc-100">{chunks}</strong>,
         })}
       >
         <DashboardMockup />
@@ -29,9 +27,7 @@ export default async function LandingPage() {
       <MockupSection
         url="app.utilitybills.dev/properties/1"
         caption={t.rich("propertySection.caption", {
-          strong: (chunks) => (
-            <strong className="text-zinc-900 dark:text-zinc-200">{chunks}</strong>
-          ),
+          strong: (chunks) => <strong className="text-zinc-100">{chunks}</strong>,
         })}
       >
         <PropertyDetailMockup />

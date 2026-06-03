@@ -1,397 +1,331 @@
-const bars = [52, 38, 61, 48, 75, 58, 80];
-const months = ["N", "D", "J", "F", "M", "A", "M"];
+const NAV_ITEMS = ["Dashboard", "Properties", "Meters", "Bills", "Payments", "Settings"] as const;
 
-const chartPoints = [
-  [0, 58],
-  [85, 48],
-  [170, 52],
-  [255, 34],
-  [340, 38],
-  [425, 22],
-  [510, 28],
-  [600, 14],
+const MONTHS = ["Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr"] as const;
+
+const BAR_HEIGHTS = [52, 48, 60, 44, 68, 56, 72, 100];
+
+const CHART_POINTS: readonly [number, number][] = [
+  [0, 62],
+  [86, 54],
+  [172, 58],
+  [258, 44],
+  [344, 48],
+  [430, 36],
+  [516, 42],
+  [602, 28],
+];
+
+const SERVICES = [
+  { label: "Electricity", color: "oklch(0.558 0.288 293)" },
+  { label: "Gas", color: "#f59e0b" },
+  { label: "Water", color: "#0d9488" },
+  { label: "Internet", color: "#3b82f6" },
+] as const;
+
+const SERVICE_PERCENTS = ["42%", "26%", "18%", "14%"] as const;
+
+// Precomputed strokeDasharray offsets for the 3 visible pie slices
+const PIE_SLICES = [
+  { color: "oklch(0.558 0.288 293)", dash: 103, gap: 60, offset: 0 },
+  { color: "#f59e0b", dash: 64, gap: 99, offset: -103 },
+  { color: "#0d9488", dash: 44, gap: 119, offset: -167 },
+] as const;
+
+const STAT_CARDS = [
+  { label: "Total balance", value: "−₴4,820", sub: "across 3 properties", valueColor: "#f87171" },
+  { label: "Billed this month", value: "₴3,180", sub: "11 services", valueColor: null },
+  { label: "Paid this month", value: "₴2,640", sub: "6 payments", valueColor: null },
+  { label: "Properties", value: "3", sub: "all active", valueColor: null },
 ] as const;
 
 export const DashboardMockup = () => {
-  const S = {
-    topBar: {
-      height: 44,
-      borderBottom: "1px solid var(--mockup-border)",
-      display: "flex",
-      alignItems: "center",
-      padding: "0 18px",
-      gap: 20,
-      background: "var(--mockup-bg)",
-    } as React.CSSProperties,
-    logoMark: {
-      width: 18,
-      height: 18,
-      background: "var(--mockup-accent)",
-      borderRadius: 3,
-      flexShrink: 0,
-    } as React.CSSProperties,
-    card: {
-      background: "var(--mockup-card)",
-      border: "1px solid var(--mockup-border)",
-      borderRadius: 7,
-      boxShadow: "0 1px 2px rgba(0,0,0,0.04)",
-    } as React.CSSProperties,
-  };
-
   return (
     <div
-      style={{
-        fontFamily: "Inter, sans-serif",
-        background: "var(--mockup-bg)",
-        userSelect: "none",
-      }}
+      className="select-none"
+      style={{ fontFamily: "Inter, -apple-system, sans-serif", background: "var(--mockup-bg)" }}
     >
-      {/* Top bar */}
-      <div style={S.topBar}>
-        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-          <div style={S.logoMark} />
+      {/* Top navigation */}
+      <div
+        className="flex h-12 items-center gap-1 px-5"
+        style={{
+          borderBottom: "1px solid var(--mockup-border)",
+          background: "var(--mockup-frame-bg)",
+        }}
+      >
+        <div className="mr-4 flex shrink-0 items-center gap-[7px]">
+          <div
+            className="size-5 shrink-0 rounded-[4px]"
+            style={{ background: "var(--mockup-accent)" }}
+          />
           <span
-            style={{
-              fontSize: 12,
-              fontWeight: 600,
-              color: "var(--mockup-fg)",
-            }}
+            className="text-xs font-semibold whitespace-nowrap"
+            style={{ color: "var(--mockup-fg)" }}
           >
             Utility Bills CRM
           </span>
         </div>
-        <div style={{ flex: 1 }} />
-        {["Dashboard", "Properties", "Bills"].map((label, i) => (
-          <span
-            key={label}
-            style={{
-              fontSize: 11,
-              color: i === 0 ? "var(--mockup-fg)" : "var(--mockup-muted-fg)",
-              fontWeight: i === 0 ? 600 : 400,
-              padding: "3px 6px",
-              borderRadius: 4,
-              background: i === 0 ? "var(--mockup-muted)" : "transparent",
-            }}
-          >
-            {label}
-          </span>
-        ))}
-        <div
-          style={{
-            width: 24,
-            height: 24,
-            borderRadius: "50%",
-            background: "var(--mockup-muted)",
-            border: "1px solid var(--mockup-border)",
-          }}
-        />
-      </div>
 
-      {/* Layout */}
-      <div style={{ display: "flex" }}>
-        {/* Sidebar */}
-        <div
-          style={{
-            width: 180,
-            borderRight: "1px solid var(--mockup-border)",
-            padding: "14px 10px",
-            minHeight: 420,
-            background: "var(--mockup-bg)",
-          }}
-        >
-          <div
-            style={{
-              fontSize: 9,
-              fontWeight: 600,
-              color: "var(--mockup-muted-fg)",
-              textTransform: "uppercase",
-              letterSpacing: "0.06em",
-              padding: "0 6px",
-              marginBottom: 8,
-            }}
-          >
-            Menu
-          </div>
-          {(
-            [
-              ["Dashboard", true],
-              ["Properties", false],
-              ["Bills", false],
-              ["Reports", false],
-            ] as const
-          ).map(([label, active]) => (
+        {NAV_ITEMS.map((label) => {
+          const active = label === "Dashboard";
+          return (
             <div
               key={label}
+              className="rounded-[5px] px-[10px] py-1 text-[11px] whitespace-nowrap"
               style={{
-                padding: "6px 8px",
-                borderRadius: 5,
-                background: active ? "var(--mockup-muted)" : "transparent",
+                fontWeight: active ? 600 : 400,
                 color: active ? "var(--mockup-fg)" : "var(--mockup-muted-fg)",
-                fontSize: 11,
-                fontWeight: active ? 500 : 400,
-                marginBottom: 2,
+                background: active ? "var(--mockup-muted)" : "transparent",
               }}
             >
               {label}
             </div>
+          );
+        })}
+
+        <div className="flex-1" />
+
+        <div
+          className="flex items-center gap-[5px] rounded-md px-[10px] py-1"
+          style={{ border: "1px solid var(--mockup-border)", background: "var(--mockup-muted)" }}
+        >
+          <span className="text-[11px]" style={{ color: "var(--mockup-fg)" }}>
+            Apartment · Kyiv
+          </span>
+          <span className="text-[9px]" style={{ color: "var(--mockup-muted-fg)" }}>
+            ▾
+          </span>
+        </div>
+
+        <div
+          className="ml-1 flex size-7 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold text-white"
+          style={{ background: "var(--mockup-accent)" }}
+        >
+          A
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="px-6 py-5">
+        {/* Page header */}
+        <div className="mb-[18px] flex items-start">
+          <div>
+            <div className="mb-[3px] text-lg font-semibold" style={{ color: "var(--mockup-fg)" }}>
+              Hi, Anna
+            </div>
+            <div className="text-[11px]" style={{ color: "var(--mockup-muted-fg)" }}>
+              Here&apos;s where every property stands this month.
+            </div>
+          </div>
+          <div className="flex-1" />
+          <div
+            className="flex items-center gap-[5px] rounded-md px-[10px] py-[5px]"
+            style={{ border: "1px solid var(--mockup-border)", background: "var(--mockup-muted)" }}
+          >
+            <span className="text-[10px]" style={{ color: "var(--mockup-muted-fg)" }}>
+              Period:
+            </span>
+            <span className="text-[10px] font-medium" style={{ color: "var(--mockup-fg)" }}>
+              Last 12 months
+            </span>
+            <span className="text-[9px]" style={{ color: "var(--mockup-muted-fg)" }}>
+              ▾
+            </span>
+          </div>
+        </div>
+
+        {/* Stat cards */}
+        <div className="mb-3 grid grid-cols-4 gap-[10px]">
+          {STAT_CARDS.map(({ label, value, sub, valueColor }) => (
+            <div
+              key={label}
+              className="rounded-lg px-[14px] py-3"
+              style={{ background: "var(--mockup-card)", border: "1px solid var(--mockup-border)" }}
+            >
+              <div className="mb-[6px] text-[10px]" style={{ color: "var(--mockup-muted-fg)" }}>
+                {label}
+              </div>
+              <div
+                className="mb-[5px] text-[19px] leading-none font-semibold"
+                style={{ color: valueColor ?? "var(--mockup-fg)" }}
+              >
+                {value}
+              </div>
+              <div className="text-[10px]" style={{ color: "var(--mockup-muted-fg)" }}>
+                {sub}
+              </div>
+            </div>
           ))}
         </div>
 
-        {/* Main content */}
-        <div
-          style={{
-            flex: 1,
-            padding: "18px 20px",
-            overflow: "hidden",
-            background: "var(--mockup-bg)",
-          }}
-        >
+        {/* Charts row */}
+        <div className="mb-[10px] grid grid-cols-2 gap-[10px]">
+          {/* Donut chart */}
           <div
-            style={{
-              fontSize: 16,
-              fontWeight: 600,
-              color: "var(--mockup-fg)",
-              marginBottom: 14,
-            }}
+            className="rounded-lg px-4 py-[14px]"
+            style={{ background: "var(--mockup-card)", border: "1px solid var(--mockup-border)" }}
           >
-            Dashboard
-          </div>
-
-          {/* Stat cards */}
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(4, 1fr)",
-              gap: 10,
-              marginBottom: 14,
-            }}
-          >
-            {(
-              [
-                ["Balance", "−€312", "3 props"],
-                ["This month", "€128", "Bills"],
-                ["Paid", "€94", "Payments"],
-                ["Properties", "3", "Active"],
-              ] as const
-            ).map(([label, value, sub]) => (
-              <div key={label} style={{ ...S.card, padding: "10px 12px" }}>
-                <div
-                  style={{
-                    fontSize: 9,
-                    color: "var(--mockup-muted-fg)",
-                    marginBottom: 5,
-                  }}
-                >
-                  {label}
-                </div>
-                <div
-                  style={{
-                    fontSize: 18,
-                    fontWeight: 600,
-                    color: "var(--mockup-fg)",
-                    lineHeight: 1,
-                  }}
-                >
-                  {value}
-                </div>
-                <div
-                  style={{
-                    fontSize: 9,
-                    color: "var(--mockup-muted-fg)",
-                    marginTop: 4,
-                  }}
-                >
-                  {sub}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Charts row */}
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr",
-              gap: 10,
-              marginBottom: 10,
-            }}
-          >
-            {/* Pie chart */}
-            <div style={{ ...S.card, padding: "12px 14px" }}>
-              <div
-                style={{
-                  fontSize: 10,
-                  fontWeight: 500,
-                  color: "var(--mockup-fg)",
-                  marginBottom: 10,
-                }}
-              >
-                Expense breakdown
-              </div>
-              <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-                <svg width={72} height={72} viewBox="0 0 72 72">
+            <div className="mb-3 text-[11px] font-medium" style={{ color: "var(--mockup-fg)" }}>
+              Expenses by service
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="relative shrink-0">
+                <svg width={80} height={80} viewBox="0 0 80 80">
                   <circle
-                    cx="36"
-                    cy="36"
-                    r="26"
+                    cx="40"
+                    cy="40"
+                    r="28"
                     fill="none"
-                    stroke="var(--mockup-accent)"
+                    stroke="var(--mockup-bar-inactive)"
                     strokeWidth="16"
-                    strokeDasharray="81 82"
-                    strokeDashoffset="0"
                   />
-                  <circle
-                    cx="36"
-                    cy="36"
-                    r="26"
-                    fill="none"
-                    stroke="#f59e0b"
-                    strokeWidth="16"
-                    strokeDasharray="49 114"
-                    strokeDashoffset="-81"
-                  />
-                  <circle
-                    cx="36"
-                    cy="36"
-                    r="26"
-                    fill="none"
-                    stroke="#0d9488"
-                    strokeWidth="16"
-                    strokeDasharray="32 130"
-                    strokeDashoffset="-130"
-                  />
-                  <circle cx="36" cy="36" r="16" fill="var(--mockup-card)" />
-                </svg>
-                <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                  {(
-                    [
-                      ["Electricity", "var(--mockup-accent)"],
-                      ["Gas", "#f59e0b"],
-                      ["Water", "#0d9488"],
-                    ] as const
-                  ).map(([label, color]) => (
-                    <div key={label} style={{ display: "flex", alignItems: "center", gap: 5 }}>
-                      <div
-                        style={{
-                          width: 7,
-                          height: 7,
-                          borderRadius: 2,
-                          background: color,
-                          flexShrink: 0,
-                        }}
-                      />
-                      <span
-                        style={{
-                          fontSize: 9,
-                          color: "var(--mockup-muted-fg)",
-                        }}
-                      >
-                        {label}
-                      </span>
-                    </div>
+                  {PIE_SLICES.map(({ color, dash, gap, offset }) => (
+                    <circle
+                      key={color}
+                      cx="40"
+                      cy="40"
+                      r="28"
+                      fill="none"
+                      stroke={color}
+                      strokeWidth="16"
+                      strokeDasharray={`${dash} ${gap}`}
+                      strokeDashoffset={offset}
+                      transform="rotate(-90 40 40)"
+                    />
                   ))}
-                </div>
+                  <circle cx="40" cy="40" r="18" fill="var(--mockup-card)" />
+                  <text
+                    x="40"
+                    y="38"
+                    textAnchor="middle"
+                    fontSize="9"
+                    fontWeight="600"
+                    fill="var(--mockup-fg)"
+                  >
+                    ₴12.4k
+                  </text>
+                  <text
+                    x="40"
+                    y="48"
+                    textAnchor="middle"
+                    fontSize="7"
+                    fill="var(--mockup-muted-fg)"
+                  >
+                    this year
+                  </text>
+                </svg>
+              </div>
+              <div className="flex flex-1 flex-col gap-[7px]">
+                {SERVICES.map(({ label, color }, i) => (
+                  <div key={label} className="flex items-center gap-[7px]">
+                    <div className="size-2 shrink-0 rounded-[2px]" style={{ background: color }} />
+                    <span
+                      className="flex-1 text-[10px]"
+                      style={{ color: "var(--mockup-muted-fg)" }}
+                    >
+                      {label}
+                    </span>
+                    <span className="text-[10px] font-medium" style={{ color: "var(--mockup-fg)" }}>
+                      {SERVICE_PERCENTS[i]}
+                    </span>
+                  </div>
+                ))}
               </div>
             </div>
+          </div>
 
-            {/* Bar chart */}
-            <div style={{ ...S.card, padding: "12px 14px" }}>
-              <div
-                style={{
-                  fontSize: 10,
-                  fontWeight: 500,
-                  color: "var(--mockup-fg)",
-                  marginBottom: 10,
-                }}
-              >
+          {/* Bar chart */}
+          <div
+            className="rounded-lg px-4 py-[14px]"
+            style={{ background: "var(--mockup-card)", border: "1px solid var(--mockup-border)" }}
+          >
+            <div className="mb-3 flex items-center justify-between">
+              <div className="text-[11px] font-medium" style={{ color: "var(--mockup-fg)" }}>
                 Monthly spend
               </div>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "flex-end",
-                  gap: 5,
-                  height: 60,
-                }}
-              >
-                {bars.map((h, i) => (
+              <div className="flex gap-1">
+                {(["Expenses (8)", "Consumption"] as const).map((label, i) => (
                   <div
-                    key={i}
+                    key={label}
+                    className="rounded-[4px] px-[7px] py-[2px] text-[9px]"
                     style={{
-                      flex: 1,
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
+                      background: i === 0 ? "var(--mockup-accent)" : "transparent",
+                      color: i === 0 ? "#fff" : "var(--mockup-muted-fg)",
+                      fontWeight: i === 0 ? 500 : 400,
                     }}
                   >
-                    <div
-                      style={{
-                        width: "100%",
-                        height: h * 0.75,
-                        background:
-                          i === bars.length - 1
-                            ? "var(--mockup-accent)"
-                            : "var(--mockup-bar-inactive)",
-                        borderRadius: "2px 2px 0 0",
-                      }}
-                    />
-                  </div>
-                ))}
-              </div>
-              <div style={{ display: "flex", gap: 5, marginTop: 5 }}>
-                {months.map((m, i) => (
-                  <div
-                    key={i}
-                    style={{
-                      flex: 1,
-                      textAlign: "center",
-                      fontSize: 8,
-                      color: "var(--mockup-muted-fg)",
-                    }}
-                  >
-                    {m}
+                    {label}
                   </div>
                 ))}
               </div>
             </div>
-          </div>
-
-          {/* Line chart */}
-          <div style={{ ...S.card, padding: "12px 14px" }}>
-            <div
-              style={{
-                fontSize: 10,
-                fontWeight: 500,
-                color: "var(--mockup-fg)",
-                marginBottom: 8,
-              }}
-            >
-              Consumption trend — kWh
-            </div>
-            <svg width="100%" height={68} viewBox="0 0 600 68" preserveAspectRatio="none">
-              <defs>
-                <linearGradient id="mockup-lg" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="var(--mockup-accent-light)" stopOpacity="0.2" />
-                  <stop offset="100%" stopColor="var(--mockup-accent-light)" stopOpacity="0" />
-                </linearGradient>
-              </defs>
-              <polygon
-                points={`${chartPoints.map(([x, y]) => `${x},${y}`).join(" ")} 600,68 0,68`}
-                fill="url(#mockup-lg)"
-              />
-              <polyline
-                points={chartPoints.map(([x, y]) => `${x},${y}`).join(" ")}
-                fill="none"
-                stroke="var(--mockup-accent-light)"
-                strokeWidth="1.8"
-                strokeLinejoin="round"
-                strokeLinecap="round"
-              />
-              {chartPoints.map(([x, y]) => (
-                <circle key={x} cx={x} cy={y} r="2.5" fill="var(--mockup-accent-light)" />
+            <div className="flex h-16 items-end gap-1">
+              {BAR_HEIGHTS.map((h, i) => (
+                <div
+                  key={i}
+                  className="flex-1 rounded-t-[2px]"
+                  style={{
+                    height: `${(h / 100) * 64}px`,
+                    background:
+                      i === BAR_HEIGHTS.length - 1
+                        ? "var(--mockup-accent)"
+                        : "var(--mockup-bar-inactive)",
+                  }}
+                />
               ))}
-            </svg>
+            </div>
+            <div className="mt-[5px] flex gap-1">
+              {MONTHS.map((m) => (
+                <div
+                  key={m}
+                  className="flex-1 text-center text-[8px]"
+                  style={{ color: "var(--mockup-muted-fg)" }}
+                >
+                  {m}
+                </div>
+              ))}
+            </div>
           </div>
+        </div>
+
+        {/* Line chart */}
+        <div
+          className="rounded-lg px-4 py-[14px]"
+          style={{ background: "var(--mockup-card)", border: "1px solid var(--mockup-border)" }}
+        >
+          <div className="mb-[10px] text-[11px] font-medium" style={{ color: "var(--mockup-fg)" }}>
+            Electricity consumption — kWh
+          </div>
+          <svg width="100%" height={72} viewBox="0 0 602 72" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="mockup-area-gradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="var(--mockup-accent-light)" stopOpacity="0.18" />
+                <stop offset="100%" stopColor="var(--mockup-accent-light)" stopOpacity="0" />
+              </linearGradient>
+            </defs>
+            <polygon
+              points={`${CHART_POINTS.map(([x, y]) => `${x},${y}`).join(" ")} 602,72 0,72`}
+              fill="url(#mockup-area-gradient)"
+            />
+            <polyline
+              points={CHART_POINTS.map(([x, y]) => `${x},${y}`).join(" ")}
+              fill="none"
+              stroke="var(--mockup-accent-light)"
+              strokeWidth="2"
+              strokeLinejoin="round"
+              strokeLinecap="round"
+            />
+            {CHART_POINTS.map(([x, y]) => (
+              <circle
+                key={x}
+                cx={x}
+                cy={y}
+                r="3"
+                fill="var(--mockup-bg)"
+                stroke="var(--mockup-accent-light)"
+                strokeWidth="1.5"
+              />
+            ))}
+          </svg>
         </div>
       </div>
     </div>

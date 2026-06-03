@@ -6,24 +6,24 @@ export const PublicFooter = async () => {
   const t = await getTranslations("landing");
 
   return (
-    <footer className="bg-zinc-100/45 dark:bg-zinc-900/80">
+    <footer className="bg-zinc-900 dark:bg-zinc-950">
       <div className="mx-auto max-w-[1100px] px-6">
         <div className="flex flex-wrap items-center justify-center gap-7 py-9">
           <Link
             href={ROUTES.about}
-            className="text-muted-foreground hover:text-foreground text-sm transition-colors"
+            className="text-sm text-zinc-400 transition-colors hover:text-zinc-200"
           >
             {t("footer.aboutDeveloper")}
           </Link>
-          <div className="h-3.5 w-px bg-zinc-200 dark:bg-zinc-800" />
+          <div className="h-3.5 w-px bg-zinc-700" />
           <Link
             href={ROUTES.project}
-            className="text-muted-foreground hover:text-foreground text-sm transition-colors"
+            className="text-sm text-zinc-400 transition-colors hover:text-zinc-200"
           >
             {t("footer.architectureCode")}
           </Link>
-          <div className="h-3.5 w-px bg-zinc-200 dark:bg-zinc-800" />
-          <span className="text-sm text-zinc-400 dark:text-zinc-700">
+          <div className="h-3.5 w-px bg-zinc-700" />
+          <span className="text-sm text-zinc-500">
             {t("footer.copyright", { year: new Date().getFullYear() })}
           </span>
         </div>

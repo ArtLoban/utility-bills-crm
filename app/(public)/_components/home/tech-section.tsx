@@ -7,7 +7,19 @@ export const TechSection = async () => {
   const t = await getTranslations("landing");
 
   return (
-    <section className="py-24">
+    <section className="relative overflow-hidden py-24">
+      {/* Radial glow — same bottom-left bloom as features section */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute"
+        style={{
+          bottom: "-180px",
+          left: "-120px",
+          width: "720px",
+          height: "580px",
+          background: "radial-gradient(at 30% 70%, var(--section-glow) 0%, transparent 62%)",
+        }}
+      />
       <div className="mx-auto max-w-[1100px] px-6">
         <div className="mx-auto max-w-[600px] text-center">
           <p className="mb-2.5 text-xs font-medium tracking-[0.08em] text-violet-600 uppercase dark:text-violet-400">

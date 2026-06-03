@@ -5,11 +5,25 @@ export const HeroSection = async () => {
 
   return (
     <section className="relative overflow-hidden py-24">
-      {/* Radial glow — decorative, pointer-events disabled */}
+      {/* Glow 1 — top-right, larger violet bloom */}
       <div
-        className="pointer-events-none absolute -top-[60px] right-[-80px] h-[500px] w-[600px]"
+        className="pointer-events-none absolute"
         style={{
-          background: "radial-gradient(ellipse at 70% 30%, var(--hero-glow) 0%, transparent 65%)",
+          top: "-160px",
+          right: "-120px",
+          width: "760px",
+          height: "620px",
+          background: "radial-gradient(at 70% 30%, var(--hero-glow) 0%, transparent 62%)",
+        }}
+      />
+      {/* Glow 2 — centered, softer sub-glow over the heading area */}
+      <div
+        className="pointer-events-none absolute left-1/2 -translate-x-1/2"
+        style={{
+          top: "40px",
+          width: "480px",
+          height: "420px",
+          background: "radial-gradient(var(--hero-glow-sub) 0%, transparent 66%)",
         }}
       />
 
