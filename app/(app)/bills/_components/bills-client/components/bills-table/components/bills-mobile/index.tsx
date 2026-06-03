@@ -7,20 +7,19 @@ import { parseAsString, useQueryStates } from "nuqs";
 import { SERVICE_COLORS, dbCodeToServiceKey } from "@/lib/constants/service-colors";
 import { ACCENT, TINT_BG, TINT_BORDER } from "@/lib/constants/ui-tokens";
 import { formatUAH } from "@/lib/format/currency";
-import type { TBillGlobalRow } from "@/lib/db/access/bills";
-import type { TServerPagination } from "@/lib/types/data-table";
-import { BillCard } from "./bill-card";
-import { FilterChip } from "./filter-chip";
-import { FilterSheet } from "./filter-sheet";
-import { MobilePager } from "./mobile-pager";
-import { TSelectableEntity } from "@/components/select-input/types";
+import { TBillsListResult } from "@/lib/db/access/bills";
+import { BillCard } from "./components/bill-card";
+import { FilterChip } from "./components/filter-chip";
+import { FilterSheet } from "./components/filter-sheet";
+import { MobilePager } from "./components/mobile-pager";
+import { TListParams } from "@/components/data-table/types";
+import { useBillsTable } from "../../../../context";
+import { TQueryFilters } from "@/app/(app)/bills/_components/bills-client/components/bills-table/types";
 
 type TProps = {
-  data: TBillGlobalRow[];
-  pagination: TServerPagination;
-  totalAmount: string;
-  propertyOptions: TSelectableEntity[];
-  onPageChange: (page: number) => void;
+  billsList: TBillsListResult;
+  listParams: TListParams;
+  queryFilters: TQueryFilters;
 };
 
 const fmtDate = (d: string) => format(parseISO(d), "MMM d, yyyy");
@@ -31,7 +30,11 @@ const formatDateRangeChip = (dateFrom: string | null, dateTo: string | null): st
   return `To ${fmtDate(dateTo!)}`;
 };
 
-const BillsMobile = ({ data, pagination, totalAmount, propertyOptions, onPageChange }: TProps) => {
+export const BillsTableMobile = (props: TProps) => {
+  const { billsList, listParams, queryFilters } = props;
+  const { data, pagination, totals } = billsList;
+  const { setPage } = listParams;
+  const { properties } = useBillsTable();
   const [sheetOpen, setSheetOpen] = useState(false);
 
   const [filters, setFilters] = useQueryStates(
@@ -51,7 +54,7 @@ const BillsMobile = ({ data, pagination, totalAmount, propertyOptions, onPageCha
   ).length;
 
   const propertyName = filters.propertyId
-    ? (propertyOptions.find((p) => p.id === filters.propertyId)?.name ?? filters.propertyId)
+    ? (properties.find((p) => p.id === filters.propertyId)?.name ?? filters.propertyId)
     : null;
 
   // const serviceName =
@@ -59,6 +62,8 @@ const BillsMobile = ({ data, pagination, totalAmount, propertyOptions, onPageCha
   const serviceName = "serviceName";
   const serviceKey = filters.service ? dbCodeToServiceKey(filters.service) : undefined;
   const serviceColor = serviceKey ? SERVICE_COLORS[serviceKey] : undefined;
+
+  const { hasActiveFilters } = queryFilters;
 
   return (
     <div style={{ padding: "12px 14px 32px" }}>
@@ -89,7 +94,7 @@ const BillsMobile = ({ data, pagination, totalAmount, propertyOptions, onPageCha
             alignItems: "center",
             gap: 6,
             fontFamily: "inherit",
-            ...(activeCount > 0
+            ...(hasActiveFilters
               ? {
                   border: `1px solid ${TINT_BORDER}`,
                   background: TINT_BG,
@@ -99,7 +104,7 @@ const BillsMobile = ({ data, pagination, totalAmount, propertyOptions, onPageCha
           }}
         >
           Filters
-          {activeCount > 0 && (
+          {hasActiveFilters && (
             <span
               style={{
                 minWidth: 16,
@@ -126,7 +131,7 @@ const BillsMobile = ({ data, pagination, totalAmount, propertyOptions, onPageCha
       </div>
 
       {/* Active filter chips */}
-      {activeCount > 0 && (
+      {hasActiveFilters && (
         <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 14 }}>
           {propertyName && (
             <FilterChip
@@ -162,14 +167,16 @@ const BillsMobile = ({ data, pagination, totalAmount, propertyOptions, onPageCha
         <MobilePager
           page={pagination.page}
           totalPages={pagination.totalPages}
-          onPrev={() => onPageChange(pagination.page - 1)}
-          onNext={() => onPageChange(pagination.page + 1)}
+          onPrev={() => setPage(pagination.page - 1)}
+          onNext={() => setPage(pagination.page + 1)}
         />
       )}
 
       <div className="mt-4 flex items-center justify-between rounded-lg border border-zinc-200 bg-white p-3.5 dark:border-zinc-800 dark:bg-zinc-900">
         <span className="text-muted-foreground text-sm">Total</span>
-        <span className="text-[15px] font-bold tabular-nums">{formatUAH(Number(totalAmount))}</span>
+        <span className="text-[15px] font-bold tabular-nums">
+          {formatUAH(Number(totals.amount))}
+        </span>
       </div>
 
       <FilterSheet
@@ -177,10 +184,8 @@ const BillsMobile = ({ data, pagination, totalAmount, propertyOptions, onPageCha
         onOpenChange={setSheetOpen}
         filters={filters}
         onFilterChange={(updated) => void setFilters(updated)}
-        propertyOptions={propertyOptions}
+        propertyOptions={properties}
       />
     </div>
   );
 };
-
-export { BillsMobile };

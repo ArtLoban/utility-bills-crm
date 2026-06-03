@@ -4,9 +4,9 @@ import { DateRangeFilter } from "@/components/date-range-filter";
 import { TableFilters } from "@/components/data-table/table-filters";
 import { SelectInput } from "@/components/select-input";
 import { useServiceOptions } from "@/features/services/hooks/use-service-options";
-import { usePaymentsTable } from "../../../../context";
 
 import type { TQueryFilters } from "../../../types";
+import { useBillsTable } from "../../../../../context";
 
 type TProps = {
   queryFilters: TQueryFilters;
@@ -14,7 +14,7 @@ type TProps = {
 
 export const FilterBar = ({ queryFilters }: TProps) => {
   const { form, values, hasActiveFilters, handleClear } = queryFilters;
-  const { properties } = usePaymentsTable();
+  const { properties } = useBillsTable();
   const serviceOptions = useServiceOptions();
 
   return (

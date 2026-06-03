@@ -7,8 +7,8 @@ import { PageMeta } from "@/components/page-meta";
 import { AddButton } from "@/components/add-button";
 import type { TPaymentsListResult } from "@/features/payments/types";
 import { ROUTES } from "@/lib/routes";
-import { PaymentsTable } from "./payments-table";
-import { PaymentsTableActions } from "./payments-table/components/table-actions";
+import { PaymentsTable } from "./components/payments-table";
+import { PaymentsTableActions } from "./components/table-actions";
 import { TSelectableEntity } from "@/components/select-input/types";
 import { formatUAH } from "@/lib/format/currency";
 

@@ -6,7 +6,7 @@ import { Pencil, Trash2 } from "lucide-react";
 import type { TRowAction } from "@/components/data-table/cells/row-actions/types";
 import { RowActions } from "@/components/data-table/cells/row-actions";
 import type { TBillGlobalRow } from "@/lib/db/access/bills";
-import { useBillsTable } from "../../context";
+import { useBillsTable } from "@/app/(app)/bills/_components/bills-client/context";
 
 type TProps = {
   bill: TBillGlobalRow;

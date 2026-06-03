@@ -13,7 +13,8 @@ import type { UserId } from "@/lib/db/schema/auth";
 import { NotFoundError, err, ok } from "@/lib/errors";
 import type { Result } from "@/lib/errors";
 import type { TServiceTypeCode } from "@/features/services/service-type";
-import type { TBillsListParams, TBillsPagination } from "@/features/bills/types";
+import type { TBillsListParams } from "@/features/bills/types";
+import { TServerPagination } from "@/lib/types/data-table";
 
 // --- Result types ---
 
@@ -37,7 +38,7 @@ export type TBillGlobalRow = {
 
 export type TBillsListResult = {
   data: TBillGlobalRow[];
-  pagination: TBillsPagination;
+  pagination: TServerPagination;
   totals: { amount: string };
 };
 

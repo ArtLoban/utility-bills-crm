@@ -1,5 +1,3 @@
-import type { TServerPagination } from "@/lib/types/data-table";
-
 // --- Sort allow-list ---
 
 export const BILLS_SORT_COLUMNS = ["periodMonth", "amount", "createdAt"] as const;
@@ -17,6 +15,3 @@ export type TBillsListParams = {
   dateFrom?: string | null; // YYYY-MM-DD, inclusive
   dateTo?: string | null; // YYYY-MM-DD, inclusive
 };
-
-// Re-export shared pagination type under the bills-scoped name.
-export type { TServerPagination as TBillsPagination };

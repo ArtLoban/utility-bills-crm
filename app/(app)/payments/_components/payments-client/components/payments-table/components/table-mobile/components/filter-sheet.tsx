@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/select";
 import { Sheet, SheetClose, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { useServiceOptions } from "@/features/services/hooks/use-service-options";
-import { usePaymentsTable } from "../../../../context";
+import { usePaymentsTable } from "@/app/(app)/payments/_components/payments-client/context";
 
 type TProps = {
   open: boolean;

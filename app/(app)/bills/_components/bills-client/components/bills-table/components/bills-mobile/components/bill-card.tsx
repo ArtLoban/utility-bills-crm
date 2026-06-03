@@ -15,7 +15,7 @@ import { DESTRUCTIVE } from "@/lib/constants/ui-tokens";
 import { getServiceLabel } from "@/lib/constants/service-colors";
 import { getServiceTypeVisuals } from "@/features/services/service-type";
 import type { TBillGlobalRow } from "@/lib/db/access/bills";
-import { useBillsTable } from "../context";
+import { useBillsTable } from "@/app/(app)/bills/_components/bills-client/context";
 
 type TProps = { row: TBillGlobalRow };
 
