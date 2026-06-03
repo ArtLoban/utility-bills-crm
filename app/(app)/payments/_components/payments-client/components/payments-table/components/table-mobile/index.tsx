@@ -17,9 +17,9 @@ import { FilterSheet } from "./components/filter-sheet";
 import { MobilePager } from "./components/mobile-pager";
 import { PaymentCard } from "./components/payment-card";
 import { TListParams } from "@/components/data-table/types";
-import { usePaymentsTable } from "../../../context";
 
 import type { TQueryFilters } from "../../types";
+import { usePaymentsTable } from "@/app/(app)/payments/_components/payments-client/context";
 
 type TProps = {
   paymentsList: TPaymentsListResult;
@@ -29,8 +29,8 @@ type TProps = {
 
 export const PaymentsTableMobile = (props: TProps) => {
   const { paymentsList, listParams, queryFilters } = props;
-  const { properties } = usePaymentsTable();
   const { data, pagination, totals } = paymentsList;
+  const { properties } = usePaymentsTable();
   const t = useTranslations("payments.list");
   const [sheetOpen, setSheetOpen] = useState(false);
   const [query, setQuery] = useQueryStates(

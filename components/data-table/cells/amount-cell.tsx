@@ -22,7 +22,6 @@ export const AmountCell = ({ value, kind = "neutral", currency = "UAH", classNam
   const format = useFormatter();
 
   const formatted = format.number(value, {
-    style: "currency",
     currency,
     maximumFractionDigits: 2,
     minimumFractionDigits: 2,

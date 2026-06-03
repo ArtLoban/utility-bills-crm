@@ -1,11 +1,13 @@
 import { createLoader, parseAsString, parseAsStringLiteral } from "nuqs/server";
 
 import { baseListSearchParams, parseAsSemicolonArray } from "@/lib/utils/query-parsers";
-import { PAYMENTS_SORT_COLUMNS } from "./types";
+import { PAYMENT_SORT_COLUMNS, TPaymentSortColumn } from "./types";
 
 export const paymentsSearchParams = {
   ...baseListSearchParams,
-  sortBy: parseAsStringLiteral(PAYMENTS_SORT_COLUMNS).withDefault("paidAt"),
+  sortBy: parseAsStringLiteral(
+    Object.values(PAYMENT_SORT_COLUMNS) as TPaymentSortColumn[],
+  ).withDefault(PAYMENT_SORT_COLUMNS.PAID_AT),
   propertyId: parseAsString,
   services: parseAsSemicolonArray,
 };

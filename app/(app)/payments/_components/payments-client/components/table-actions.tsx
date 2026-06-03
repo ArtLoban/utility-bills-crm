@@ -6,8 +6,8 @@ import { Modal } from "@/components/modal";
 import { Trash2 } from "lucide-react";
 import { IconBadge } from "@/components/icon-badge";
 import { getServiceLabel } from "@/lib/constants/service-colors";
-import { PaymentsTableContext } from "../../context";
 import type { TSelectableEntity } from "@/components/select-input/types";
+import { PaymentsTableContext } from "../context";
 
 type TProps = {
   children: ReactNode;

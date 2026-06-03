@@ -1,7 +1,8 @@
 import { auth } from "@/lib/auth";
 import type { UserId } from "@/lib/db/schema/auth";
 import { accessibleProperties } from "@/lib/db/access/properties";
-import { BillModal, servicesForBillForm } from "@/features/bills";
+import { BillModal } from "@/features/bills";
+import { servicesForBillForm } from "@/lib/db/access/bills";
 
 export default async function InterceptedNewBillPage() {
   const session = await auth();

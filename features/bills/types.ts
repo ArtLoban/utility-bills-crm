@@ -1,7 +1,12 @@
 // --- Sort allow-list ---
 
-export const BILLS_SORT_COLUMNS = ["periodMonth", "amount", "createdAt"] as const;
-export type TBillSortColumn = (typeof BILLS_SORT_COLUMNS)[number];
+export const BILLS_SORT_COLUMNS = {
+  PERIOD_MONTH: "periodMonth",
+  AMOUNT: "amount",
+  CREATED_AT: "createdAt",
+} as const;
+
+export type TBillSortColumn = (typeof BILLS_SORT_COLUMNS)[keyof typeof BILLS_SORT_COLUMNS];
 
 // --- List query contract ---
 

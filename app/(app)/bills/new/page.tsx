@@ -1,7 +1,8 @@
 import { auth } from "@/lib/auth";
 import type { UserId } from "@/lib/db/schema/auth";
 import { accessibleProperties } from "@/lib/db/access/properties";
-import { BillFormContent, servicesForBillForm } from "@/features/bills";
+import { BillFormContent } from "@/features/bills";
+import { servicesForBillForm } from "@/lib/db/access/bills";
 import { PageContainer } from "@/components/page-container";
 import { ROUTES } from "@/lib/routes";
 

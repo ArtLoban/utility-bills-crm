@@ -35,7 +35,7 @@ export const getPaymentsColumns = (t: TTranslateFn): ColumnDef<TPaymentGlobalRow
   {
     id: "amount",
     accessorFn: (row) => row.payment.amount,
-    header: t("columns.amount"),
+    header: `${t("columns.amount")}, ₴`,
     cell: ({ row }) => (
       <AmountCell value={parseFloat(row.original.payment.amount)} kind="payment" />
     ),

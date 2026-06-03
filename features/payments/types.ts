@@ -8,8 +8,13 @@ import { TDateParams } from "@/lib/types/common";
 
 // --- Sort allow-list ---
 
-export const PAYMENTS_SORT_COLUMNS = ["paidAt", "amount", "createdAt"] as const;
-export type TPaymentSortColumn = (typeof PAYMENTS_SORT_COLUMNS)[number];
+export const PAYMENT_SORT_COLUMNS = {
+  PAID_AT: "paidAt",
+  AMOUNT: "amount",
+  CREATED_AT: "createdAt",
+} as const;
+
+export type TPaymentSortColumn = (typeof PAYMENT_SORT_COLUMNS)[keyof typeof PAYMENT_SORT_COLUMNS];
 
 // --- List query contract (Decision #120) ---
 

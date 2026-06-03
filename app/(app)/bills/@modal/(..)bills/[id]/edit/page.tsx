@@ -3,7 +3,8 @@ import { notFound } from "next/navigation";
 import { auth } from "@/lib/auth";
 import type { UserId } from "@/lib/db/schema/auth";
 import type { BillId } from "@/lib/db/schema/bills";
-import { BillModal, billByIdForUser } from "@/features/bills";
+import { BillModal } from "@/features/bills";
+import { billByIdForUser } from "@/lib/db/access/bills";
 
 type TProps = {
   params: Promise<{ id: string }>;

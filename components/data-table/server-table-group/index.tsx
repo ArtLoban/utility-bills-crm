@@ -32,6 +32,7 @@ export const ServerTableGroup = <T,>(props: TProps<T>) => {
     manualSorting: true,
     manualPagination: true,
     enableMultiSort: false,
+    enableSortingRemoval: false,
     getCoreRowModel: getCoreRowModel(),
   });
 
