@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Home — mobile · light · Utility Bills CRM</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; }
+  .lu-root h1, .lu-root h2, .lu-root h3, .lu-root p { margin: 0; }
+  .lu-card { transition: transform .15s ease, box-shadow .15s ease; }
+  .lu-card:hover { transform: translateY(-3px); }
+  .lu-light .lu-card:hover { box-shadow: 0 10px 28px rgba(24,24,27,0.12), 0 3px 8px rgba(24,24,27,0.06); }
+  .lu-dark .lu-card:hover { box-shadow: 0 12px 32px rgba(0,0,0,0.55); border-color: #3f3f46; }
+  .lu-link { transition: opacity .12s; }
+  .lu-link:hover { opacity: 0.72; }
+  .lu-navlink { transition: color .12s; cursor: pointer; }
+  .lu-light .lu-navlink:hover { color: #09090b; }
+  .lu-dark .lu-navlink:hover { color: #fafafa; }
+  .lu-footlink { transition: color .12s; cursor: pointer; }
+  .lu-footlink:hover { color: #ffffff; }
+  .lu-chip { transition: border-color .15s, color .15s; }
+  .lu-light .lu-chip:hover { border-color: rgba(124,58,237,0.4); color: #7c3aed; }
+  .lu-dark .lu-chip:hover { border-color: rgba(167,139,250,0.5); color: #a78bfa; }
+  .lu-arch-body code { padding: 1px 5px; border-radius: 4px; font-size: 0.86em; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .lu-light .lu-arch-body code { background: #f4f4f5; color: #52525b; }
+  .lu-dark .lu-arch-body code { background: #27272a; color: #a1a1aa; }
+  .lu-btn-ghost { transition: background .12s; }
+  .lu-light .lu-btn-ghost:hover { background: #f4f4f5; }
+  .lu-dark .lu-btn-ghost:hover { background: #27272a; }
+
+  #root { max-width: 390px; margin: 0 auto; }
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" data-presets="react" src="../../landing-upgrade/parts.jsx"></script>
+<script type="text/babel" data-presets="react" src="../../landing-upgrade/home.jsx"></script>
+<script type="text/babel" data-presets="react" src="../../landing-upgrade/home-mobile.jsx"></script>
+<script type="text/babel" data-presets="react">
+ReactDOM.createRoot(document.getElementById('root')).render(<HomeMobilePage theme="light" />);
+</script>
+</body>
+</html>

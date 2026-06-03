@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Iteration 9 — System states</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    background: #fafafa;
+    color: #09090b;
+    padding: 48px 24px 96px;
+  }
+  .wrap { max-width: 720px; margin: 0 auto; }
+  .back {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 13px; font-weight: 500; color: #71717a;
+    text-decoration: none; margin-bottom: 36px;
+    transition: color .12s;
+  }
+  .back:hover { color: #09090b; }
+  .main-title {
+    font-size: 26px; font-weight: 700; letter-spacing: -.5px;
+    margin: 0 0 6px;
+  }
+  .main-sub { font-size: 14px; color: #71717a; margin: 0 0 52px; }
+  section { margin-bottom: 44px; }
+  .sec-head { margin-bottom: 12px; }
+  .sec-head h2 {
+    font-size: 12px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: .6px;
+    color: #71717a; margin: 0 0 4px;
+  }
+  .sec-head p { font-size: 13px; color: #a1a1aa; margin: 0; line-height: 1.5; }
+  .page-list {
+    display: flex; flex-direction: column; gap: 2px;
+    border-top: 1px solid #e4e4e7; padding-top: 8px;
+  }
+  .page-link {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 10px; border-radius: 8px;
+    text-decoration: none; color: #09090b;
+    font-size: 14px; font-weight: 500;
+    transition: background .1s;
+  }
+  .page-link:hover { background: #f4f4f5; }
+  .label { flex: 1; }
+  .tag {
+    display: inline-flex; align-items: center;
+    height: 20px; padding: 0 8px; border-radius: 4px;
+    font-size: 11px; font-weight: 500; flex-shrink: 0;
+  }
+  .tag.light  { background: #f4f4f5; color: #71717a; }
+  .tag.dark   { background: #27272a; color: #a1a1aa; }
+  .tag.mobile { background: #ede9fe; color: #7c3aed; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a href="../../Iteration%209.html" class="back">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+    Iteration 9.html
+  </a>
+  <h1 class="main-title">Iteration 9 — System states</h1>
+  <p class="main-sub">15 artboards · 5 sections</p>
+
+  <section>
+    <div class="sec-head">
+      <h2>404 / Not found</h2>
+      <p>SearchX icon chip, app shell with no active nav item.</p>
+    </div>
+    <div class="page-list">
+      <a href="404-light.html" class="page-link">
+        <span class="label">404 · Light</span>
+        <span class="tag light">light</span>
+      </a>
+      <a href="404-dark.html" class="page-link">
+        <span class="label">404 · Dark</span>
+        <span class="tag dark">dark</span>
+      </a>
+      <a href="404-mobile-light.html" class="page-link">
+        <span class="label">404 · Mobile (light)</span>
+        <span class="tag mobile">mobile</span>
+      </a>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <h2>Fatal error</h2>
+      <p>Full-page crash — no top bar. TriangleAlert in destructive-tint chip.</p>
+    </div>
+    <div class="page-list">
+      <a href="fatal-light.html" class="page-link">
+        <span class="label">Fatal error · Light</span>
+        <span class="tag light">light</span>
+      </a>
+      <a href="fatal-dark.html" class="page-link">
+        <span class="label">Fatal error · Dark</span>
+        <span class="tag dark">dark</span>
+      </a>
+      <a href="fatal-mobile-light.html" class="page-link">
+        <span class="label">Fatal error · Mobile (light)</span>
+        <span class="tag mobile">mobile</span>
+      </a>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <h2>Loading skeleton · Dashboard</h2>
+      <p>App shell present; content area shimmers. Pulse matches shadcn Skeleton.</p>
+    </div>
+    <div class="page-list">
+      <a href="skel-dash-light.html" class="page-link">
+        <span class="label">Dashboard loading · Light</span>
+        <span class="tag light">light</span>
+      </a>
+      <a href="skel-dash-dark.html" class="page-link">
+        <span class="label">Dashboard loading · Dark</span>
+        <span class="tag dark">dark</span>
+      </a>
+      <a href="skel-dash-mobile-light.html" class="page-link">
+        <span class="label">Dashboard loading · Mobile (light)</span>
+        <span class="tag mobile">mobile</span>
+      </a>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <h2>Loading skeleton · Bills list</h2>
+      <p>Table skeleton sets the language for Bills / Payments / Meters / Admin.</p>
+    </div>
+    <div class="page-list">
+      <a href="skel-bills-light.html" class="page-link">
+        <span class="label">Bills loading · Light</span>
+        <span class="tag light">light</span>
+      </a>
+      <a href="skel-bills-dark.html" class="page-link">
+        <span class="label">Bills loading · Dark</span>
+        <span class="tag dark">dark</span>
+      </a>
+      <a href="skel-bills-mobile-light.html" class="page-link">
+        <span class="label">Bills loading · Mobile (light)</span>
+        <span class="tag mobile">mobile</span>
+      </a>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <h2>Toast stack</h2>
+      <p>sonner New-York toasts over dimmed Dashboard, bottom-right anchor.</p>
+    </div>
+    <div class="page-list">
+      <a href="toasts-light.html" class="page-link">
+        <span class="label">Toast stack · Light</span>
+        <span class="tag light">light</span>
+      </a>
+      <a href="toasts-dark.html" class="page-link">
+        <span class="label">Toast stack · Dark</span>
+        <span class="tag dark">dark</span>
+      </a>
+      <a href="toasts-mobile-light.html" class="page-link">
+        <span class="label">Toast stack · Mobile (light)</span>
+        <span class="tag mobile">mobile</span>
+      </a>
+    </div>
+  </section>
+</div>
+</body>
+</html>
