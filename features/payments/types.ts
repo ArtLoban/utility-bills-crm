@@ -12,6 +12,8 @@ export const PAYMENT_SORT_COLUMNS = {
   PAID_AT: "paidAt",
   AMOUNT: "amount",
   CREATED_AT: "createdAt",
+  PROPERTY: "property",
+  SERVICE: "service",
 } as const;
 
 export type TPaymentSortColumn = (typeof PAYMENT_SORT_COLUMNS)[keyof typeof PAYMENT_SORT_COLUMNS];

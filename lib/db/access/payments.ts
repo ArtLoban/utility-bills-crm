@@ -87,6 +87,10 @@ const buildOrderBy = (params: TPaymentsListParams) => {
       return [dir(payments.amount), desc(payments.createdAt)] as const;
     case "createdAt":
       return [dir(payments.createdAt)] as const;
+    case "property":
+      return [dir(properties.name), desc(payments.paidAt)] as const;
+    case "service":
+      return [dir(serviceTypes.sortOrder), desc(payments.paidAt)] as const;
     case "paidAt":
     default:
       return [dir(payments.paidAt), desc(payments.createdAt)] as const;

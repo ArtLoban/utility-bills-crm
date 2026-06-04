@@ -7,6 +7,8 @@ export const BILLS_SORT_COLUMNS = {
   PERIOD_MONTH: "periodMonth",
   AMOUNT: "amount",
   CREATED_AT: "createdAt",
+  PROPERTY: "property",
+  SERVICE: "service",
 } as const;
 
 export type TBillSortColumn = (typeof BILLS_SORT_COLUMNS)[keyof typeof BILLS_SORT_COLUMNS];

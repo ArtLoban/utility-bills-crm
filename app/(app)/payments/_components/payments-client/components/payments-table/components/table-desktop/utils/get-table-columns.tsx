@@ -16,21 +16,18 @@ export const getPaymentsColumns = (t: TTranslateFn): ColumnDef<TPaymentGlobalRow
     accessorFn: (row) => row.payment.paidAt,
     header: t("columns.date"),
     cell: ({ row }) => <DateCell value={row.original.payment.paidAt} />,
-    enableSorting: true,
   },
   {
     id: "property",
     accessorFn: (row) => row.property.name,
     header: t("columns.property"),
     cell: ({ row }) => row.original.property.name,
-    enableSorting: false,
   },
   {
     id: "service",
     accessorFn: (row) => row.serviceTypeCode,
     header: t("columns.service"),
     cell: ({ row }) => <ServiceCell type={row.original.serviceTypeCode} />,
-    enableSorting: false,
   },
   {
     id: "amount",
@@ -39,7 +36,6 @@ export const getPaymentsColumns = (t: TTranslateFn): ColumnDef<TPaymentGlobalRow
     cell: ({ row }) => (
       <AmountCell value={parseFloat(row.original.payment.amount)} kind="payment" />
     ),
-    enableSorting: true,
     meta: { align: "right" },
   },
   {

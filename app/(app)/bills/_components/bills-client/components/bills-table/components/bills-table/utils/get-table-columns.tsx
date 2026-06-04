@@ -23,14 +23,12 @@ export const getBillsColumns = (t: TTranslateFn): ColumnDef<TBillGlobalRow>[] =>
     accessorFn: (row) => row.property.name,
     header: t("columns.property"),
     cell: ({ row }) => row.original.property.name,
-    enableSorting: false,
   },
   {
     id: "service",
     accessorFn: (row) => row.serviceTypeCode,
     header: t("columns.service"),
     cell: ({ row }) => <ServiceCell type={row.original.serviceTypeCode} />,
-    enableSorting: false,
   },
   {
     id: "periodMonth",

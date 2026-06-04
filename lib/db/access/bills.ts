@@ -109,6 +109,10 @@ const buildOrderBy = (params: TBillsListParams) => {
       return [dir(bills.amount), desc(bills.createdAt)] as const;
     case "createdAt":
       return [dir(bills.createdAt)] as const;
+    case "property":
+      return [dir(properties.name), desc(bills.periodMonth)] as const;
+    case "service":
+      return [dir(serviceTypes.sortOrder), desc(bills.periodMonth)] as const;
     case "periodMonth":
     default:
       return [dir(bills.periodMonth), desc(bills.createdAt)] as const;
