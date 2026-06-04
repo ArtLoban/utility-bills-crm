@@ -12,9 +12,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import type { TNavUser } from "../types";
-import { getAvatarColor } from "../utils/avatar-color";
-import { getInitials } from "../utils/get-initials";
+import type { TNavUser } from "@/lib/types/nav";
+import { getAvatarColor } from "@/lib/utils/avatar-color";
+import { getInitials } from "@/lib/utils/get-initials";
 
 type TProps = {
   user: TNavUser;

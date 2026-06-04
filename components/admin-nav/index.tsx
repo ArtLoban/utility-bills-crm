@@ -1,11 +1,11 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard } from "lucide-react";
+import { LayoutDashboard, Shield } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { ROUTES } from "@/lib/routes";
-import { Logo } from "@/components/logo";
 import { ThemeToggle } from "@/components/theme-toggle";
 import {
   DropdownMenu,
@@ -14,7 +14,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { AdminBadge } from "./components/admin-badge";
 import { AdminNavMobileMenu } from "./components/admin-nav-mobile-menu";
 import { NavLink } from "./components/nav-link";
 import { UserAvatarStub } from "./components/user-avatar-stub";
@@ -49,10 +48,12 @@ export const AdminNav = ({ user }: TProps) => {
       <div className="h-[2px] w-full bg-amber-500" />
       <header className="bg-background/80 sticky top-0 z-50 h-16 border-b backdrop-blur-sm">
         <div className="mx-auto flex h-full max-w-screen-2xl items-center gap-6 px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-2">
-            <Logo href={ROUTES.home} />
-            <AdminBadge />
-          </div>
+          <Link href={ROUTES.home} className="flex items-center gap-2">
+            <div className="flex size-7 items-center justify-center rounded-[7px] bg-violet-600">
+              <Shield className="size-[15px] text-white" strokeWidth={1.75} />
+            </div>
+            <span className="text-md font-bold tracking-[-0.2px]">UtilityBills</span>
+          </Link>
 
           <nav className="hidden items-center gap-6 md:flex">
             {links.map((link) => (

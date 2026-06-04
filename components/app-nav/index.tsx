@@ -1,6 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Shield } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { ROUTES } from "@/lib/routes";
 import { Logo } from "@/components/logo";
@@ -8,7 +10,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { AppNavMobileMenu } from "./components/app-nav-mobile-menu";
 import { LanguageSwitcher } from "./components/language-switcher";
 import { NavLink } from "./components/nav-link";
-import { UserDropdown } from "./components/user-dropdown";
+import { UserDropdown } from "@/components/user-dropdown";
 import type { TNavUser } from "./types";
 
 const NAV_LINKS = [
@@ -50,6 +52,15 @@ export const AppNav = ({ user }: TProps) => {
 
         <div className="ml-auto flex items-center gap-1">
           <div className="hidden items-center gap-1 md:flex">
+            {user.systemRole === "admin" && (
+              <Link
+                href={ROUTES.admin.root}
+                aria-label={t("adminDashboard")}
+                className="inline-flex size-9 items-center justify-center rounded-md text-amber-700 transition-colors hover:bg-amber-100 dark:text-amber-400 dark:hover:bg-amber-950"
+              >
+                <Shield className="size-4" />
+              </Link>
+            )}
             <LanguageSwitcher ruEnabled={user.ruLocaleEnabled} />
             <ThemeToggle />
             <div className="bg-border mx-2 h-5 w-px" />

@@ -1,7 +1,9 @@
 import Link from "next/link";
+import { LogIn, Shield } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { PublicLogo } from "@/components/public-logo";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { UserDropdown } from "@/components/user-dropdown";
 import { PublicMobileMenu } from "@/components/public-mobile-menu";
 import { auth } from "@/lib/auth";
 import { ROUTES } from "@/lib/routes";
@@ -21,24 +23,65 @@ export const PublicHeader = async () => {
           <PublicNavLink href={ROUTES.home} label={t("nav.home")} />
           <PublicNavLink href={ROUTES.about} label={t("nav.about")} />
           <PublicNavLink href={ROUTES.project} label={t("nav.project")} />
-          {user && <PublicNavLink href={ROUTES.dashboard} label={t("nav.dashboard")} />}
-          {user?.systemRole === "admin" && (
-            <PublicNavLink href={ROUTES.admin.root} label={t("nav.adminPanel")} />
-          )}
         </nav>
 
         <div className="hidden items-center gap-2 md:flex">
+          {user && (
+            <Link
+              href={ROUTES.dashboard}
+              className="border-border text-foreground hover:bg-accent rounded-md border px-3.5 py-1.5 text-sm font-medium transition-colors"
+            >
+              {t("nav.goToApp")}
+            </Link>
+          )}
+          {user?.systemRole === "admin" && (
+            <Link
+              href={ROUTES.admin.root}
+              aria-label={t("nav.adminPanel")}
+              className="inline-flex size-9 items-center justify-center rounded-md text-amber-700 transition-colors hover:bg-amber-100 dark:text-amber-400 dark:hover:bg-amber-950"
+            >
+              <Shield className="size-4" />
+            </Link>
+          )}
           <ThemeToggle />
-          <Link
-            href={user ? ROUTES.dashboard : ROUTES.login}
-            className="border-border text-foreground hover:bg-accent rounded-md border px-3.5 py-1.5 text-sm font-medium transition-colors"
-          >
-            {user ? t("nav.goToApp") : t("nav.signIn")}
-          </Link>
+          <div className="bg-border mx-2 h-5 w-px" />
+          {user ? (
+            <UserDropdown
+              user={{
+                id: user.id,
+                name: user.name ?? null,
+                email: user.email ?? null,
+                image: user.image ?? null,
+                systemRole: user.systemRole,
+                ruLocaleEnabled: user.ruLocaleEnabled,
+              }}
+            />
+          ) : (
+            <Link
+              href={ROUTES.login}
+              className="border-border text-foreground hover:bg-accent flex items-center gap-1.5 rounded-md border px-3.5 py-1.5 text-sm font-medium transition-colors"
+            >
+              <LogIn className="size-4" />
+              {t("nav.signIn")}
+            </Link>
+          )}
         </div>
 
         <div className="ml-auto md:hidden">
-          <PublicMobileMenu isLoggedIn={!!user} isAdmin={user?.systemRole === "admin"} />
+          <PublicMobileMenu
+            user={
+              user
+                ? {
+                    id: user.id,
+                    name: user.name ?? null,
+                    email: user.email ?? null,
+                    image: user.image ?? null,
+                    systemRole: user.systemRole,
+                    ruLocaleEnabled: user.ruLocaleEnabled,
+                  }
+                : null
+            }
+          />
         </div>
       </div>
     </PublicHeaderShell>

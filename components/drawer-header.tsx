@@ -2,9 +2,9 @@ import Image from "next/image";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SheetClose } from "@/components/ui/sheet";
-import { getAvatarColor } from "../../../utils/avatar-color";
-import { getInitials } from "../../../utils/get-initials";
-import type { TNavUser } from "../../../types";
+import { getAvatarColor } from "@/lib/utils/avatar-color";
+import { getInitials } from "@/lib/utils/get-initials";
+import type { TNavUser } from "@/lib/types/nav";
 
 type TProps = {
   user: TNavUser;

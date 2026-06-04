@@ -5,7 +5,7 @@ import { LogOut, Settings, Shield } from "lucide-react";
 import { SheetClose } from "@/components/ui/sheet";
 import { ROUTES } from "@/lib/routes";
 import { signOutAction } from "@/lib/auth/actions";
-import type { TNavUser } from "../../../types";
+import type { TNavUser } from "@/lib/types/nav";
 
 type TProps = {
   user: Pick<TNavUser, "systemRole">;
