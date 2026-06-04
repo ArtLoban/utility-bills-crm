@@ -88,3 +88,81 @@
     cursor: pointer;
   }
 }
+
+/* ── Sonner toast overrides ─────────────────────────────────────────────────
+ * Sonner injects its CSS at runtime via __insertCSS(), which appends a
+ * <style> tag after this stylesheet. Equal-specificity rules in this file
+ * lose to Sonner's late injection, so overrides use !important.
+ * ──────────────────────────────────────────────────────────────────────── */
+
+/* Map Sonner's internal color vars to the project's design tokens */
+[data-sonner-toaster][data-sonner-theme="light"] {
+  --normal-bg: var(--card) !important;
+  --normal-border: var(--border) !important;
+  --normal-text: var(--foreground) !important;
+}
+
+[data-sonner-toaster][data-sonner-theme="dark"] {
+  --normal-bg: var(--card) !important;
+  --normal-border: var(--border) !important;
+  --normal-text: var(--foreground) !important;
+}
+
+/* Move close button to the top-right corner (Sonner defaults to top-left) */
+[data-sonner-toaster][dir="ltr"] {
+  --toast-close-button-start: unset !important;
+  --toast-close-button-end: 0 !important;
+  --toast-close-button-transform: translate(35%, -35%) !important;
+}
+
+/* Toast layout — padding, gap, alignment, typography, shadow */
+[data-sonner-toast][data-styled="true"] {
+  padding: 14px 14px 14px 16px !important;
+  gap: 12px !important;
+  align-items: flex-start !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+  line-height: 1.45 !important;
+  box-shadow:
+    0 4px 12px rgba(24, 24, 27, 0.1),
+    0 2px 4px rgba(24, 24, 27, 0.06) !important;
+}
+
+[data-sonner-toaster][data-sonner-theme="dark"] [data-sonner-toast][data-styled="true"] {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45) !important;
+}
+
+/* Icon slot — size and optical alignment */
+[data-sonner-toast][data-styled="true"] [data-icon] {
+  width: 18px !important;
+  height: 18px !important;
+  margin-top: 1px;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+/* Icon colors by toast type — inherits via SVG stroke="currentColor" */
+[data-sonner-toast][data-type="success"] [data-icon] {
+  color: var(--success);
+}
+[data-sonner-toast][data-type="error"] [data-icon] {
+  color: var(--destructive);
+}
+[data-sonner-toast][data-type="info"] [data-icon] {
+  color: var(--muted-foreground);
+}
+
+/* Close button — size, shape, and color */
+[data-sonner-toast][data-styled="true"] [data-close-button] {
+  width: 22px !important;
+  height: 22px !important;
+  border-radius: 5px !important;
+  background: var(--card) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--muted-foreground) !important;
+}
+
+[data-sonner-toast][data-styled="true"]:hover [data-close-button]:hover {
+  background: var(--muted) !important;
+  border-color: var(--border) !important;
+}
