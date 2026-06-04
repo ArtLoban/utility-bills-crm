@@ -1,39 +1,49 @@
 import { getTranslations } from "next-intl/server";
 import { Users, History, Wallet, TrendingUp } from "lucide-react";
+import type { ComponentType } from "react";
 
-const FEATURES = [
+type TCard = { title: string; body: string };
+
+type TProps = {
+  cards: [TCard, TCard, TCard, TCard];
+};
+
+const FEATURE_CONFIG = [
   {
     icon: Users,
     badgeBg: "bg-violet-100 dark:bg-violet-900/30",
     iconColor: "text-violet-600 dark:text-violet-400",
-    titleKey: "features.propertiesTitle",
-    bodyKey: "features.propertiesBody",
   },
   {
     icon: History,
     badgeBg: "bg-amber-100 dark:bg-amber-900/30",
     iconColor: "text-amber-600 dark:text-amber-400",
-    titleKey: "features.tariffsTitle",
-    bodyKey: "features.tariffsBody",
   },
   {
     icon: Wallet,
     badgeBg: "bg-teal-100 dark:bg-teal-900/30",
     iconColor: "text-teal-600 dark:text-teal-400",
-    titleKey: "features.walletTitle",
-    bodyKey: "features.walletBody",
   },
   {
     icon: TrendingUp,
     badgeBg: "bg-sky-100 dark:bg-sky-900/30",
     iconColor: "text-sky-600 dark:text-sky-400",
-    titleKey: "features.trendsTitle",
-    bodyKey: "features.trendsBody",
   },
-] as const;
+] as const satisfies ReadonlyArray<{
+  icon: ComponentType<{ className?: string; strokeWidth?: number }>;
+  badgeBg: string;
+  iconColor: string;
+}>;
 
-export const FeaturesSection = async () => {
+export const FeaturesSection = async ({ cards }: TProps) => {
   const t = await getTranslations("landing");
+
+  const rows = [
+    { ...FEATURE_CONFIG[0], title: cards[0].title, body: cards[0].body },
+    { ...FEATURE_CONFIG[1], title: cards[1].title, body: cards[1].body },
+    { ...FEATURE_CONFIG[2], title: cards[2].title, body: cards[2].body },
+    { ...FEATURE_CONFIG[3], title: cards[3].title, body: cards[3].body },
+  ];
 
   return (
     <section className="relative overflow-hidden py-16 md:py-[116px]">
@@ -60,22 +70,24 @@ export const FeaturesSection = async () => {
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          {FEATURES.map(({ icon: Icon, badgeBg, iconColor, titleKey, bodyKey }) => (
-            <div
-              key={titleKey}
-              className="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm transition-[transform,box-shadow] duration-150 ease-in-out hover:-translate-y-[3px] hover:shadow-[0_10px_28px_rgba(24,24,27,0.12),0_3px_8px_rgba(24,24,27,0.06)] dark:border-zinc-800 dark:bg-zinc-900 dark:shadow-none dark:hover:translate-y-0 dark:hover:border-zinc-700 dark:hover:shadow-[0_12px_32px_rgba(0,0,0,0.55)]"
-            >
+          {rows.map(({ icon: Icon, badgeBg, iconColor, title, body }) => {
+            return (
               <div
-                className={`mb-5 inline-flex size-11 items-center justify-center rounded-xl ${badgeBg}`}
+                key={title}
+                className="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm transition-[transform,box-shadow] duration-150 ease-in-out hover:-translate-y-[3px] hover:shadow-[0_10px_28px_rgba(24,24,27,0.12),0_3px_8px_rgba(24,24,27,0.06)] dark:border-zinc-800 dark:bg-zinc-900 dark:shadow-none dark:hover:translate-y-0 dark:hover:border-zinc-700 dark:hover:shadow-[0_12px_32px_rgba(0,0,0,0.55)]"
               >
-                <Icon className={`size-5 ${iconColor}`} strokeWidth={1.75} />
+                <div
+                  className={`mb-5 inline-flex size-11 items-center justify-center rounded-xl ${badgeBg}`}
+                >
+                  <Icon className={`size-5 ${iconColor}`} strokeWidth={1.75} />
+                </div>
+                <p className="text-md mb-2 font-semibold text-zinc-900 dark:text-zinc-50">
+                  {title}
+                </p>
+                <p className="text-sm leading-[1.65] text-zinc-500">{body}</p>
               </div>
-              <p className="text-md mb-2 font-semibold text-zinc-900 dark:text-zinc-50">
-                {t(titleKey)}
-              </p>
-              <p className="text-sm leading-[1.65] text-zinc-500">{t(bodyKey)}</p>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>

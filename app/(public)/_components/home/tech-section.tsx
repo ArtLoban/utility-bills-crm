@@ -3,7 +3,11 @@ import { ArrowRight } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { ROUTES } from "@/lib/routes";
 
-export const TechSection = async () => {
+type TProps = {
+  techHighlights: string;
+};
+
+export const TechSection = async ({ techHighlights }: TProps) => {
   const t = await getTranslations("landing");
 
   return (
@@ -39,13 +43,7 @@ export const TechSection = async () => {
           <h2 className="mb-5 text-[clamp(28px,3vw,36px)] font-semibold tracking-[-0.02em] text-zinc-900 dark:text-zinc-50">
             {t("tech.sectionTitle")}
           </h2>
-          <p className="text-base leading-[1.75] text-zinc-500">
-            {t.rich("tech.description", {
-              b: (chunks) => (
-                <strong className="font-medium text-zinc-700 dark:text-zinc-300">{chunks}</strong>
-              ),
-            })}
-          </p>
+          <p className="text-base leading-[1.75] text-zinc-500">{techHighlights}</p>
           <Link
             href={ROUTES.project}
             className="text-md mt-5 inline-flex items-center gap-1 font-medium text-violet-600 transition-opacity hover:opacity-75 dark:text-violet-400"

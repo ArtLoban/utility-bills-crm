@@ -86,3 +86,23 @@ export const getGlobalCms = async (): Promise<TCmsLinks | undefined> => {
   await assertAdmin();
   return _queryCmsLinks();
 };
+
+// ---------------------------------------------------------------------------
+// Public unguarded reads — for the public landing pages. No assertAdmin().
+// Callers treat undefined as "table transiently empty" — use ?? fallback,
+// never throw.
+// ---------------------------------------------------------------------------
+
+export const getPublicHome = async (): Promise<{
+  homeHero: THomeHero | undefined;
+  features: TCmsFeatures | undefined;
+}> => {
+  const [homeHero, features] = await Promise.all([_queryHomeHero(), _queryCmsFeatures()]);
+  return { homeHero, features };
+};
+
+export const getPublicAbout = (): Promise<TAboutHero | undefined> => _queryAboutHero();
+
+export const getPublicProject = (): Promise<TProjectHero | undefined> => _queryProjectHero();
+
+export const getPublicLinks = (): Promise<TCmsLinks | undefined> => _queryCmsLinks();

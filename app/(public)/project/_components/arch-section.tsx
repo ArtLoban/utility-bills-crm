@@ -1,74 +1,67 @@
 import { Code2, Database, Layers, Scale, ShieldCheck, Users } from "lucide-react";
 import { getTranslations } from "next-intl/server";
-import type { ComponentType, ReactNode } from "react";
+import type { ComponentType } from "react";
 
-type TArchCard = {
+type TCard = { title: string; body: string };
+
+type TProps = {
+  cards: [TCard, TCard, TCard, TCard, TCard, TCard];
+};
+
+const ARCH_CONFIG = [
+  {
+    icon: Layers,
+    badgeBg: "bg-violet-100/80 dark:bg-violet-900/25",
+    badgeBorder: "border-violet-200 dark:border-violet-700/40",
+    iconColor: "text-violet-600 dark:text-violet-400",
+  },
+  {
+    icon: Database,
+    badgeBg: "bg-teal-100/80 dark:bg-teal-900/25",
+    badgeBorder: "border-teal-200 dark:border-teal-700/40",
+    iconColor: "text-teal-600 dark:text-teal-400",
+  },
+  {
+    icon: Code2,
+    badgeBg: "bg-blue-100/80 dark:bg-blue-900/25",
+    badgeBorder: "border-blue-200 dark:border-blue-700/40",
+    iconColor: "text-blue-600 dark:text-blue-400",
+  },
+  {
+    icon: ShieldCheck,
+    badgeBg: "bg-amber-100/80 dark:bg-amber-900/25",
+    badgeBorder: "border-amber-200 dark:border-amber-700/40",
+    iconColor: "text-amber-600 dark:text-amber-400",
+  },
+  {
+    icon: Scale,
+    badgeBg: "bg-violet-100/80 dark:bg-violet-900/25",
+    badgeBorder: "border-violet-200 dark:border-violet-700/40",
+    iconColor: "text-violet-600 dark:text-violet-400",
+  },
+  {
+    icon: Users,
+    badgeBg: "bg-teal-100/80 dark:bg-teal-900/25",
+    badgeBorder: "border-teal-200 dark:border-teal-700/40",
+    iconColor: "text-teal-600 dark:text-teal-400",
+  },
+] as const satisfies ReadonlyArray<{
   icon: ComponentType<{ className?: string; strokeWidth?: number }>;
   badgeBg: string;
   badgeBorder: string;
   iconColor: string;
-  title: string;
-  body: ReactNode;
-};
+}>;
 
-const codeTag = (chunks: ReactNode) => (
-  <code className="rounded bg-zinc-100 px-[5px] py-px font-mono text-xs text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400">
-    {chunks}
-  </code>
-);
-
-export const ArchSection = async () => {
+export const ArchSection = async ({ cards }: TProps) => {
   const t = await getTranslations("landing");
 
-  const cards: TArchCard[] = [
-    {
-      icon: Layers,
-      badgeBg: "bg-violet-100/80 dark:bg-violet-900/25",
-      badgeBorder: "border-violet-200 dark:border-violet-700/40",
-      iconColor: "text-violet-600 dark:text-violet-400",
-      title: t("project.arch.card1Title"),
-      body: t("project.arch.card1Body"),
-    },
-    {
-      icon: Database,
-      badgeBg: "bg-teal-100/80 dark:bg-teal-900/25",
-      badgeBorder: "border-teal-200 dark:border-teal-700/40",
-      iconColor: "text-teal-600 dark:text-teal-400",
-      title: t("project.arch.card2Title"),
-      body: t.rich("project.arch.card2Body", { code: codeTag }),
-    },
-    {
-      icon: Code2,
-      badgeBg: "bg-blue-100/80 dark:bg-blue-900/25",
-      badgeBorder: "border-blue-200 dark:border-blue-700/40",
-      iconColor: "text-blue-600 dark:text-blue-400",
-      title: t("project.arch.card3Title"),
-      body: t.rich("project.arch.card3Body", { code: codeTag }),
-    },
-    {
-      icon: ShieldCheck,
-      badgeBg: "bg-amber-100/80 dark:bg-amber-900/25",
-      badgeBorder: "border-amber-200 dark:border-amber-700/40",
-      iconColor: "text-amber-600 dark:text-amber-400",
-      title: t("project.arch.card4Title"),
-      body: t("project.arch.card4Body"),
-    },
-    {
-      icon: Scale,
-      badgeBg: "bg-violet-100/80 dark:bg-violet-900/25",
-      badgeBorder: "border-violet-200 dark:border-violet-700/40",
-      iconColor: "text-violet-600 dark:text-violet-400",
-      title: t("project.arch.card5Title"),
-      body: t.rich("project.arch.card5Body", { code: codeTag }),
-    },
-    {
-      icon: Users,
-      badgeBg: "bg-teal-100/80 dark:bg-teal-900/25",
-      badgeBorder: "border-teal-200 dark:border-teal-700/40",
-      iconColor: "text-teal-600 dark:text-teal-400",
-      title: t("project.arch.card6Title"),
-      body: t.rich("project.arch.card6Body", { code: codeTag }),
-    },
+  const rows = [
+    { ...ARCH_CONFIG[0], title: cards[0].title, body: cards[0].body },
+    { ...ARCH_CONFIG[1], title: cards[1].title, body: cards[1].body },
+    { ...ARCH_CONFIG[2], title: cards[2].title, body: cards[2].body },
+    { ...ARCH_CONFIG[3], title: cards[3].title, body: cards[3].body },
+    { ...ARCH_CONFIG[4], title: cards[4].title, body: cards[4].body },
+    { ...ARCH_CONFIG[5], title: cards[5].title, body: cards[5].body },
   ];
 
   return (
@@ -81,7 +74,7 @@ export const ArchSection = async () => {
           {t("project.arch.sectionTitle")}
         </h2>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          {cards.map(({ icon: Icon, badgeBg, badgeBorder, iconColor, title, body }) => (
+          {rows.map(({ icon: Icon, badgeBg, badgeBorder, iconColor, title, body }) => (
             <div
               key={title}
               className="rounded-xl border border-zinc-200 bg-white p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-[transform,box-shadow,border-color] duration-150 ease-in-out hover:-translate-y-[3px] hover:shadow-[0_10px_28px_rgba(24,24,27,0.12),0_3px_8px_rgba(24,24,27,0.06)] dark:border-zinc-800 dark:bg-zinc-900 dark:shadow-none dark:hover:translate-y-0 dark:hover:border-zinc-700 dark:hover:shadow-[0_12px_32px_rgba(0,0,0,0.55)]"

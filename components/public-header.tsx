@@ -9,10 +9,18 @@ import { auth } from "@/lib/auth";
 import { ROUTES } from "@/lib/routes";
 import { PublicHeaderShell } from "@/components/public-header-shell";
 import { PublicNavLink } from "@/components/public-nav-link";
+import { getPublicLinks } from "@/features/landing-cms";
 
 export const PublicHeader = async () => {
-  const [session, t] = await Promise.all([auth(), getTranslations("landing")]);
+  const [session, t, links] = await Promise.all([
+    auth(),
+    getTranslations("landing"),
+    getPublicLinks(),
+  ]);
   const user = session?.user;
+
+  const showAbout = links?.aboutNavVisible ?? true;
+  const showProject = links?.projectNavVisible ?? true;
 
   return (
     <PublicHeaderShell>
@@ -21,8 +29,8 @@ export const PublicHeader = async () => {
 
         <nav className="hidden flex-1 items-center justify-center gap-1 md:flex">
           <PublicNavLink href={ROUTES.home} label={t("nav.home")} />
-          <PublicNavLink href={ROUTES.about} label={t("nav.about")} />
-          <PublicNavLink href={ROUTES.project} label={t("nav.project")} />
+          {showAbout && <PublicNavLink href={ROUTES.about} label={t("nav.about")} />}
+          {showProject && <PublicNavLink href={ROUTES.project} label={t("nav.project")} />}
         </nav>
 
         <div className="hidden items-center gap-2 md:flex">
@@ -68,6 +76,8 @@ export const PublicHeader = async () => {
         </div>
         <div className="ml-auto md:hidden">
           <PublicMobileMenu
+            showAbout={showAbout}
+            showProject={showProject}
             user={
               user
                 ? {

@@ -15,9 +15,11 @@ import type { TNavUser } from "@/lib/types/nav";
 
 type TProps = {
   user: TNavUser | null;
+  showAbout: boolean;
+  showProject: boolean;
 };
 
-export const PublicMobileMenu = ({ user }: TProps) => {
+export const PublicMobileMenu = ({ user, showAbout, showProject }: TProps) => {
   const t = useTranslations("landing");
   const pathname = usePathname();
   const { resolvedTheme, setTheme } = useTheme();
@@ -95,16 +97,20 @@ export const PublicMobileMenu = ({ user }: TProps) => {
                     {t("nav.home")}
                   </Link>
                 </SheetClose>
-                <SheetClose asChild>
-                  <Link href={ROUTES.about} className={navLinkClass(ROUTES.about)}>
-                    {t("nav.about")}
-                  </Link>
-                </SheetClose>
-                <SheetClose asChild>
-                  <Link href={ROUTES.project} className={navLinkClass(ROUTES.project)}>
-                    {t("nav.project")}
-                  </Link>
-                </SheetClose>
+                {showAbout && (
+                  <SheetClose asChild>
+                    <Link href={ROUTES.about} className={navLinkClass(ROUTES.about)}>
+                      {t("nav.about")}
+                    </Link>
+                  </SheetClose>
+                )}
+                {showProject && (
+                  <SheetClose asChild>
+                    <Link href={ROUTES.project} className={navLinkClass(ROUTES.project)}>
+                      {t("nav.project")}
+                    </Link>
+                  </SheetClose>
+                )}
                 <SheetClose asChild>
                   <Link href={ROUTES.dashboard} className={navLinkClass(ROUTES.dashboard)}>
                     {t("nav.dashboard")}
@@ -138,16 +144,20 @@ export const PublicMobileMenu = ({ user }: TProps) => {
                     {t("nav.home")}
                   </Link>
                 </SheetClose>
-                <SheetClose asChild>
-                  <Link href={ROUTES.about} className={navLinkClass(ROUTES.about)}>
-                    {t("nav.about")}
-                  </Link>
-                </SheetClose>
-                <SheetClose asChild>
-                  <Link href={ROUTES.project} className={navLinkClass(ROUTES.project)}>
-                    {t("nav.project")}
-                  </Link>
-                </SheetClose>
+                {showAbout && (
+                  <SheetClose asChild>
+                    <Link href={ROUTES.about} className={navLinkClass(ROUTES.about)}>
+                      {t("nav.about")}
+                    </Link>
+                  </SheetClose>
+                )}
+                {showProject && (
+                  <SheetClose asChild>
+                    <Link href={ROUTES.project} className={navLinkClass(ROUTES.project)}>
+                      {t("nav.project")}
+                    </Link>
+                  </SheetClose>
+                )}
               </nav>
               <div className="bg-border mx-4 h-px" />
               {themeSection}

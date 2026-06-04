@@ -1,5 +1,11 @@
 import { getTranslations } from "next-intl/server";
 
+type TProps = {
+  title: string;
+  desc: string;
+  githubUrl: string;
+};
+
 const GithubIcon = () => (
   <svg
     width="16"
@@ -17,7 +23,7 @@ const GithubIcon = () => (
   </svg>
 );
 
-export const HeroSection = async () => {
+export const HeroSection = async ({ title, desc, githubUrl }: TProps) => {
   const t = await getTranslations("landing");
 
   return (
@@ -48,13 +54,11 @@ export const HeroSection = async () => {
 
       <div className="relative mx-auto max-w-[1100px] px-4 md:px-6">
         <h1 className="mb-5 max-w-[680px] text-[clamp(38px,5vw,60px)] leading-[1.12] font-semibold tracking-[-0.035em] text-zinc-900 dark:text-zinc-50">
-          {t("project.hero.h1")}
+          {title}
         </h1>
-        <p className="mb-8 max-w-[560px] text-lg leading-[1.7] text-zinc-500">
-          {t("project.hero.subtitle")}
-        </p>
+        <p className="mb-8 max-w-[560px] text-lg leading-[1.7] text-zinc-500">{desc}</p>
         <a
-          href="https://github.com"
+          href={githubUrl}
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-2 rounded-lg bg-violet-600 px-5 py-[11px] text-sm font-medium text-white transition-colors hover:bg-violet-700"

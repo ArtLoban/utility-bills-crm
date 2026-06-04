@@ -1,8 +1,9 @@
-import { getTranslations } from "next-intl/server";
+type TProps = {
+  greeting: string;
+  desc: string;
+};
 
-export const HeroSection = async () => {
-  const t = await getTranslations("landing");
-
+export const HeroSection = ({ greeting, desc }: TProps) => {
   return (
     <section className="relative overflow-hidden py-14 md:pt-[104px] md:pb-[96px]">
       {/* Glow 1 — top-right violet bloom */}
@@ -32,13 +33,10 @@ export const HeroSection = async () => {
       <div className="relative mx-auto max-w-[1100px] px-4 md:px-6">
         <div className="max-w-[720px]">
           <h1 className="mb-[22px] text-[clamp(40px,5vw,64px)] leading-[1.06] font-semibold tracking-[-0.035em] text-zinc-900 dark:text-zinc-50">
-            {t("about.hero.h1")}
+            {greeting}
           </h1>
-          <p className="mb-2 text-xl leading-[1.5] font-normal text-zinc-900 dark:text-zinc-50">
-            {t("about.hero.role")}
-          </p>
-          <p className="text-[17px] leading-relaxed text-zinc-500 dark:text-zinc-400">
-            {t("about.hero.location")}
+          <p className="text-xl leading-[1.5] font-normal text-zinc-900 dark:text-zinc-50">
+            {desc}
           </p>
         </div>
       </div>

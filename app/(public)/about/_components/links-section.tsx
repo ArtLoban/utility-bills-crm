@@ -3,7 +3,12 @@ import { ArrowRight } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { ROUTES } from "@/lib/routes";
 
-export const LinksSection = async () => {
+type TProps = {
+  linkedinUrl: string;
+  githubUrl: string;
+};
+
+export const LinksSection = async ({ linkedinUrl, githubUrl }: TProps) => {
   const t = await getTranslations("landing");
 
   return (
@@ -12,7 +17,7 @@ export const LinksSection = async () => {
         <div className="flex max-w-[640px] flex-col gap-[26px]">
           <div className="flex flex-col gap-1">
             <a
-              href="https://linkedin.com"
+              href={linkedinUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex w-fit items-center gap-[7px] text-[17px] font-medium text-violet-600 transition-opacity hover:opacity-75 dark:text-violet-400"
@@ -27,7 +32,7 @@ export const LinksSection = async () => {
 
           <div className="flex flex-col gap-1">
             <a
-              href="https://github.com"
+              href={githubUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex w-fit items-center gap-[7px] text-[17px] font-medium text-violet-600 transition-opacity hover:opacity-75 dark:text-violet-400"

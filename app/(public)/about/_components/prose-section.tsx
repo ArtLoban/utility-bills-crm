@@ -1,9 +1,9 @@
-import { getTranslations } from "next-intl/server";
+type TProps = {
+  worksWith: string;
+};
 
-export const ProseSection = async () => {
-  const t = await getTranslations("landing");
-
-  const paragraphs = [t("about.prose.p1"), t("about.prose.p2"), t("about.prose.p3")] as const;
+export const ProseSection = ({ worksWith }: TProps) => {
+  const paragraphs = worksWith.split(/\n\n+/).filter(Boolean);
 
   return (
     <section className="border-border relative overflow-hidden border-t py-14 md:py-[88px]">

@@ -1,6 +1,11 @@
 import { getTranslations } from "next-intl/server";
 
-export const HeroSection = async () => {
+type TProps = {
+  heroTitle: string;
+  heroDesc: string;
+};
+
+export const HeroSection = async ({ heroTitle, heroDesc }: TProps) => {
   const t = await getTranslations("landing");
 
   return (
@@ -42,10 +47,10 @@ export const HeroSection = async () => {
         </div>
 
         <h1 className="mb-5 max-w-[720px] text-[clamp(40px,5vw,56px)] leading-[1.12] font-semibold tracking-[-0.03em] text-zinc-900 dark:text-zinc-50">
-          {t("hero.h1")}
+          {heroTitle}
         </h1>
 
-        <p className="max-w-[580px] text-lg leading-[1.65] text-zinc-500">{t("hero.subtitle1")}</p>
+        <p className="max-w-[580px] text-lg leading-[1.65] text-zinc-500">{heroDesc}</p>
 
         <p className="text-md mt-4 max-w-[580px] leading-[1.65] text-zinc-500">
           {t("hero.subtitle2")}
