@@ -21,9 +21,33 @@ export const HeroSection = async () => {
   const t = await getTranslations("landing");
 
   return (
-    <section className="py-24">
-      <div className="mx-auto max-w-[1100px] px-6">
-        <h1 className="mb-5 max-w-[680px] text-[clamp(32px,4.5vw,52px)] leading-[1.12] font-semibold tracking-[-0.03em] text-zinc-900 dark:text-zinc-50">
+    <section className="relative overflow-hidden pt-[52px] pb-[72px] md:pt-[84px] md:pb-[116px]">
+      {/* Glow 1 — top-right violet bloom */}
+      <div
+        className="pointer-events-none absolute"
+        aria-hidden="true"
+        style={{
+          top: "-160px",
+          right: "-120px",
+          width: "760px",
+          height: "620px",
+          background: "radial-gradient(at 70% 30%, var(--hero-glow) 0%, transparent 62%)",
+        }}
+      />
+      {/* Glow 2 — centered sub-glow over the heading area */}
+      <div
+        className="pointer-events-none absolute right-10 md:right-[200px]"
+        aria-hidden="true"
+        style={{
+          top: "40px",
+          width: "480px",
+          height: "420px",
+          background: "radial-gradient(var(--hero-glow-sub) 0%, transparent 66%)",
+        }}
+      />
+
+      <div className="relative mx-auto max-w-[1100px] px-4 md:px-6">
+        <h1 className="mb-5 max-w-[680px] text-[clamp(38px,5vw,60px)] leading-[1.12] font-semibold tracking-[-0.035em] text-zinc-900 dark:text-zinc-50">
           {t("project.hero.h1")}
         </h1>
         <p className="mb-8 max-w-[560px] text-lg leading-[1.7] text-zinc-500">
@@ -33,7 +57,8 @@ export const HeroSection = async () => {
           href="https://github.com"
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 rounded-md bg-violet-600 px-[18px] py-2 text-sm font-medium text-white transition-colors hover:bg-violet-700"
+          className="inline-flex items-center gap-2 rounded-lg bg-violet-600 px-5 py-[11px] text-sm font-medium text-white transition-colors hover:bg-violet-700"
+          style={{ boxShadow: "0 2px 8px rgba(124,58,237,0.35)" }}
         >
           <GithubIcon />
           {t("project.hero.githubLink")}

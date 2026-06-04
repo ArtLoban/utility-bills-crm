@@ -5,7 +5,7 @@ const FRONTEND_CHIPS = [
   "TypeScript",
   "Tailwind v4",
   "shadcn/ui",
-  "Base UI",
+  "Radix",
   "TanStack Table",
   "React Hook Form",
   "Zod",
@@ -29,12 +29,12 @@ export const StackSection = async () => {
   const t = await getTranslations("landing");
 
   return (
-    <section className="bg-zinc-100/45 py-24 dark:bg-zinc-900/80">
-      <div className="mx-auto max-w-[1100px] px-6">
+    <section className="bg-zinc-100/45 py-[56px] md:py-[92px] dark:bg-zinc-900/80">
+      <div className="mx-auto max-w-[1100px] px-4 md:px-6">
         <p className="mb-3 text-xs font-medium tracking-[0.08em] text-violet-600 uppercase dark:text-violet-400">
           {t("project.stack.sectionLabel")}
         </p>
-        <h2 className="mb-10 text-[clamp(24px,2.8vw,32px)] font-semibold tracking-[-0.02em] text-zinc-900 dark:text-zinc-50">
+        <h2 className="mb-10 text-[clamp(28px,3vw,38px)] font-semibold tracking-[-0.025em] text-zinc-900 dark:text-zinc-50">
           {t("project.stack.sectionTitle")}
         </h2>
         <div className="grid grid-cols-1 gap-7 sm:grid-cols-2 sm:gap-10">
@@ -46,7 +46,7 @@ export const StackSection = async () => {
               {FRONTEND_CHIPS.map((chip) => (
                 <span
                   key={chip}
-                  className="rounded-md border border-zinc-200 px-[11px] py-1 text-sm whitespace-nowrap text-zinc-600 transition-colors hover:border-violet-400/40 hover:text-violet-600 dark:border-zinc-800 dark:text-zinc-400 dark:hover:border-violet-400/50 dark:hover:text-violet-400"
+                  className="rounded-[7px] border border-zinc-200 px-[13px] py-[6px] text-sm whitespace-nowrap text-zinc-600 transition-colors hover:border-violet-400/40 hover:text-violet-600 dark:border-zinc-800 dark:text-zinc-400 dark:hover:border-violet-400/50 dark:hover:text-violet-400"
                 >
                   {chip}
                 </span>
@@ -61,7 +61,7 @@ export const StackSection = async () => {
               {BACKEND_CHIPS.map((chip) => (
                 <span
                   key={chip}
-                  className="rounded-md border border-zinc-200 px-[11px] py-1 text-sm whitespace-nowrap text-zinc-600 transition-colors hover:border-violet-400/40 hover:text-violet-600 dark:border-zinc-800 dark:text-zinc-400 dark:hover:border-violet-400/50 dark:hover:text-violet-400"
+                  className="rounded-[7px] border border-zinc-200 px-[13px] py-[6px] text-sm whitespace-nowrap text-zinc-600 transition-colors hover:border-violet-400/40 hover:text-violet-600 dark:border-zinc-800 dark:text-zinc-400 dark:hover:border-violet-400/50 dark:hover:text-violet-400"
                 >
                   {chip}
                 </span>

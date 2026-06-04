@@ -108,7 +108,8 @@
         "card6Body": "Every entity carries an owner reference. Every query filters by access through typed helpers like <code>accessibleProperties(userId)</code>. Multi-tenancy is in the data model, not bolted on later — and that decision shapes auth, sharing, soft-delete, and admin all at once."
       },
       "schema": {
-        "sectionTitle": "Data model",
+        "sectionLabel": "Data model",
+        "sectionTitle": "One tree, every entity",
         "caption": "Full schema in the GitHub repository — Drizzle definitions, exclusion constraints, indexes, the lot."
       },
       "status": {

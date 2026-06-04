@@ -9,10 +9,10 @@ export const StatusSection = async () => {
   const t = await getTranslations("landing");
 
   return (
-    <section className="py-24">
-      <div className="mx-auto max-w-[1100px] px-6">
+    <section className="py-[56px] md:py-[92px]">
+      <div className="mx-auto max-w-[1100px] px-4 md:px-6">
         <div className="max-w-[640px]">
-          <h2 className="mb-6 text-[clamp(22px,2.5vw,30px)] font-semibold tracking-[-0.02em] text-zinc-900 dark:text-zinc-50">
+          <h2 className="mb-8 text-[clamp(28px,3vw,38px)] font-semibold tracking-[-0.025em] text-zinc-900 dark:text-zinc-50">
             {t("project.status.sectionTitle")}
           </h2>
           <div className="flex flex-col gap-5">
