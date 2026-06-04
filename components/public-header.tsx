@@ -66,7 +66,6 @@ export const PublicHeader = async () => {
             </Link>
           )}
         </div>
-
         <div className="ml-auto md:hidden">
           <PublicMobileMenu
             user={
