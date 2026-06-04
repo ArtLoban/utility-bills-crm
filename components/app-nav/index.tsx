@@ -8,7 +8,7 @@ import { ROUTES } from "@/lib/routes";
 import { Logo } from "@/components/logo";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { AppNavMobileMenu } from "./components/app-nav-mobile-menu";
-import { LanguageSwitcher } from "./components/language-switcher";
+import { LanguageSwitcher } from "@/components/language-switcher";
 import { NavLink } from "./components/nav-link";
 import { UserDropdown } from "@/components/user-dropdown";
 import type { TNavUser } from "./types";

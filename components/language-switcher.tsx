@@ -13,7 +13,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { LocaleFlag } from "./locale-flag";
+import { LocaleFlag } from "@/components/locale-flag";
 
 type TProps = {
   ruEnabled: boolean;

@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { LOCALE_CONFIG, getAvailableLocales } from "@/lib/locale/constants";
 import type { TLocale } from "@/lib/locale/constants";
 import { setLocale } from "@/lib/locale/actions";
-import { LocaleFlag } from "@/components/app-nav/components/locale-flag";
+import { LocaleFlag } from "@/components/locale-flag";
 
 type TProps = {
   ruEnabled: boolean;
@@ -33,7 +33,7 @@ export const DrawerLangPanel = ({ ruEnabled, onBack }: TProps) => {
     <div className="flex-1 overflow-y-auto px-2.5 py-2">
       <button
         onClick={onBack}
-        className="hover:bg-accent text-muted-foreground mb-2 flex h-9 items-center gap-1.5 rounded-lg px-2 text-[13.5px] font-medium transition-colors"
+        className="hover:bg-accent text-muted-foreground mb-2 flex h-9 items-center gap-1.5 rounded-lg px-2 text-sm font-medium transition-colors"
       >
         <ChevronLeft className="size-4" />
         Back
@@ -50,13 +50,13 @@ export const DrawerLangPanel = ({ ruEnabled, onBack }: TProps) => {
             key={locale}
             onClick={() => handleSelect(locale)}
             className={cn(
-              "mb-0.5 flex h-[52px] w-full items-center gap-3.5 rounded-xl px-3 text-left transition-colors",
+              "mb-0.5 flex h-13 w-full items-center gap-3.5 rounded-xl px-3 text-left transition-colors",
               active ? "bg-brand-bg" : "hover:bg-accent",
             )}
           >
             <LocaleFlag locale={locale} />
             <div className="flex-1">
-              <p className={cn("text-[15px]", active ? "font-semibold" : "font-medium")}>
+              <p className={cn("text-sm", active ? "font-semibold" : "font-medium")}>
                 {config.label}
               </p>
               <p className="text-muted-foreground text-xs font-semibold tracking-wider">

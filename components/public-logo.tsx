@@ -13,7 +13,7 @@ export const PublicLogo = ({ href = "/", className }: TProps) => {
       <div className="flex size-5 shrink-0 items-center justify-center rounded bg-violet-600">
         <Zap className="size-3 text-white" strokeWidth={1.75} />
       </div>
-      <span className="text-sm font-semibold tracking-tight">Utility Bills CRM</span>
+      <span className="text-sm font-semibold tracking-tight">UtilityBills CRM</span>
     </Link>
   );
 };

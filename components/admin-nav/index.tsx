@@ -1,22 +1,16 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, Shield } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { Shield } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { ROUTES } from "@/lib/routes";
 import { ThemeToggle } from "@/components/theme-toggle";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { LanguageSwitcher } from "@/components/language-switcher";
+import type { TNavUser } from "@/lib/types/nav";
 import { AdminNavMobileMenu } from "./components/admin-nav-mobile-menu";
+import { AdminUserDropdown } from "./components/admin-user-dropdown";
 import { NavLink } from "./components/nav-link";
-import { UserAvatarStub } from "./components/user-avatar-stub";
 
 const NAV_LINKS = [
   { key: "adminDashboard", href: ROUTES.admin.root },
@@ -26,12 +20,11 @@ const NAV_LINKS = [
 ] as const;
 
 type TProps = {
-  user: { image: string | null };
+  user: TNavUser;
 };
 
 export const AdminNav = ({ user }: TProps) => {
   const pathname = usePathname();
-  const router = useRouter();
   const t = useTranslations("nav");
 
   const isActive = (href: string) =>
@@ -62,35 +55,19 @@ export const AdminNav = ({ user }: TProps) => {
           </nav>
 
           <div className="ml-auto flex items-center gap-1">
-            <ThemeToggle />
-
-            <DropdownMenu>
-              <DropdownMenuTrigger aria-label="User menu" className="cursor-pointer">
-                {user.image ? (
-                  <Image
-                    src={user.image}
-                    alt="Avatar"
-                    width={32}
-                    height={32}
-                    className="size-8 rounded-full object-cover"
-                  />
-                ) : (
-                  <UserAvatarStub />
-                )}
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  className="cursor-pointer"
-                  onClick={() => router.push(ROUTES.dashboard)}
-                >
-                  <LayoutDashboard className="size-4" />
-                  Switch to user view
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            <AdminNavMobileMenu links={links} />
+            <div className="hidden items-center gap-1 md:flex">
+              <Link
+                href={ROUTES.dashboard}
+                className="border-border text-foreground hover:bg-accent mr-1 rounded-md border px-3.5 py-1.5 text-sm font-medium transition-colors"
+              >
+                Go to App
+              </Link>
+              <LanguageSwitcher ruEnabled={user.ruLocaleEnabled} />
+              <ThemeToggle />
+              <div className="bg-border mx-2 h-5 w-px" />
+              <AdminUserDropdown user={user} />
+            </div>
+            <AdminNavMobileMenu links={links} user={user} />
           </div>
         </div>
       </header>

@@ -7,7 +7,7 @@ import { DrawerHeader } from "@/components/drawer-header";
 import { DrawerNav } from "./components/drawer-nav";
 import { DrawerPrefs } from "./components/drawer-prefs";
 import { DrawerAccount } from "@/components/drawer-account";
-import { DrawerLangPanel } from "./components/drawer-lang-panel";
+import { DrawerLangPanel } from "@/components/drawer-lang-panel";
 import type { TLink, TNavUser } from "../../types";
 
 type TView = "main" | "lang";
