@@ -1,4 +1,6 @@
-const NAV_ITEMS = ["Dashboard", "Properties", "Meters", "Bills", "Payments", "Settings"] as const;
+import { SERVICE_TYPE_COLORS, SERVICE_TYPE_CODES } from "@/features/services/service-type";
+
+const NAV_ITEMS = ["Dashboard", "Properties", "Providers", "Meters", "Bills", "Payments"] as const;
 
 const MONTHS = ["Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr"] as const;
 
@@ -16,20 +18,38 @@ const CHART_POINTS: readonly [number, number][] = [
 ];
 
 const SERVICES = [
-  { label: "Electricity", color: "oklch(0.558 0.288 293)" },
-  { label: "Gas", color: "#f59e0b" },
-  { label: "Water", color: "#0d9488" },
-  { label: "Internet", color: "#3b82f6" },
-] as const;
+  { label: "Electricity", color: SERVICE_TYPE_COLORS[SERVICE_TYPE_CODES.ELECTRICITY] },
+  { label: "Gas", color: SERVICE_TYPE_COLORS[SERVICE_TYPE_CODES.GAS] },
+  { label: "Water", color: SERVICE_TYPE_COLORS[SERVICE_TYPE_CODES.COLD_WATER] },
+  { label: "Internet", color: SERVICE_TYPE_COLORS[SERVICE_TYPE_CODES.INTERNET] },
+];
 
 const SERVICE_PERCENTS = ["42%", "26%", "18%", "14%"] as const;
 
-// Precomputed strokeDasharray offsets for the 3 visible pie slices
+// Precomputed strokeDasharray offsets for the 3 visible pie slices (Electricity, Gas, Water)
 const PIE_SLICES = [
-  { color: "oklch(0.558 0.288 293)", dash: 103, gap: 60, offset: 0 },
-  { color: "#f59e0b", dash: 64, gap: 99, offset: -103 },
-  { color: "#0d9488", dash: 44, gap: 119, offset: -167 },
-] as const;
+  {
+    id: "electricity",
+    color: SERVICE_TYPE_COLORS[SERVICE_TYPE_CODES.ELECTRICITY],
+    dash: 103,
+    gap: 60,
+    offset: 0,
+  },
+  {
+    id: "gas",
+    color: SERVICE_TYPE_COLORS[SERVICE_TYPE_CODES.GAS],
+    dash: 64,
+    gap: 99,
+    offset: -103,
+  },
+  {
+    id: "cold_water",
+    color: SERVICE_TYPE_COLORS[SERVICE_TYPE_CODES.COLD_WATER],
+    dash: 44,
+    gap: 119,
+    offset: -167,
+  },
+];
 
 const STAT_CARDS = [
   { label: "Total balance", value: "−₴4,820", sub: "across 3 properties", valueColor: "#f87171" },
@@ -178,9 +198,9 @@ export const DashboardMockup = () => {
                     stroke="var(--mockup-bar-inactive)"
                     strokeWidth="16"
                   />
-                  {PIE_SLICES.map(({ color, dash, gap, offset }) => (
+                  {PIE_SLICES.map(({ id, color, dash, gap, offset }) => (
                     <circle
-                      key={color}
+                      key={id}
                       cx="40"
                       cy="40"
                       r="28"
@@ -298,8 +318,16 @@ export const DashboardMockup = () => {
           <svg width="100%" height={72} viewBox="0 0 602 72" preserveAspectRatio="none">
             <defs>
               <linearGradient id="mockup-area-gradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="var(--mockup-accent-light)" stopOpacity="0.18" />
-                <stop offset="100%" stopColor="var(--mockup-accent-light)" stopOpacity="0" />
+                <stop
+                  offset="0%"
+                  stopColor={SERVICE_TYPE_COLORS[SERVICE_TYPE_CODES.ELECTRICITY]}
+                  stopOpacity="0.18"
+                />
+                <stop
+                  offset="100%"
+                  stopColor={SERVICE_TYPE_COLORS[SERVICE_TYPE_CODES.ELECTRICITY]}
+                  stopOpacity="0"
+                />
               </linearGradient>
             </defs>
             <polygon
@@ -309,7 +337,7 @@ export const DashboardMockup = () => {
             <polyline
               points={CHART_POINTS.map(([x, y]) => `${x},${y}`).join(" ")}
               fill="none"
-              stroke="var(--mockup-accent-light)"
+              stroke={SERVICE_TYPE_COLORS[SERVICE_TYPE_CODES.ELECTRICITY]}
               strokeWidth="2"
               strokeLinejoin="round"
               strokeLinecap="round"
@@ -321,7 +349,7 @@ export const DashboardMockup = () => {
                 cy={y}
                 r="3"
                 fill="var(--mockup-bg)"
-                stroke="var(--mockup-accent-light)"
+                stroke={SERVICE_TYPE_COLORS[SERVICE_TYPE_CODES.ELECTRICITY]}
                 strokeWidth="1.5"
               />
             ))}

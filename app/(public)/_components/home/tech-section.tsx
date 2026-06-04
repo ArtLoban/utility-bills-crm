@@ -7,8 +7,8 @@ export const TechSection = async () => {
   const t = await getTranslations("landing");
 
   return (
-    <section className="relative overflow-hidden py-24">
-      {/* Radial glow — same bottom-left bloom as features section */}
+    <section className="relative overflow-hidden py-16 md:py-[116px]">
+      {/* Radial glows — bottom-left + top-right, matching features section bloom */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute"
@@ -20,12 +20,23 @@ export const TechSection = async () => {
           background: "radial-gradient(at 30% 70%, var(--section-glow) 0%, transparent 62%)",
         }}
       />
-      <div className="mx-auto max-w-[1100px] px-6">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute"
+        style={{
+          top: "-180px",
+          right: "-120px",
+          width: "720px",
+          height: "580px",
+          background: "radial-gradient(at 70% 30%, var(--section-glow) 0%, transparent 62%)",
+        }}
+      />
+      <div className="mx-auto max-w-[1100px] px-4 md:px-6">
         <div className="mx-auto max-w-[600px] text-center">
           <p className="mb-2.5 text-xs font-medium tracking-[0.08em] text-violet-600 uppercase dark:text-violet-400">
             {t("tech.sectionLabel")}
           </p>
-          <h2 className="mb-5 text-[clamp(26px,3vw,36px)] font-semibold tracking-[-0.02em] text-zinc-900 dark:text-zinc-50">
+          <h2 className="mb-5 text-[clamp(28px,3vw,36px)] font-semibold tracking-[-0.02em] text-zinc-900 dark:text-zinc-50">
             {t("tech.sectionTitle")}
           </h2>
           <p className="text-base leading-[1.75] text-zinc-500">

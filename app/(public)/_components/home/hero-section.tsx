@@ -4,7 +4,7 @@ export const HeroSection = async () => {
   const t = await getTranslations("landing");
 
   return (
-    <section className="relative overflow-hidden py-24">
+    <section className="relative overflow-hidden pt-[52px] pb-16 md:pt-[84px] md:pb-[116px]">
       {/* Glow 1 — top-right, larger violet bloom */}
       <div
         className="pointer-events-none absolute"
@@ -18,7 +18,7 @@ export const HeroSection = async () => {
       />
       {/* Glow 2 — centered, softer sub-glow over the heading area */}
       <div
-        className="pointer-events-none absolute left-1/2 -translate-x-1/2"
+        className="pointer-events-none absolute right-10 md:right-[200px]"
         style={{
           top: "40px",
           width: "480px",
@@ -27,7 +27,7 @@ export const HeroSection = async () => {
         }}
       />
 
-      <div className="relative mx-auto max-w-[1100px] px-6">
+      <div className="relative mx-auto max-w-[1100px] px-4 md:px-6">
         {/* Eyebrow badge */}
         <div className="mb-6 inline-flex items-center gap-1.5 rounded-full border border-violet-200 bg-violet-50 px-2.5 py-1 dark:border-violet-800/50 dark:bg-violet-950/40">
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
@@ -41,7 +41,7 @@ export const HeroSection = async () => {
           </span>
         </div>
 
-        <h1 className="mb-5 max-w-[720px] text-[clamp(36px,5vw,56px)] leading-[1.12] font-semibold tracking-[-0.03em] text-zinc-900 dark:text-zinc-50">
+        <h1 className="mb-5 max-w-[720px] text-[clamp(40px,5vw,56px)] leading-[1.12] font-semibold tracking-[-0.03em] text-zinc-900 dark:text-zinc-50">
           {t("hero.h1")}
         </h1>
 

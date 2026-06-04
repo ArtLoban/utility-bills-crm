@@ -32,7 +32,7 @@
       "copyright": "© {year} · Utility Bills CRM"
     },
     "hero": {
-      "eyebrow": "Portfolio project · v1 in progress",
+      "eyebrow": "Portfolio project",
       "h1": "Utility Bills CRM",
       "subtitle1": "A multi-tenant web application for tracking utility bills across multiple properties — apartments, houses, summer homes. Log meter readings, record bills and payments, see balances and consumption analytics over time.",
       "subtitle2": "Built as a portfolio piece and a real product. The first user is the author's wife, who's been tracking two apartments in a paper notebook for years."

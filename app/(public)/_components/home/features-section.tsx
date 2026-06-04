@@ -36,7 +36,7 @@ export const FeaturesSection = async () => {
   const t = await getTranslations("landing");
 
   return (
-    <section className="relative overflow-hidden py-24">
+    <section className="relative overflow-hidden py-16 md:py-[116px]">
       {/* Radial glow — bottom-left bloom, bleeds slightly below into the dark mockup section */}
       <div
         aria-hidden="true"
@@ -49,12 +49,12 @@ export const FeaturesSection = async () => {
           background: "radial-gradient(at 30% 70%, var(--section-glow) 0%, transparent 62%)",
         }}
       />
-      <div className="relative mx-auto max-w-[1100px] px-6">
-        <div className="mb-10">
+      <div className="relative mx-auto max-w-[1100px] px-4 md:px-6">
+        <div className="mb-8 md:mb-12">
           <p className="mb-2.5 text-xs font-medium tracking-[0.08em] text-violet-600 uppercase dark:text-violet-400">
             {t("features.sectionLabel")}
           </p>
-          <h2 className="text-[clamp(26px,3vw,36px)] font-semibold tracking-[-0.02em] text-zinc-900 dark:text-zinc-50">
+          <h2 className="text-[clamp(30px,3vw,36px)] font-semibold tracking-[-0.02em] text-zinc-900 dark:text-zinc-50">
             {t("features.sectionTitle")}
           </h2>
         </div>
@@ -63,7 +63,7 @@ export const FeaturesSection = async () => {
           {FEATURES.map(({ icon: Icon, badgeBg, iconColor, titleKey, bodyKey }) => (
             <div
               key={titleKey}
-              className="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 dark:shadow-none"
+              className="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm transition-[transform,box-shadow] duration-150 ease-in-out hover:-translate-y-[3px] hover:shadow-[0_10px_28px_rgba(24,24,27,0.12),0_3px_8px_rgba(24,24,27,0.06)] dark:border-zinc-800 dark:bg-zinc-900 dark:shadow-none dark:hover:translate-y-0 dark:hover:border-zinc-700 dark:hover:shadow-[0_12px_32px_rgba(0,0,0,0.55)]"
             >
               <div
                 className={`mb-5 inline-flex size-11 items-center justify-center rounded-xl ${badgeBg}`}

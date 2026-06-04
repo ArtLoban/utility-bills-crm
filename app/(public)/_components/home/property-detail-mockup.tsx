@@ -1,10 +1,12 @@
-const NAV_ITEMS = ["Dashboard", "Properties", "Meters", "Bills", "Payments", "Settings"] as const;
+import { SERVICE_TYPE_COLORS, SERVICE_TYPE_CODES } from "@/features/services/service-type";
+
+const NAV_ITEMS = ["Dashboard", "Properties", "Providers", "Meters", "Bills", "Payments"] as const;
 
 const SERVICES = [
   {
     name: "Electricity",
     provider: "YASNO",
-    color: "oklch(0.558 0.288 293)",
+    color: SERVICE_TYPE_COLORS[SERVICE_TYPE_CODES.ELECTRICITY],
     balance: "−₴1,180",
     status: "Due in 3 days",
     statusColor: "#f87171",
@@ -12,7 +14,7 @@ const SERVICES = [
   {
     name: "Gas",
     provider: "Naftogaz",
-    color: "#f59e0b",
+    color: SERVICE_TYPE_COLORS[SERVICE_TYPE_CODES.GAS],
     balance: "−₴640",
     status: "Due in 12 days",
     statusColor: "#f87171",
@@ -20,7 +22,7 @@ const SERVICES = [
   {
     name: "Cold water",
     provider: "Kyivvodokanal",
-    color: "#0d9488",
+    color: SERVICE_TYPE_COLORS[SERVICE_TYPE_CODES.COLD_WATER],
     balance: "+₴90",
     status: "Overpaid",
     statusColor: "#4ade80",
@@ -28,12 +30,12 @@ const SERVICES = [
   {
     name: "Internet",
     provider: "Kyivstar",
-    color: "#3b82f6",
+    color: SERVICE_TYPE_COLORS[SERVICE_TYPE_CODES.INTERNET],
     balance: "₴0",
     status: "Settled",
     statusColor: "var(--mockup-muted-fg)",
   },
-] as const;
+];
 
 export const PropertyDetailMockup = () => {
   return (
