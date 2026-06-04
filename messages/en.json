@@ -1071,5 +1071,11 @@
     "title": "Page not found",
     "description": "The page you're looking for doesn't exist or may have been moved.",
     "goHome": "Go home"
+  },
+  "fatalError": {
+    "title": "Something went wrong",
+    "description": "We've been notified and are looking into it. Try again, or head back home.",
+    "goHome": "Go home",
+    "tryAgain": "Try again"
   }
 }
