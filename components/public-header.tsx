@@ -5,8 +5,8 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { PublicMobileMenu } from "@/components/public-mobile-menu";
 import { auth } from "@/lib/auth";
 import { ROUTES } from "@/lib/routes";
-import { PublicHeaderShell } from "./public-header-shell";
-import { PublicNavLink } from "./public-nav-link";
+import { PublicHeaderShell } from "@/components/public-header-shell";
+import { PublicNavLink } from "@/components/public-nav-link";
 
 export const PublicHeader = async () => {
   const [session, t] = await Promise.all([auth(), getTranslations("landing")]);
