@@ -75,7 +75,6 @@ export const FilterSheet = ({ open, onOpenChange }: TProps) => {
         <div className="flex justify-center pt-2.5">
           <div className="h-1 w-9 rounded-full bg-zinc-200 dark:bg-zinc-700" />
         </div>
-
         <div className="px-4 pb-6">
           <div className="flex items-center justify-between py-3">
             <SheetTitle>{t("mobile.filters")}</SheetTitle>

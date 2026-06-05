@@ -22,7 +22,7 @@ export const PaymentsTable = ({ paymentsList }: TProps) => {
           queryFilters={queryFilters}
         />
       </div>
-      <div className="-mx-8 md:hidden">
+      <div className="md:hidden">
         <PaymentsTableMobile
           paymentsList={paymentsList}
           listParams={listParams}
