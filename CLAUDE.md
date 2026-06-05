@@ -121,7 +121,7 @@ Read the relevant document(s) when working on a related task. Do not preload.
 **UI:**
 
 - `docs/UI_ARCHITECTURE.md` — routes, layouts, design system
-- `.claude/design/OBSERVATIONS.md` — visual rules. Read before any UI work.
+- `.claude/design/design-system/Design System.html` — Design System. Read before any UI work.
 
 **Code:**
 

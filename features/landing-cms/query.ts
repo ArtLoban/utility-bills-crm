@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { notFound } from "next/navigation";
 
 import { db } from "@/lib/db/client";
@@ -93,16 +94,18 @@ export const getGlobalCms = async (): Promise<TCmsLinks | undefined> => {
 // never throw.
 // ---------------------------------------------------------------------------
 
-export const getPublicHome = async (): Promise<{
-  homeHero: THomeHero | undefined;
-  features: TCmsFeatures | undefined;
-}> => {
-  const [homeHero, features] = await Promise.all([_queryHomeHero(), _queryCmsFeatures()]);
-  return { homeHero, features };
-};
+export const getPublicHome = cache(
+  async (): Promise<{
+    homeHero: THomeHero | undefined;
+    features: TCmsFeatures | undefined;
+  }> => {
+    const [homeHeroRow, featuresRow] = await Promise.all([_queryHomeHero(), _queryCmsFeatures()]);
+    return { homeHero: homeHeroRow, features: featuresRow };
+  },
+);
 
-export const getPublicAbout = (): Promise<TAboutHero | undefined> => _queryAboutHero();
+export const getPublicAbout = cache(_queryAboutHero);
 
-export const getPublicProject = (): Promise<TProjectHero | undefined> => _queryProjectHero();
+export const getPublicProject = cache(_queryProjectHero);
 
-export const getPublicLinks = (): Promise<TCmsLinks | undefined> => _queryCmsLinks();
+export const getPublicLinks = cache(_queryCmsLinks);
