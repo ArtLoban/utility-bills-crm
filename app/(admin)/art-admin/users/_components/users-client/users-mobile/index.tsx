@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { parseAsString, useQueryStates } from "nuqs";
-import { useTranslations } from "next-intl";
 
 import type { TAdminUserRow } from "@/features/admin-users/types";
 import type { TServerPagination } from "@/lib/types/data-table";
@@ -20,7 +19,6 @@ type TProps = {
 };
 
 export const UsersMobile = ({ data, pagination, onPageChange }: TProps) => {
-  const t = useTranslations("adminUsers");
   const [sheetOpen, setSheetOpen] = useState(false);
 
   const [query, setQuery] = useQueryStates(
@@ -32,17 +30,13 @@ export const UsersMobile = ({ data, pagination, onPageChange }: TProps) => {
 
   const roleLabel =
     query.systemRole === SYSTEM_ROLES.ADMIN
-      ? t("filters.roleAdmin")
+      ? "Admin"
       : query.systemRole === SYSTEM_ROLES.USER
-        ? t("filters.roleUser")
+        ? "User"
         : null;
 
   const statusLabel =
-    query.status === "deleted"
-      ? t("filters.statusDeleted")
-      : query.status === "all"
-        ? t("filters.statusAll")
-        : null;
+    query.status === "deleted" ? "Deleted" : query.status === "all" ? "All users" : null;
 
   return (
     <div className="px-3.5 pt-3 pb-8">
@@ -67,7 +61,7 @@ export const UsersMobile = ({ data, pagination, onPageChange }: TProps) => {
             fontFamily: "inherit",
           }}
         >
-          {t("filters.mobile.filters")}
+          Filters
           {activeCount > 0 && (
             <span className="bg-brand inline-flex min-w-4 items-center justify-center rounded-full px-1 text-[10.5px] font-bold text-white">
               {activeCount}
@@ -76,7 +70,7 @@ export const UsersMobile = ({ data, pagination, onPageChange }: TProps) => {
         </button>
 
         <span className="text-muted-foreground text-xs">
-          {t("meta.total", { count: pagination.total })}
+          {pagination.total === 1 ? "1 user" : `${pagination.total} users`}
         </span>
       </div>
 

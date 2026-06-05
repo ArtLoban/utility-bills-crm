@@ -3,7 +3,6 @@
 import { useEffect, useRef } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { parseAsInteger, parseAsString, useQueryStates } from "nuqs";
-import { useTranslations } from "next-intl";
 
 import { TableFilters } from "@/components/data-table/table-filters";
 import { SelectInput } from "@/components/select-input";
@@ -18,8 +17,6 @@ type TFilterForm = {
 const EMPTY_FILTERS: TFilterForm = { systemRole: null, status: null };
 
 export const FiltersBar = () => {
-  const t = useTranslations("adminUsers");
-
   const [query, setQuery] = useQueryStates(
     {
       systemRole: parseAsString,
@@ -52,20 +49,20 @@ export const FiltersBar = () => {
   const handleClear = () => form.reset(EMPTY_FILTERS);
 
   const roleOptions = [
-    { id: SYSTEM_ROLES.ADMIN, name: t("filters.roleAdmin") },
-    { id: SYSTEM_ROLES.USER, name: t("filters.roleUser") },
+    { id: SYSTEM_ROLES.ADMIN, name: "Admin" },
+    { id: SYSTEM_ROLES.USER, name: "User" },
   ];
 
   // null = "Active" (default, no explicit param). Options expose non-default statuses only.
   const statusOptions = [
-    { id: "deleted", name: t("filters.statusDeleted") },
-    { id: "all", name: t("filters.statusAll") },
+    { id: "deleted", name: "Deleted" },
+    { id: "all", name: "All users" },
   ];
 
   return (
     <TableFilters hasActiveFilters={hasActiveFilters} onClear={handleClear}>
-      <SelectInput form={form} field="systemRole" label={t("filters.role")} options={roleOptions} />
-      <SelectInput form={form} field="status" label={t("filters.status")} options={statusOptions} />
+      <SelectInput form={form} field="systemRole" label="Role" options={roleOptions} />
+      <SelectInput form={form} field="status" label="Status" options={statusOptions} />
     </TableFilters>
   );
 };

@@ -3,7 +3,6 @@
 import { useEffect, useRef } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { parseAsInteger, parseAsString, useQueryStates } from "nuqs";
-import { useTranslations } from "next-intl";
 import { X } from "lucide-react";
 
 import { TableFilters } from "@/components/data-table/table-filters";
@@ -22,8 +21,6 @@ type TProps = {
 };
 
 export const FilterBar = ({ ownerName }: TProps) => {
-  const t = useTranslations("adminProperties");
-
   const [query, setQuery] = useQueryStates(
     {
       status: parseAsString,
@@ -61,30 +58,30 @@ export const FilterBar = ({ ownerName }: TProps) => {
   };
 
   const statusOptions = [
-    { id: "deleted", name: t("filters.statusDeleted") },
-    { id: "all", name: t("filters.statusAll") },
+    { id: "deleted", name: "Deleted" },
+    { id: "all", name: "All" },
   ];
 
   const typeOptions = [
-    { id: "apartment", name: t("filters.typeApartment") },
-    { id: "house", name: t("filters.typeHouse") },
-    { id: "cottage", name: t("filters.typeCottage") },
-    { id: "other", name: t("filters.typeOther") },
+    { id: "apartment", name: "Apartment" },
+    { id: "house", name: "House" },
+    { id: "cottage", name: "Cottage" },
+    { id: "other", name: "Other" },
   ];
 
   return (
     <TableFilters hasActiveFilters={hasActiveFilters} onClear={handleClear}>
-      <SelectInput form={form} field="status" label={t("filters.status")} options={statusOptions} />
-      <SelectInput form={form} field="type" label={t("filters.type")} options={typeOptions} />
+      <SelectInput form={form} field="status" label="Status" options={statusOptions} />
+      <SelectInput form={form} field="type" label="Type" options={typeOptions} />
 
       {ownerName && (
         <div className="border-brand bg-brand-bg text-brand flex items-center gap-1.5 rounded-sm border px-2.5 py-1 text-sm">
           <span>
-            {t("filters.owner")}: <span className="font-medium">{ownerName}</span>
+            Owner: <span className="font-medium">{ownerName}</span>
           </span>
           <button
             type="button"
-            aria-label={t("filters.clearOwner")}
+            aria-label="Clear owner filter"
             onClick={() => void setQuery({ owner: null, page: PAGE_DEFAULT })}
             className="hover:opacity-70"
           >

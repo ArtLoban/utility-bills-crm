@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { getTranslations } from "next-intl/server";
 import { ROUTES } from "@/lib/routes";
 import { CmsText } from "@/components/cms-text";
 
@@ -8,9 +7,7 @@ type TProps = {
   techHighlights: string;
 };
 
-export const TechSection = async ({ techHighlights }: TProps) => {
-  const t = await getTranslations("landing");
-
+export const TechSection = ({ techHighlights }: TProps) => {
   return (
     <section className="relative overflow-hidden py-16 md:py-[116px]">
       {/* Radial glows — bottom-left + top-right, matching features section bloom */}
@@ -39,10 +36,10 @@ export const TechSection = async ({ techHighlights }: TProps) => {
       <div className="mx-auto max-w-[1100px] px-4 md:px-6">
         <div className="mx-auto max-w-[600px] text-center">
           <p className="mb-2.5 text-xs font-medium tracking-[0.08em] text-violet-600 uppercase dark:text-violet-400">
-            {t("tech.sectionLabel")}
+            Stack
           </p>
           <h2 className="mb-5 text-[clamp(28px,3vw,36px)] font-semibold tracking-[-0.02em] text-zinc-900 dark:text-zinc-50">
-            {t("tech.sectionTitle")}
+            How it&apos;s built
           </h2>
           <p className="text-base leading-[1.75] text-zinc-500">
             <CmsText value={techHighlights} />
@@ -51,7 +48,7 @@ export const TechSection = async ({ techHighlights }: TProps) => {
             href={ROUTES.project}
             className="text-md mt-5 inline-flex items-center gap-1 font-medium text-violet-600 transition-opacity hover:opacity-75 dark:text-violet-400"
           >
-            {t("tech.link")}
+            Architecture deep-dive
             <ArrowRight className="size-3.5" strokeWidth={2} />
           </Link>
         </div>

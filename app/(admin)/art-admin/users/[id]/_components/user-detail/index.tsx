@@ -1,5 +1,4 @@
 import { format } from "date-fns";
-import { getTranslations } from "next-intl/server";
 
 import { cn } from "@/lib/utils";
 import { PageContainer } from "@/components/page-container";
@@ -14,14 +13,13 @@ import { UserPropertiesCard } from "./components/user-properties-card";
 type TProps = { user: TAdminUserDetailResult };
 
 export const UserDetail = async ({ user }: TProps) => {
-  const t = await getTranslations("adminUsers.detail");
   const isDeleted = user.deletedAt !== null;
   const displayName = user.name ?? user.email;
 
   const metaItems = [
     user.email,
     <RoleBadge key="role" role={user.systemRole} />,
-    t("joinedMeta", { date: format(user.createdAt, "MMMM yyyy") }),
+    `Joined ${format(user.createdAt, "MMMM yyyy")}`,
   ];
 
   return (
@@ -45,10 +43,10 @@ export const UserDetail = async ({ user }: TProps) => {
       </div>
 
       <div className="border-border mt-8 border-t pt-4">
-        <p className="text-muted-foreground font-mono text-xs">
-          {t("footer.userId")} {user.id}
+        <p className="text-muted-foreground font-mono text-xs">User ID: {user.id}</p>
+        <p className="text-muted-foreground mt-0.5 text-xs">
+          Internal record. For support reference only.
         </p>
-        <p className="text-muted-foreground mt-0.5 text-xs">{t("footer.note")}</p>
       </div>
     </PageContainer>
   );

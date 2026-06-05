@@ -1,4 +1,3 @@
-import { getTranslations } from "next-intl/server";
 import { CmsText } from "@/components/cms-text";
 
 type TProps = {
@@ -24,9 +23,7 @@ const GithubIcon = () => (
   </svg>
 );
 
-export const HeroSection = async ({ title, desc, githubUrl }: TProps) => {
-  const t = await getTranslations("landing");
-
+export const HeroSection = ({ title, desc, githubUrl }: TProps) => {
   return (
     <section className="relative overflow-hidden pt-[52px] pb-[72px] md:pt-[84px] md:pb-[116px]">
       {/* Glow 1 — top-right violet bloom */}
@@ -68,7 +65,7 @@ export const HeroSection = async ({ title, desc, githubUrl }: TProps) => {
           style={{ boxShadow: "0 2px 8px rgba(124,58,237,0.35)" }}
         >
           <GithubIcon />
-          {t("project.hero.githubLink")}
+          View on GitHub
         </a>
       </div>
     </section>

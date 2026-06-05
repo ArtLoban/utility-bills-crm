@@ -1,6 +1,5 @@
 import { type ReactNode } from "react";
 import { Controller, type UseFormReturn } from "react-hook-form";
-import { useTranslations } from "next-intl";
 
 import { Briefcase, Eye, Folder, GitBranch, Link, Play } from "lucide-react";
 
@@ -94,7 +93,6 @@ type TProps = {
 };
 
 export const GlobalTab = ({ form, onSave }: TProps) => {
-  const t = useTranslations();
   const { isDirty, isSubmitting } = form.formState;
 
   // Watch boolean fields to drive VisibilityRow switches
@@ -125,9 +123,7 @@ export const GlobalTab = ({ form, onSave }: TProps) => {
                   onChange={field.onChange}
                 />
                 {fieldState.error && (
-                  <p className="text-destructive mt-1 text-xs">
-                    {t(fieldState.error.message as Parameters<typeof t>[0])}
-                  </p>
+                  <p className="text-destructive mt-1 text-xs">{fieldState.error.message}</p>
                 )}
               </div>
             )}
@@ -146,9 +142,7 @@ export const GlobalTab = ({ form, onSave }: TProps) => {
                   onChange={field.onChange}
                 />
                 {fieldState.error && (
-                  <p className="text-destructive mt-1 text-xs">
-                    {t(fieldState.error.message as Parameters<typeof t>[0])}
-                  </p>
+                  <p className="text-destructive mt-1 text-xs">{fieldState.error.message}</p>
                 )}
               </div>
             )}
@@ -167,9 +161,7 @@ export const GlobalTab = ({ form, onSave }: TProps) => {
                   onChange={field.onChange}
                 />
                 {fieldState.error && (
-                  <p className="text-destructive mt-1 text-xs">
-                    {t(fieldState.error.message as Parameters<typeof t>[0])}
-                  </p>
+                  <p className="text-destructive mt-1 text-xs">{fieldState.error.message}</p>
                 )}
               </div>
             )}
@@ -188,9 +180,7 @@ export const GlobalTab = ({ form, onSave }: TProps) => {
                   onChange={field.onChange}
                 />
                 {fieldState.error && (
-                  <p className="text-destructive mt-1 text-xs">
-                    {t(fieldState.error.message as Parameters<typeof t>[0])}
-                  </p>
+                  <p className="text-destructive mt-1 text-xs">{fieldState.error.message}</p>
                 )}
               </div>
             )}

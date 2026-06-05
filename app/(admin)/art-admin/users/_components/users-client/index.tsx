@@ -2,7 +2,6 @@
 
 import { FilterX, Users } from "lucide-react";
 import { parseAsString, useQueryStates } from "nuqs";
-import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
 import { EmptyStateCard } from "@/components/empty-state-card";
@@ -22,7 +21,6 @@ type TProps = {
 };
 
 export const UsersClient = ({ data, pagination }: TProps) => {
-  const t = useTranslations("adminUsers");
   const { sorting, onSortingChange, setPage, setPageSize } = useServerListParams({
     defaultSortBy: "createdAt",
     defaultSortOrder: "desc",
@@ -38,24 +36,24 @@ export const UsersClient = ({ data, pagination }: TProps) => {
 
   return (
     <PageContainer
-      title={t("title")}
-      meta={<PageMeta items={[t("meta.total", { count: pagination.total })]} />}
+      title="All users"
+      meta={<PageMeta items={[pagination.total === 1 ? "1 user" : `${pagination.total} users`]} />}
     >
       {/* Desktop */}
       <div className="hidden md:block">
         {(data.length > 0 || anyFilter) && <FiltersBar />}
 
         {data.length === 0 && !anyFilter && (
-          <EmptyStateCard icon={Users} title={t("title")} body="" />
+          <EmptyStateCard icon={Users} title="All users" body="" />
         )}
 
         {data.length === 0 && anyFilter && (
           <EmptyStateCard
             icon={FilterX}
-            title={t("empty.filtered.title")}
+            title="No users match your filters"
             cta={
               <Button variant="outline" className="h-9" onClick={handleClearFilters}>
-                {t("empty.filtered.cta")}
+                Clear filters
               </Button>
             }
           />

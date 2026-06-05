@@ -18,10 +18,6 @@ const { mockSaveGlobalCms, mockToastSuccess, mockToastError } = vi.hoisted(() =>
 // Module mocks
 // ---------------------------------------------------------------------------
 
-vi.mock("next-intl", () => ({
-  useTranslations: () => (key: string) => key,
-}));
-
 vi.mock("sonner", () => ({
   toast: {
     success: mockToastSuccess,
@@ -99,9 +95,8 @@ describe("GlobalTab wiring", () => {
 
     await user.click(getSaveButton());
 
-    // t(key) = key in tests — inline error renders as the raw i18n key
     await waitFor(() => {
-      expect(screen.queryByText("landingCms.global.errors.invalidLinkedinUrl")).toBeTruthy();
+      expect(screen.queryByText("Enter a valid LinkedIn URL.")).toBeTruthy();
     });
 
     // Server action NOT called — client-side Zod blocked submit
@@ -122,7 +117,7 @@ describe("GlobalTab wiring", () => {
 
     await waitFor(() => {
       expect(mockSaveGlobalCms).toHaveBeenCalledOnce();
-      expect(mockToastSuccess).toHaveBeenCalledWith("landingCms.global.saveSuccess");
+      expect(mockToastSuccess).toHaveBeenCalledWith("Global settings saved.");
     });
 
     // Dirty state resets after successful save → Save button disabled again

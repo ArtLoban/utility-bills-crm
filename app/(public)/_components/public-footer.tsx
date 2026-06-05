@@ -1,10 +1,9 @@
 import Link from "next/link";
-import { getTranslations } from "next-intl/server";
 import { ROUTES } from "@/lib/routes";
 import { getPublicLinks } from "@/features/landing-cms";
 
 export const PublicFooter = async () => {
-  const [t, links] = await Promise.all([getTranslations("landing"), getPublicLinks()]);
+  const links = await getPublicLinks();
 
   const showAbout = links?.aboutNavVisible ?? true;
   const showProject = links?.projectNavVisible ?? true;
@@ -18,7 +17,7 @@ export const PublicFooter = async () => {
               href={ROUTES.about}
               className="text-sm text-zinc-200 transition-colors hover:text-white"
             >
-              {t("footer.aboutDeveloper")}
+              About the developer
             </Link>
           )}
           {showAbout && showProject && <div className="hidden h-3.5 w-px bg-white/20 md:block" />}
@@ -27,12 +26,12 @@ export const PublicFooter = async () => {
               href={ROUTES.project}
               className="text-sm text-zinc-200 transition-colors hover:text-white"
             >
-              {t("footer.architectureCode")}
+              Architecture &amp; code
             </Link>
           )}
           {(showAbout || showProject) && <div className="hidden h-3.5 w-px bg-white/20 md:block" />}
           <span className="text-sm text-zinc-400">
-            {t("footer.copyright", { year: new Date().getFullYear() })}
+            © {new Date().getFullYear()} · Utility Bills CRM
           </span>
         </div>
       </div>

@@ -1,4 +1,3 @@
-import { getTranslations } from "next-intl/server";
 import { Users, History, Wallet, TrendingUp } from "lucide-react";
 import type { ComponentType } from "react";
 import { CmsText } from "@/components/cms-text";
@@ -36,9 +35,7 @@ const FEATURE_CONFIG = [
   iconColor: string;
 }>;
 
-export const FeaturesSection = async ({ cards }: TProps) => {
-  const t = await getTranslations("landing");
-
+export const FeaturesSection = ({ cards }: TProps) => {
   const rows = [
     { ...FEATURE_CONFIG[0], title: cards[0].title, body: cards[0].body },
     { ...FEATURE_CONFIG[1], title: cards[1].title, body: cards[1].body },
@@ -63,10 +60,10 @@ export const FeaturesSection = async ({ cards }: TProps) => {
       <div className="relative mx-auto max-w-[1100px] px-4 md:px-6">
         <div className="mb-8 md:mb-12">
           <p className="mb-2.5 text-xs font-medium tracking-[0.08em] text-violet-600 uppercase dark:text-violet-400">
-            {t("features.sectionLabel")}
+            Features
           </p>
           <h2 className="text-[clamp(30px,3vw,36px)] font-semibold tracking-[-0.02em] text-zinc-900 dark:text-zinc-50">
-            {t("features.sectionTitle")}
+            Built around how households actually work
           </h2>
         </div>
 

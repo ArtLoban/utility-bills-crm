@@ -1,43 +1,40 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import { formatDistanceToNow } from "date-fns";
-import type { useTranslations } from "next-intl";
 
 import { Badge } from "@/components/ui/badge";
 import type { TAdminUserRow } from "@/features/admin-users/types";
 import { RoleBadge } from "../../../../_components/role-badge";
 import { UserRowActions } from "../components/user-row-actions";
 
-type TTranslations = ReturnType<typeof useTranslations<"adminUsers">>;
-
-export const getUserColumns = (t: TTranslations): ColumnDef<TAdminUserRow>[] => [
+export const getUserColumns = (): ColumnDef<TAdminUserRow>[] => [
   {
     accessorKey: "email",
-    header: t("columns.email"),
+    header: "Email",
     cell: ({ row }) => <span className="font-medium">{row.original.email}</span>,
   },
   {
     accessorKey: "name",
-    header: t("columns.name"),
+    header: "Name",
     cell: ({ row }) => (
       <span className="text-zinc-500 dark:text-zinc-400">{row.original.name ?? "—"}</span>
     ),
   },
   {
     accessorKey: "systemRole",
-    header: t("columns.role"),
+    header: "Role",
     cell: ({ row }) => <RoleBadge role={row.original.systemRole} />,
     enableSorting: false,
   },
   {
     accessorKey: "propertiesCount",
-    header: t("columns.properties"),
+    header: "Properties",
     cell: ({ row }) => <span className="tabular-nums">{row.original.propertiesCount}</span>,
     meta: { align: "right" },
     enableSorting: false,
   },
   {
     accessorKey: "createdAt",
-    header: t("columns.created"),
+    header: "Created",
     cell: ({ row }) => (
       <span className="text-zinc-500 tabular-nums dark:text-zinc-400">
         {row.original.createdAt.toLocaleDateString("en-US", { month: "short", year: "numeric" })}
@@ -46,18 +43,18 @@ export const getUserColumns = (t: TTranslations): ColumnDef<TAdminUserRow>[] => 
   },
   {
     accessorKey: "lastLoginAt",
-    header: t("columns.lastLogin"),
+    header: "Last login",
     cell: ({ row }) => (
       <span className="text-zinc-500 tabular-nums dark:text-zinc-400">
         {row.original.lastLoginAt
           ? formatDistanceToNow(row.original.lastLoginAt, { addSuffix: true })
-          : t("detail.fields.lastLoginNever")}
+          : "Never"}
       </span>
     ),
   },
   {
     accessorKey: "deletedAt",
-    header: t("columns.status"),
+    header: "Status",
     cell: ({ row }) =>
       row.original.deletedAt ? (
         <Badge

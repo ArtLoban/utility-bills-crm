@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { Controller, type Path, type UseFormReturn } from "react-hook-form";
-import { useTranslations } from "next-intl";
 
 import { ChevronDown, Code2, Image as ImageIcon, Layers, Sparkles } from "lucide-react";
 
@@ -21,7 +20,6 @@ type TProps = {
 };
 
 export const HomeTab = ({ form, onSave }: TProps) => {
-  const t = useTranslations();
   const [cardsExpanded, setCardsExpanded] = useState(false);
   const [techExpanded, setTechExpanded] = useState(false);
 
@@ -56,9 +54,7 @@ export const HomeTab = ({ form, onSave }: TProps) => {
                   className="h-9 text-[13.5px]"
                 />
                 {fieldState.error && (
-                  <p className="text-destructive mt-1 text-xs">
-                    {t(fieldState.error.message as Parameters<typeof t>[0])}
-                  </p>
+                  <p className="text-destructive mt-1 text-xs">{fieldState.error.message}</p>
                 )}
               </div>
             )}
@@ -81,9 +77,7 @@ export const HomeTab = ({ form, onSave }: TProps) => {
                   className="text-[13.5px] leading-[1.55]"
                 />
                 {fieldState.error && (
-                  <p className="text-destructive mt-1 text-xs">
-                    {t(fieldState.error.message as Parameters<typeof t>[0])}
-                  </p>
+                  <p className="text-destructive mt-1 text-xs">{fieldState.error.message}</p>
                 )}
               </div>
             )}
@@ -113,9 +107,7 @@ export const HomeTab = ({ form, onSave }: TProps) => {
                   className="text-[13.5px] leading-[1.55]"
                 />
                 {fieldState.error && (
-                  <p className="text-destructive mt-1 text-xs">
-                    {t(fieldState.error.message as Parameters<typeof t>[0])}
-                  </p>
+                  <p className="text-destructive mt-1 text-xs">{fieldState.error.message}</p>
                 )}
                 <p className="text-muted-foreground mt-2.5 text-xs leading-[1.55]">
                   Supports **bold** and `code` markers.
@@ -141,9 +133,7 @@ export const HomeTab = ({ form, onSave }: TProps) => {
                   className="text-[13.5px] leading-[1.55]"
                 />
                 {fieldState.error && (
-                  <p className="text-destructive mt-1 text-xs">
-                    {t(fieldState.error.message as Parameters<typeof t>[0])}
-                  </p>
+                  <p className="text-destructive mt-1 text-xs">{fieldState.error.message}</p>
                 )}
                 <p className="text-muted-foreground mt-2.5 text-xs leading-[1.55]">
                   Supports **bold** and `code` markers.
@@ -194,16 +184,8 @@ export const HomeTab = ({ form, onSave }: TProps) => {
                     shouldDirty: true,
                   })
                 }
-                titleError={
-                  featureCardErrors?.[i]?.title?.message
-                    ? t(featureCardErrors[i].title.message as Parameters<typeof t>[0])
-                    : undefined
-                }
-                bodyError={
-                  featureCardErrors?.[i]?.body?.message
-                    ? t(featureCardErrors[i].body.message as Parameters<typeof t>[0])
-                    : undefined
-                }
+                titleError={featureCardErrors?.[i]?.title?.message}
+                bodyError={featureCardErrors?.[i]?.body?.message}
               />
             ))}
           </div>
@@ -251,9 +233,7 @@ export const HomeTab = ({ form, onSave }: TProps) => {
                   className="h-9 text-[13.5px]"
                 />
                 {fieldState.error && (
-                  <p className="text-destructive mt-1 text-xs">
-                    {t(fieldState.error.message as Parameters<typeof t>[0])}
-                  </p>
+                  <p className="text-destructive mt-1 text-xs">{fieldState.error.message}</p>
                 )}
               </div>
             )}

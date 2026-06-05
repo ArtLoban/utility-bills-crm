@@ -1,13 +1,9 @@
-import { getTranslations } from "next-intl/server";
-
 type TProps = {
   heroTitle: string;
   heroDesc: string;
 };
 
-export const HeroSection = async ({ heroTitle, heroDesc }: TProps) => {
-  const t = await getTranslations("landing");
-
+export const HeroSection = ({ heroTitle, heroDesc }: TProps) => {
   return (
     <section className="relative overflow-hidden pt-[52px] pb-16 md:pt-[84px] md:pb-[116px]">
       {/* Glow 1 — top-right, larger violet bloom */}
@@ -42,7 +38,7 @@ export const HeroSection = async ({ heroTitle, heroDesc }: TProps) => {
             <rect x="7.5" y="7.5" width="4" height="4" rx="0.75" fill="#7c3aed" opacity="0.3" />
           </svg>
           <span className="text-xs font-medium text-violet-700 dark:text-violet-300">
-            {t("hero.eyebrow")}
+            Portfolio project
           </span>
         </div>
 
@@ -53,7 +49,8 @@ export const HeroSection = async ({ heroTitle, heroDesc }: TProps) => {
         <p className="max-w-[580px] text-lg leading-[1.65] text-zinc-500">{heroDesc}</p>
 
         <p className="text-md mt-4 max-w-[580px] leading-[1.65] text-zinc-500">
-          {t("hero.subtitle2")}
+          Built as a portfolio piece and a real product. The first user is the author&apos;s wife,
+          who&apos;s been tracking two apartments in a paper notebook for years.
         </p>
       </div>
     </section>

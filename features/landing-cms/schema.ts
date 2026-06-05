@@ -8,26 +8,26 @@ const featureCardSchema = z.object({
   title: z
     .string()
     .trim()
-    .min(1, "landingCms.home.errors.featureTitle")
-    .max(100, "landingCms.home.errors.featureTitle"),
+    .min(1, "Feature card title is required.")
+    .max(100, "Feature card title is required."),
   body: z
     .string()
     .trim()
-    .min(1, "landingCms.home.errors.featureBody")
-    .max(500, "landingCms.home.errors.featureBody"),
+    .min(1, "Feature card body is required.")
+    .max(500, "Feature card body is required."),
 });
 
 const archCardSchema = z.object({
   title: z
     .string()
     .trim()
-    .min(1, "landingCms.project.errors.archTitle")
-    .max(100, "landingCms.project.errors.archTitle"),
+    .min(1, "Architecture card title is required.")
+    .max(100, "Architecture card title is required."),
   body: z
     .string()
     .trim()
-    .min(1, "landingCms.project.errors.archBody")
-    .max(500, "landingCms.project.errors.archBody"),
+    .min(1, "Architecture card body is required.")
+    .max(500, "Architecture card body is required."),
 });
 
 // ---------------------------------------------------------------------------
@@ -38,28 +38,28 @@ export const homeSchema = z.object({
   heroTitle: z
     .string()
     .trim()
-    .min(1, "landingCms.home.errors.heroTitle")
-    .max(200, "landingCms.home.errors.heroTitle"),
+    .min(1, "Hero title is required.")
+    .max(200, "Hero title is required."),
   heroDesc: z
     .string()
     .trim()
-    .min(1, "landingCms.home.errors.heroDesc")
-    .max(500, "landingCms.home.errors.heroDesc"),
+    .min(1, "Hero description is required.")
+    .max(500, "Hero description is required."),
   dashboardCaption: z
     .string()
     .trim()
-    .min(1, "landingCms.home.errors.dashboardCaption")
-    .max(500, "landingCms.home.errors.dashboardCaption"),
+    .min(1, "Dashboard caption is required.")
+    .max(500, "Dashboard caption is required."),
   propertyCaption: z
     .string()
     .trim()
-    .min(1, "landingCms.home.errors.propertyCaption")
-    .max(500, "landingCms.home.errors.propertyCaption"),
+    .min(1, "Property caption is required.")
+    .max(500, "Property caption is required."),
   techHighlights: z
     .string()
     .trim()
-    .min(1, "landingCms.home.errors.techHighlights")
-    .max(200, "landingCms.home.errors.techHighlights"),
+    .min(1, "Tech highlights line is required.")
+    .max(200, "Tech highlights line is required."),
   // z.tuple preserves the fixed-length 4 guarantee and avoids non-null assertions
   // when unpacking to flat DB columns (feature1Title, feature1Body, ...).
   featureCards: z.tuple([
@@ -75,31 +75,23 @@ export const homeSchema = z.object({
 // ---------------------------------------------------------------------------
 
 export const aboutSchema = z.object({
-  heroGreeting: z
-    .string()
-    .trim()
-    .min(1, "landingCms.about.errors.heroGreeting")
-    .max(100, "landingCms.about.errors.heroGreeting"),
+  heroGreeting: z.string().trim().min(1, "Greeting is required.").max(100, "Greeting is required."),
   heroDesc: z
     .string()
     .trim()
-    .min(1, "landingCms.about.errors.heroDesc")
-    .max(300, "landingCms.about.errors.heroDesc"),
-  heroText: z
-    .string()
-    .trim()
-    .min(1, "landingCms.about.errors.heroText")
-    .max(200, "landingCms.about.errors.heroText"),
+    .min(1, "Description is required.")
+    .max(300, "Description is required."),
+  heroText: z.string().trim().min(1, "Hero text is required.").max(200, "Hero text is required."),
   worksWithTitle: z
     .string()
     .trim()
-    .min(1, "landingCms.about.errors.worksWithTitle")
-    .max(300, "landingCms.about.errors.worksWithTitle"),
+    .min(1, '"What I work with" section is required.')
+    .max(300, '"What I work with" section is required.'),
   worksWith: z
     .string()
     .trim()
-    .min(1, "landingCms.about.errors.worksWith")
-    .max(2000, "landingCms.about.errors.worksWith"),
+    .min(1, '"What I work with" section is required.')
+    .max(2000, '"What I work with" section is required.'),
 });
 
 // ---------------------------------------------------------------------------
@@ -110,13 +102,13 @@ export const projectSchema = z.object({
   heroTitle: z
     .string()
     .trim()
-    .min(1, "landingCms.project.errors.heroTitle")
-    .max(200, "landingCms.project.errors.heroTitle"),
+    .min(1, "Hero title is required.")
+    .max(200, "Hero title is required."),
   heroDesc: z
     .string()
     .trim()
-    .min(1, "landingCms.project.errors.heroDesc")
-    .max(500, "landingCms.project.errors.heroDesc"),
+    .min(1, "Hero description is required.")
+    .max(500, "Hero description is required."),
   // z.tuple preserves the fixed-length 6 guarantee for arch1..6 flat mapping.
   archCards: z.tuple([
     archCardSchema,
@@ -129,8 +121,8 @@ export const projectSchema = z.object({
   status: z
     .string()
     .trim()
-    .min(1, "landingCms.project.errors.status")
-    .max(2000, "landingCms.project.errors.status"),
+    .min(1, "Status section is required.")
+    .max(2000, "Status section is required."),
 });
 
 // ---------------------------------------------------------------------------
@@ -138,10 +130,10 @@ export const projectSchema = z.object({
 // ---------------------------------------------------------------------------
 
 export const globalSchema = z.object({
-  linkedinUrl: z.string().url("landingCms.global.errors.invalidLinkedinUrl"),
-  githubUrl: z.string().url("landingCms.global.errors.invalidGithubUrl"),
-  projectRepoUrl: z.string().url("landingCms.global.errors.invalidProjectRepoUrl"),
-  liveDemoUrl: z.string().url("landingCms.global.errors.invalidLiveDemoUrl"),
+  linkedinUrl: z.string().url("Enter a valid LinkedIn URL."),
+  githubUrl: z.string().url("Enter a valid GitHub URL."),
+  projectRepoUrl: z.string().url("Enter a valid project repository URL."),
+  liveDemoUrl: z.string().url("Enter a valid live demo URL."),
   aboutNavVisible: z.boolean(),
   aboutUrlAccessible: z.boolean(),
   projectNavVisible: z.boolean(),

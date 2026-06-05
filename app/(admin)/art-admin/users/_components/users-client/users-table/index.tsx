@@ -1,7 +1,6 @@
 "use client";
 
 import type { SortingState, Updater } from "@tanstack/react-table";
-import { useTranslations } from "next-intl";
 
 import { ServerDataTable } from "@/components/data-table/server-data-table";
 import type { TServerPagination } from "@/lib/types/data-table";
@@ -27,8 +26,7 @@ export const UsersTable = ({
   onPageChange,
   onPageSizeChange,
 }: TProps) => {
-  const t = useTranslations("adminUsers");
-  const columns = getUserColumns(t);
+  const columns = getUserColumns();
 
   return (
     <ServerDataTable

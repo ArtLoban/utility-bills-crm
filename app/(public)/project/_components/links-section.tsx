@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { getTranslations } from "next-intl/server";
 import { ROUTES } from "@/lib/routes";
 
 type TProps = {
@@ -8,8 +7,7 @@ type TProps = {
   liveDemoUrl: string | null | undefined;
 };
 
-export const LinksSection = async ({ projectRepoUrl, liveDemoUrl }: TProps) => {
-  const t = await getTranslations("landing");
+export const LinksSection = ({ projectRepoUrl, liveDemoUrl }: TProps) => {
   const demoVisible = !!liveDemoUrl?.trim();
 
   return (
@@ -23,11 +21,11 @@ export const LinksSection = async ({ projectRepoUrl, liveDemoUrl }: TProps) => {
             className="flex flex-col gap-3 rounded-xl border border-zinc-200 bg-white p-6 shadow-sm transition-[transform,box-shadow,border-color] duration-150 ease-in-out hover:-translate-y-[3px] hover:shadow-[0_10px_28px_rgba(24,24,27,0.12),0_3px_8px_rgba(24,24,27,0.06)] dark:border-zinc-800 dark:bg-zinc-900 dark:shadow-none dark:hover:translate-y-0 dark:hover:border-zinc-700 dark:hover:shadow-[0_12px_32px_rgba(0,0,0,0.55)]"
           >
             <span className="inline-flex items-center gap-1.5 text-base font-medium text-violet-600 dark:text-violet-400">
-              {t("project.links.githubLabel")}
+              GitHub
               <ArrowRight className="size-3.5" strokeWidth={2} />
             </span>
             <span className="text-sm leading-[1.55] text-zinc-500">
-              {t("project.links.githubCaption")}
+              full source, README, decision log.
             </span>
           </a>
 
@@ -39,11 +37,11 @@ export const LinksSection = async ({ projectRepoUrl, liveDemoUrl }: TProps) => {
               className="flex flex-col gap-3 rounded-xl border border-zinc-200 bg-white p-6 shadow-sm transition-[transform,box-shadow,border-color] duration-150 ease-in-out hover:-translate-y-[3px] hover:shadow-[0_10px_28px_rgba(24,24,27,0.12),0_3px_8px_rgba(24,24,27,0.06)] dark:border-zinc-800 dark:bg-zinc-900 dark:shadow-none dark:hover:translate-y-0 dark:hover:border-zinc-700 dark:hover:shadow-[0_12px_32px_rgba(0,0,0,0.55)]"
             >
               <span className="inline-flex items-center gap-1.5 text-base font-medium text-violet-600 dark:text-violet-400">
-                {t("project.links.demoLabel")}
+                Live demo
                 <ArrowRight className="size-3.5" strokeWidth={2} />
               </span>
               <span className="text-sm leading-[1.55] text-zinc-500">
-                {t("project.links.demoCaption")}
+                view-only, with sample data.
               </span>
             </a>
           )}
@@ -53,12 +51,10 @@ export const LinksSection = async ({ projectRepoUrl, liveDemoUrl }: TProps) => {
             className="flex flex-col gap-3 rounded-xl border border-zinc-200 bg-white p-6 shadow-sm transition-[transform,box-shadow,border-color] duration-150 ease-in-out hover:-translate-y-[3px] hover:shadow-[0_10px_28px_rgba(24,24,27,0.12),0_3px_8px_rgba(24,24,27,0.06)] dark:border-zinc-800 dark:bg-zinc-900 dark:shadow-none dark:hover:translate-y-0 dark:hover:border-zinc-700 dark:hover:shadow-[0_12px_32px_rgba(0,0,0,0.55)]"
           >
             <span className="inline-flex items-center gap-1.5 text-base font-medium text-violet-600 dark:text-violet-400">
-              {t("project.links.aboutLabel")}
+              About me
               <ArrowRight className="size-3.5" strokeWidth={2} />
             </span>
-            <span className="text-sm leading-[1.55] text-zinc-500">
-              {t("project.links.aboutCaption")}
-            </span>
+            <span className="text-sm leading-[1.55] text-zinc-500">who built this.</span>
           </Link>
         </div>
       </div>

@@ -1,5 +1,3 @@
-import { useTranslations } from "next-intl";
-
 import { DataCard } from "@/components/data-card";
 import type { TAdminPropertyDetail } from "@/features/admin-properties";
 
@@ -11,12 +9,10 @@ type TProps = {
 };
 
 export const SharingCard = ({ owners, isDeleted }: TProps) => {
-  const t = useTranslations("adminProperties");
-
   return (
     <DataCard className="overflow-hidden">
       <div className="border-border border-b px-6 py-4">
-        <h3 className="text-sm font-semibold">{t("detail.sharingCard.title")}</h3>
+        <h3 className="text-sm font-semibold">Sharing & access</h3>
       </div>
       <div className="px-6">
         {owners.length === 0 ? (
@@ -28,7 +24,9 @@ export const SharingCard = ({ owners, isDeleted }: TProps) => {
         )}
       </div>
       <p className="border-border bg-muted/50 text-muted-foreground mx-6 mt-1 mb-5 rounded-md border px-3.5 py-2.5 text-xs leading-[1.55]">
-        {isDeleted ? t("detail.sharingCard.deletedNote") : t("detail.sharingCard.activeNote")}
+        {isDeleted
+          ? "This property has been deleted. Access is read-only."
+          : "Users listed above have access to this property. Manage sharing from within the app."}
       </p>
     </DataCard>
   );

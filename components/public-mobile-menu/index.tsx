@@ -4,7 +4,6 @@ import Link from "next/link";
 import { LogIn, Menu, Moon, Sun, X } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
-import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { Sheet, SheetClose, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { PublicLogo } from "@/components/public-logo";
@@ -20,7 +19,6 @@ type TProps = {
 };
 
 export const PublicMobileMenu = ({ user, showAbout, showProject }: TProps) => {
-  const t = useTranslations("landing");
   const pathname = usePathname();
   const { resolvedTheme, setTheme } = useTheme();
 
@@ -94,26 +92,26 @@ export const PublicMobileMenu = ({ user, showAbout, showProject }: TProps) => {
               <nav className="px-2.5 pt-2 pb-1">
                 <SheetClose asChild>
                   <Link href={ROUTES.home} className={navLinkClass(ROUTES.home)}>
-                    {t("nav.home")}
+                    Home
                   </Link>
                 </SheetClose>
                 {showAbout && (
                   <SheetClose asChild>
                     <Link href={ROUTES.about} className={navLinkClass(ROUTES.about)}>
-                      {t("nav.about")}
+                      About
                     </Link>
                   </SheetClose>
                 )}
                 {showProject && (
                   <SheetClose asChild>
                     <Link href={ROUTES.project} className={navLinkClass(ROUTES.project)}>
-                      {t("nav.project")}
+                      Project
                     </Link>
                   </SheetClose>
                 )}
                 <SheetClose asChild>
                   <Link href={ROUTES.dashboard} className={navLinkClass(ROUTES.dashboard)}>
-                    {t("nav.dashboard")}
+                    Dashboard
                   </Link>
                 </SheetClose>
               </nav>
@@ -141,20 +139,20 @@ export const PublicMobileMenu = ({ user, showAbout, showProject }: TProps) => {
               <nav className="px-2.5 pt-2 pb-1">
                 <SheetClose asChild>
                   <Link href={ROUTES.home} className={navLinkClass(ROUTES.home)}>
-                    {t("nav.home")}
+                    Home
                   </Link>
                 </SheetClose>
                 {showAbout && (
                   <SheetClose asChild>
                     <Link href={ROUTES.about} className={navLinkClass(ROUTES.about)}>
-                      {t("nav.about")}
+                      About
                     </Link>
                   </SheetClose>
                 )}
                 {showProject && (
                   <SheetClose asChild>
                     <Link href={ROUTES.project} className={navLinkClass(ROUTES.project)}>
-                      {t("nav.project")}
+                      Project
                     </Link>
                   </SheetClose>
                 )}
@@ -170,7 +168,7 @@ export const PublicMobileMenu = ({ user, showAbout, showProject }: TProps) => {
                     className="hover:bg-accent flex h-11 items-center gap-3 rounded-lg px-3 text-[14.5px] font-medium transition-colors"
                   >
                     <LogIn className="text-muted-foreground size-5 shrink-0" />
-                    {t("nav.signIn")}
+                    Sign in
                   </Link>
                 </SheetClose>
               </div>

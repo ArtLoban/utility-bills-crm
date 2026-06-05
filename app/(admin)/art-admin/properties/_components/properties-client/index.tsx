@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { FilterX, Home } from "lucide-react";
 import { parseAsString, useQueryStates } from "nuqs";
-import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
 import { EmptyStateCard } from "@/components/empty-state-card";
@@ -27,7 +26,6 @@ type TProps = {
 };
 
 export const PropertiesClient = ({ data, pagination, ownerName }: TProps) => {
-  const t = useTranslations("adminProperties");
   const { sorting, onSortingChange, setPage, setPageSize } = useServerListParams({
     defaultSortBy: "createdAt",
     defaultSortOrder: "desc",
@@ -58,24 +56,28 @@ export const PropertiesClient = ({ data, pagination, ownerName }: TProps) => {
   return (
     <PropertiesTableProvider value={{ openRestore, openHardDelete }}>
       <PageContainer
-        title={t("title")}
-        meta={<PageMeta items={[t("meta.total", { count: pagination.total })]} />}
+        title="All properties"
+        meta={
+          <PageMeta
+            items={[pagination.total === 1 ? "1 property" : `${pagination.total} properties`]}
+          />
+        }
       >
         {/* Desktop */}
         <div className="hidden md:block">
           {(data.length > 0 || anyFilter) && <FilterBar ownerName={ownerName} />}
 
           {data.length === 0 && !anyFilter && (
-            <EmptyStateCard icon={Home} title={t("title")} body="" />
+            <EmptyStateCard icon={Home} title="All properties" body="" />
           )}
 
           {data.length === 0 && anyFilter && (
             <EmptyStateCard
               icon={FilterX}
-              title={t("empty.filtered.title")}
+              title="No properties match your filters"
               cta={
                 <Button variant="outline" className="h-9" onClick={handleClearFilters}>
-                  {t("empty.filtered.cta")}
+                  Clear filters
                 </Button>
               }
             />

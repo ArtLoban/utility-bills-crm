@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { parseAsString, useQueryStates } from "nuqs";
-import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -26,7 +25,6 @@ type TProps = {
 };
 
 export const PropertiesMobile = ({ data, pagination, onPageChange }: TProps) => {
-  const t = useTranslations("adminProperties");
   const [sheetOpen, setSheetOpen] = useState(false);
 
   const [query, setQuery] = useQueryStates(
@@ -42,15 +40,15 @@ export const PropertiesMobile = ({ data, pagination, onPageChange }: TProps) => 
   };
 
   const statusOptions = [
-    { id: "deleted", name: t("filters.statusDeleted") },
-    { id: "all", name: t("filters.statusAll") },
+    { id: "deleted", name: "Deleted" },
+    { id: "all", name: "All" },
   ];
 
   const typeOptions = [
-    { id: "apartment", name: t("filters.typeApartment") },
-    { id: "house", name: t("filters.typeHouse") },
-    { id: "cottage", name: t("filters.typeCottage") },
-    { id: "other", name: t("filters.typeOther") },
+    { id: "apartment", name: "Apartment" },
+    { id: "house", name: "House" },
+    { id: "cottage", name: "Cottage" },
+    { id: "other", name: "Other" },
   ];
 
   const prevDisabled = pagination.page <= 1;
@@ -79,7 +77,7 @@ export const PropertiesMobile = ({ data, pagination, onPageChange }: TProps) => 
             fontFamily: "inherit",
           }}
         >
-          {t("filters.mobile.filters")}
+          Filters
           {activeCount > 0 && (
             <span className="bg-brand inline-flex min-w-4 items-center justify-center rounded-full px-1 text-[10.5px] font-bold text-white">
               {activeCount}
@@ -88,7 +86,7 @@ export const PropertiesMobile = ({ data, pagination, onPageChange }: TProps) => 
         </button>
 
         <span className="text-muted-foreground text-xs">
-          {t("meta.total", { count: pagination.total })}
+          {pagination.total === 1 ? "1 property" : `${pagination.total} properties`}
         </span>
       </div>
 
@@ -136,7 +134,7 @@ export const PropertiesMobile = ({ data, pagination, onPageChange }: TProps) => 
           </div>
           <div className="px-4 pb-6">
             <div className="flex items-center justify-between py-3">
-              <SheetTitle>{t("filters.mobile.filters")}</SheetTitle>
+              <SheetTitle>Filters</SheetTitle>
               <SheetClose asChild>
                 <Button variant="ghost" size="icon-sm" aria-label="Close">
                   <X size={16} className="text-muted-foreground" />
@@ -147,18 +145,18 @@ export const PropertiesMobile = ({ data, pagination, onPageChange }: TProps) => 
             <div className="flex flex-col gap-3.5">
               {[
                 {
-                  label: t("filters.status"),
+                  label: "Status",
                   value: query.status,
                   key: "status",
                   options: statusOptions,
-                  placeholder: t("filters.mobile.activeDefault"),
+                  placeholder: "Active (default)",
                 },
                 {
-                  label: t("filters.type"),
+                  label: "Type",
                   value: query.type,
                   key: "type",
                   options: typeOptions,
-                  placeholder: t("filters.mobile.allTypes"),
+                  placeholder: "All types",
                 },
               ].map(({ label, value, key, options, placeholder }) => (
                 <div key={key} className="flex flex-col gap-1.5">
@@ -185,10 +183,10 @@ export const PropertiesMobile = ({ data, pagination, onPageChange }: TProps) => 
 
             <div className="mt-5 flex gap-2.5">
               <Button variant="outline" className="flex-1" onClick={handleClear}>
-                {t("empty.filtered.cta")}
+                Clear filters
               </Button>
               <Button className="flex-[2]" onClick={() => setSheetOpen(false)}>
-                {t("filters.mobile.apply")}
+                Apply
               </Button>
             </div>
           </div>

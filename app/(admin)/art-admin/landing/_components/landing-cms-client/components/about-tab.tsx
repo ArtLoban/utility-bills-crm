@@ -1,5 +1,4 @@
 import { Controller, type UseFormReturn } from "react-hook-form";
-import { useTranslations } from "next-intl";
 
 import { Briefcase, User } from "lucide-react";
 
@@ -17,7 +16,6 @@ type TProps = {
 };
 
 export const AboutTab = ({ form, onSave }: TProps) => {
-  const t = useTranslations();
   const { isDirty, isSubmitting } = form.formState;
 
   const heroGreeting = form.watch("heroGreeting");
@@ -50,9 +48,7 @@ export const AboutTab = ({ form, onSave }: TProps) => {
                   className="h-9 text-[13.5px]"
                 />
                 {fieldState.error && (
-                  <p className="text-destructive mt-1 text-xs">
-                    {t(fieldState.error.message as Parameters<typeof t>[0])}
-                  </p>
+                  <p className="text-destructive mt-1 text-xs">{fieldState.error.message}</p>
                 )}
               </div>
             )}
@@ -75,9 +71,7 @@ export const AboutTab = ({ form, onSave }: TProps) => {
                   className="text-[13.5px] leading-[1.55]"
                 />
                 {fieldState.error && (
-                  <p className="text-destructive mt-1 text-xs">
-                    {t(fieldState.error.message as Parameters<typeof t>[0])}
-                  </p>
+                  <p className="text-destructive mt-1 text-xs">{fieldState.error.message}</p>
                 )}
                 <p className="text-muted-foreground mt-2.5 text-xs leading-[1.55]">
                   Supports **bold** and `code` markers.
@@ -102,9 +96,7 @@ export const AboutTab = ({ form, onSave }: TProps) => {
                   className="h-9 text-[13.5px]"
                 />
                 {fieldState.error && (
-                  <p className="text-destructive mt-1 text-xs">
-                    {t(fieldState.error.message as Parameters<typeof t>[0])}
-                  </p>
+                  <p className="text-destructive mt-1 text-xs">{fieldState.error.message}</p>
                 )}
               </div>
             )}
@@ -137,9 +129,7 @@ export const AboutTab = ({ form, onSave }: TProps) => {
                   className="text-[13.5px] leading-[1.55]"
                 />
                 {fieldState.error && (
-                  <p className="text-destructive mt-1 text-xs">
-                    {t(fieldState.error.message as Parameters<typeof t>[0])}
-                  </p>
+                  <p className="text-destructive mt-1 text-xs">{fieldState.error.message}</p>
                 )}
                 <p className="text-muted-foreground mt-2.5 text-xs leading-[1.55]">
                   Supports **bold** and `code` markers.
@@ -167,9 +157,7 @@ export const AboutTab = ({ form, onSave }: TProps) => {
                 className="min-h-48 text-[13.5px] leading-[1.55]"
               />
               {fieldState.error && (
-                <p className="text-destructive mt-1 text-xs">
-                  {t(fieldState.error.message as Parameters<typeof t>[0])}
-                </p>
+                <p className="text-destructive mt-1 text-xs">{fieldState.error.message}</p>
               )}
               <p className="text-muted-foreground mt-2.5 text-xs leading-[1.55]">
                 Separate paragraphs with a blank line. Supports **bold** and `code` markers.

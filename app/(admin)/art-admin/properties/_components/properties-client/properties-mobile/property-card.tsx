@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { MoreHorizontal } from "lucide-react";
-import { useTranslations } from "next-intl";
 
 import {
   DropdownMenu,
@@ -27,7 +26,6 @@ const formatOwners = (owners: TAdminPropertyRow["owners"]): string => {
 };
 
 export const PropertyCard = ({ row }: TProps) => {
-  const t = useTranslations("adminProperties");
   const { openRestore, openHardDelete } = usePropertiesTable();
   const isDeleted = row.deletedAt !== null;
 
@@ -52,21 +50,19 @@ export const PropertyCard = ({ row }: TProps) => {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-44">
             <DropdownMenuItem asChild>
-              <Link href={`/art-admin/properties/${row.id}`}>{t("rowActions.viewDetails")}</Link>
+              <Link href={`/art-admin/properties/${row.id}`}>View details</Link>
             </DropdownMenuItem>
             {!isDeleted && (
               <DropdownMenuItem asChild>
-                <Link href={`/properties/${row.id}`}>{t("rowActions.goToProperty")}</Link>
+                <Link href={`/properties/${row.id}`}>Go to property</Link>
               </DropdownMenuItem>
             )}
             {isDeleted && (
               <>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => openRestore(row)}>
-                  {t("rowActions.restore")}
-                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => openRestore(row)}>Restore</DropdownMenuItem>
                 <DropdownMenuItem variant="destructive" onClick={() => openHardDelete(row)}>
-                  {t("rowActions.hardDelete")}
+                  Delete permanently
                 </DropdownMenuItem>
               </>
             )}
@@ -88,7 +84,7 @@ export const PropertyCard = ({ row }: TProps) => {
             variant="outline"
             className="border-red-200 text-red-600 dark:border-red-900 dark:text-red-400"
           >
-            {t("status.deleted")}
+            Deleted
           </Badge>
         </div>
       )}

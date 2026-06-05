@@ -1,5 +1,4 @@
 import { format } from "date-fns";
-import { useTranslations } from "next-intl";
 
 import { DataCard } from "@/components/data-card";
 import { InfoGrid } from "@/components/info-grid";
@@ -20,37 +19,26 @@ const formatOwners = (owners: TAdminPropertyDetail["owners"]): string => {
 };
 
 export const PropertyInfoCard = ({ property }: TProps) => {
-  const t = useTranslations("adminProperties");
-
   const rows = [
-    { label: t("detail.fields.owner"), value: formatOwners(property.owners) },
-    { label: t("detail.fields.type"), value: capitalize(property.type) },
-    { label: t("detail.fields.address"), value: property.address ?? "—" },
-    { label: t("detail.fields.notes"), value: property.notes ?? "—" },
+    { label: "Owner", value: formatOwners(property.owners) },
+    { label: "Type", value: capitalize(property.type) },
+    { label: "Address", value: property.address ?? "—" },
+    { label: "Notes", value: property.notes ?? "—" },
+    { label: "Services", value: String(property.servicesCount) },
+    { label: "Created", value: format(property.createdAt, "MMMM d, yyyy") },
+    { label: "Updated", value: format(property.updatedAt, "MMMM d, yyyy") },
     {
-      label: t("detail.fields.services"),
-      value: String(property.servicesCount),
-    },
-    {
-      label: t("detail.fields.created"),
-      value: format(property.createdAt, "MMMM d, yyyy"),
-    },
-    {
-      label: t("detail.fields.updated"),
-      value: format(property.updatedAt, "MMMM d, yyyy"),
-    },
-    {
-      label: t("detail.fields.status"),
+      label: "Status",
       value: property.deletedAt
-        ? `${t("status.deleted")} — ${format(property.deletedAt, "MMMM d, yyyy")}`
-        : t("status.active"),
+        ? `Deleted — ${format(property.deletedAt, "MMMM d, yyyy")}`
+        : "Active",
     },
   ];
 
   return (
     <DataCard className="overflow-hidden">
       <div className="border-border border-b px-6 py-4">
-        <h3 className="text-sm font-semibold">{t("detail.infoCard.title")}</h3>
+        <h3 className="text-sm font-semibold">Property information</h3>
       </div>
       <div className="px-6">
         <InfoGrid rows={rows} />

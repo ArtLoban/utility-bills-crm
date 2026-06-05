@@ -1,5 +1,4 @@
 import { Controller, type Path, type UseFormReturn } from "react-hook-form";
-import { useTranslations } from "next-intl";
 
 import { Activity, Blocks, Sparkles } from "lucide-react";
 
@@ -18,7 +17,6 @@ type TProps = {
 };
 
 export const ProjectTab = ({ form, onSave }: TProps) => {
-  const t = useTranslations();
   const { isDirty, isSubmitting } = form.formState;
 
   const heroTitle = form.watch("heroTitle");
@@ -50,9 +48,7 @@ export const ProjectTab = ({ form, onSave }: TProps) => {
                   className="h-9 text-[13.5px]"
                 />
                 {fieldState.error && (
-                  <p className="text-destructive mt-1 text-xs">
-                    {t(fieldState.error.message as Parameters<typeof t>[0])}
-                  </p>
+                  <p className="text-destructive mt-1 text-xs">{fieldState.error.message}</p>
                 )}
               </div>
             )}
@@ -75,9 +71,7 @@ export const ProjectTab = ({ form, onSave }: TProps) => {
                   className="text-[13.5px] leading-[1.55]"
                 />
                 {fieldState.error && (
-                  <p className="text-destructive mt-1 text-xs">
-                    {t(fieldState.error.message as Parameters<typeof t>[0])}
-                  </p>
+                  <p className="text-destructive mt-1 text-xs">{fieldState.error.message}</p>
                 )}
                 <p className="text-muted-foreground mt-2.5 text-xs leading-[1.55]">
                   Supports **bold** and `code` markers.
@@ -110,16 +104,8 @@ export const ProjectTab = ({ form, onSave }: TProps) => {
                   shouldDirty: true,
                 })
               }
-              titleError={
-                archCardErrors?.[i]?.title?.message
-                  ? t(archCardErrors[i].title.message as Parameters<typeof t>[0])
-                  : undefined
-              }
-              bodyError={
-                archCardErrors?.[i]?.body?.message
-                  ? t(archCardErrors[i].body.message as Parameters<typeof t>[0])
-                  : undefined
-              }
+              titleError={archCardErrors?.[i]?.title?.message}
+              bodyError={archCardErrors?.[i]?.body?.message}
             />
           ))}
         </div>
@@ -146,9 +132,7 @@ export const ProjectTab = ({ form, onSave }: TProps) => {
                 className="text-[13.5px] leading-[1.55]"
               />
               {fieldState.error && (
-                <p className="text-destructive mt-1 text-xs">
-                  {t(fieldState.error.message as Parameters<typeof t>[0])}
-                </p>
+                <p className="text-destructive mt-1 text-xs">{fieldState.error.message}</p>
               )}
               <p className="text-muted-foreground mt-2.5 text-xs leading-[1.55]">
                 Separate paragraphs with a blank line. Supports **bold** and `code` markers.

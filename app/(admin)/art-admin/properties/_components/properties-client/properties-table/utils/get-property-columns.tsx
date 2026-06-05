@@ -1,13 +1,10 @@
 import type { ColumnDef } from "@tanstack/react-table";
-import type { useTranslations } from "next-intl";
 import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
 import { RowActions } from "@/components/data-table/cells/row-actions";
 import type { TAdminPropertyRow } from "@/features/admin-properties";
 import { usePropertiesTable } from "../../context";
-
-type TTranslations = ReturnType<typeof useTranslations<"adminProperties">>;
 
 const formatOwners = (owners: TAdminPropertyRow["owners"]): string => {
   const primary = owners[0];
@@ -48,10 +45,10 @@ const PropertyRowActions = ({ row }: { row: TAdminPropertyRow }) => {
   return <RowActions items={actions} />;
 };
 
-export const getPropertyColumns = (t: TTranslations): ColumnDef<TAdminPropertyRow>[] => [
+export const getPropertyColumns = (): ColumnDef<TAdminPropertyRow>[] => [
   {
     accessorKey: "name",
-    header: t("columns.name"),
+    header: "Name",
     cell: ({ row }) => (
       <Link
         href={`/art-admin/properties/${row.original.id}`}
@@ -63,7 +60,7 @@ export const getPropertyColumns = (t: TTranslations): ColumnDef<TAdminPropertyRo
   },
   {
     id: "owners",
-    header: t("columns.owners"),
+    header: "Owner(s)",
     enableSorting: false,
     cell: ({ row }) => (
       <span className="text-muted-foreground">{formatOwners(row.original.owners)}</span>
@@ -71,7 +68,7 @@ export const getPropertyColumns = (t: TTranslations): ColumnDef<TAdminPropertyRo
   },
   {
     accessorKey: "type",
-    header: t("columns.type"),
+    header: "Type",
     cell: ({ row }) => (
       <span className="text-muted-foreground">{capitalize(row.original.type)}</span>
     ),
@@ -79,29 +76,29 @@ export const getPropertyColumns = (t: TTranslations): ColumnDef<TAdminPropertyRo
   {
     accessorKey: "deletedAt",
     id: "status",
-    header: t("columns.status"),
+    header: "Status",
     cell: ({ row }) =>
       row.original.deletedAt ? (
         <Badge
           variant="outline"
           className="border-red-200 text-red-600 dark:border-red-900 dark:text-red-400"
         >
-          {t("status.deleted")}
+          Deleted
         </Badge>
       ) : (
-        <span className="text-muted-foreground text-sm">{t("status.active")}</span>
+        <span className="text-muted-foreground text-sm">Active</span>
       ),
   },
   {
     id: "servicesCount",
-    header: t("columns.services"),
+    header: "Services",
     enableSorting: false,
     cell: ({ row }) => <span className="tabular-nums">{row.original.servicesCount}</span>,
     meta: { align: "right" },
   },
   {
     accessorKey: "createdAt",
-    header: t("columns.created"),
+    header: "Created",
     cell: ({ row }) => (
       <span className="text-muted-foreground tabular-nums">
         {row.original.createdAt.toLocaleDateString("en-US", { month: "short", year: "numeric" })}

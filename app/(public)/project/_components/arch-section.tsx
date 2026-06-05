@@ -1,5 +1,4 @@
 import { Code2, Database, Layers, Scale, ShieldCheck, Users } from "lucide-react";
-import { getTranslations } from "next-intl/server";
 import type { ComponentType } from "react";
 import { CmsText } from "@/components/cms-text";
 
@@ -53,9 +52,7 @@ const ARCH_CONFIG = [
   iconColor: string;
 }>;
 
-export const ArchSection = async ({ cards }: TProps) => {
-  const t = await getTranslations("landing");
-
+export const ArchSection = ({ cards }: TProps) => {
   const rows = [
     { ...ARCH_CONFIG[0], title: cards[0].title, body: cards[0].body },
     { ...ARCH_CONFIG[1], title: cards[1].title, body: cards[1].body },
@@ -69,10 +66,10 @@ export const ArchSection = async ({ cards }: TProps) => {
     <section className="py-[56px] md:py-[92px]">
       <div className="mx-auto max-w-[1100px] px-4 md:px-6">
         <p className="mb-3 text-xs font-medium tracking-[0.08em] text-violet-600 uppercase dark:text-violet-400">
-          {t("project.arch.sectionLabel")}
+          Architecture
         </p>
         <h2 className="mb-10 text-[clamp(28px,3vw,38px)] font-semibold tracking-[-0.025em] text-zinc-900 dark:text-zinc-50">
-          {t("project.arch.sectionTitle")}
+          Six decisions worth explaining
         </h2>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {rows.map(({ icon: Icon, badgeBg, badgeBorder, iconColor, title, body }) => (

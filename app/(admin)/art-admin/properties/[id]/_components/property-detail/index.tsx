@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import { useTranslations } from "next-intl";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -17,14 +16,13 @@ type TProps = { property: TAdminPropertyDetail };
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
 export const PropertyDetail = ({ property }: TProps) => {
-  const t = useTranslations("adminProperties");
   const isDeleted = property.deletedAt !== null;
 
   const metaItems = [
     capitalize(property.type),
     property.address ?? null,
     `${property.servicesCount} ${property.servicesCount === 1 ? "service" : "services"}`,
-    isDeleted ? t("status.deleted") : t("status.active"),
+    isDeleted ? "Deleted" : "Active",
   ].filter(Boolean) as string[];
 
   return (
@@ -55,7 +53,7 @@ export const PropertyDetail = ({ property }: TProps) => {
           <Button asChild variant="outline" size="sm">
             <Link href={`/properties/${property.id}`}>
               <ArrowUpRight size={14} strokeWidth={1.75} />
-              {t("detail.goToProperty")}
+              Go to property
             </Link>
           </Button>
         </div>

@@ -1,5 +1,3 @@
-import { getTranslations } from "next-intl/server";
-
 const FRONTEND_CHIPS = [
   "Next.js",
   "TypeScript",
@@ -25,22 +23,20 @@ const BACKEND_CHIPS = [
   "Sentry",
 ];
 
-export const StackSection = async () => {
-  const t = await getTranslations("landing");
-
+export const StackSection = () => {
   return (
     <section className="bg-zinc-100/45 py-[56px] md:py-[92px] dark:bg-zinc-900/80">
       <div className="mx-auto max-w-[1100px] px-4 md:px-6">
         <p className="mb-3 text-xs font-medium tracking-[0.08em] text-violet-600 uppercase dark:text-violet-400">
-          {t("project.stack.sectionLabel")}
+          Stack
         </p>
         <h2 className="mb-10 text-[clamp(28px,3vw,38px)] font-semibold tracking-[-0.025em] text-zinc-900 dark:text-zinc-50">
-          {t("project.stack.sectionTitle")}
+          At a glance
         </h2>
         <div className="grid grid-cols-1 gap-7 sm:grid-cols-2 sm:gap-10">
           <div>
             <p className="mb-4 text-sm font-semibold tracking-[0.06em] text-zinc-900 uppercase dark:text-zinc-200">
-              {t("project.stack.frontendLabel")}
+              Frontend
             </p>
             <div className="flex flex-wrap gap-2">
               {FRONTEND_CHIPS.map((chip) => (
@@ -55,7 +51,7 @@ export const StackSection = async () => {
           </div>
           <div>
             <p className="mb-4 text-sm font-semibold tracking-[0.06em] text-zinc-900 uppercase dark:text-zinc-200">
-              {t("project.stack.backendLabel")}
+              Backend
             </p>
             <div className="flex flex-wrap gap-2">
               {BACKEND_CHIPS.map((chip) => (

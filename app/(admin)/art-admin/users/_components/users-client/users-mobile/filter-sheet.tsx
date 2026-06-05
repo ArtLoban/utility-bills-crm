@@ -2,7 +2,6 @@
 
 import { X } from "lucide-react";
 import { parseAsString, useQueryStates } from "nuqs";
-import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -48,7 +47,6 @@ type TProps = {
 };
 
 export const FilterSheet = ({ open, onOpenChange }: TProps) => {
-  const t = useTranslations("adminUsers");
   const [query, setQuery] = useQueryStates(
     { systemRole: parseAsString, status: parseAsString },
     { history: "replace", shallow: false },
@@ -60,13 +58,13 @@ export const FilterSheet = ({ open, onOpenChange }: TProps) => {
   };
 
   const roleOptions = [
-    { id: SYSTEM_ROLES.ADMIN, name: t("filters.roleAdmin") },
-    { id: SYSTEM_ROLES.USER, name: t("filters.roleUser") },
+    { id: SYSTEM_ROLES.ADMIN, name: "Admin" },
+    { id: SYSTEM_ROLES.USER, name: "User" },
   ];
 
   const statusOptions = [
-    { id: "deleted", name: t("filters.statusDeleted") },
-    { id: "all", name: t("filters.statusAll") },
+    { id: "deleted", name: "Deleted" },
+    { id: "all", name: "All users" },
   ];
 
   return (
@@ -78,7 +76,7 @@ export const FilterSheet = ({ open, onOpenChange }: TProps) => {
 
         <div className="px-4 pb-6">
           <div className="flex items-center justify-between py-3">
-            <SheetTitle>{t("filters.mobile.filters")}</SheetTitle>
+            <SheetTitle>Filters</SheetTitle>
             <SheetClose asChild>
               <Button variant="ghost" size="icon-sm" aria-label="Close">
                 <X size={16} className="text-muted-foreground" />
@@ -88,27 +86,27 @@ export const FilterSheet = ({ open, onOpenChange }: TProps) => {
 
           <div className="flex flex-col gap-3.5">
             <FilterSelect
-              label={t("filters.role")}
+              label="Role"
               value={query.systemRole}
               onChange={(v) => void setQuery({ systemRole: v })}
               options={roleOptions}
-              placeholder={t("filters.mobile.allRoles")}
+              placeholder="All roles"
             />
             <FilterSelect
-              label={t("filters.status")}
+              label="Status"
               value={query.status}
               onChange={(v) => void setQuery({ status: v })}
               options={statusOptions}
-              placeholder={t("filters.mobile.activeDefault")}
+              placeholder="Active (default)"
             />
           </div>
 
           <div className="mt-5 flex gap-2.5">
             <Button variant="outline" className="flex-1" onClick={handleClear}>
-              {t("empty.filtered.cta")}
+              Clear filters
             </Button>
             <Button className="flex-[2]" onClick={() => onOpenChange(false)}>
-              {t("filters.mobile.apply")}
+              Apply
             </Button>
           </div>
         </div>

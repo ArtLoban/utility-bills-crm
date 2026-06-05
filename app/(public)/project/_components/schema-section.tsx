@@ -1,5 +1,3 @@
-import { getTranslations } from "next-intl/server";
-
 type TSchemaLine = {
   tree: string;
   name: string;
@@ -21,9 +19,7 @@ const SCHEMA_TREE: TSchemaLine[] = [
   { tree: "        └── ", name: "Reading", note: "(date, value(s))" },
 ];
 
-export const SchemaSection = async () => {
-  const t = await getTranslations("landing");
-
+export const SchemaSection = () => {
   return (
     <section
       className="relative overflow-hidden py-[56px] md:py-[92px]"
@@ -46,10 +42,10 @@ export const SchemaSection = async () => {
           className="mb-3 text-xs font-medium tracking-[0.08em] uppercase"
           style={{ color: "#cbb6f5" }}
         >
-          {t("project.schema.sectionLabel")}
+          Data model
         </p>
         <h2 className="mb-10 text-[clamp(28px,3vw,38px)] font-semibold tracking-[-0.025em] text-zinc-100">
-          {t("project.schema.sectionTitle")}
+          One tree, every entity
         </h2>
 
         {/* Panel wrapper — scroll on mobile, full width on desktop */}
@@ -75,7 +71,8 @@ export const SchemaSection = async () => {
         </div>
 
         <p className="mt-6 text-center text-sm leading-[1.65] text-zinc-400">
-          {t("project.schema.caption")}
+          Full schema in the GitHub repository — Drizzle definitions, exclusion constraints,
+          indexes, the lot.
         </p>
       </div>
     </section>
