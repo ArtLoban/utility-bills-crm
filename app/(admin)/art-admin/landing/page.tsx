@@ -59,6 +59,8 @@ const mapAboutContent = (row: TAboutHero | undefined): TAboutPayload => {
   return {
     heroGreeting: row.heroGreeting,
     heroDesc: row.heroDesc,
+    heroText: row.heroText,
+    worksWithTitle: row.worksWithTitle,
     worksWith: row.worksWith,
   };
 };

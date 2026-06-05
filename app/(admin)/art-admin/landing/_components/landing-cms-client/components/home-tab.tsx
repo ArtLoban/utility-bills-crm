@@ -117,6 +117,9 @@ export const HomeTab = ({ form, onSave }: TProps) => {
                     {t(fieldState.error.message as Parameters<typeof t>[0])}
                   </p>
                 )}
+                <p className="text-muted-foreground mt-2.5 text-xs leading-[1.55]">
+                  Supports **bold** and `code` markers.
+                </p>
               </div>
             )}
           />
@@ -142,6 +145,9 @@ export const HomeTab = ({ form, onSave }: TProps) => {
                     {t(fieldState.error.message as Parameters<typeof t>[0])}
                   </p>
                 )}
+                <p className="text-muted-foreground mt-2.5 text-xs leading-[1.55]">
+                  Supports **bold** and `code` markers.
+                </p>
               </div>
             )}
           />
@@ -219,7 +225,7 @@ export const HomeTab = ({ form, onSave }: TProps) => {
               Tech highlights
             </div>
             <div className="text-muted-foreground mt-0.5 text-[12.5px]">
-              Single line under the feature cards. Plain text.
+              Single line under the feature cards. Supports **bold** and `code` markers.
             </div>
           </div>
           <ChevronDown

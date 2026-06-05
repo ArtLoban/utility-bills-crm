@@ -22,6 +22,8 @@ export const AboutTab = ({ form, onSave }: TProps) => {
 
   const heroGreeting = form.watch("heroGreeting");
   const heroDesc = form.watch("heroDesc");
+  const heroText = form.watch("heroText");
+  const worksWithTitle = form.watch("worksWithTitle");
   const worksWith = form.watch("worksWith");
   const paragraphCount = worksWith.split(/\n\s*\n/).filter((p) => p.trim().length > 0).length;
 
@@ -30,7 +32,7 @@ export const AboutTab = ({ form, onSave }: TProps) => {
       <CmsSection
         icon={<User className="size-[14px]" />}
         title="Hero"
-        description="Top of the about page — personal intro."
+        description="Top of the about page — three lines of personal intro."
       >
         <div className="mb-4">
           <Controller
@@ -56,7 +58,7 @@ export const AboutTab = ({ form, onSave }: TProps) => {
             )}
           />
         </div>
-        <div>
+        <div className="mb-4">
           <Controller
             control={form.control}
             name="heroDesc"
@@ -77,6 +79,33 @@ export const AboutTab = ({ form, onSave }: TProps) => {
                     {t(fieldState.error.message as Parameters<typeof t>[0])}
                   </p>
                 )}
+                <p className="text-muted-foreground mt-2.5 text-xs leading-[1.55]">
+                  Supports **bold** and `code` markers.
+                </p>
+              </div>
+            )}
+          />
+        </div>
+        <div>
+          <Controller
+            control={form.control}
+            name="heroText"
+            render={({ field, fieldState }) => (
+              <div>
+                <FieldLabel hint={`${heroText.length} chars`} htmlFor="about-hero-text">
+                  Hero text
+                </FieldLabel>
+                <Input
+                  id="about-hero-text"
+                  value={field.value}
+                  onChange={field.onChange}
+                  className="h-9 text-[13.5px]"
+                />
+                {fieldState.error && (
+                  <p className="text-destructive mt-1 text-xs">
+                    {t(fieldState.error.message as Parameters<typeof t>[0])}
+                  </p>
+                )}
               </div>
             )}
           />
@@ -86,8 +115,39 @@ export const AboutTab = ({ form, onSave }: TProps) => {
       <CmsSection
         icon={<Briefcase className="size-[14px]" />}
         title="What I work with"
-        description="Three paragraphs separated by blank lines. Plain text only."
+        description="Title line followed by body paragraphs separated by blank lines."
       >
+        <div className="mb-4">
+          <Controller
+            control={form.control}
+            name="worksWithTitle"
+            render={({ field, fieldState }) => (
+              <div>
+                <FieldLabel
+                  hint={`${worksWithTitle.length} chars`}
+                  htmlFor="about-works-with-title"
+                >
+                  Title
+                </FieldLabel>
+                <Textarea
+                  id="about-works-with-title"
+                  value={field.value}
+                  onChange={field.onChange}
+                  rows={2}
+                  className="text-[13.5px] leading-[1.55]"
+                />
+                {fieldState.error && (
+                  <p className="text-destructive mt-1 text-xs">
+                    {t(fieldState.error.message as Parameters<typeof t>[0])}
+                  </p>
+                )}
+                <p className="text-muted-foreground mt-2.5 text-xs leading-[1.55]">
+                  Supports **bold** and `code` markers.
+                </p>
+              </div>
+            )}
+          />
+        </div>
         <Controller
           control={form.control}
           name="worksWith"
@@ -103,8 +163,8 @@ export const AboutTab = ({ form, onSave }: TProps) => {
                 id="about-works-with"
                 value={field.value}
                 onChange={field.onChange}
-                rows={11}
-                className="min-h-[264px] text-[13.5px] leading-[1.55]"
+                rows={8}
+                className="min-h-48 text-[13.5px] leading-[1.55]"
               />
               {fieldState.error && (
                 <p className="text-destructive mt-1 text-xs">
@@ -112,8 +172,7 @@ export const AboutTab = ({ form, onSave }: TProps) => {
                 </p>
               )}
               <p className="text-muted-foreground mt-2.5 text-xs leading-[1.55]">
-                Separate paragraphs with a blank line. No rich-text formatting — line breaks render
-                as written.
+                Separate paragraphs with a blank line. Supports **bold** and `code` markers.
               </p>
             </div>
           )}

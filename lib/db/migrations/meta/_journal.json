@@ -120,6 +120,20 @@
       "when": 1780299727225,
       "tag": "0016_crazy_speedball",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1748959200000,
+      "tag": "0017_content_seed",
+      "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1749131400000,
+      "tag": "0018_about_hero_fields",
+      "breakpoints": true
     }
   ]
 }

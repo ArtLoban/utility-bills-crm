@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { Users, History, Wallet, TrendingUp } from "lucide-react";
 import type { ComponentType } from "react";
+import { CmsText } from "@/components/cms-text";
 
 type TCard = { title: string; body: string };
 
@@ -84,7 +85,9 @@ export const FeaturesSection = async ({ cards }: TProps) => {
                 <p className="text-md mb-2 font-semibold text-zinc-900 dark:text-zinc-50">
                   {title}
                 </p>
-                <p className="text-sm leading-[1.65] text-zinc-500">{body}</p>
+                <p className="text-sm leading-[1.65] text-zinc-500">
+                  <CmsText value={body} />
+                </p>
               </div>
             );
           })}

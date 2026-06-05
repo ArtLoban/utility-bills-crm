@@ -101,6 +101,8 @@ export const aboutHero = pgTable(
     id: brandedUuidPk<TAboutHeroId>(),
     heroGreeting: text("hero_greeting").notNull(),
     heroDesc: text("hero_desc").notNull(),
+    heroText: text("hero_text").notNull(),
+    worksWithTitle: text("works_with_title").notNull(),
     worksWith: text("works_with").notNull(),
     oneRow: boolean("one_row").notNull().default(true),
     ...timestamps(),

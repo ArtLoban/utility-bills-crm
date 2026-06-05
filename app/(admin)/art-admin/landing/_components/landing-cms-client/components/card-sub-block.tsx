@@ -51,6 +51,9 @@ export const CardSubBlock = ({
         className="text-[13.5px] leading-[1.55]"
       />
       {bodyError && <p className="text-destructive mt-1 text-xs">{bodyError}</p>}
+      <p className="text-muted-foreground mt-2.5 text-xs leading-[1.55]">
+        Supports **bold** and `code` markers.
+      </p>
     </div>
   </div>
 );

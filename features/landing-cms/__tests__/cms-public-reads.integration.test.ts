@@ -2,7 +2,13 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vite
 
 import { db } from "@/lib/db/client";
 import { aboutHero, cmsFeatures, cmsLinks, homeHero, projectHero } from "@/lib/db/schema/cms";
-import type { TCmsLinks } from "@/lib/db/schema/cms";
+import type {
+  TAboutHero,
+  TCmsFeatures,
+  TCmsLinks,
+  THomeHero,
+  TProjectHero,
+} from "@/lib/db/schema/cms";
 import { auth } from "@/lib/auth";
 
 import { saveAboutCms, saveGlobalCms, saveHomeCms, saveProjectCms } from "../actions";
@@ -44,6 +50,8 @@ const VALID_HOME: THomePayload = {
 const VALID_ABOUT: TAboutPayload = {
   heroGreeting: "Hi, public test.",
   heroDesc: "Public test about desc.",
+  heroText: "Based in Ukraine.",
+  worksWithTitle: "Day-to-day: React.",
   worksWith: "React, TypeScript.",
 };
 
@@ -66,24 +74,56 @@ const VALID_GLOBAL: TGlobalPayload = {
 };
 
 // ---------------------------------------------------------------------------
-// Snapshot / restore
+// Snapshot / restore — all 5 CMS tables are restored after each test so that
+// cms-schema.integration.test.ts (which runs after this file) finds the seed
+// data intact. beforeAll snapshots require the seed to be present.
 // ---------------------------------------------------------------------------
 
+let homeHeroSnap: THomeHero;
+let cmsFeaturesSnap: TCmsFeatures;
+let aboutHeroSnap: TAboutHero;
+let projectHeroSnap: TProjectHero;
 let cmsLinksSnap: TCmsLinks;
 
 beforeAll(async () => {
-  const [[cl]] = await Promise.all([db.select().from(cmsLinks).limit(1)]);
-  cmsLinksSnap = cl!;
+  const [[hh], [cf], [ah], [ph], [cl]] = await Promise.all([
+    db.select().from(homeHero).limit(1),
+    db.select().from(cmsFeatures).limit(1),
+    db.select().from(aboutHero).limit(1),
+    db.select().from(projectHero).limit(1),
+    db.select().from(cmsLinks).limit(1),
+  ]);
+  if (!hh || !cf || !ah || !ph || !cl) {
+    throw new Error("CMS seed is missing — run db:migrate first");
+  }
+  homeHeroSnap = hh;
+  cmsFeaturesSnap = cf;
+  aboutHeroSnap = ah;
+  projectHeroSnap = ph;
+  cmsLinksSnap = cl;
 });
 
 afterEach(async () => {
-  const { id: _id, createdAt: _ca, updatedAt: _ua, oneRow: _or, ...clData } = cmsLinksSnap;
+  const { id: _id1, createdAt: _ca1, updatedAt: _ua1, oneRow: _or1, ...hhData } = homeHeroSnap;
+  const { id: _id2, createdAt: _ca2, updatedAt: _ua2, oneRow: _or2, ...cfData } = cmsFeaturesSnap;
+  const { id: _id3, createdAt: _ca3, updatedAt: _ua3, oneRow: _or3, ...ahData } = aboutHeroSnap;
+  const { id: _id4, createdAt: _ca4, updatedAt: _ua4, oneRow: _or4, ...phData } = projectHeroSnap;
+  const { id: _id5, createdAt: _ca5, updatedAt: _ua5, oneRow: _or5, ...clData } = cmsLinksSnap;
   await Promise.all([
+    db.insert(homeHero).values(hhData).onConflictDoUpdate({ target: homeHero.oneRow, set: hhData }),
+    db
+      .insert(cmsFeatures)
+      .values(cfData)
+      .onConflictDoUpdate({ target: cmsFeatures.oneRow, set: cfData }),
+    db
+      .insert(aboutHero)
+      .values(ahData)
+      .onConflictDoUpdate({ target: aboutHero.oneRow, set: ahData }),
+    db
+      .insert(projectHero)
+      .values(phData)
+      .onConflictDoUpdate({ target: projectHero.oneRow, set: phData }),
     db.insert(cmsLinks).values(clData).onConflictDoUpdate({ target: cmsLinks.oneRow, set: clData }),
-    db.delete(homeHero),
-    db.delete(cmsFeatures),
-    db.delete(aboutHero),
-    db.delete(projectHero),
   ]);
 });
 

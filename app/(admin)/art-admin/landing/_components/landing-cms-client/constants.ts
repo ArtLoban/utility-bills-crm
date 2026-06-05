@@ -39,11 +39,11 @@ export const INITIAL_HOME: THomePayload = {
 
 export const INITIAL_ABOUT: TAboutPayload = {
   heroGreeting: "Hi, I'm Art.",
-  heroDesc:
-    "Frontend developer. React, TypeScript, complex UIs. Working remotely, based in Ukraine.",
-  worksWith: `Day-to-day: React with TypeScript, Next.js, modern data tables and visualizations, design systems.
-
-Comfortable with: state management at scale (Redux Toolkit, RTK Query), forms and validation, authentication, role-based access.
+  heroDesc: "Frontend developer. React, TypeScript, complex UIs.",
+  heroText: "Working remotely, based in Ukraine.",
+  worksWithTitle:
+    "Day-to-day: React with TypeScript, Next.js, modern data tables and visualizations, design systems.",
+  worksWith: `Comfortable with: state management at scale (Redux Toolkit, RTK Query), forms and validation, authentication, role-based access.
 
 Most of the last few years went into building a payment orchestration platform — a large back-office admin panel that grew to 50+ pages and a few thousand TypeScript files. This CRM is the next thing I'm building.`,
 };

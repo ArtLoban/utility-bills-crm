@@ -1,4 +1,5 @@
 import { getTranslations } from "next-intl/server";
+import { CmsText } from "@/components/cms-text";
 
 type TProps = {
   title: string;
@@ -56,7 +57,9 @@ export const HeroSection = async ({ title, desc, githubUrl }: TProps) => {
         <h1 className="mb-5 max-w-[680px] text-[clamp(38px,5vw,60px)] leading-[1.12] font-semibold tracking-[-0.035em] text-zinc-900 dark:text-zinc-50">
           {title}
         </h1>
-        <p className="mb-8 max-w-[560px] text-lg leading-[1.7] text-zinc-500">{desc}</p>
+        <p className="mb-8 max-w-[560px] text-lg leading-[1.7] text-zinc-500">
+          <CmsText value={desc} />
+        </p>
         <a
           href={githubUrl}
           target="_blank"

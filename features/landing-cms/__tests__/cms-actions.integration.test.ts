@@ -57,6 +57,8 @@ const VALID_HOME: THomePayload = {
 const VALID_ABOUT: TAboutPayload = {
   heroGreeting: "Hi, test.",
   heroDesc: "Test about description.",
+  heroText: "Working remotely.",
+  worksWithTitle: "Day-to-day: React with TypeScript.",
   worksWith: "React, TypeScript.",
 };
 
@@ -451,6 +453,8 @@ describe("round-trip", () => {
     const payload: TAboutPayload = {
       heroGreeting: "Round-trip greeting",
       heroDesc: "Round-trip desc",
+      heroText: "Round-trip text",
+      worksWithTitle: "Round-trip title",
       worksWith: "Round-trip worksWith",
     };
     const saveResult = await saveAboutCms(payload);

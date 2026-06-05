@@ -1,9 +1,12 @@
+import { CmsText } from "@/components/cms-text";
+
 type TProps = {
   greeting: string;
   desc: string;
+  text: string;
 };
 
-export const HeroSection = ({ greeting, desc }: TProps) => {
+export const HeroSection = ({ greeting, desc, text }: TProps) => {
   return (
     <section className="relative overflow-hidden py-14 md:pt-[104px] md:pb-[96px]">
       {/* Glow 1 — top-right violet bloom */}
@@ -36,7 +39,10 @@ export const HeroSection = ({ greeting, desc }: TProps) => {
             {greeting}
           </h1>
           <p className="text-xl leading-[1.5] font-normal text-zinc-900 dark:text-zinc-50">
-            {desc}
+            <CmsText value={desc} />
+          </p>
+          <p className="mt-1.5 text-xl leading-[1.5] font-normal text-zinc-500 dark:text-zinc-400">
+            <CmsText value={text} />
           </p>
         </div>
       </div>

@@ -1,6 +1,7 @@
 import { Code2, Database, Layers, Scale, ShieldCheck, Users } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import type { ComponentType } from "react";
+import { CmsText } from "@/components/cms-text";
 
 type TCard = { title: string; body: string };
 
@@ -87,7 +88,9 @@ export const ArchSection = async ({ cards }: TProps) => {
               <div className="mb-2 text-sm font-semibold text-zinc-900 dark:text-zinc-50">
                 {title}
               </div>
-              <p className="text-sm leading-[1.7] text-zinc-500">{body}</p>
+              <p className="text-sm leading-[1.7] text-zinc-500">
+                <CmsText value={body} />
+              </p>
             </div>
           ))}
         </div>

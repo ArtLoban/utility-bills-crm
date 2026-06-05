@@ -1,8 +1,11 @@
+import { CmsText } from "@/components/cms-text";
+
 type TProps = {
+  worksWithTitle: string;
   worksWith: string;
 };
 
-export const ProseSection = ({ worksWith }: TProps) => {
+export const ProseSection = ({ worksWithTitle, worksWith }: TProps) => {
   const paragraphs = worksWith.split(/\n\n+/).filter(Boolean);
 
   return (
@@ -22,16 +25,12 @@ export const ProseSection = ({ worksWith }: TProps) => {
 
       <div className="relative mx-auto max-w-[1100px] px-4 md:px-6">
         <div className="flex max-w-[640px] flex-col gap-[22px] md:mx-auto">
+          <p className="text-[19px] leading-[1.75] font-medium text-zinc-900 dark:text-zinc-50">
+            <CmsText value={worksWithTitle} />
+          </p>
           {paragraphs.map((para, i) => (
-            <p
-              key={i}
-              className={
-                i === 0
-                  ? "text-[19px] leading-[1.75] font-medium text-zinc-900 dark:text-zinc-50"
-                  : "text-base leading-[1.75] text-zinc-500"
-              }
-            >
-              {para}
+            <p key={i} className="text-base leading-[1.75] text-zinc-500">
+              <CmsText value={para} />
             </p>
           ))}
         </div>

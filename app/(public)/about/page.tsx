@@ -30,8 +30,15 @@ export default async function AboutPage() {
 
   return (
     <>
-      <HeroSection greeting={aboutHero?.heroGreeting ?? ""} desc={aboutHero?.heroDesc ?? ""} />
-      <ProseSection worksWith={aboutHero?.worksWith ?? ""} />
+      <HeroSection
+        greeting={aboutHero?.heroGreeting ?? ""}
+        desc={aboutHero?.heroDesc ?? ""}
+        text={aboutHero?.heroText ?? ""}
+      />
+      <ProseSection
+        worksWithTitle={aboutHero?.worksWithTitle ?? ""}
+        worksWith={aboutHero?.worksWith ?? ""}
+      />
       <LinksSection linkedinUrl={links?.linkedinUrl ?? ""} githubUrl={links?.githubUrl ?? ""} />
     </>
   );

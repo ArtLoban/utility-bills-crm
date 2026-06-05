@@ -1,4 +1,5 @@
 import { getTranslations } from "next-intl/server";
+import { CmsText } from "@/components/cms-text";
 
 type TProps = {
   status: string;
@@ -18,7 +19,7 @@ export const StatusSection = async ({ status }: TProps) => {
           <div className="flex flex-col gap-5">
             {paragraphs.map((para, i) => (
               <p key={i} className="text-md leading-[1.75] text-zinc-500">
-                {para}
+                <CmsText value={para} />
               </p>
             ))}
           </div>

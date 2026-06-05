@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getPublicHome } from "@/features/landing-cms";
+import { CmsText } from "@/components/cms-text";
 import { HeroSection } from "./_components/home/hero-section";
 import { MockupSection } from "./_components/home/mockup-section";
 import { FeaturesSection } from "./_components/home/features-section";
@@ -52,7 +53,7 @@ export default async function LandingPage() {
 
       <MockupSection
         url="app.utilitybills.dev/dashboard"
-        caption={homeHero?.dashboardCaption ?? ""}
+        caption={<CmsText value={homeHero?.dashboardCaption ?? ""} />}
       >
         <DashboardMockup />
       </MockupSection>
@@ -61,7 +62,7 @@ export default async function LandingPage() {
 
       <MockupSection
         url="app.utilitybills.dev/properties/1"
-        caption={homeHero?.propertyCaption ?? ""}
+        caption={<CmsText value={homeHero?.propertyCaption ?? ""} />}
       >
         <PropertyDetailMockup />
       </MockupSection>

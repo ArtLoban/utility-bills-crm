@@ -79,6 +79,9 @@ export const ProjectTab = ({ form, onSave }: TProps) => {
                     {t(fieldState.error.message as Parameters<typeof t>[0])}
                   </p>
                 )}
+                <p className="text-muted-foreground mt-2.5 text-xs leading-[1.55]">
+                  Supports **bold** and `code` markers.
+                </p>
               </div>
             )}
           />
@@ -147,6 +150,9 @@ export const ProjectTab = ({ form, onSave }: TProps) => {
                   {t(fieldState.error.message as Parameters<typeof t>[0])}
                 </p>
               )}
+              <p className="text-muted-foreground mt-2.5 text-xs leading-[1.55]">
+                Separate paragraphs with a blank line. Supports **bold** and `code` markers.
+              </p>
             </div>
           )}
         />

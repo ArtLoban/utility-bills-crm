@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { ROUTES } from "@/lib/routes";
+import { CmsText } from "@/components/cms-text";
 
 type TProps = {
   techHighlights: string;
@@ -43,7 +44,9 @@ export const TechSection = async ({ techHighlights }: TProps) => {
           <h2 className="mb-5 text-[clamp(28px,3vw,36px)] font-semibold tracking-[-0.02em] text-zinc-900 dark:text-zinc-50">
             {t("tech.sectionTitle")}
           </h2>
-          <p className="text-base leading-[1.75] text-zinc-500">{techHighlights}</p>
+          <p className="text-base leading-[1.75] text-zinc-500">
+            <CmsText value={techHighlights} />
+          </p>
           <Link
             href={ROUTES.project}
             className="text-md mt-5 inline-flex items-center gap-1 font-medium text-violet-600 transition-opacity hover:opacity-75 dark:text-violet-400"

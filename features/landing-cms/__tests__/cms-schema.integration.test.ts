@@ -76,6 +76,8 @@ describe("cms singleton enforcement", () => {
       db.insert(aboutHero).values({
         heroGreeting: "duplicate",
         heroDesc: "duplicate",
+        heroText: "duplicate",
+        worksWithTitle: "duplicate",
         worksWith: "duplicate",
       }),
     ).rejects.toThrow();

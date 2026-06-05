@@ -826,17 +826,19 @@ Home tab — exactly 4 feature cards, stored as fixed columns (not a multi-row c
 
 ### `about_hero`
 
-About tab — hero greeting/description and "What I work with" multiline body.
+About tab — hero greeting/description/text and "What I work with" title + multiline body.
 
-| Column         | Type          | Null | Default | Notes                   |
-| -------------- | ------------- | ---- | ------- | ----------------------- |
-| `id`           | `uuid`        | NO   | random  | Branded `TAboutHeroId`. |
-| `heroGreeting` | `text`        | NO   | —       |                         |
-| `heroDesc`     | `text`        | NO   | —       |                         |
-| `worksWith`    | `text`        | NO   | —       | Multiline plain text.   |
-| `oneRow`       | `boolean`     | NO   | `true`  | Singleton lock.         |
-| `createdAt`    | `timestamptz` | NO   | `now()` |                         |
-| `updatedAt`    | `timestamptz` | NO   | `now()` |                         |
+| Column           | Type          | Null | Default | Notes                                   |
+| ---------------- | ------------- | ---- | ------- | --------------------------------------- |
+| `id`             | `uuid`        | NO   | random  | Branded `TAboutHeroId`.                 |
+| `heroGreeting`   | `text`        | NO   | —       |                                         |
+| `heroDesc`       | `text`        | NO   | —       |                                         |
+| `heroText`       | `text`        | NO   | —       | Third line of the hero section.         |
+| `worksWithTitle` | `text`        | NO   | —       | Bold title above the body paragraphs.   |
+| `worksWith`      | `text`        | NO   | —       | Multiline plain text, `\n\n`-separated. |
+| `oneRow`         | `boolean`     | NO   | `true`  | Singleton lock.                         |
+| `createdAt`      | `timestamptz` | NO   | `now()` |                                         |
+| `updatedAt`      | `timestamptz` | NO   | `now()` |                                         |
 
 ### `project_hero`
 

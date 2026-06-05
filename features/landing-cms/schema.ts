@@ -84,7 +84,17 @@ export const aboutSchema = z.object({
     .string()
     .trim()
     .min(1, "landingCms.about.errors.heroDesc")
-    .max(500, "landingCms.about.errors.heroDesc"),
+    .max(300, "landingCms.about.errors.heroDesc"),
+  heroText: z
+    .string()
+    .trim()
+    .min(1, "landingCms.about.errors.heroText")
+    .max(200, "landingCms.about.errors.heroText"),
+  worksWithTitle: z
+    .string()
+    .trim()
+    .min(1, "landingCms.about.errors.worksWithTitle")
+    .max(300, "landingCms.about.errors.worksWithTitle"),
   worksWith: z
     .string()
     .trim()
