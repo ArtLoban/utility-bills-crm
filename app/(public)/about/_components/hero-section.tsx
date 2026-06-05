@@ -41,7 +41,7 @@ export const HeroSection = ({ greeting, desc, text }: TProps) => {
           <p className="text-xl leading-[1.5] font-normal text-zinc-900 dark:text-zinc-50">
             <CmsText value={desc} />
           </p>
-          <p className="mt-1.5 text-xl leading-[1.5] font-normal text-zinc-500 dark:text-zinc-400">
+          <p className="mt-1.5 text-base leading-[1.5] font-normal text-zinc-500 dark:text-zinc-400">
             <CmsText value={text} />
           </p>
         </div>

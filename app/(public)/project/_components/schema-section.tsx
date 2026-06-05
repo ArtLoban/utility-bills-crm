@@ -74,7 +74,9 @@ export const SchemaSection = async () => {
           </div>
         </div>
 
-        <p className="mt-6 text-sm leading-[1.65] text-zinc-400">{t("project.schema.caption")}</p>
+        <p className="mt-6 text-center text-sm leading-[1.65] text-zinc-400">
+          {t("project.schema.caption")}
+        </p>
       </div>
     </section>
   );
