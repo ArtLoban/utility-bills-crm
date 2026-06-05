@@ -11,10 +11,7 @@
     "bills": "Bills",
     "payments": "Payments",
     "settings": "Settings",
-    "adminDashboard": "Dashboard",
-    "adminProperties": "Properties",
-    "adminUsers": "Users",
-    "adminLanding": "Landing"
+    "adminDashboard": "Dashboard"
   },
   "meters": {
     "list": {

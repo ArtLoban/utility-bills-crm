@@ -11,10 +11,7 @@
     "bills": "Рахунки",
     "payments": "Платежі",
     "settings": "Налаштування",
-    "adminDashboard": "Панель",
-    "adminProperties": "Об'єкти",
-    "adminUsers": "Користувачі",
-    "adminLanding": "Лендінг"
+    "adminDashboard": "Панель"
   },
   "meters": {
     "list": {

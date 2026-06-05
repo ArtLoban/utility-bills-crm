@@ -11,10 +11,7 @@
     "bills": "Счета",
     "payments": "Платежи",
     "settings": "Настройки",
-    "adminDashboard": "Панель",
-    "adminProperties": "Объекты",
-    "adminUsers": "Пользователи",
-    "adminLanding": "Лендинг"
+    "adminDashboard": "Панель"
   },
   "meters": {
     "list": {

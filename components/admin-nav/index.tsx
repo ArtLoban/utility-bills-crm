@@ -3,20 +3,18 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Shield } from "lucide-react";
-import { useTranslations } from "next-intl";
 import { ROUTES } from "@/lib/routes";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { LanguageSwitcher } from "@/components/language-switcher";
 import type { TNavUser } from "@/lib/types/nav";
 import { AdminNavMobileMenu } from "./components/admin-nav-mobile-menu";
 import { AdminUserDropdown } from "./components/admin-user-dropdown";
 import { NavLink } from "./components/nav-link";
 
 const NAV_LINKS = [
-  { key: "adminDashboard", href: ROUTES.admin.root },
-  { key: "adminProperties", href: ROUTES.admin.properties },
-  { key: "adminUsers", href: ROUTES.admin.users },
-  { key: "adminLanding", href: ROUTES.admin.landing },
+  { label: "Dashboard", href: ROUTES.admin.root },
+  { label: "Properties", href: ROUTES.admin.properties },
+  { label: "Users", href: ROUTES.admin.users },
+  { label: "Landing", href: ROUTES.admin.landing },
 ] as const;
 
 type TProps = {
@@ -25,14 +23,13 @@ type TProps = {
 
 export const AdminNav = ({ user }: TProps) => {
   const pathname = usePathname();
-  const t = useTranslations("nav");
 
   const isActive = (href: string) =>
     href === ROUTES.admin.root ? pathname === href : pathname.startsWith(href);
 
-  const links = NAV_LINKS.map(({ key, href }) => ({
+  const links = NAV_LINKS.map(({ label, href }) => ({
     href,
-    label: t(key),
+    label,
     active: isActive(href),
   }));
 
@@ -62,7 +59,6 @@ export const AdminNav = ({ user }: TProps) => {
               >
                 Go to App
               </Link>
-              <LanguageSwitcher ruEnabled={user.ruLocaleEnabled} />
               <ThemeToggle />
               <div className="bg-border mx-2 h-5 w-px" />
               <AdminUserDropdown user={user} />
