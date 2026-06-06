@@ -7,6 +7,7 @@ import { toast } from "sonner";
 
 import { changeProvider } from "@/features/contracts/actions";
 import { changeProviderSchema } from "@/features/contracts/schema";
+import { useActionErrorHandler } from "@/lib/hooks/use-action-error-handler";
 import type { TChangeProviderFormState } from "@/features/contracts/types";
 import type { TServiceId } from "@/lib/db/schema/services";
 
@@ -19,6 +20,7 @@ const today = () => new Date().toISOString().slice(0, 10);
 export const useChangeProviderForm = ({ serviceId }: TParams) => {
   const t = useTranslations("contracts");
   const router = useRouter();
+  const handleActionError = useActionErrorHandler({ onClose: () => router.back() });
 
   const [form, setForm] = useState<TChangeProviderFormState>({
     providerId: "",
@@ -73,8 +75,7 @@ export const useChangeProviderForm = ({ serviceId }: TParams) => {
           const key = response.error.message as Parameters<typeof t>[0];
           setFormError(t(key));
         } else {
-          toast.error(t("toast.saveError"));
-          router.back();
+          handleActionError(response.error);
         }
         return;
       }

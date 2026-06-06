@@ -6,6 +6,7 @@ import { toast } from "sonner";
 
 import { propertySchema } from "@/features/properties/schema";
 import { createProperty, editProperty } from "@/features/properties/actions";
+import { useActionErrorHandler } from "@/lib/hooks/use-action-error-handler";
 import type { TPropertyDetail } from "@/app/(app)/properties/[id]/_data/queries";
 import type { TFormState } from "@/features/properties/types";
 
@@ -23,6 +24,7 @@ const makeInitialState = (property?: TPropertyDetail): TFormState => ({
 
 export const usePropertyForm = ({ property, onClose }: TParams) => {
   const t = useTranslations("properties");
+  const handleActionError = useActionErrorHandler({ onClose });
   const [form, setForm] = useState<TFormState>(() => makeInitialState(property));
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [formError, setFormError] = useState<string | null>(null);
@@ -59,12 +61,11 @@ export const usePropertyForm = ({ property, onClose }: TParams) => {
 
       if (!response.ok) {
         // ValidationError → inline per decision #105 (form validation never a toast).
-        // NotFoundError → guard failure (user lost access between open and save); toast + close.
+        // DemoModeError / NotFoundError → handled by shared error handler.
         if (response.error.name === "ValidationError") {
           setFormError(t("modal.formError"));
         } else {
-          toast.error(t("toast.saveError"));
-          onClose();
+          handleActionError(response.error);
         }
         return;
       }

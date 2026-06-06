@@ -14,6 +14,7 @@ import type { TPaymentGlobalRow } from "@/features/payments/types";
 import { paymentSchema } from "../schema";
 import type { TPaymentFormValues } from "../types";
 import { recordPayment, editPayment } from "../actions";
+import { useActionErrorHandler } from "@/lib/hooks/use-action-error-handler";
 import type { PaymentId } from "@/lib/db/schema/payments";
 
 const todayIso = (): string => new Date().toISOString().slice(0, 10);
@@ -33,6 +34,8 @@ type TParams = {
 };
 
 export const usePaymentForm = ({ payment, propertyOptions, serviceOptions, onClose }: TParams) => {
+  // No onClose on error — payment modal stays open so the user can correct or acknowledge.
+  const handleActionError = useActionErrorHandler({});
   const isEditMode = payment !== undefined;
 
   const form = useForm<TPaymentFormValues>({
@@ -80,7 +83,7 @@ export const usePaymentForm = ({ payment, propertyOptions, serviceOptions, onClo
         notes: data.notes,
       });
       if (!result.ok) {
-        toast.error(result.error.message ?? "Failed to update payment.");
+        handleActionError(result.error);
         return;
       }
       toast.success("Payment updated");
@@ -92,7 +95,7 @@ export const usePaymentForm = ({ payment, propertyOptions, serviceOptions, onClo
         notes: data.notes,
       });
       if (!result.ok) {
-        toast.error(result.error.message ?? "Failed to record payment.");
+        handleActionError(result.error);
         return;
       }
       toast.success("Payment recorded");

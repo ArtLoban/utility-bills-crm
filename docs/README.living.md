@@ -584,6 +584,9 @@ Rationale: the "product-first" framing had begun to systematically under-scope f
 >
 > **#142 — Demo theme/locale = cookie-only (DB write skipped); `setRuLocaleEnabled` = full block.**
 > `setTheme` and `setLocale` write the preference cookie (so the UI reflects the change immediately) but skip the `db.update` when `session.user.isDemo` is true. This preserves the presentational demo experience without persisting state to a shared demo account. `setRuLocaleEnabled` is a settings action (not presentational) — it uses `requireMutableUser` and returns `err(DemoModeError)` like all other mutations. Rejected: no carve-out for all three (theme/locale changes would silently fail to apply during the demo); cookie-only for all three (locale enable/disable has no cookie, only DB state).
+>
+> **#143 — Demo-blocked feedback: info toast (not modal), single shared i18n key, persistent banner.**
+> Overrides #96 (which proposed a friendly frontend modal): a toast avoids modal-over-modal stacking and requires less code. Toast type is `info` not `error` — the demo user is exploring, not encountering a failure; the modal is intentionally left open. All 9 mutating form hooks share a single `useActionErrorHandler` hook (`lib/hooks/use-action-error-handler.ts`) that intercepts `DemoModeError` and shows `common.demoBlocked`. This is a deliberate deviation from the per-feature #124 i18n norm: the error class is global (same guard, same `DemoModeError`) so it belongs in a shared namespace. A `DemoBanner` component in the app shell (`app/(app)/layout.tsx`) shows the demo context on every page while signed in as the demo user; it is always visible and not dismissible.
 
 ## Open Questions
 

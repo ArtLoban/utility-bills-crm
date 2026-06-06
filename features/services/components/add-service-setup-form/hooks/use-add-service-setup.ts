@@ -8,6 +8,7 @@ import { toast } from "sonner";
 
 import { createServiceWithSetup } from "@/features/services/actions.composite";
 import { createServiceWithSetupSchema } from "@/features/services/schema";
+import { useActionErrorHandler } from "@/lib/hooks/use-action-error-handler";
 import type { TCreateServiceWithSetupInput } from "@/features/services/schema";
 import type { PropertyId } from "@/lib/db/schema/properties";
 import type { TServiceType } from "@/lib/db/schema/service-types";
@@ -57,6 +58,7 @@ const buildActionInput = (
 export const useAddServiceSetup = ({ propertyId, serviceTypes }: TParams) => {
   const t = useTranslations("services.serviceForm");
   const router = useRouter();
+  const handleActionError = useActionErrorHandler({ onClose: () => router.back() });
   const [meterEngaged, setMeterEngaged] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
@@ -122,8 +124,7 @@ export const useAddServiceSetup = ({ propertyId, serviceTypes }: TParams) => {
         if (result.error.name === "ValidationError") {
           setFormError(resolveFormError(result.error.message));
         } else {
-          toast.error(t("error.generic"));
-          router.back();
+          handleActionError(result.error);
         }
         return;
       }

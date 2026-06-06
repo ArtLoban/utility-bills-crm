@@ -1,7 +1,13 @@
 {
   "common": {
     "appName": "Utility Bills CRM",
-    "signIn": "Sign in"
+    "signIn": "Sign in",
+    "demoBlocked": "This action isn't available in demo mode.",
+    "saveError": "Failed to save. Please try again.",
+    "demoBanner": {
+      "message": "Demo mode",
+      "cta": "Sign in with Google for full access"
+    }
   },
   "nav": {
     "dashboard": "Dashboard",

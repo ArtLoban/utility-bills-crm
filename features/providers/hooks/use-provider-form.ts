@@ -6,6 +6,7 @@ import { toast } from "sonner";
 
 import { providerSchema } from "@/features/providers/schema";
 import { createProvider, editProvider } from "@/features/providers/actions";
+import { useActionErrorHandler } from "@/lib/hooks/use-action-error-handler";
 import type { TFormState } from "@/features/providers/types";
 import type { TProvider } from "@/lib/db/schema/providers";
 
@@ -23,6 +24,7 @@ const makeInitialState = (provider?: TProvider): TFormState => ({
 
 export const useProviderForm = ({ provider, onClose }: TParams) => {
   const t = useTranslations("providers");
+  const handleActionError = useActionErrorHandler({ onClose });
   const [form, setForm] = useState<TFormState>(() => makeInitialState(provider));
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [formError, setFormError] = useState<string | null>(null);
@@ -59,12 +61,11 @@ export const useProviderForm = ({ provider, onClose }: TParams) => {
 
       if (!response.ok) {
         // ValidationError → inline per decision #105 (form validation never a toast).
-        // NotFoundError → guard failure (provider deleted or access lost); toast + close.
+        // DemoModeError / NotFoundError → handled by shared error handler.
         if (response.error.name === "ValidationError") {
           setFormError(t("modal.formError"));
         } else {
-          toast.error(t("toast.saveError"));
-          onClose();
+          handleActionError(response.error);
         }
         return;
       }

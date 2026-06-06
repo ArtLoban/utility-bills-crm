@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { editService } from "@/features/services/actions";
+import { useActionErrorHandler } from "@/lib/hooks/use-action-error-handler";
 import type { TServiceId } from "@/lib/db/schema/services";
 
 type TParams = {
@@ -14,6 +15,7 @@ type TParams = {
 
 export const useEditService = ({ serviceId, initialNotes }: TParams) => {
   const router = useRouter();
+  const handleActionError = useActionErrorHandler({ onClose: () => router.back() });
   const [notes, setNotes] = useState(initialNotes ?? "");
   const [formError, setFormError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
@@ -27,8 +29,7 @@ export const useEditService = ({ serviceId, initialNotes }: TParams) => {
         if (result.error.name === "ValidationError") {
           setFormError(result.error.message);
         } else {
-          toast.error("Failed to save notes. Please try again.");
-          router.back();
+          handleActionError(result.error);
         }
         return;
       }

@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { ROUTES } from "@/lib/routes";
 import { AppNav } from "@/components/app-nav";
+import { DemoBanner } from "@/components/demo-banner";
 
 type Props = {
   children: ReactNode;
@@ -12,7 +13,7 @@ export default async function AppLayout({ children }: Props) {
   const session = await auth();
   if (!session) redirect(ROUTES.login);
 
-  const { id, name, email, image, systemRole, ruLocaleEnabled } = session.user;
+  const { id, name, email, image, systemRole, ruLocaleEnabled, isDemo } = session.user;
 
   return (
     <div className="flex min-h-full flex-col">
@@ -26,6 +27,7 @@ export default async function AppLayout({ children }: Props) {
           ruLocaleEnabled,
         }}
       />
+      {isDemo && <DemoBanner />}
       <div className="flex flex-1 flex-col">{children}</div>
     </div>
   );

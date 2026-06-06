@@ -5,6 +5,7 @@ import { toast } from "sonner";
 
 import { createBill, editBill } from "@/features/bills/actions";
 import { getExpectedAmountHintAction } from "@/features/ledger/actions";
+import { useActionErrorHandler } from "@/lib/hooks/use-action-error-handler";
 import type { TExpectedAmount } from "@/features/ledger/types";
 import type { PropertyId } from "@/lib/db/schema/properties";
 import type { TServiceId } from "@/lib/db/schema/services";
@@ -46,6 +47,7 @@ const buildInitialState = (bill: TBillGlobalRow | undefined): TFormState => {
 };
 
 export const useBillForm = ({ bill, serviceOptions = {}, onClose }: TUseBillFormProps) => {
+  const handleActionError = useActionErrorHandler({ onClose });
   const isEditMode = Boolean(bill);
   const [form, setForm] = useState<TFormState>(() => buildInitialState(bill));
   const [formError, setFormError] = useState<string | null>(null);
@@ -96,8 +98,7 @@ export const useBillForm = ({ bill, serviceOptions = {}, onClose }: TUseBillForm
           if (result.error.name === "ValidationError") {
             setFormError(result.error.message);
           } else {
-            toast.error("Failed to save bill. Please try again.");
-            onClose();
+            handleActionError(result.error);
           }
           return;
         }
@@ -113,8 +114,7 @@ export const useBillForm = ({ bill, serviceOptions = {}, onClose }: TUseBillForm
           if (result.error.name === "ValidationError") {
             setFormError(result.error.message);
           } else {
-            toast.error("Failed to create bill. Please try again.");
-            onClose();
+            handleActionError(result.error);
           }
           return;
         }

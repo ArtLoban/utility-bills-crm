@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import type { ReadingId, TReading } from "@/lib/db/schema/readings";
 import type { TMeter } from "@/lib/db/schema/meters";
 import { createReading, updateReading } from "@/features/readings/actions";
+import { useActionErrorHandler } from "@/lib/hooks/use-action-error-handler";
 
 type TFormState = {
   readAt: string;
@@ -59,6 +60,7 @@ const parseValue = (s: string): number | undefined => {
 };
 
 export const useReadingForm = ({ meter, reading, lastReading, onClose }: TParams) => {
+  const handleActionError = useActionErrorHandler({ onClose });
   const isEditMode = reading !== undefined;
 
   const [form, setForm] = useState<TFormState>(() => makeInitialState(reading));
@@ -116,8 +118,7 @@ export const useReadingForm = ({ meter, reading, lastReading, onClose }: TParams
           if (result.error.name === "ValidationError") {
             setFormError(result.error.message);
           } else {
-            toast.error("Failed to update reading");
-            onClose();
+            handleActionError(result.error);
           }
           return;
         }
@@ -137,8 +138,7 @@ export const useReadingForm = ({ meter, reading, lastReading, onClose }: TParams
           if (result.error.name === "ValidationError") {
             setFormError(result.error.message);
           } else {
-            toast.error("Failed to save reading");
-            onClose();
+            handleActionError(result.error);
           }
           return;
         }
