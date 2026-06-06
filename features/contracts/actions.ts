@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { and, eq, isNull } from "drizzle-orm";
 
-import { auth } from "@/lib/auth";
+import { requireMutableUser } from "@/lib/auth/guards";
 import { db } from "@/lib/db/client";
 import { contracts } from "@/lib/db/schema/contracts";
 import type { TContract, TContractId } from "@/lib/db/schema/contracts";
@@ -12,12 +12,11 @@ import { accountNumbers } from "@/lib/db/schema/account-numbers";
 import { paymentDetails } from "@/lib/db/schema/payment-details";
 import type { ProviderId } from "@/lib/db/schema/providers";
 import type { TServiceId } from "@/lib/db/schema/services";
-import type { UserId } from "@/lib/db/schema/auth";
 import { contractByIdForUser, currentContractForService } from "@/lib/db/access/contracts";
 import { providerByIdForUser } from "@/lib/db/access/providers";
 import { requirePropertyRole } from "@/lib/db/access/properties";
 import { serviceByIdForUser } from "@/lib/db/access/services";
-import { NotFoundError, ValidationError, err, ok } from "@/lib/errors";
+import { DemoModeError, NotFoundError, ValidationError, err, ok } from "@/lib/errors";
 import type { Result } from "@/lib/errors";
 import { insertContractInternal } from "./lib";
 import { changeProviderSchema, createContractSchema, updateContractNotesSchema } from "./schema";
@@ -26,13 +25,6 @@ import type {
   TCreateContractInput,
   TUpdateContractNotesInput,
 } from "./schema";
-
-// Throws on unauthenticated access — unexpected error, not a domain error.
-const requireAuth = async (): Promise<UserId> => {
-  const session = await auth();
-  if (!session?.user?.id) throw new Error("Unauthenticated");
-  return session.user.id as UserId;
-};
 
 // PostgreSQL error code 23P01 = exclusion_violation.
 const isExclusionViolation = (error: unknown): boolean =>
@@ -43,13 +35,15 @@ const isExclusionViolation = (error: unknown): boolean =>
 
 export const createContract = async (
   input: TCreateContractInput,
-): Promise<Result<TContract, ValidationError | NotFoundError>> => {
+): Promise<Result<TContract, ValidationError | NotFoundError | DemoModeError>> => {
   const parsed = createContractSchema.safeParse(input);
   if (!parsed.success) {
     return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
   }
 
-  const userId = await requireAuth();
+  const authGuard = await requireMutableUser();
+  if (!authGuard.ok) return authGuard;
+  const userId = authGuard.value;
   const serviceId = parsed.data.serviceId as TServiceId;
   const providerId = parsed.data.providerId as ProviderId;
 
@@ -94,8 +88,10 @@ export const createContract = async (
 export const closeContract = async (
   contractId: TContractId,
   validTo: Date,
-): Promise<Result<void, ValidationError | NotFoundError>> => {
-  const userId = await requireAuth();
+): Promise<Result<void, ValidationError | NotFoundError | DemoModeError>> => {
+  const authGuard = await requireMutableUser();
+  if (!authGuard.ok) return authGuard;
+  const userId = authGuard.value;
 
   const contractAccess = await contractByIdForUser(userId, contractId);
   if (!contractAccess.ok) return contractAccess;
@@ -128,13 +124,15 @@ export const closeContract = async (
 
 export const changeProvider = async (
   input: TChangeProviderInput,
-): Promise<Result<TContract, ValidationError | NotFoundError>> => {
+): Promise<Result<TContract, ValidationError | NotFoundError | DemoModeError>> => {
   const parsed = changeProviderSchema.safeParse(input);
   if (!parsed.success) {
     return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
   }
 
-  const userId = await requireAuth();
+  const authGuard = await requireMutableUser();
+  if (!authGuard.ok) return authGuard;
+  const userId = authGuard.value;
   const serviceId = parsed.data.serviceId as TServiceId;
   const newProviderId = parsed.data.newProviderId as ProviderId;
   const changeDate = new Date(parsed.data.changeDate);
@@ -197,13 +195,15 @@ export const changeProvider = async (
 export const updateContractNotes = async (
   contractId: TContractId,
   input: TUpdateContractNotesInput,
-): Promise<Result<void, ValidationError | NotFoundError>> => {
+): Promise<Result<void, ValidationError | NotFoundError | DemoModeError>> => {
   const parsed = updateContractNotesSchema.safeParse(input);
   if (!parsed.success) {
     return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
   }
 
-  const userId = await requireAuth();
+  const authGuard = await requireMutableUser();
+  if (!authGuard.ok) return authGuard;
+  const userId = authGuard.value;
 
   const contractAccess = await contractByIdForUser(userId, contractId);
   if (!contractAccess.ok) return contractAccess;
@@ -231,8 +231,10 @@ export const updateContractNotes = async (
 
 export const softDeleteContract = async (
   contractId: TContractId,
-): Promise<Result<void, NotFoundError>> => {
-  const userId = await requireAuth();
+): Promise<Result<void, NotFoundError | DemoModeError>> => {
+  const authGuard = await requireMutableUser();
+  if (!authGuard.ok) return authGuard;
+  const userId = authGuard.value;
 
   const contractAccess = await contractByIdForUser(userId, contractId);
   if (!contractAccess.ok) return contractAccess;

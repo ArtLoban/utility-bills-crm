@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { and, eq, inArray, isNull } from "drizzle-orm";
 
-import { auth } from "@/lib/auth";
+import { requireMutableUser } from "@/lib/auth/guards";
 import { db } from "@/lib/db/client";
 import { contracts } from "@/lib/db/schema/contracts";
 import { tariffs } from "@/lib/db/schema/tariffs";
@@ -13,38 +13,30 @@ import { services } from "@/lib/db/schema/services";
 import type { TService, TServiceId } from "@/lib/db/schema/services";
 import type { PropertyId } from "@/lib/db/schema/properties";
 import type { TServiceTypeId } from "@/lib/db/schema/service-types";
-import type { UserId } from "@/lib/db/schema/auth";
 import { requirePropertyRole } from "@/lib/db/access/properties";
-import { NotFoundError, ValidationError, err, ok } from "@/lib/errors";
+import { DemoModeError, NotFoundError, ValidationError, err, ok } from "@/lib/errors";
 import type { Result } from "@/lib/errors";
 import { createServiceSchema, editServiceSchema } from "./schema";
 import type { TCreateServiceInput, TEditServiceInput } from "./schema";
 
-// Throws on unauthenticated access — unexpected error, not a domain error.
-// Auth middleware prevents reaching server actions unauthenticated; if it does
-// happen, it is a bug, not a user-facing condition.
-const requireAuth = async (): Promise<UserId> => {
-  const session = await auth();
-  if (!session?.user?.id) throw new Error("Unauthenticated");
-  return session.user.id as UserId;
-};
-
 export const createService = async (
   input: TCreateServiceInput,
-): Promise<Result<TService, ValidationError | NotFoundError>> => {
+): Promise<Result<TService, ValidationError | NotFoundError | DemoModeError>> => {
   const parsed = createServiceSchema.safeParse(input);
   if (!parsed.success) {
     return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
   }
 
-  const currentUserId = await requireAuth();
+  const authGuard = await requireMutableUser();
+  if (!authGuard.ok) return authGuard;
+  const userId = authGuard.value;
 
   // Brand-casts: Zod validated these as UUID strings; branded types are structurally string.
   const propertyId = parsed.data.propertyId as PropertyId;
   const serviceTypeId = parsed.data.serviceTypeId as TServiceTypeId;
   const notes = parsed.data.notes || null;
 
-  const guard = await requirePropertyRole(currentUserId, propertyId, "editor");
+  const guard = await requirePropertyRole(userId, propertyId, "editor");
   if (!guard.ok) return guard;
 
   try {
@@ -73,13 +65,15 @@ export const createService = async (
 export const editService = async (
   serviceId: TServiceId,
   input: TEditServiceInput,
-): Promise<Result<void, ValidationError | NotFoundError>> => {
+): Promise<Result<void, ValidationError | NotFoundError | DemoModeError>> => {
   const parsed = editServiceSchema.safeParse(input);
   if (!parsed.success) {
     return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
   }
 
-  const currentUserId = await requireAuth();
+  const authGuard = await requireMutableUser();
+  if (!authGuard.ok) return authGuard;
+  const userId = authGuard.value;
 
   // Fetch the service's propertyId directly — access check happens via requirePropertyRole below.
   const rows = await db
@@ -93,7 +87,7 @@ export const editService = async (
 
   // Role check covers missing property, no access, and insufficient role.
   // Decision #108: all three surface as NotFoundError — not ForbiddenError.
-  const guard = await requirePropertyRole(currentUserId, propertyId, "editor");
+  const guard = await requirePropertyRole(userId, propertyId, "editor");
   if (!guard.ok) return guard;
 
   await db
@@ -108,8 +102,10 @@ export const editService = async (
 
 export const softDeleteService = async (
   serviceId: TServiceId,
-): Promise<Result<void, NotFoundError>> => {
-  const currentUserId = await requireAuth();
+): Promise<Result<void, NotFoundError | DemoModeError>> => {
+  const authGuard = await requireMutableUser();
+  if (!authGuard.ok) return authGuard;
+  const userId = authGuard.value;
 
   const rows = await db
     .select({ propertyId: services.propertyId })
@@ -120,7 +116,7 @@ export const softDeleteService = async (
   if (rows.length === 0) return err(new NotFoundError("service", serviceId));
   const propertyId = rows[0]!.propertyId;
 
-  const guard = await requirePropertyRole(currentUserId, propertyId, "editor");
+  const guard = await requirePropertyRole(userId, propertyId, "editor");
   if (!guard.ok) return guard;
 
   await db.transaction(async (tx) => {

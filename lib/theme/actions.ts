@@ -23,6 +23,7 @@ export const setTheme = async (theme: TTheme) => {
 
   const session = await auth();
   if (!session?.user?.id) return;
+  if (session.user.isDemo) return;
 
   await db
     .update(users)

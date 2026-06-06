@@ -3,42 +3,34 @@
 import { revalidatePath } from "next/cache";
 import { and, eq, isNull } from "drizzle-orm";
 
-import { auth } from "@/lib/auth";
+import { requireMutableUser } from "@/lib/auth/guards";
 import { db } from "@/lib/db/client";
 import { contracts } from "@/lib/db/schema/contracts";
 import { providers } from "@/lib/db/schema/providers";
 import type { ProviderId, TProvider } from "@/lib/db/schema/providers";
-import type { UserId } from "@/lib/db/schema/auth";
 import { providerByIdForUser } from "@/lib/db/access/providers";
-import { NotFoundError, ValidationError, err, ok } from "@/lib/errors";
+import { DemoModeError, NotFoundError, ValidationError, err, ok } from "@/lib/errors";
 import type { Result } from "@/lib/errors";
 import { providerSchema } from "./schema";
 import type { TProviderInput } from "./schema";
 
-// Throws on unauthenticated access — unexpected error, not a domain error.
-// Auth middleware prevents reaching server actions unauthenticated; if it does
-// happen, it is a bug, not a user-facing condition.
-const requireAuth = async (): Promise<UserId> => {
-  const session = await auth();
-  if (!session?.user?.id) throw new Error("Unauthenticated");
-  return session.user.id as UserId;
-};
-
 export const createProvider = async (
   input: TProviderInput,
-): Promise<Result<TProvider, ValidationError>> => {
+): Promise<Result<TProvider, ValidationError | DemoModeError>> => {
   const parsed = providerSchema.safeParse(input);
   if (!parsed.success) {
     return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
   }
 
-  const currentUserId = await requireAuth();
+  const authGuard = await requireMutableUser();
+  if (!authGuard.ok) return authGuard;
+  const userId = authGuard.value;
   const { name, website, phone, notes } = parsed.data;
 
   const [newProvider] = await db
     .insert(providers)
     .values({
-      ownerId: currentUserId,
+      ownerId: userId,
       name,
       website: website || null,
       phone: phone || null,
@@ -53,15 +45,17 @@ export const createProvider = async (
 export const editProvider = async (
   providerId: ProviderId,
   input: TProviderInput,
-): Promise<Result<void, ValidationError | NotFoundError>> => {
+): Promise<Result<void, ValidationError | NotFoundError | DemoModeError>> => {
   const parsed = providerSchema.safeParse(input);
   if (!parsed.success) {
     return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
   }
 
-  const currentUserId = await requireAuth();
+  const authGuard = await requireMutableUser();
+  if (!authGuard.ok) return authGuard;
+  const userId = authGuard.value;
 
-  const guard = await providerByIdForUser(currentUserId, providerId);
+  const guard = await providerByIdForUser(userId, providerId);
   if (!guard.ok) return guard;
 
   const { name, website, phone, notes } = parsed.data;
@@ -77,10 +71,12 @@ export const editProvider = async (
 
 export const softDeleteProvider = async (
   providerId: ProviderId,
-): Promise<Result<void, NotFoundError | ValidationError>> => {
-  const currentUserId = await requireAuth();
+): Promise<Result<void, NotFoundError | ValidationError | DemoModeError>> => {
+  const authGuard = await requireMutableUser();
+  if (!authGuard.ok) return authGuard;
+  const userId = authGuard.value;
 
-  const guard = await providerByIdForUser(currentUserId, providerId);
+  const guard = await providerByIdForUser(userId, providerId);
   if (!guard.ok) return guard;
 
   // Active-contracts guard: a provider referenced by any non-soft-deleted contract

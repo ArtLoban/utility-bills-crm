@@ -575,6 +575,15 @@ Rationale: the "product-first" framing had begun to systematically under-scope f
 >
 > **#139 — `seed:demo` script: self-contained data-definition module, idempotent reseed via wipe-then-rebuild inside a single transaction.**
 > The script at `lib/db/seeds/demo.seed.ts` creates its own pool+db connection (module-level, so the `TTx` type can be derived from `typeof db`) and wraps all work in a single transaction. Idempotency: (1) find all `isDemo` users → find their owned properties → delete properties (FK cascade removes all children: services, contracts, tariffs, meters, readings, bills, payments, property_access) → delete providers; (2) upsert users by email; (3) rebuild full graph. Non-demo data is never touched. Running `npm run seed:demo` twice yields identical row counts. Rejected alternative: query-and-skip (patchy, error-prone on schema changes); wipe-and-rebuild is the correct baseline for a deterministic fixture.
+>
+> **#140 — Demo enforcement: `DemoModeError` returned as `Result`, `isDemo` projected into session, `requireMutableUser` guard at Server Action boundary.**
+> All 14 mutating Server Action files use a shared `requireMutableUser()` guard (`lib/auth/guards.ts`) that returns `err(new DemoModeError())` for demo users. `DemoModeError extends DomainError` with `name = "DEMO_MODE_BLOCKED"` — discriminated the same way as `NotFoundError`/`ForbiddenError` via `error.name`. `isDemo` is projected into the Auth.js session in `callbacks.session` (same pattern as `locale`, `theme`, `ruLocaleEnabled`) so actions pay zero extra DB round-trips. The guard throws (not returns) on unauthenticated — that path is a bug caught by middleware, not a user-facing condition. Rejected: throw instead of return (breaks the frontend Result-interception pattern in D3b); middleware-level block (too coarse, bypasses the Result contract).
+>
+> **#141 — 13 local `requireAuth` helpers replaced by shared `requireMutableUser` in `lib/auth/guards.ts`.**
+> Every mutating action file contained an identical local `requireAuth` function. Consolidated into one shared guard that adds demo enforcement as a first-class concern. `features/profile/actions.ts` had an inline auth check (no named helper) — migrated to the same pattern. Rejected: keep per-file helpers (perpetuates duplication and requires 13 touch-points for any future auth policy change); middleware only (can't return a typed Result to the calling action).
+>
+> **#142 — Demo theme/locale = cookie-only (DB write skipped); `setRuLocaleEnabled` = full block.**
+> `setTheme` and `setLocale` write the preference cookie (so the UI reflects the change immediately) but skip the `db.update` when `session.user.isDemo` is true. This preserves the presentational demo experience without persisting state to a shared demo account. `setRuLocaleEnabled` is a settings action (not presentational) — it uses `requireMutableUser` and returns `err(DemoModeError)` like all other mutations. Rejected: no carve-out for all three (theme/locale changes would silently fail to apply during the demo); cookie-only for all three (locale enable/disable has no cookie, only DB state).
 
 ## Open Questions
 

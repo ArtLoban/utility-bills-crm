@@ -3,12 +3,11 @@
 import { revalidatePath } from "next/cache";
 import { and, eq, isNull } from "drizzle-orm";
 
-import { auth } from "@/lib/auth";
+import { requireMutableUser } from "@/lib/auth/guards";
 import { db } from "@/lib/db/client";
 import { paymentDetails } from "@/lib/db/schema/payment-details";
 import type { TPaymentDetails, TPaymentDetailsId } from "@/lib/db/schema/payment-details";
 import type { TContractId } from "@/lib/db/schema/contracts";
-import type { UserId } from "@/lib/db/schema/auth";
 import { contractByIdForUser } from "@/lib/db/access/contracts";
 import {
   paymentDetailsByIdForUser,
@@ -16,7 +15,7 @@ import {
 } from "@/lib/db/access/payment-details";
 import { requirePropertyRole } from "@/lib/db/access/properties";
 import { serviceByIdForUser } from "@/lib/db/access/services";
-import { NotFoundError, ValidationError, err, ok } from "@/lib/errors";
+import { DemoModeError, NotFoundError, ValidationError, err, ok } from "@/lib/errors";
 import type { Result } from "@/lib/errors";
 import { insertPaymentDetailsInternal } from "./lib";
 import {
@@ -29,12 +28,6 @@ import type {
   TCreatePaymentDetailsInput,
   TUpdatePaymentDetailsNotesInput,
 } from "./schema";
-
-const requireAuth = async (): Promise<UserId> => {
-  const session = await auth();
-  if (!session?.user?.id) throw new Error("Unauthenticated");
-  return session.user.id as UserId;
-};
 
 const isExclusionViolation = (error: unknown): boolean =>
   typeof error === "object" &&
@@ -58,13 +51,15 @@ const validateTemporalNesting = (
 
 export const createPaymentDetails = async (
   input: TCreatePaymentDetailsInput,
-): Promise<Result<TPaymentDetails, ValidationError | NotFoundError>> => {
+): Promise<Result<TPaymentDetails, ValidationError | NotFoundError | DemoModeError>> => {
   const parsed = createPaymentDetailsSchema.safeParse(input);
   if (!parsed.success) {
     return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
   }
 
-  const userId = await requireAuth();
+  const authGuard = await requireMutableUser();
+  if (!authGuard.ok) return authGuard;
+  const userId = authGuard.value;
   const contractId = parsed.data.contractId as TContractId;
 
   const contractAccess = await contractByIdForUser(userId, contractId);
@@ -115,13 +110,15 @@ export const createPaymentDetails = async (
 
 export const changePaymentDetails = async (
   input: TChangePaymentDetailsInput,
-): Promise<Result<TPaymentDetails, ValidationError | NotFoundError>> => {
+): Promise<Result<TPaymentDetails, ValidationError | NotFoundError | DemoModeError>> => {
   const parsed = changePaymentDetailsSchema.safeParse(input);
   if (!parsed.success) {
     return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
   }
 
-  const userId = await requireAuth();
+  const authGuard = await requireMutableUser();
+  if (!authGuard.ok) return authGuard;
+  const userId = authGuard.value;
   const contractId = parsed.data.contractId as TContractId;
 
   const contractAccess = await contractByIdForUser(userId, contractId);
@@ -184,13 +181,15 @@ export const changePaymentDetails = async (
 export const updatePaymentDetailsNotes = async (
   paymentDetailsId: TPaymentDetailsId,
   input: TUpdatePaymentDetailsNotesInput,
-): Promise<Result<void, ValidationError | NotFoundError>> => {
+): Promise<Result<void, ValidationError | NotFoundError | DemoModeError>> => {
   const parsed = updatePaymentDetailsNotesSchema.safeParse(input);
   if (!parsed.success) {
     return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
   }
 
-  const userId = await requireAuth();
+  const authGuard = await requireMutableUser();
+  if (!authGuard.ok) return authGuard;
+  const userId = authGuard.value;
 
   const access = await paymentDetailsByIdForUser(userId, paymentDetailsId);
   if (!access.ok) return access;
@@ -221,8 +220,10 @@ export const updatePaymentDetailsNotes = async (
 
 export const softDeletePaymentDetails = async (
   paymentDetailsId: TPaymentDetailsId,
-): Promise<Result<void, NotFoundError>> => {
-  const userId = await requireAuth();
+): Promise<Result<void, NotFoundError | DemoModeError>> => {
+  const authGuard = await requireMutableUser();
+  if (!authGuard.ok) return authGuard;
+  const userId = authGuard.value;
 
   const access = await paymentDetailsByIdForUser(userId, paymentDetailsId);
   if (!access.ok) return access;

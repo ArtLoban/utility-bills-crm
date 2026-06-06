@@ -3,26 +3,18 @@
 import { revalidatePath } from "next/cache";
 import { and, eq, isNull } from "drizzle-orm";
 
-import { auth } from "@/lib/auth";
+import { requireMutableUser } from "@/lib/auth/guards";
 import { db } from "@/lib/db/client";
 import { bills } from "@/lib/db/schema/bills";
 import type { BillId, TBill } from "@/lib/db/schema/bills";
 import { services } from "@/lib/db/schema/services";
 import type { TServiceId } from "@/lib/db/schema/services";
-import type { UserId } from "@/lib/db/schema/auth";
 import { billByIdForUser } from "@/lib/db/access/bills";
 import { requirePropertyRole } from "@/lib/db/access/properties";
-import { NotFoundError, ValidationError, err, ok } from "@/lib/errors";
+import { DemoModeError, NotFoundError, ValidationError, err, ok } from "@/lib/errors";
 import type { Result } from "@/lib/errors";
 import { createBillSchema, updateBillSchema } from "./schema";
 import type { TCreateBillInput, TUpdateBillInput } from "./schema";
-
-// Throws on unauthenticated access — unexpected error, not a domain error.
-const requireAuth = async (): Promise<UserId> => {
-  const session = await auth();
-  if (!session?.user?.id) throw new Error("Unauthenticated");
-  return session.user.id as UserId;
-};
 
 // Expands "YYYY-MM" month string into the date triple (ISO date strings).
 const expandMonth = (
@@ -42,13 +34,15 @@ const expandMonth = (
 
 export const createBill = async (
   input: TCreateBillInput,
-): Promise<Result<TBill, ValidationError | NotFoundError>> => {
+): Promise<Result<TBill, ValidationError | NotFoundError | DemoModeError>> => {
   const parsed = createBillSchema.safeParse(input);
   if (!parsed.success) {
     return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
   }
 
-  const userId = await requireAuth();
+  const authGuard = await requireMutableUser();
+  if (!authGuard.ok) return authGuard;
+  const userId = authGuard.value;
   const serviceId = parsed.data.serviceId as TServiceId;
 
   const [service] = await db
@@ -84,13 +78,15 @@ export const createBill = async (
 export const editBill = async (
   billId: BillId,
   input: TUpdateBillInput,
-): Promise<Result<void, ValidationError | NotFoundError>> => {
+): Promise<Result<void, ValidationError | NotFoundError | DemoModeError>> => {
   const parsed = updateBillSchema.safeParse(input);
   if (!parsed.success) {
     return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
   }
 
-  const userId = await requireAuth();
+  const authGuard = await requireMutableUser();
+  if (!authGuard.ok) return authGuard;
+  const userId = authGuard.value;
 
   const access = await billByIdForUser(userId, billId);
   if (!access.ok) return access;
@@ -126,8 +122,12 @@ export const editBill = async (
   return ok(undefined);
 };
 
-export const softDeleteBill = async (billId: BillId): Promise<Result<void, NotFoundError>> => {
-  const userId = await requireAuth();
+export const softDeleteBill = async (
+  billId: BillId,
+): Promise<Result<void, NotFoundError | DemoModeError>> => {
+  const authGuard = await requireMutableUser();
+  if (!authGuard.ok) return authGuard;
+  const userId = authGuard.value;
 
   const access = await billByIdForUser(userId, billId);
   if (!access.ok) return access;

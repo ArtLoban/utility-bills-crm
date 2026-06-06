@@ -3,17 +3,16 @@
 import { revalidatePath } from "next/cache";
 import { eq } from "drizzle-orm";
 
-import { auth } from "@/lib/auth";
+import { requireMutableUser } from "@/lib/auth/guards";
 import { db } from "@/lib/db/client";
 import { serviceTypes } from "@/lib/db/schema/service-types";
 import type { TService } from "@/lib/db/schema/services";
 import type { PropertyId } from "@/lib/db/schema/properties";
 import type { ProviderId } from "@/lib/db/schema/providers";
 import type { TServiceTypeId } from "@/lib/db/schema/service-types";
-import type { UserId } from "@/lib/db/schema/auth";
 import { requirePropertyRole } from "@/lib/db/access/properties";
 import { providerByIdForUser } from "@/lib/db/access/providers";
-import { NotFoundError, ValidationError, err, ok } from "@/lib/errors";
+import { DemoModeError, NotFoundError, ValidationError, err, ok } from "@/lib/errors";
 import type { Result } from "@/lib/errors";
 import { insertServiceInternal } from "./lib";
 import { insertContractInternal } from "@/features/contracts/lib";
@@ -21,12 +20,6 @@ import { insertTariffInternal } from "@/features/tariffs/lib";
 import { insertMeterInternal } from "@/features/meters/lib";
 import { createServiceWithSetupSchema } from "./schema";
 import type { TCreateServiceWithSetupInput } from "./schema";
-
-const requireAuth = async (): Promise<UserId> => {
-  const session = await auth();
-  if (!session?.user?.id) throw new Error("Unauthenticated");
-  return session.user.id as UserId;
-};
 
 // Drizzle 0.45+ wraps pg errors in DrizzleQueryError — the original pg error lands in .cause.
 // Check both the error itself (older Drizzle / raw pg) and its cause (newer Drizzle wrapper).
@@ -78,13 +71,15 @@ const validateTemporalNesting = (
 
 export const createServiceWithSetup = async (
   input: TCreateServiceWithSetupInput,
-): Promise<Result<TService, ValidationError | NotFoundError>> => {
+): Promise<Result<TService, ValidationError | NotFoundError | DemoModeError>> => {
   const parsed = createServiceWithSetupSchema.safeParse(input);
   if (!parsed.success) {
     return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
   }
 
-  const userId = await requireAuth();
+  const authGuard = await requireMutableUser();
+  if (!authGuard.ok) return authGuard;
+  const userId = authGuard.value;
 
   const propertyId = parsed.data.propertyId as PropertyId;
   const serviceTypeId = parsed.data.serviceTypeId as TServiceTypeId;

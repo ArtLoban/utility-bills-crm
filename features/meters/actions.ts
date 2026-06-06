@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { and, eq, isNull } from "drizzle-orm";
 
-import { auth } from "@/lib/auth";
+import { requireMutableUser } from "@/lib/auth/guards";
 import { db } from "@/lib/db/client";
 import { meters } from "@/lib/db/schema/meters";
 import type { MeterId, TMeter } from "@/lib/db/schema/meters";
@@ -11,21 +11,13 @@ import { readings } from "@/lib/db/schema/readings";
 import type { PropertyId } from "@/lib/db/schema/properties";
 import type { TServiceTypeId } from "@/lib/db/schema/service-types";
 import { serviceTypes } from "@/lib/db/schema/service-types";
-import type { UserId } from "@/lib/db/schema/auth";
 import { meterByIdForUser } from "@/lib/db/access/meters";
 import { requirePropertyRole } from "@/lib/db/access/properties";
-import { NotFoundError, ValidationError, err, ok } from "@/lib/errors";
+import { DemoModeError, NotFoundError, ValidationError, err, ok } from "@/lib/errors";
 import type { Result } from "@/lib/errors";
 import { insertMeterInternal } from "./lib";
 import { createMeterSchema, replaceMeterSchema, updateMeterSchema } from "./schema";
 import type { TCreateMeterInput, TReplaceMeterInput, TUpdateMeterInput } from "./schema";
-
-// Throws on unauthenticated access — unexpected error, not a domain error.
-const requireAuth = async (): Promise<UserId> => {
-  const session = await auth();
-  if (!session?.user?.id) throw new Error("Unauthenticated");
-  return session.user.id as UserId;
-};
 
 // PostgreSQL error code 23P01 = exclusion_violation.
 const isExclusionViolation = (error: unknown): boolean =>
@@ -54,13 +46,15 @@ const checkZoneCompatibility = async (
 
 export const createMeter = async (
   input: TCreateMeterInput,
-): Promise<Result<TMeter, ValidationError | NotFoundError>> => {
+): Promise<Result<TMeter, ValidationError | NotFoundError | DemoModeError>> => {
   const parsed = createMeterSchema.safeParse(input);
   if (!parsed.success) {
     return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
   }
 
-  const userId = await requireAuth();
+  const authGuard = await requireMutableUser();
+  if (!authGuard.ok) return authGuard;
+  const userId = authGuard.value;
   const propertyId = parsed.data.propertyId as PropertyId;
   const serviceTypeId = parsed.data.serviceTypeId as TServiceTypeId;
 
@@ -104,13 +98,15 @@ export const createMeter = async (
 export const updateMeter = async (
   meterId: MeterId,
   input: TUpdateMeterInput,
-): Promise<Result<void, ValidationError | NotFoundError>> => {
+): Promise<Result<void, ValidationError | NotFoundError | DemoModeError>> => {
   const parsed = updateMeterSchema.safeParse(input);
   if (!parsed.success) {
     return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
   }
 
-  const userId = await requireAuth();
+  const authGuard = await requireMutableUser();
+  if (!authGuard.ok) return authGuard;
+  const userId = authGuard.value;
 
   const meterAccess = await meterByIdForUser(userId, meterId);
   if (!meterAccess.ok) return meterAccess;
@@ -139,13 +135,15 @@ export const updateMeter = async (
 
 export const replaceMeter = async (
   input: TReplaceMeterInput,
-): Promise<Result<TMeter, ValidationError | NotFoundError>> => {
+): Promise<Result<TMeter, ValidationError | NotFoundError | DemoModeError>> => {
   const parsed = replaceMeterSchema.safeParse(input);
   if (!parsed.success) {
     return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
   }
 
-  const userId = await requireAuth();
+  const authGuard = await requireMutableUser();
+  if (!authGuard.ok) return authGuard;
+  const userId = authGuard.value;
   const currentMeterId = parsed.data.currentMeterId as MeterId;
 
   const meterAccess = await meterByIdForUser(userId, currentMeterId);
@@ -207,8 +205,12 @@ export const replaceMeter = async (
   }
 };
 
-export const softDeleteMeter = async (meterId: MeterId): Promise<Result<void, NotFoundError>> => {
-  const userId = await requireAuth();
+export const softDeleteMeter = async (
+  meterId: MeterId,
+): Promise<Result<void, NotFoundError | DemoModeError>> => {
+  const authGuard = await requireMutableUser();
+  if (!authGuard.ok) return authGuard;
+  const userId = authGuard.value;
 
   const meterAccess = await meterByIdForUser(userId, meterId);
   if (!meterAccess.ok) return meterAccess;

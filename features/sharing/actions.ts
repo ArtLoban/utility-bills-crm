@@ -3,39 +3,39 @@
 import { revalidatePath } from "next/cache";
 import { and, eq, isNull } from "drizzle-orm";
 
-import { auth } from "@/lib/auth";
+import { requireMutableUser } from "@/lib/auth/guards";
 import { db } from "@/lib/db/client";
 import { propertyAccess } from "@/lib/db/schema/properties";
 import type { PropertyId } from "@/lib/db/schema/properties";
 import { users } from "@/lib/db/schema/auth";
 import type { UserId } from "@/lib/db/schema/auth";
 import { requirePropertyRole } from "@/lib/db/access/properties";
-import { ForbiddenError, NotFoundError, ValidationError, err, ok } from "@/lib/errors";
+import {
+  DemoModeError,
+  ForbiddenError,
+  NotFoundError,
+  ValidationError,
+  err,
+  ok,
+} from "@/lib/errors";
 import type { Result } from "@/lib/errors";
 import { inviteSchema, changeRoleSchema, removeAccessSchema } from "./schema";
 import type { TInviteInput, TChangeRoleInput, TRemoveAccessInput } from "./schema";
 
-// Throws on unauthenticated access — unexpected error, not a domain error.
-// Auth middleware prevents reaching server actions unauthenticated; if it does
-// happen, it is a bug, not a user-facing condition.
-const requireAuth = async (): Promise<UserId> => {
-  const session = await auth();
-  if (!session?.user?.id) throw new Error("Unauthenticated");
-  return session.user.id as UserId;
-};
-
 export const inviteToProperty = async (
   propertyId: PropertyId,
   input: TInviteInput,
-): Promise<Result<void, ValidationError | NotFoundError>> => {
+): Promise<Result<void, ValidationError | NotFoundError | DemoModeError>> => {
   const parsed = inviteSchema.safeParse(input);
   if (!parsed.success) {
     return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
   }
 
-  const currentUserId = await requireAuth();
+  const authGuard = await requireMutableUser();
+  if (!authGuard.ok) return authGuard;
+  const userId = authGuard.value;
 
-  const guard = await requirePropertyRole(currentUserId, propertyId, "owner");
+  const guard = await requirePropertyRole(userId, propertyId, "owner");
   if (!guard.ok) return guard;
 
   const { email, role } = parsed.data;
@@ -71,7 +71,7 @@ export const inviteToProperty = async (
     propertyId,
     userId: targetUser.id,
     propertyRole: role,
-    grantedBy: currentUserId,
+    grantedBy: userId,
   });
 
   revalidatePath(`/properties/${propertyId}/sharing`);
@@ -81,15 +81,17 @@ export const inviteToProperty = async (
 export const changePropertyRole = async (
   propertyId: PropertyId,
   input: TChangeRoleInput,
-): Promise<Result<void, ValidationError | NotFoundError | ForbiddenError>> => {
+): Promise<Result<void, ValidationError | NotFoundError | ForbiddenError | DemoModeError>> => {
   const parsed = changeRoleSchema.safeParse(input);
   if (!parsed.success) {
     return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
   }
 
-  const currentUserId = await requireAuth();
+  const authGuard = await requireMutableUser();
+  if (!authGuard.ok) return authGuard;
+  const userId = authGuard.value;
 
-  const guard = await requirePropertyRole(currentUserId, propertyId, "owner");
+  const guard = await requirePropertyRole(userId, propertyId, "owner");
   if (!guard.ok) return guard;
 
   const { targetUserId, newRole } = parsed.data;
@@ -115,7 +117,7 @@ export const changePropertyRole = async (
   }
 
   // Another owner's role is immutable — only that owner can act on their own ownership.
-  if (targetUserId !== currentUserId && targetAccess.role === "owner") {
+  if (targetUserId !== userId && targetAccess.role === "owner") {
     return err(new ForbiddenError("OWNER_PROTECTED"));
   }
 
@@ -155,21 +157,23 @@ export const changePropertyRole = async (
 export const removePropertyAccess = async (
   propertyId: PropertyId,
   input: TRemoveAccessInput,
-): Promise<Result<void, NotFoundError | ForbiddenError>> => {
+): Promise<Result<void, NotFoundError | ForbiddenError | DemoModeError>> => {
   const parsed = removeAccessSchema.safeParse(input);
   if (!parsed.success) {
     return err(new ForbiddenError("Invalid input"));
   }
 
-  const currentUserId = await requireAuth();
+  const authGuard = await requireMutableUser();
+  if (!authGuard.ok) return authGuard;
+  const userId = authGuard.value;
 
-  const guard = await requirePropertyRole(currentUserId, propertyId, "owner");
+  const guard = await requirePropertyRole(userId, propertyId, "owner");
   if (!guard.ok) return guard;
 
   const { targetUserId } = parsed.data;
 
   // Self-removal uses leaveProperty — this action is for removing others.
-  if (targetUserId === currentUserId) {
+  if (targetUserId === userId) {
     return err(new ForbiddenError("SELF_REMOVAL_NOT_ALLOWED"));
   }
 
@@ -205,8 +209,10 @@ export const removePropertyAccess = async (
 
 export const leaveProperty = async (
   propertyId: PropertyId,
-): Promise<Result<void, NotFoundError | ForbiddenError>> => {
-  const currentUserId = await requireAuth();
+): Promise<Result<void, NotFoundError | ForbiddenError | DemoModeError>> => {
+  const authGuard = await requireMutableUser();
+  if (!authGuard.ok) return authGuard;
+  const userId = authGuard.value;
 
   const [ownAccess] = await db
     .select({ id: propertyAccess.id, role: propertyAccess.propertyRole })
@@ -214,7 +220,7 @@ export const leaveProperty = async (
     .where(
       and(
         eq(propertyAccess.propertyId, propertyId),
-        eq(propertyAccess.userId, currentUserId),
+        eq(propertyAccess.userId, userId),
         isNull(propertyAccess.deletedAt),
       ),
     )

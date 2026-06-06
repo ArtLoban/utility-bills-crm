@@ -3,12 +3,11 @@
 import { revalidatePath } from "next/cache";
 import { and, eq, isNull } from "drizzle-orm";
 
-import { auth } from "@/lib/auth";
+import { requireMutableUser } from "@/lib/auth/guards";
 import { db } from "@/lib/db/client";
 import { accountNumbers } from "@/lib/db/schema/account-numbers";
 import type { TAccountNumber, TAccountNumberId } from "@/lib/db/schema/account-numbers";
 import type { TContractId } from "@/lib/db/schema/contracts";
-import type { UserId } from "@/lib/db/schema/auth";
 import { contractByIdForUser } from "@/lib/db/access/contracts";
 import {
   accountNumberByIdForUser,
@@ -16,7 +15,7 @@ import {
 } from "@/lib/db/access/account-numbers";
 import { requirePropertyRole } from "@/lib/db/access/properties";
 import { serviceByIdForUser } from "@/lib/db/access/services";
-import { NotFoundError, ValidationError, err, ok } from "@/lib/errors";
+import { DemoModeError, NotFoundError, ValidationError, err, ok } from "@/lib/errors";
 import type { Result } from "@/lib/errors";
 import { insertAccountNumberInternal } from "./lib";
 import {
@@ -29,12 +28,6 @@ import type {
   TCreateAccountNumberInput,
   TUpdateAccountNumberNotesInput,
 } from "./schema";
-
-const requireAuth = async (): Promise<UserId> => {
-  const session = await auth();
-  if (!session?.user?.id) throw new Error("Unauthenticated");
-  return session.user.id as UserId;
-};
 
 const isExclusionViolation = (error: unknown): boolean =>
   typeof error === "object" &&
@@ -58,13 +51,14 @@ const validateTemporalNesting = (
 
 export const createAccountNumber = async (
   input: TCreateAccountNumberInput,
-): Promise<Result<TAccountNumber, ValidationError | NotFoundError>> => {
+): Promise<Result<TAccountNumber, ValidationError | NotFoundError | DemoModeError>> => {
   const parsed = createAccountNumberSchema.safeParse(input);
   if (!parsed.success) {
     return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
   }
-
-  const userId = await requireAuth();
+  const authGuard = await requireMutableUser();
+  if (!authGuard.ok) return authGuard;
+  const userId = authGuard.value;
   const contractId = parsed.data.contractId as TContractId;
 
   const contractAccess = await contractByIdForUser(userId, contractId);
@@ -115,13 +109,15 @@ export const createAccountNumber = async (
 
 export const changeAccountNumber = async (
   input: TChangeAccountNumberInput,
-): Promise<Result<TAccountNumber, ValidationError | NotFoundError>> => {
+): Promise<Result<TAccountNumber, ValidationError | NotFoundError | DemoModeError>> => {
   const parsed = changeAccountNumberSchema.safeParse(input);
   if (!parsed.success) {
     return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
   }
 
-  const userId = await requireAuth();
+  const authGuard = await requireMutableUser();
+  if (!authGuard.ok) return authGuard;
+  const userId = authGuard.value;
   const contractId = parsed.data.contractId as TContractId;
 
   const contractAccess = await contractByIdForUser(userId, contractId);
@@ -184,13 +180,15 @@ export const changeAccountNumber = async (
 export const updateAccountNumberNotes = async (
   accountNumberId: TAccountNumberId,
   input: TUpdateAccountNumberNotesInput,
-): Promise<Result<void, ValidationError | NotFoundError>> => {
+): Promise<Result<void, ValidationError | NotFoundError | DemoModeError>> => {
   const parsed = updateAccountNumberNotesSchema.safeParse(input);
   if (!parsed.success) {
     return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
   }
 
-  const userId = await requireAuth();
+  const authGuard = await requireMutableUser();
+  if (!authGuard.ok) return authGuard;
+  const userId = authGuard.value;
 
   const access = await accountNumberByIdForUser(userId, accountNumberId);
   if (!access.ok) return access;
@@ -221,8 +219,10 @@ export const updateAccountNumberNotes = async (
 
 export const softDeleteAccountNumber = async (
   accountNumberId: TAccountNumberId,
-): Promise<Result<void, NotFoundError>> => {
-  const userId = await requireAuth();
+): Promise<Result<void, NotFoundError | DemoModeError>> => {
+  const authGuard = await requireMutableUser();
+  if (!authGuard.ok) return authGuard;
+  const userId = authGuard.value;
 
   const access = await accountNumberByIdForUser(userId, accountNumberId);
   if (!access.ok) return access;

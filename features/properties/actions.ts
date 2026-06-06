@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { and, eq, inArray, isNull } from "drizzle-orm";
 
-import { auth } from "@/lib/auth";
+import { requireMutableUser } from "@/lib/auth/guards";
 import { db } from "@/lib/db/client";
 import { accountNumbers } from "@/lib/db/schema/account-numbers";
 import { contracts } from "@/lib/db/schema/contracts";
@@ -16,31 +16,23 @@ import { properties, propertyAccess } from "@/lib/db/schema/properties";
 import { services } from "@/lib/db/schema/services";
 import { tariffs } from "@/lib/db/schema/tariffs";
 import type { PropertyId, TProperty } from "@/lib/db/schema/properties";
-import type { UserId } from "@/lib/db/schema/auth";
 import { requirePropertyRole } from "@/lib/db/access/properties";
-import { ValidationError, err, ok } from "@/lib/errors";
+import { DemoModeError, ValidationError, err, ok } from "@/lib/errors";
 import type { NotFoundError, Result } from "@/lib/errors";
 import { propertySchema } from "./schema";
 import type { TPropertyInput } from "./schema";
 
-// Throws on unauthenticated access — unexpected error, not a domain error.
-// Auth middleware prevents reaching server actions unauthenticated; if it does
-// happen, it is a bug, not a user-facing condition.
-const requireAuth = async (): Promise<UserId> => {
-  const session = await auth();
-  if (!session?.user?.id) throw new Error("Unauthenticated");
-  return session.user.id as UserId;
-};
-
 export const createProperty = async (
   input: TPropertyInput,
-): Promise<Result<TProperty, ValidationError>> => {
+): Promise<Result<TProperty, ValidationError | DemoModeError>> => {
   const parsed = propertySchema.safeParse(input);
   if (!parsed.success) {
     return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
   }
 
-  const currentUserId = await requireAuth();
+  const authGuard = await requireMutableUser();
+  if (!authGuard.ok) return authGuard;
+  const userId = authGuard.value;
   const { name, type, address, notes } = parsed.data;
 
   const property = await db.transaction(async (tx) => {
@@ -51,9 +43,9 @@ export const createProperty = async (
 
     await tx.insert(propertyAccess).values({
       propertyId: newProperty!.id,
-      userId: currentUserId,
+      userId,
       propertyRole: "owner",
-      grantedBy: currentUserId,
+      grantedBy: userId,
     });
 
     return newProperty!;
@@ -66,15 +58,17 @@ export const createProperty = async (
 export const editProperty = async (
   propertyId: PropertyId,
   input: TPropertyInput,
-): Promise<Result<void, ValidationError | NotFoundError>> => {
+): Promise<Result<void, ValidationError | NotFoundError | DemoModeError>> => {
   const parsed = propertySchema.safeParse(input);
   if (!parsed.success) {
     return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
   }
 
-  const currentUserId = await requireAuth();
+  const authGuard = await requireMutableUser();
+  if (!authGuard.ok) return authGuard;
+  const userId = authGuard.value;
 
-  const guard = await requirePropertyRole(currentUserId, propertyId, "editor");
+  const guard = await requirePropertyRole(userId, propertyId, "editor");
   if (!guard.ok) return guard;
 
   const { name, type, address, notes } = parsed.data;
@@ -91,10 +85,12 @@ export const editProperty = async (
 
 export const softDeleteProperty = async (
   propertyId: PropertyId,
-): Promise<Result<void, NotFoundError>> => {
-  const currentUserId = await requireAuth();
+): Promise<Result<void, NotFoundError | DemoModeError>> => {
+  const authGuard = await requireMutableUser();
+  if (!authGuard.ok) return authGuard;
+  const userId = authGuard.value;
 
-  const guard = await requirePropertyRole(currentUserId, propertyId, "owner");
+  const guard = await requirePropertyRole(userId, propertyId, "owner");
   if (!guard.ok) return guard;
 
   await db.transaction(async (tx) => {

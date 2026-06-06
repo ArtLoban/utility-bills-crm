@@ -3,27 +3,20 @@
 import { revalidatePath } from "next/cache";
 import { and, eq, isNull } from "drizzle-orm";
 
-import { auth } from "@/lib/auth";
+import { requireMutableUser } from "@/lib/auth/guards";
 import { db } from "@/lib/db/client";
 import { tariffs } from "@/lib/db/schema/tariffs";
 import type { TTariff, TTariffId } from "@/lib/db/schema/tariffs";
 import type { TContractId } from "@/lib/db/schema/contracts";
-import type { UserId } from "@/lib/db/schema/auth";
 import { contractByIdForUser } from "@/lib/db/access/contracts";
 import { tariffByIdForUser, currentTariffForContract } from "@/lib/db/access/tariffs";
 import { requirePropertyRole } from "@/lib/db/access/properties";
 import { serviceByIdForUser } from "@/lib/db/access/services";
-import { NotFoundError, ValidationError, err, ok } from "@/lib/errors";
+import { DemoModeError, NotFoundError, ValidationError, err, ok } from "@/lib/errors";
 import type { Result } from "@/lib/errors";
 import { insertTariffInternal } from "./lib";
 import { changeTariffSchema, createTariffSchema, updateTariffNotesSchema } from "./schema";
 import type { TChangeTariffInput, TCreateTariffInput, TUpdateTariffNotesInput } from "./schema";
-
-const requireAuth = async (): Promise<UserId> => {
-  const session = await auth();
-  if (!session?.user?.id) throw new Error("Unauthenticated");
-  return session.user.id as UserId;
-};
 
 // PostgreSQL error code 23P01 = exclusion_violation.
 const isExclusionViolation = (error: unknown): boolean =>
@@ -73,13 +66,15 @@ const validateTemporalNesting = (
 
 export const createTariff = async (
   input: TCreateTariffInput,
-): Promise<Result<TTariff, ValidationError | NotFoundError>> => {
+): Promise<Result<TTariff, ValidationError | NotFoundError | DemoModeError>> => {
   const parsed = createTariffSchema.safeParse(input);
   if (!parsed.success) {
     return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
   }
 
-  const userId = await requireAuth();
+  const authGuard = await requireMutableUser();
+  if (!authGuard.ok) return authGuard;
+  const userId = authGuard.value;
   const contractId = parsed.data.contractId as TContractId;
 
   const contractAccess = await contractByIdForUser(userId, contractId);
@@ -148,13 +143,15 @@ export const createTariff = async (
 
 export const changeTariff = async (
   input: TChangeTariffInput,
-): Promise<Result<TTariff, ValidationError | NotFoundError>> => {
+): Promise<Result<TTariff, ValidationError | NotFoundError | DemoModeError>> => {
   const parsed = changeTariffSchema.safeParse(input);
   if (!parsed.success) {
     return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
   }
 
-  const userId = await requireAuth();
+  const authGuard = await requireMutableUser();
+  if (!authGuard.ok) return authGuard;
+  const userId = authGuard.value;
   const contractId = parsed.data.contractId as TContractId;
 
   const contractAccess = await contractByIdForUser(userId, contractId);
@@ -237,13 +234,15 @@ export const changeTariff = async (
 export const updateTariffNotes = async (
   tariffId: TTariffId,
   input: TUpdateTariffNotesInput,
-): Promise<Result<void, ValidationError | NotFoundError>> => {
+): Promise<Result<void, ValidationError | NotFoundError | DemoModeError>> => {
   const parsed = updateTariffNotesSchema.safeParse(input);
   if (!parsed.success) {
     return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
   }
 
-  const userId = await requireAuth();
+  const authGuard = await requireMutableUser();
+  if (!authGuard.ok) return authGuard;
+  const userId = authGuard.value;
 
   const tariffAccess = await tariffByIdForUser(userId, tariffId);
   if (!tariffAccess.ok) return tariffAccess;
@@ -274,8 +273,10 @@ export const updateTariffNotes = async (
 
 export const softDeleteTariff = async (
   tariffId: TTariffId,
-): Promise<Result<void, NotFoundError>> => {
-  const userId = await requireAuth();
+): Promise<Result<void, NotFoundError | DemoModeError>> => {
+  const authGuard = await requireMutableUser();
+  if (!authGuard.ok) return authGuard;
+  const userId = authGuard.value;
 
   const tariffAccess = await tariffByIdForUser(userId, tariffId);
   if (!tariffAccess.ok) return tariffAccess;

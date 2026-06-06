@@ -3,26 +3,18 @@
 import { revalidatePath } from "next/cache";
 import { and, eq, isNull } from "drizzle-orm";
 
-import { auth } from "@/lib/auth";
+import { requireMutableUser } from "@/lib/auth/guards";
 import { db } from "@/lib/db/client";
 import { readings } from "@/lib/db/schema/readings";
 import type { ReadingId, TReading } from "@/lib/db/schema/readings";
 import type { MeterId, TMeter } from "@/lib/db/schema/meters";
-import type { UserId } from "@/lib/db/schema/auth";
 import { meterByIdForUser } from "@/lib/db/access/meters";
 import { readingByIdForUser } from "@/lib/db/access/readings";
 import { requirePropertyRole } from "@/lib/db/access/properties";
-import { NotFoundError, ValidationError, err, ok } from "@/lib/errors";
+import { DemoModeError, NotFoundError, ValidationError, err, ok } from "@/lib/errors";
 import type { Result } from "@/lib/errors";
 import { createReadingSchema, updateReadingSchema } from "./schema";
 import type { TCreateReadingInput, TUpdateReadingInput } from "./schema";
-
-// Throws on unauthenticated access — unexpected error, not a domain error.
-const requireAuth = async (): Promise<UserId> => {
-  const session = await auth();
-  if (!session?.user?.id) throw new Error("Unauthenticated");
-  return session.user.id as UserId;
-};
 
 // Validates that readAt falls within the meter's system temporal window [validFrom, validTo ?? ∞).
 const validateReadingWindow = (readAt: Date, meter: TMeter): ValidationError | null => {
@@ -71,13 +63,15 @@ const validateZoneValues = (
 
 export const createReading = async (
   input: TCreateReadingInput,
-): Promise<Result<TReading, ValidationError | NotFoundError>> => {
+): Promise<Result<TReading, ValidationError | NotFoundError | DemoModeError>> => {
   const parsed = createReadingSchema.safeParse(input);
   if (!parsed.success) {
     return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
   }
 
-  const userId = await requireAuth();
+  const authGuard = await requireMutableUser();
+  if (!authGuard.ok) return authGuard;
+  const userId = authGuard.value;
   const meterId = parsed.data.meterId as MeterId;
 
   const meterAccess = await meterByIdForUser(userId, meterId);
@@ -117,13 +111,15 @@ export const createReading = async (
 export const updateReading = async (
   readingId: ReadingId,
   input: TUpdateReadingInput,
-): Promise<Result<void, ValidationError | NotFoundError>> => {
+): Promise<Result<void, ValidationError | NotFoundError | DemoModeError>> => {
   const parsed = updateReadingSchema.safeParse(input);
   if (!parsed.success) {
     return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
   }
 
-  const userId = await requireAuth();
+  const authGuard = await requireMutableUser();
+  if (!authGuard.ok) return authGuard;
+  const userId = authGuard.value;
 
   const readingAccess = await readingByIdForUser(userId, readingId);
   if (!readingAccess.ok) return readingAccess;
@@ -163,8 +159,10 @@ export const updateReading = async (
 
 export const softDeleteReading = async (
   readingId: ReadingId,
-): Promise<Result<void, NotFoundError>> => {
-  const userId = await requireAuth();
+): Promise<Result<void, NotFoundError | DemoModeError>> => {
+  const authGuard = await requireMutableUser();
+  if (!authGuard.ok) return authGuard;
+  const userId = authGuard.value;
 
   const readingAccess = await readingByIdForUser(userId, readingId);
   if (!readingAccess.ok) return readingAccess;

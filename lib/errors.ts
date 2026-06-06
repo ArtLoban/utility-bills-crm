@@ -27,6 +27,12 @@ export class ValidationError extends DomainError {
   }
 }
 
+export class DemoModeError extends DomainError {
+  constructor() {
+    super("DEMO_MODE_BLOCKED");
+  }
+}
+
 // --- Decision #108: ForbiddenError → 404 convention ---
 // Both ForbiddenError and NotFoundError map to a 404 response at the HTTP boundary
 // to hide the existence of protected resources.

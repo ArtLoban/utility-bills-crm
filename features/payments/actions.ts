@@ -3,38 +3,30 @@
 import { revalidatePath } from "next/cache";
 import { and, eq, isNull } from "drizzle-orm";
 
-import { auth } from "@/lib/auth";
+import { requireMutableUser } from "@/lib/auth/guards";
 import { db } from "@/lib/db/client";
 import { payments } from "@/lib/db/schema/payments";
 import type { PaymentId, TPayment } from "@/lib/db/schema/payments";
 import { services } from "@/lib/db/schema/services";
 import type { TServiceId } from "@/lib/db/schema/services";
-import type { UserId } from "@/lib/db/schema/auth";
 import { paymentByIdForUser } from "@/lib/db/access/payments";
 import { requirePropertyRole } from "@/lib/db/access/properties";
-import { NotFoundError, ValidationError, err, ok } from "@/lib/errors";
+import { DemoModeError, NotFoundError, ValidationError, err, ok } from "@/lib/errors";
 import type { Result } from "@/lib/errors";
 import { createPaymentSchema, updatePaymentSchema } from "./schema";
 import type { TCreatePaymentInput, TUpdatePaymentInput } from "./schema";
 
-// Throws on unauthenticated access — unexpected error, not a domain error.
-// Auth middleware prevents reaching server actions unauthenticated; if it does
-// happen, it is a bug, not a user-facing condition.
-const requireAuth = async (): Promise<UserId> => {
-  const session = await auth();
-  if (!session?.user?.id) throw new Error("Unauthenticated");
-  return session.user.id as UserId;
-};
-
 export const recordPayment = async (
   input: TCreatePaymentInput,
-): Promise<Result<TPayment, ValidationError | NotFoundError>> => {
+): Promise<Result<TPayment, ValidationError | NotFoundError | DemoModeError>> => {
   const parsed = createPaymentSchema.safeParse(input);
   if (!parsed.success) {
     return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
   }
 
-  const userId = await requireAuth();
+  const authGuard = await requireMutableUser();
+  if (!authGuard.ok) return authGuard;
+  const userId = authGuard.value;
   const serviceId = parsed.data.serviceId as TServiceId;
 
   const [service] = await db
@@ -66,13 +58,15 @@ export const recordPayment = async (
 export const editPayment = async (
   paymentId: PaymentId,
   input: TUpdatePaymentInput,
-): Promise<Result<void, ValidationError | NotFoundError>> => {
+): Promise<Result<void, ValidationError | NotFoundError | DemoModeError>> => {
   const parsed = updatePaymentSchema.safeParse(input);
   if (!parsed.success) {
     return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
   }
 
-  const userId = await requireAuth();
+  const authGuard = await requireMutableUser();
+  if (!authGuard.ok) return authGuard;
+  const userId = authGuard.value;
 
   const access = await paymentByIdForUser(userId, paymentId);
   if (!access.ok) return access;
@@ -99,8 +93,10 @@ export const editPayment = async (
 
 export const softDeletePayment = async (
   paymentId: PaymentId,
-): Promise<Result<void, NotFoundError>> => {
-  const userId = await requireAuth();
+): Promise<Result<void, NotFoundError | DemoModeError>> => {
+  const authGuard = await requireMutableUser();
+  if (!authGuard.ok) return authGuard;
+  const userId = authGuard.value;
 
   const access = await paymentByIdForUser(userId, paymentId);
   if (!access.ok) return access;
