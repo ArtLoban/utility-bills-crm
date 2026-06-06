@@ -66,7 +66,6 @@ const VALID_GLOBAL: TGlobalPayload = {
   linkedinUrl: "https://linkedin.com/in/test",
   githubUrl: "https://github.com/test",
   projectRepoUrl: "https://github.com/test/repo",
-  liveDemoUrl: "https://test.vercel.app",
   aboutNavVisible: true,
   aboutUrlAccessible: true,
   projectNavVisible: true,

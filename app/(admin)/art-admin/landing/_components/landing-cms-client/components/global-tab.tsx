@@ -1,7 +1,7 @@
 import { type ReactNode } from "react";
 import { Controller, type UseFormReturn } from "react-hook-form";
 
-import { Briefcase, Eye, Folder, GitBranch, Link, Play } from "lucide-react";
+import { Briefcase, Eye, Folder, GitBranch, Link } from "lucide-react";
 
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
@@ -156,25 +156,6 @@ export const GlobalTab = ({ form, onSave }: TProps) => {
                   id="global-repo"
                   icon={<Folder className="size-[13px]" />}
                   label="Project repository URL"
-                  hint="Project page"
-                  value={field.value}
-                  onChange={field.onChange}
-                />
-                {fieldState.error && (
-                  <p className="text-destructive mt-1 text-xs">{fieldState.error.message}</p>
-                )}
-              </div>
-            )}
-          />
-          <Controller
-            control={form.control}
-            name="liveDemoUrl"
-            render={({ field, fieldState }) => (
-              <div>
-                <UrlField
-                  id="global-demo"
-                  icon={<Play className="size-[13px]" />}
-                  label="Live demo URL"
                   hint="Project page"
                   value={field.value}
                   onChange={field.onChange}

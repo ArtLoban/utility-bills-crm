@@ -58,7 +58,7 @@ export default async function ProjectPage() {
       <ArchSection cards={archCards} />
       <SchemaSection />
       <StatusSection status={projectHero?.status ?? ""} />
-      <LinksSection projectRepoUrl={links?.projectRepoUrl ?? ""} liveDemoUrl={links?.liveDemoUrl} />
+      <LinksSection projectRepoUrl={links?.projectRepoUrl ?? ""} />
     </>
   );
 }

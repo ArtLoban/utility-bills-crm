@@ -88,7 +88,6 @@ const mapGlobalContent = (row: TCmsLinks | undefined): TGlobalPayload => {
     linkedinUrl: row.linkedinUrl,
     githubUrl: row.githubUrl,
     projectRepoUrl: row.projectRepoUrl,
-    liveDemoUrl: row.liveDemoUrl,
     aboutNavVisible: row.aboutNavVisible,
     aboutUrlAccessible: row.aboutUrlAccessible,
     projectNavVisible: row.projectNavVisible,

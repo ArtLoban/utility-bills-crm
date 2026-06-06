@@ -165,7 +165,6 @@ export const cmsLinks = pgTable(
     linkedinUrl: text("linkedin_url").notNull(),
     githubUrl: text("github_url").notNull(),
     projectRepoUrl: text("project_repo_url").notNull(),
-    liveDemoUrl: text("live_demo_url").notNull(),
     aboutNavVisible: boolean("about_nav_visible").notNull().default(true),
     aboutUrlAccessible: boolean("about_url_accessible").notNull().default(true),
     projectNavVisible: boolean("project_nav_visible").notNull().default(true),

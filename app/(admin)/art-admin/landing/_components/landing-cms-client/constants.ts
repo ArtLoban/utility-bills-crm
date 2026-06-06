@@ -91,7 +91,6 @@ export const INITIAL_GLOBAL: TGlobalPayload = {
   linkedinUrl: "https://linkedin.com/in/artem-loban",
   githubUrl: "https://github.com/artloban",
   projectRepoUrl: "https://github.com/artloban/utility-bills-crm",
-  liveDemoUrl: "https://utility-bills-crm.vercel.app",
   aboutNavVisible: true,
   aboutUrlAccessible: true,
   projectNavVisible: true,

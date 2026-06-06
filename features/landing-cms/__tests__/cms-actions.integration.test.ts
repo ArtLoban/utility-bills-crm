@@ -73,7 +73,6 @@ const VALID_GLOBAL: TGlobalPayload = {
   linkedinUrl: "https://linkedin.com/in/test",
   githubUrl: "https://github.com/test",
   projectRepoUrl: "https://github.com/test/repo",
-  liveDemoUrl: "https://test.vercel.app",
   aboutNavVisible: true,
   aboutUrlAccessible: true,
   projectNavVisible: true,
@@ -290,13 +289,6 @@ describe("saveGlobalCms — validation", () => {
     expect(result.ok).toBe(false);
     if (result.ok) return;
     expect(result.error.message).toBe("Enter a valid project repository URL.");
-  });
-
-  it("rejects malformed liveDemoUrl", async () => {
-    const result = await saveGlobalCms({ ...VALID_GLOBAL, liveDemoUrl: "not a url at all" });
-    expect(result.ok).toBe(false);
-    if (result.ok) return;
-    expect(result.error.message).toBe("Enter a valid live demo URL.");
   });
 
   it("accepts all valid URLs", async () => {

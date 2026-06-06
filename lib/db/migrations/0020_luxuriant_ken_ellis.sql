@@ -1,0 +1,1 @@
+ALTER TABLE "links" DROP COLUMN "live_demo_url";

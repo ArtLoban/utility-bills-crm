@@ -111,7 +111,6 @@ describe("cms singleton enforcement", () => {
         linkedinUrl: "https://example.com",
         githubUrl: "https://example.com",
         projectRepoUrl: "https://example.com",
-        liveDemoUrl: "https://example.com",
       }),
     ).rejects.toThrow();
   });

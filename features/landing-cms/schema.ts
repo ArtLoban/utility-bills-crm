@@ -133,7 +133,6 @@ export const globalSchema = z.object({
   linkedinUrl: z.string().url("Enter a valid LinkedIn URL."),
   githubUrl: z.string().url("Enter a valid GitHub URL."),
   projectRepoUrl: z.string().url("Enter a valid project repository URL."),
-  liveDemoUrl: z.string().url("Enter a valid live demo URL."),
   aboutNavVisible: z.boolean(),
   aboutUrlAccessible: z.boolean(),
   projectNavVisible: z.boolean(),

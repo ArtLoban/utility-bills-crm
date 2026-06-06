@@ -588,6 +588,9 @@ Rationale: the "product-first" framing had begun to systematically under-scope f
 > **#143 — Demo-blocked feedback: info toast (not modal), single shared i18n key, persistent banner.**
 > Overrides #96 (which proposed a friendly frontend modal): a toast avoids modal-over-modal stacking and requires less code. Toast type is `info` not `error` — the demo user is exploring, not encountering a failure; the modal is intentionally left open. All 9 mutating form hooks share a single `useActionErrorHandler` hook (`lib/hooks/use-action-error-handler.ts`) that intercepts `DemoModeError` and shows `common.demoBlocked`. This is a deliberate deviation from the per-feature #124 i18n norm: the error class is global (same guard, same `DemoModeError`) so it belongs in a shared namespace. A `DemoBanner` component in the app shell (`app/(app)/layout.tsx`) shows the demo context on every page while signed in as the demo user; it is always visible and not dismissible.
 
+> **#144 — All demo CTAs (`/`, `/auth/login`, `/project`) route to `/auth/demo`; the dead `liveDemoUrl` field is removed end to end.**
+> The three public entry points to the demo all navigate to the internal `/auth/demo` route handler, which creates a session and redirects to `/dashboard` (Decision #136). The `/` home hero gained a "Try demo →" CTA (previously had none). The `/project` links section now always shows a "Live demo" card pointing to `/auth/demo` — previously conditional on a CMS-managed external URL. The `liveDemoUrl` field (`links` table column, `globalSchema`, admin Global tab input, `INITIAL_GLOBAL` constant, public `LinksSection` prop, and related tests) is removed in full; migration `0020` drops the column. There is no external demo URL — the app is the demo.
+
 ## Open Questions
 
 Carried forward to Phase 7 (implementation) and beyond.

@@ -879,7 +879,6 @@ The four visibility booleans live here; there is no sixth table.
 | `linkedinUrl`          | `text`        | NO   | —       |                                           |
 | `githubUrl`            | `text`        | NO   | —       |                                           |
 | `projectRepoUrl`       | `text`        | NO   | —       |                                           |
-| `liveDemoUrl`          | `text`        | NO   | —       |                                           |
 | `aboutNavVisible`      | `boolean`     | NO   | `true`  | About page: show link in public header.   |
 | `aboutUrlAccessible`   | `boolean`     | NO   | `true`  | About page: accessible directly by URL.   |
 | `projectNavVisible`    | `boolean`     | NO   | `true`  | Project page: show link in public header. |

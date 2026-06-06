@@ -1,3 +1,7 @@
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
+import { ROUTES } from "@/lib/routes";
+
 type TProps = {
   heroTitle: string;
   heroDesc: string;
@@ -52,6 +56,16 @@ export const HeroSection = ({ heroTitle, heroDesc }: TProps) => {
           Built as a portfolio piece and a real product. The first user is the author&apos;s wife,
           who&apos;s been tracking two apartments in a paper notebook for years.
         </p>
+
+        <div className="mt-8">
+          <Link
+            href={ROUTES.demo}
+            className="inline-flex items-center gap-1.5 rounded-md border border-zinc-200 px-4 py-2 text-sm font-medium text-zinc-900 transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-800"
+          >
+            Try demo
+            <ArrowRight className="size-3.5" strokeWidth={2} />
+          </Link>
+        </div>
       </div>
     </section>
   );
