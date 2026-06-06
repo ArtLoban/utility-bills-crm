@@ -42,7 +42,6 @@ export default async function LoginPage() {
         <div className="h-px flex-1 bg-zinc-200 dark:bg-zinc-800" />
       </div>
 
-      {/* [stub] /auth/demo endpoint not yet implemented */}
       <Link
         href="/auth/demo"
         className="mt-4 mb-2 flex h-[38px] w-full items-center justify-center gap-1.5 rounded-md border border-zinc-200 text-sm font-medium text-zinc-900 transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-800"
