@@ -567,6 +567,15 @@ Rationale: the "product-first" framing had begun to systematically under-scope f
 
 > **#136 — demo sign-in via a session-creating route handler, not a Credentials provider.** A visitor becomes the demo user through `/auth/demo`, a route handler that find-or-creates the persistent demo user, creates a database session row, sets the Auth.js session cookie, and redirects to `/dashboard`. A Credentials provider was rejected because it forces the JWT session strategy, which conflicts with the project's database sessions (#6). The route handler creates a session exactly as the adapter does on an OAuth callback, so the rest of the app reads it normally via `auth()`. One persistent demo user backs many concurrent visitor sessions (each gets its own session row pointing at the same user); shared data is safe because mutations are blocked in demo mode (D3).
 
+> **#137 — `isDemo` boolean on `users` table marks demo accounts; demo data excluded from admin activity feed; Demo badge shown in admin UI.**
+> `users.isDemo` (migration `0019`, default `false`) is the single marker for all demo-related filtering. The `seed:demo` script sets it when upserting demo users; `/auth/demo` sets it on every find-or-create so the flag survives accounts created before the migration. Admin activity feed excludes demo data with a `notInArray(properties.id, demoPropertyIds)` subquery across all six UNION ALL branches and a direct `eq(users.isDemo, false)` guard on the users branch. Admin users and properties list/detail pages show a blue "Demo" badge alongside the existing Deleted badge.
+>
+> **#138 — demo dataset shape: 3 properties, 24 months of seasonal data, temporal contract history, three ledger states.**
+> The `seed:demo` script produces a dataset sufficient to showcase the full app architecture: **Квартира** (apartment, 7 services including 2-zone electricity, internet provider change at month 12); **Будинок** (house, 5 services, strong winter gas peak); **Дача** (cottage, seasonal electricity only). Consumption is generated from per-service seasonal factor arrays × YoY drift (4%/year). Temporal complexity: tariff change within one contract (apartment electricity, house gas), provider change = two separate contracts (apartment internet). Ledger states: apartment electricity has 22/24 payments (debt in last 2 months), house gas has an extra 2500 UAH advance at month 6 (overpayment), all other services are balanced. Sharing: family user is an editor on the apartment. Total data: ~290 bills, ~289 payments, 192 readings.
+>
+> **#139 — `seed:demo` script: self-contained data-definition module, idempotent reseed via wipe-then-rebuild inside a single transaction.**
+> The script at `lib/db/seeds/demo.seed.ts` creates its own pool+db connection (module-level, so the `TTx` type can be derived from `typeof db`) and wraps all work in a single transaction. Idempotency: (1) find all `isDemo` users → find their owned properties → delete properties (FK cascade removes all children: services, contracts, tariffs, meters, readings, bills, payments, property_access) → delete providers; (2) upsert users by email; (3) rebuild full graph. Non-demo data is never touched. Running `npm run seed:demo` twice yields identical row counts. Rejected alternative: query-and-skip (patchy, error-prone on schema changes); wipe-and-rebuild is the correct baseline for a deterministic fixture.
+
 ## Open Questions
 
 Carried forward to Phase 7 (implementation) and beyond.
@@ -577,8 +586,8 @@ Carried forward to Phase 7 (implementation) and beyond.
 - Translation workflow: author, wife, AI-assisted, review process.
 - ~~Error code catalog structure in i18n files.~~ Resolved by Decision #124.
 - Cron job for expired session cleanup (timing, location).
-- Seed script for `service_types` catalog and landing CMS baseline content (CMS data model is implemented; seed content is pending).
-- Demo account seed: one-time deployment pipeline, idempotent re-seed procedure.
+- ~~Seed script for `service_types` catalog and landing CMS baseline content.~~ Resolved: catalog in migration (#118); CMS baseline in migration `0016` (#132); landing copy in migration `0017` (#135).
+- ~~Demo account seed: one-time deployment pipeline, idempotent re-seed procedure.~~ Resolved: `seed:demo` script, wipe-then-rebuild inside a transaction, scoped to `isDemo` users (Decision #139).
 - Exclusion constraint specifics with `btree_gist` extension — concrete SQL for all temporal entities.
 - Indexing strategy for common dashboard queries (balance computation, monthly aggregation).
 - Sentry integration: deferred within Phase 7 — timing and error policy TBD when integration begins.

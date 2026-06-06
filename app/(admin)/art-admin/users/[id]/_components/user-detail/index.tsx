@@ -1,6 +1,7 @@
 import { format } from "date-fns";
 
 import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
 import { PageContainer } from "@/components/page-container";
 import { PageMeta } from "@/components/page-meta";
 import type { TAdminUserDetailResult } from "@/features/admin-users/types";
@@ -19,8 +20,17 @@ export const UserDetail = async ({ user }: TProps) => {
   const metaItems = [
     user.email,
     <RoleBadge key="role" role={user.systemRole} />,
+    user.isDemo ? (
+      <Badge
+        key="demo"
+        variant="outline"
+        className="border-blue-200 text-blue-600 dark:border-blue-900 dark:text-blue-400"
+      >
+        Demo
+      </Badge>
+    ) : null,
     `Joined ${format(user.createdAt, "MMMM yyyy")}`,
-  ];
+  ].filter(Boolean);
 
   return (
     <PageContainer

@@ -84,6 +84,7 @@ npm run dev
 | `npm run db:generate` | Generate a migration from schema changes            |
 | `npm run db:migrate`  | Apply pending migrations                            |
 | `npm run db:studio`   | Open Drizzle Studio at https://local.drizzle.studio |
+| `npm run seed:demo`   | Seed (or re-seed) the demo dataset — idempotent     |
 
 Required environment variables:
 

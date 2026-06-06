@@ -55,15 +55,26 @@ export const getUserColumns = (): ColumnDef<TAdminUserRow>[] => [
   {
     accessorKey: "deletedAt",
     header: "Status",
-    cell: ({ row }) =>
-      row.original.deletedAt ? (
-        <Badge
-          variant="outline"
-          className="border-red-200 text-red-600 dark:border-red-900 dark:text-red-400"
-        >
-          Deleted
-        </Badge>
-      ) : null,
+    cell: ({ row }) => (
+      <span className="flex flex-wrap gap-1">
+        {row.original.isDemo && (
+          <Badge
+            variant="outline"
+            className="border-blue-200 text-blue-600 dark:border-blue-900 dark:text-blue-400"
+          >
+            Demo
+          </Badge>
+        )}
+        {row.original.deletedAt && (
+          <Badge
+            variant="outline"
+            className="border-red-200 text-red-600 dark:border-red-900 dark:text-red-400"
+          >
+            Deleted
+          </Badge>
+        )}
+      </span>
+    ),
     enableSorting: false,
   },
   {

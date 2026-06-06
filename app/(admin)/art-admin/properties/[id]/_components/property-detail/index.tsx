@@ -1,7 +1,9 @@
+import type React from "react";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { PageContainer } from "@/components/page-container";
 import { PageMeta } from "@/components/page-meta";
@@ -17,13 +19,23 @@ const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
 export const PropertyDetail = ({ property }: TProps) => {
   const isDeleted = property.deletedAt !== null;
+  const isDemo = property.owners.some((o) => o.isDemo);
 
   const metaItems = [
     capitalize(property.type),
     property.address ?? null,
     `${property.servicesCount} ${property.servicesCount === 1 ? "service" : "services"}`,
+    isDemo ? (
+      <Badge
+        key="demo"
+        variant="outline"
+        className="border-blue-200 text-blue-600 dark:border-blue-900 dark:text-blue-400"
+      >
+        Demo
+      </Badge>
+    ) : null,
     isDeleted ? "Deleted" : "Active",
-  ].filter(Boolean) as string[];
+  ].filter(Boolean) as (string | React.ReactElement)[];
 
   return (
     <PageContainer

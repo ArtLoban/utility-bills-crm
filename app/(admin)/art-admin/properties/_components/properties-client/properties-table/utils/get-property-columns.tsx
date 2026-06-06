@@ -77,17 +77,31 @@ export const getPropertyColumns = (): ColumnDef<TAdminPropertyRow>[] => [
     accessorKey: "deletedAt",
     id: "status",
     header: "Status",
-    cell: ({ row }) =>
-      row.original.deletedAt ? (
-        <Badge
-          variant="outline"
-          className="border-red-200 text-red-600 dark:border-red-900 dark:text-red-400"
-        >
-          Deleted
-        </Badge>
-      ) : (
-        <span className="text-muted-foreground text-sm">Active</span>
-      ),
+    cell: ({ row }) => {
+      const isDemo = row.original.owners.some((o) => o.isDemo);
+      return (
+        <span className="flex flex-wrap gap-1">
+          {isDemo && (
+            <Badge
+              variant="outline"
+              className="border-blue-200 text-blue-600 dark:border-blue-900 dark:text-blue-400"
+            >
+              Demo
+            </Badge>
+          )}
+          {row.original.deletedAt ? (
+            <Badge
+              variant="outline"
+              className="border-red-200 text-red-600 dark:border-red-900 dark:text-red-400"
+            >
+              Deleted
+            </Badge>
+          ) : (
+            !isDemo && <span className="text-muted-foreground text-sm">Active</span>
+          )}
+        </span>
+      );
+    },
   },
   {
     id: "servicesCount",

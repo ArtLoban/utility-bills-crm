@@ -125,6 +125,7 @@ export const getAdminPropertiesList = async (
         userId: users.id,
         userName: users.name,
         userEmail: users.email,
+        userIsDemo: users.isDemo,
       })
       .from(propertyAccess)
       .innerJoin(users, eq(users.id, propertyAccess.userId))
@@ -143,7 +144,7 @@ export const getAdminPropertiesList = async (
   const ownerMap = new Map<string, TAdminPropertyOwner[]>();
   for (const row of ownerRows) {
     const list = ownerMap.get(row.propertyId) ?? [];
-    list.push({ id: row.userId, name: row.userName, email: row.userEmail });
+    list.push({ id: row.userId, name: row.userName, email: row.userEmail, isDemo: row.userIsDemo });
     ownerMap.set(row.propertyId, list);
   }
 
@@ -182,6 +183,7 @@ export const getAdminPropertyDetail = async (id: string): Promise<TAdminProperty
         userId: users.id,
         userName: users.name,
         userEmail: users.email,
+        userIsDemo: users.isDemo,
         propertyRole: propertyAccess.propertyRole,
       })
       .from(propertyAccess)
@@ -200,6 +202,7 @@ export const getAdminPropertyDetail = async (id: string): Promise<TAdminProperty
     id: row.userId,
     name: row.userName,
     email: row.userEmail,
+    isDemo: row.userIsDemo,
     propertyRole: row.propertyRole,
   }));
 

@@ -31,7 +31,8 @@
     "db:seed:readings": "tsx lib/db/seeds/readings.seed.ts",
     "db:seed:bills": "tsx lib/db/seeds/bills.seed.ts",
     "db:seed:payments": "tsx lib/db/seeds/payments.seed.ts",
-    "db:seed:cms-content": "tsx lib/db/seeds/cms-content.seed.ts"
+    "db:seed:cms-content": "tsx lib/db/seeds/cms-content.seed.ts",
+    "seed:demo": "tsx lib/db/seeds/demo.seed.ts"
   },
   "lint-staged": {
     "*.{ts,tsx,js,mjs,cjs}": [

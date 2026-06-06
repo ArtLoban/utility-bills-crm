@@ -134,6 +134,13 @@
       "when": 1749131400000,
       "tag": "0018_about_hero_fields",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1780749939037,
+      "tag": "0019_spooky_boom_boom",
+      "breakpoints": true
     }
   ]
 }

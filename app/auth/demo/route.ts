@@ -10,9 +10,12 @@ import { ROUTES } from "@/lib/routes";
 const DEMO_SESSION_DURATION_MS = 60 * 60 * 1000; // 1 hour — non-rememberMe policy
 
 export const GET = async (request: Request): Promise<Response> => {
-  // Find or create the persistent demo user. Idempotent: onConflictDoNothing
-  // ensures no duplicate rows even under concurrent hits.
-  await db.insert(users).values({ name: "Demo User", email: DEMO_EMAIL }).onConflictDoNothing();
+  // Find or create the persistent demo user. onConflictDoUpdate ensures
+  // isDemo is set to true even if the row pre-dated the isDemo column migration.
+  await db
+    .insert(users)
+    .values({ name: "Demo User", email: DEMO_EMAIL, isDemo: true })
+    .onConflictDoUpdate({ target: users.email, set: { isDemo: true } });
 
   const demoUser = await db.query.users.findFirst({
     where: eq(users.email, DEMO_EMAIL),

@@ -8,6 +8,7 @@ export type TAdminPropertyOwner = {
   id: string;
   name: string | null;
   email: string;
+  isDemo: boolean;
 };
 
 export type TAdminPropertyRow = {

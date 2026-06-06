@@ -37,6 +37,7 @@ export const users = pgTable(
     locale: textEnum("locale", LOCALE_LIST).notNull().default(LOCALES.EN),
     theme: textEnum("theme", THEME_LIST).notNull().default(THEMES.SYSTEM),
     ruLocaleEnabled: boolean("ru_locale_enabled").notNull().default(false),
+    isDemo: boolean("is_demo").notNull().default(false),
     timezone: text("timezone").notNull().default("Europe/Kyiv"),
     lastLoginAt: timestamp("last_login_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),

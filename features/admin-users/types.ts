@@ -19,6 +19,7 @@ export type TAdminUserRow = {
   email: string;
   name: string | null;
   systemRole: TSystemRole;
+  isDemo: boolean;
   propertiesCount: number;
   createdAt: Date;
   lastLoginAt: Date | null;
@@ -43,6 +44,7 @@ export type TAdminUserDetailResult = {
   email: string;
   name: string | null;
   systemRole: TSystemRole;
+  isDemo: boolean;
   createdAt: Date;
   lastLoginAt: Date | null;
   deletedAt: Date | null;

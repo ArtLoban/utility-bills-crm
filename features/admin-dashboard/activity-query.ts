@@ -1,10 +1,10 @@
-import { eq, isNull, sql } from "drizzle-orm";
+import { and, eq, isNull, notInArray, sql } from "drizzle-orm";
 import { unionAll } from "drizzle-orm/pg-core";
 import { notFound } from "next/navigation";
 
 import { db } from "@/lib/db/client";
 import { users } from "@/lib/db/schema/auth";
-import { properties } from "@/lib/db/schema/properties";
+import { properties, propertyAccess, PROPERTY_ROLES } from "@/lib/db/schema/properties";
 import { services } from "@/lib/db/schema/services";
 import { serviceTypes } from "@/lib/db/schema/service-types";
 import { bills } from "@/lib/db/schema/bills";
@@ -60,6 +60,14 @@ export const getAdminActivityFeed = async (): Promise<TActivityItem[]> => {
 
   const nullText = sql<string | null>`NULL`;
 
+  // Subquery: IDs of all properties owned by demo users.
+  // Used to exclude demo data from every branch of the feed.
+  const demoPropertyIds = db
+    .select({ id: propertyAccess.propertyId })
+    .from(propertyAccess)
+    .innerJoin(users, eq(users.id, propertyAccess.userId))
+    .where(and(eq(users.isDemo, true), eq(propertyAccess.propertyRole, PROPERTY_ROLES.OWNER)));
+
   const propertiesBranch = db
     .select({
       kind: sql<string>`'property'`,
@@ -70,7 +78,7 @@ export const getAdminActivityFeed = async (): Promise<TActivityItem[]> => {
       extra: nullText,
     })
     .from(properties)
-    .where(isNull(properties.deletedAt));
+    .where(and(isNull(properties.deletedAt), notInArray(properties.id, demoPropertyIds)));
 
   const usersBranch = db
     .select({
@@ -82,7 +90,7 @@ export const getAdminActivityFeed = async (): Promise<TActivityItem[]> => {
       extra: nullText,
     })
     .from(users)
-    .where(isNull(users.deletedAt));
+    .where(and(isNull(users.deletedAt), eq(users.isDemo, false)));
 
   const servicesBranch = db
     .select({
@@ -96,7 +104,7 @@ export const getAdminActivityFeed = async (): Promise<TActivityItem[]> => {
     .from(services)
     .innerJoin(properties, eq(properties.id, services.propertyId))
     .innerJoin(serviceTypes, eq(serviceTypes.id, services.serviceTypeId))
-    .where(isNull(services.deletedAt));
+    .where(and(isNull(services.deletedAt), notInArray(properties.id, demoPropertyIds)));
 
   const billsBranch = db
     .select({
@@ -111,7 +119,7 @@ export const getAdminActivityFeed = async (): Promise<TActivityItem[]> => {
     .innerJoin(services, eq(services.id, bills.serviceId))
     .innerJoin(properties, eq(properties.id, services.propertyId))
     .innerJoin(serviceTypes, eq(serviceTypes.id, services.serviceTypeId))
-    .where(isNull(bills.deletedAt));
+    .where(and(isNull(bills.deletedAt), notInArray(properties.id, demoPropertyIds)));
 
   const paymentsBranch = db
     .select({
@@ -126,7 +134,7 @@ export const getAdminActivityFeed = async (): Promise<TActivityItem[]> => {
     .innerJoin(services, eq(services.id, payments.serviceId))
     .innerJoin(properties, eq(properties.id, services.propertyId))
     .innerJoin(serviceTypes, eq(serviceTypes.id, services.serviceTypeId))
-    .where(isNull(payments.deletedAt));
+    .where(and(isNull(payments.deletedAt), notInArray(properties.id, demoPropertyIds)));
 
   const readingsBranch = db
     .select({
@@ -141,7 +149,7 @@ export const getAdminActivityFeed = async (): Promise<TActivityItem[]> => {
     .innerJoin(meters, eq(meters.id, readings.meterId))
     .innerJoin(properties, eq(properties.id, meters.propertyId))
     .innerJoin(serviceTypes, eq(serviceTypes.id, meters.serviceTypeId))
-    .where(isNull(readings.deletedAt));
+    .where(and(isNull(readings.deletedAt), notInArray(properties.id, demoPropertyIds)));
 
   const rows = await unionAll(
     propertiesBranch,
