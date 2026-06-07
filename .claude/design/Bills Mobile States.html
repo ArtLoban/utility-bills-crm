@@ -1,0 +1,466 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Bills Mobile — All States</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; padding: 0; height: 100%; background: #18181b; }
+  body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+  * { box-sizing: border-box; }
+  button, input, textarea, select { font-family: inherit; }
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script type="text/babel" src="dashboard.jsx"></script>
+<script type="text/babel" src="bills-list.jsx"></script>
+<script type="text/babel" src="bills-mobile.jsx"></script>
+
+<script type="text/babel" data-presets="react">
+  const AW = 390;
+
+  // ── Dark snapshot: Sort sheet open · Service active ──────────────────────
+  const ZD = { bg:'#09090b', card:'#18181b', border:'#27272a', border2:'#3f3f46',
+    fg:'#fafafa', muted:'#71717a', mid:'#a1a1aa', red:'#f87171' };
+  const VD = { solid:'#7c3aed', tint:'rgba(124,58,237,0.18)', border:'rgba(124,58,237,0.35)' };
+  const DS = [
+    { svc:'Electricity', color:'#f59e0b', amount:420,  date:'08/04/2026', prop:'Apartment on Main St', period:'March 2025' },
+    { svc:'Gas',         color:'#3b82f6', amount:940,  date:'11/03/2026', prop:'Apartment on Main St', period:'February 2025' },
+    { svc:'Hot water',   color:'#ef4444', amount:290,  date:'22/09/2025', prop:'Summer house',         period:'August 2025' },
+  ];
+  const DSF = [
+    { id:'date',     label:'Date',     dir:'Newest first', active:false },
+    { id:'property', label:'Property', dir:'A \u2192 Z',   active:false },
+    { id:'service',  label:'Service',  dir:'A \u2192 Z',   active:true  },
+    { id:'amount',   label:'Amount',   dir:'High \u2192 Low', active:false },
+  ];
+
+  function SortSheetDark() {
+    return (
+      <div style={{ width:390, height:960, background:ZD.bg, position:'relative',
+        fontFamily:"'Inter',system-ui,sans-serif", WebkitFontSmoothing:'antialiased' }}>
+        {/* TopBar */}
+        <div style={{ height:52, background:'rgba(9,9,11,0.92)', backdropFilter:'blur(8px)',
+          borderBottom:`1px solid ${ZD.border}`, display:'flex', alignItems:'center',
+          padding:'0 16px', justifyContent:'space-between' }}>
+          <div style={{ display:'flex', alignItems:'center', gap:8 }}>
+            <div style={{ width:22, height:22, borderRadius:5, background:VD.solid,
+              display:'flex', alignItems:'center', justifyContent:'center' }}>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+                <rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/>
+                <rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/>
+              </svg>
+            </div>
+            <span style={{ fontSize:14, fontWeight:600, letterSpacing:-0.1, color:ZD.fg }}>UtilityBills CRM</span>
+          </div>
+          <button style={{ background:'none', border:'none', padding:4 }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={ZD.fg} strokeWidth="2" strokeLinecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+          </button>
+        </div>
+        {/* Content */}
+        <div style={{ padding:'20px 14px 0' }}>
+          <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', marginBottom:14 }}>
+            <div>
+              <h2 style={{ margin:0, fontSize:22, fontWeight:700, letterSpacing:-0.5, color:ZD.fg }}>Bills</h2>
+              <div style={{ fontSize:12.5, color:ZD.muted, marginTop:3 }}><strong style={{ color:ZD.fg }}>156</strong> records</div>
+            </div>
+            <button style={{ display:'inline-flex', alignItems:'center', gap:6, height:34, padding:'0 14px',
+              fontSize:13, fontWeight:500, background:VD.solid, color:'#fff', border:'none', borderRadius:6 }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5v14"/></svg>
+              Add
+            </button>
+          </div>
+          <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:14 }}>
+            <button style={{ display:'inline-flex', alignItems:'center', gap:6, height:32, padding:'0 12px',
+              fontSize:13, fontWeight:500, background:ZD.card, color:ZD.fg, border:`1px solid ${ZD.border}`, borderRadius:6 }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+              Filters
+            </button>
+            <button style={{ display:'flex', alignItems:'center', gap:4, height:32, padding:'0 10px',
+              fontSize:12, fontWeight:500, background:VD.tint, color:VD.solid, border:`1px solid ${VD.border}`, borderRadius:6, whiteSpace:'nowrap' }}>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+              Service A\u2013Z
+            </button>
+          </div>
+          <div style={{ display:'flex', flexDirection:'column', gap:8 }}>
+            {DS.map((c,i) => (
+              <div key={i} style={{ background:ZD.card, border:`1px solid ${ZD.border}`, borderRadius:8,
+                padding:'12px 10px 12px 14px', display:'flex', alignItems:'stretch', gap:8 }}>
+                <div style={{ flex:1, minWidth:0 }}>
+                  <div style={{ display:'flex', alignItems:'center', gap:7 }}>
+                    <div style={{ width:12, height:12, borderRadius:3, flexShrink:0, background:c.color+'30',
+                      display:'flex', alignItems:'center', justifyContent:'center' }}>
+                      <svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke={c.color} strokeWidth="2.5" strokeLinecap="round"><circle cx="12" cy="12" r="3"/></svg>
+                    </div>
+                    <span style={{ fontSize:14, fontWeight:600, color:ZD.fg, letterSpacing:-0.1, flex:1, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{c.svc}</span>
+                    <span style={{ fontSize:14, fontWeight:700, color:ZD.red, whiteSpace:'nowrap', flexShrink:0 }}>-{c.amount}</span>
+                    <span style={{ fontSize:11, color:ZD.muted, flexShrink:0, marginLeft:2 }}>UAH</span>
+                  </div>
+                  <div style={{ paddingLeft:19, marginTop:5 }}>
+                    <span style={{ fontSize:12, color:ZD.muted, display:'block', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{c.prop}</span>
+                  </div>
+                  <div style={{ paddingLeft:19, marginTop:3, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+                    <span style={{ fontSize:12, color:ZD.muted }}>{c.date}</span>
+                    <span style={{ fontSize:12, color:ZD.mid, fontWeight:500, whiteSpace:'nowrap' }}>{c.period}</span>
+                  </div>
+                </div>
+                <div style={{ display:'flex', alignItems:'center', flexShrink:0 }}>
+                  <button style={{ width:28, height:28, borderRadius:5, border:'1px solid transparent', background:'transparent',
+                    display:'flex', alignItems:'center', justifyContent:'center' }}>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={ZD.muted} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        {/* Backdrop */}
+        <div style={{ position:'absolute', inset:0, background:'rgba(0,0,0,0.65)', zIndex:20 }}/>
+        {/* Sort sheet */}
+        <div style={{ position:'absolute', left:0, right:0, bottom:0, background:ZD.card,
+          borderRadius:'14px 14px 0 0', zIndex:21, padding:'0 16px 28px',
+          boxShadow:'0 -8px 40px rgba(0,0,0,0.5)' }}>
+          <div style={{ display:'flex', justifyContent:'center', padding:'10px 0 4px' }}>
+            <div style={{ width:36, height:4, borderRadius:2, background:ZD.border2 }}/>
+          </div>
+          <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'10px 0 16px' }}>
+            <span style={{ fontSize:15, fontWeight:600, color:ZD.fg }}>Sort by</span>
+            <button style={{ background:'none', border:'none', cursor:'pointer', padding:4 }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={ZD.muted} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+            </button>
+          </div>
+          <div style={{ display:'flex', flexDirection:'column', gap:8 }}>
+            {DSF.map(f => (
+              <div key={f.id} style={{ display:'flex', alignItems:'center', gap:10, padding:'12px 14px',
+                background: f.active ? VD.tint : ZD.border,
+                border: `1px solid ${f.active ? VD.border : ZD.border2}`,
+                borderRadius:8 }}>
+                <span style={{ flex:1, fontSize:14, fontWeight:f.active?600:400, color:f.active?VD.solid:ZD.fg }}>{f.label}</span>
+                {f.active && <span style={{ fontSize:12, color:VD.solid, fontWeight:500 }}>{f.dir}</span>}
+                {f.active && (
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={VD.solid} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="m18 15-6-6-6 6"/>
+                  </svg>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+  // ── Dark default: full page, no filters, Date (newest), page 1 ──────────
+  const MN = { Jan:'01',Feb:'02',Mar:'03',Apr:'04',May:'05',Jun:'06',Jul:'07',Aug:'08',Sep:'09',Oct:'10',Nov:'11',Dec:'12' };
+  const MF = { Jan:'January',Feb:'February',Mar:'March',Apr:'April',May:'May',Jun:'June',Jul:'July',Aug:'August',Sep:'September',Oct:'October',Nov:'November',Dec:'December' };
+  const fmtDD = d => { const [day,mon,yr] = d.split(' '); return `${day}/${MN[mon]||mon}/${yr}`; };
+  const fmtPD = p => { const [mon,yr] = p.split(' '); return `${MF[mon]||mon} ${yr}`; };
+
+  function DefaultDark() {
+    const bills   = (window.ALL_BILLS || []).slice(0, 10);
+    const total   = (window.ALL_BILLS || []).reduce((s,r) => s + r.amount, 0);
+    const totalPg = Math.ceil((window.ALL_BILLS || []).length / 10);
+    const SC = window.UB ? window.UB.SERVICE_COLORS : {};
+    const SI = window.UB ? window.UB.SERVICE_ICONS  : {};
+    return (
+      <div style={{ width:390, height:1300, background:ZD.bg, position:'relative',
+        fontFamily:"'Inter',system-ui,sans-serif", WebkitFontSmoothing:'antialiased', overflow:'hidden' }}>
+        {/* TopBar */}
+        <div style={{ height:52, background:'rgba(9,9,11,0.92)', backdropFilter:'blur(8px)',
+          borderBottom:`1px solid ${ZD.border}`, display:'flex', alignItems:'center',
+          padding:'0 16px', justifyContent:'space-between' }}>
+          <div style={{ display:'flex', alignItems:'center', gap:8 }}>
+            <div style={{ width:22, height:22, borderRadius:5, background:VD.solid,
+              display:'flex', alignItems:'center', justifyContent:'center' }}>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+                <rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/>
+                <rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/>
+              </svg>
+            </div>
+            <span style={{ fontSize:14, fontWeight:600, letterSpacing:-0.1, color:ZD.fg }}>UtilityBills CRM</span>
+          </div>
+          <button style={{ background:'none', border:'none', padding:4 }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={ZD.fg} strokeWidth="2" strokeLinecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+          </button>
+        </div>
+        {/* Content */}
+        <div style={{ padding:'20px 14px 32px' }}>
+          <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', marginBottom:14 }}>
+            <div>
+              <h2 style={{ margin:0, fontSize:22, fontWeight:700, letterSpacing:-0.5, color:ZD.fg }}>Bills</h2>
+              <div style={{ fontSize:12.5, color:ZD.muted, marginTop:3 }}>
+                <strong style={{ color:ZD.fg }}>{(window.ALL_BILLS||[]).length}</strong> records
+              </div>
+            </div>
+            <button style={{ display:'inline-flex', alignItems:'center', gap:6, height:34, padding:'0 14px',
+              fontSize:13, fontWeight:500, background:VD.solid, color:'#fff', border:'none', borderRadius:6 }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5v14"/></svg>
+              Add
+            </button>
+          </div>
+          <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:14 }}>
+            <button style={{ display:'inline-flex', alignItems:'center', gap:6, height:32, padding:'0 12px',
+              fontSize:13, fontWeight:500, background:ZD.card, color:ZD.fg, border:`1px solid ${ZD.border}`, borderRadius:6 }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+              Filters
+            </button>
+            <div style={{ display:'flex', alignItems:'center', gap:4, fontSize:12, color:ZD.muted }}>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              Date (newest)
+            </div>
+          </div>
+          {/* Cards */}
+          <div style={{ display:'flex', flexDirection:'column', gap:8 }}>
+            {bills.map(row => {
+              const color = SC[row.service.id] || '#7c3aed';
+              const Ic = SI[row.service.id];
+              return (
+                <div key={row.id} style={{ background:ZD.card, border:`1px solid ${ZD.border}`, borderRadius:8,
+                  padding:'12px 10px 12px 14px', display:'flex', alignItems:'stretch', gap:8 }}>
+                  <div style={{ flex:1, minWidth:0 }}>
+                    <div style={{ display:'flex', alignItems:'center', gap:7 }}>
+                      <div style={{ width:12, height:12, borderRadius:3, flexShrink:0, background:color+'28',
+                        display:'flex', alignItems:'center', justifyContent:'center' }}>
+                        {Ic && <Ic size={7} stroke={color}/>}
+                      </div>
+                      <span style={{ fontSize:14, fontWeight:600, color:ZD.fg, letterSpacing:-0.1,
+                        flex:1, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{row.service.name}</span>
+                      <span style={{ fontSize:14, fontWeight:700, color:ZD.red, whiteSpace:'nowrap', flexShrink:0 }}>−{row.amount.toLocaleString()}</span>
+                      <span style={{ fontSize:11, color:ZD.muted, flexShrink:0, marginLeft:2 }}>UAH</span>
+                    </div>
+                    <div style={{ paddingLeft:19, marginTop:5 }}>
+                      <span style={{ fontSize:12, color:ZD.muted, display:'block', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{row.property.name}</span>
+                    </div>
+                    <div style={{ paddingLeft:19, marginTop:3, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+                      <span style={{ fontSize:12, color:ZD.muted }}>{fmtDD(row.date)}</span>
+                      <span style={{ fontSize:12, color:ZD.mid, fontWeight:500, whiteSpace:'nowrap' }}>{fmtPD(row.period)}</span>
+                    </div>
+                  </div>
+                  <div style={{ display:'flex', alignItems:'center', flexShrink:0 }}>
+                    <button style={{ width:28, height:28, borderRadius:5, border:'1px solid transparent',
+                      background:'transparent', display:'flex', alignItems:'center', justifyContent:'center' }}>
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={ZD.muted} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          {/* Page size + Pagination */}
+          <div style={{ marginTop:16 }}>
+            <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:10 }}>
+              <span style={{ fontSize:12, color:ZD.muted, flexShrink:0 }}>Show:</span>
+              <div style={{ display:'flex', gap:4 }}>
+                {[10,25,50,100].map(s => (
+                  <button key={s} style={{ height:28, minWidth:38, padding:'0 8px', fontSize:12, fontWeight:500,
+                    background: s===10 ? VD.solid : ZD.card,
+                    color: s===10 ? '#fff' : ZD.muted,
+                    border: `1px solid ${s===10 ? VD.solid : ZD.border}`,
+                    borderRadius:5 }}>{s}</button>
+                ))}
+              </div>
+            </div>
+            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'4px 0 0' }}>
+              <button style={{ width:32, height:32, borderRadius:6, border:`1px solid ${ZD.border}`,
+                background:ZD.card, display:'flex', alignItems:'center', justifyContent:'center', opacity:0.35 }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={ZD.fg} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+              </button>
+              <span style={{ fontSize:13, color:ZD.muted, whiteSpace:'nowrap' }}>
+                Page <strong style={{ color:ZD.fg }}>1</strong> of {totalPg}
+              </span>
+              <button style={{ width:32, height:32, borderRadius:6, border:`1px solid ${ZD.border}`,
+                background:ZD.card, display:'flex', alignItems:'center', justifyContent:'center' }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={ZD.fg} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+              </button>
+            </div>
+          </div>
+          {/* Totals */}
+          <div style={{ marginTop:16, borderTop:`1px solid ${ZD.border}`, paddingTop:14,
+            display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+            <span style={{ fontSize:13, color:ZD.muted }}>Total paid</span>
+            <span style={{ fontSize:15, fontWeight:700, color:'#4ade80', fontFeatureSettings:'"tnum" 1', whiteSpace:'nowrap' }}>
+              {total.toLocaleString()} UAH
+            </span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  Object.assign(window, { SortSheetDark, DefaultDark });
+
+  // Clips to artboard height, hides overflow so the artboard shows a clean snapshot
+  function MobileFrame({ height, children }) {
+    return (
+      <div style={{
+        width: AW,
+        height: height,
+        background: '#f4f4f5',
+        overflow: 'hidden',
+        position: 'relative',
+      }}>
+        {children}
+      </div>
+    );
+  }
+
+  function App() {
+    return (
+      <window.DesignCanvas
+        title="Bills Mobile — All States"
+        subtitle="390px · shadcn/ui New York · Zinc + Violet · All interaction states"
+      >
+
+        {/* ── 1. DEFAULT ──────────────────────────────────────────────── */}
+        <window.DCSection
+          id="default"
+          title="Default state"
+          subtitle="No filters · Date (newest) · 10 per page · Page 1"
+        >
+          <window.DCArtboard id="default-p1" label="Default · Page 1 · Light" width={AW} height={1300}>
+            <MobileFrame height={1300}>
+              <window.BillsListMobile />
+            </MobileFrame>
+          </window.DCArtboard>
+
+          <window.DCArtboard id="default-dark" label="Default · Page 1 · Dark" width={AW} height={1300}>
+            <window.DefaultDark />
+          </window.DCArtboard>
+        </window.DCSection>
+
+        {/* ── 2. FILTERS ──────────────────────────────────────────────── */}
+        <window.DCSection
+          id="filters"
+          title="Filters applied"
+          subtitle="Filter chip(s) visible · Record count reduced"
+        >
+          <window.DCArtboard id="filter-electricity" label="Filter: Electricity" width={AW} height={950}>
+            <MobileFrame height={950}>
+              <window.BillsListMobile
+                initFilters={{ prop:'all', svc:'electricity', period:'last12' }}
+              />
+            </MobileFrame>
+          </window.DCArtboard>
+
+          <window.DCArtboard id="filter-gas-3mo" label="Filter: Gas · Last 3 months" width={AW} height={680}>
+            <MobileFrame height={680}>
+              <window.BillsListMobile
+                initFilters={{ prop:'all', svc:'gas', period:'last3' }}
+              />
+            </MobileFrame>
+          </window.DCArtboard>
+
+          <window.DCArtboard id="filter-prop-svc" label="Filter: Property + Service" width={AW} height={680}>
+            <MobileFrame height={680}>
+              <window.BillsListMobile
+                initFilters={{ prop:'p1', svc:'electricity', period:'last12' }}
+              />
+            </MobileFrame>
+          </window.DCArtboard>
+
+          <window.DCArtboard id="filter-sheet-open" label="Filter sheet open" width={AW} height={960}>
+            <MobileFrame height={960}>
+              <window.BillsListMobile
+                initSheetOpen={true}
+                canvasMode={true}
+              />
+            </MobileFrame>
+          </window.DCArtboard>
+        </window.DCSection>
+
+        {/* ── 3. SORT ─────────────────────────────────────────────────── */}
+        <window.DCSection
+          id="sort"
+          title="Sort states"
+          subtitle="Sort trigger highlighted when non-default · Sheet shows active field"
+        >
+          <window.DCArtboard id="sort-amount-desc" label="Sort: Amount ↓ (High → Low)" width={AW} height={1150}>
+            <MobileFrame height={1150}>
+              <window.BillsListMobile
+                initSortField="amount"
+                initSortDir="desc"
+              />
+            </MobileFrame>
+          </window.DCArtboard>
+
+          <window.DCArtboard id="sort-property-asc" label="Sort: Property A–Z" width={AW} height={1150}>
+            <MobileFrame height={1150}>
+              <window.BillsListMobile
+                initSortField="property"
+                initSortDir="asc"
+              />
+            </MobileFrame>
+          </window.DCArtboard>
+
+          <window.DCArtboard id="sort-sheet-service-dark" label="Sort sheet open · Service · Dark theme" width={AW} height={960}>
+            <window.SortSheetDark />
+          </window.DCArtboard>
+
+          <window.DCArtboard id="sort-sheet-amount" label="Sort sheet open · Amount active" width={AW} height={960}>
+            <MobileFrame height={960}>
+              <window.BillsListMobile
+                initSortField="amount"
+                initSortDir="desc"
+                initSortSheetOpen={true}
+                canvasMode={true}
+              />
+            </MobileFrame>
+          </window.DCArtboard>
+
+          <window.DCArtboard id="sort-sheet-default" label="Sort sheet open · Date active" width={AW} height={960}>
+            <MobileFrame height={960}>
+              <window.BillsListMobile
+                initSortSheetOpen={true}
+                canvasMode={true}
+              />
+            </MobileFrame>
+          </window.DCArtboard>
+        </window.DCSection>
+
+        {/* ── 4. PAGINATION ───────────────────────────────────────────── */}
+        <window.DCSection
+          id="pagination"
+          title="Pagination states"
+          subtitle="Page 2 · Different page sizes"
+        >
+          <window.DCArtboard id="page-2" label="Page 2 · 10 per page" width={AW} height={1150}>
+            <MobileFrame height={1150}>
+              <window.BillsListMobile
+                initPage={2}
+              />
+            </MobileFrame>
+          </window.DCArtboard>
+
+          <window.DCArtboard id="page-size-25" label="25 per page · Page 1" width={AW} height={2200}>
+            <MobileFrame height={2200}>
+              <window.BillsListMobile
+                initPerPage={25}
+              />
+            </MobileFrame>
+          </window.DCArtboard>
+
+          <window.DCArtboard id="page-size-50" label="50 per page · Page 1" width={AW} height={3800}>
+            <MobileFrame height={3800}>
+              <window.BillsListMobile
+                initPerPage={50}
+              />
+            </MobileFrame>
+          </window.DCArtboard>
+        </window.DCSection>
+
+      </window.DesignCanvas>
+    );
+  }
+
+  ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

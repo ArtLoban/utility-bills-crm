@@ -13,6 +13,7 @@ const BI_M = {
   Plus:    () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5v14"/></svg>,
   Filter:  () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>,
   ChevD:   () => <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke={Z.mutedFg} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>,
+  ChevU:   () => <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke={Z.mutedFg} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m18 15-6-6-6 6"/></svg>,
   ChevR:   (p) => <svg width={p?.s||14} height={p?.s||14} viewBox="0 0 24 24" fill="none" stroke={p?.c||'currentColor'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>,
   MoreH:   () => <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>,
   ChevL:   () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>,
@@ -114,13 +115,10 @@ function FilterSheet({ open, onClose, filters, setFilters }) {
   );
   return (
     <>
-      {/* Backdrop */}
-      <div onClick={onClose} style={{
-        position: 'absolute', inset: 0, background: 'rgba(9,9,11,0.4)', zIndex: 20,
-      }}/>
+      <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(9,9,11,0.4)', zIndex: 20 }}/>
       {/* Sheet */}
       <div style={{
-        position: 'absolute', left: 0, right: 0, bottom: 0,
+        position: 'fixed', left: 0, right: 0, bottom: 0,
         background: Z.background,
         borderRadius: '14px 14px 0 0',
         zIndex: 21,
@@ -197,123 +195,244 @@ function FilterSheet({ open, onClose, filters, setFilters }) {
   );
 }
 
-// Bill card (the mobile row)
-function BillCard({ row, isFirst }) {
+// Date formatter: "15 Apr 2026" → "15/04/2026"
+const MONTH_NUM = { Jan:'01',Feb:'02',Mar:'03',Apr:'04',May:'05',Jun:'06',Jul:'07',Aug:'08',Sep:'09',Oct:'10',Nov:'11',Dec:'12' };
+function fmtDate(d) {
+  const [day, mon, year] = d.split(' ');
+  return `${day}/${MONTH_NUM[mon] || mon}/${year}`;
+}
+
+// Period formatter: "Mar 2025" → "March 2025"
+const MONTH_FULL = { Jan:'January',Feb:'February',Mar:'March',Apr:'April',May:'May',Jun:'June',Jul:'July',Aug:'August',Sep:'September',Oct:'October',Nov:'November',Dec:'December' };
+function fmtPeriod(p) {
+  const [mon, year] = p.split(' ');
+  return `${MONTH_FULL[mon] || mon} ${year}`;
+}
+
+// Bill card — row 1: icon + service + amount inline
+function BillCard({ row }) {
   const color = SERVICE_COLORS[row.service.id] || Z.mutedFg;
   const Ic = SERVICE_ICONS[row.service.id];
   const [menuOpen, setMenuOpen] = useStM(false);
+
   return (
     <div style={{
       background: Z.card,
       border: `1px solid ${Z.border}`,
       borderRadius: 8,
       boxShadow: '0 1px 2px rgba(24,24,27,0.04)',
-      padding: '14px 14px 14px 14px',
-      display: 'flex', alignItems: 'center', gap: 12,
+      padding: '12px 10px 12px 14px',
+      display: 'flex', alignItems: 'stretch', gap: 8,
       position: 'relative',
     }}>
-      {/* Service icon */}
-      <div style={{
-        width: 36, height: 36, borderRadius: 8, flexShrink: 0,
-        background: color + '18',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-      }}>
-        {Ic && <Ic size={18} stroke={color}/>}
-      </div>
 
-      {/* Content */}
+      {/* LEFT: all text rows */}
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{
-          display: 'flex', alignItems: 'baseline',
-          justifyContent: 'space-between', gap: 8,
-        }}>
-          <span style={{ fontSize: 14, fontWeight: 600, color: Z.foreground, letterSpacing: -0.1 }}>
-            {row.date.split(' ').slice(0,2).join(' ')} · {row.service.name}
-          </span>
-          <span style={{
-            fontSize: 14, fontWeight: 700, color: Z.destructive,
-            fontFeatureSettings: '"tnum" 1', flexShrink: 0,
+
+        {/* Row 1: [icon] Service · −amount UAH */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+          <div style={{
+            width: 12, height: 12, borderRadius: 3, flexShrink: 0,
+            background: color + '28',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}>
+            {Ic && <Ic size={7} stroke={color}/>}
+          </div>
+          <span style={{ fontSize: 14, fontWeight: 600, color: Z.foreground, letterSpacing: -0.1, flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            {row.service.name}
+          </span>
+          <span style={{ fontSize: 14, fontWeight: 700, color: Z.destructive, fontFeatureSettings: '"tnum" 1', whiteSpace: 'nowrap', flexShrink: 0 }}>
             −{row.amount.toLocaleString()}
           </span>
+          <span style={{ fontSize: 11, color: Z.mutedFg, flexShrink: 0, marginLeft: 2 }}>UAH</span>
         </div>
+
+        {/* Row 2: property name */}
+        <div style={{ paddingLeft: 19, marginTop: 5 }}>
+          <span style={{
+            fontSize: 12, color: Z.mutedFg,
+            display: 'block', overflow: 'hidden',
+            textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+          }}>
+            {row.property.name}
+          </span>
+        </div>
+
+        {/* Row 3: date left · period right */}
         <div style={{
-          fontSize: 12, color: Z.mutedFg, marginTop: 3,
+          paddingLeft: 19, marginTop: 3,
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         }}>
-          <span style={{
-            overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-            flex: 1,
-          }}>
-            {row.property.name} · {row.period}
-          </span>
-          <span style={{ color: Z.mutedFg, fontSize: 11.5, marginLeft: 4, flexShrink: 0 }}>UAH</span>
+          <span style={{ fontSize: 12, color: Z.mutedFg }}>{fmtDate(row.date)}</span>
+          <span style={{ fontSize: 12, color: '#3f3f46', fontWeight: 500, whiteSpace: 'nowrap' }}>{fmtPeriod(row.period)}</span>
+        </div>
+
+      </div>
+
+      {/* RIGHT: ⋮ button, vertically centered */}
+      <div style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
+        <div style={{ position: 'relative' }}>
+          <button
+            onClick={e => { e.stopPropagation(); setMenuOpen(v => !v); }}
+            style={{
+              width: 28, height: 28, borderRadius: 5,
+              border: `1px solid ${menuOpen ? Z.border : 'transparent'}`,
+              background: menuOpen ? Z.muted : 'transparent',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              cursor: 'pointer',
+            }}
+          >
+            <BI_M.MoreH/>
+          </button>
+          {menuOpen && (
+            <div style={{
+              position: 'absolute', right: 0, top: 32,
+              width: 120,
+              background: Z.card, border: `1px solid ${Z.border}`,
+              borderRadius: 6, boxShadow: '0 4px 16px rgba(9,9,11,0.10)',
+              zIndex: 10, overflow: 'hidden',
+            }}>
+              {['Edit','Delete'].map((item, i) => (
+                <button key={item} style={{
+                  display: 'block', width: '100%', padding: '9px 14px',
+                  textAlign: 'left', fontSize: 13, fontFamily: 'inherit',
+                  background: 'none', border: 'none',
+                  borderTop: i > 0 ? `1px solid ${Z.border}` : 'none',
+                  color: item === 'Delete' ? Z.destructive : Z.foreground,
+                  cursor: 'pointer',
+                }}>{item}</button>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
-      {/* ⋮ menu */}
-      <div style={{ position: 'relative', flexShrink: 0 }}>
-        <button
-          onClick={e => { e.stopPropagation(); setMenuOpen(v => !v); }}
-          style={{
-            width: 28, height: 28, borderRadius: 5,
-            border: `1px solid ${menuOpen ? Z.border : 'transparent'}`,
-            background: menuOpen ? Z.muted : 'transparent',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            cursor: 'pointer',
-          }}
-        >
-          <BI_M.MoreH/>
-        </button>
-        {menuOpen && (
-          <div style={{
-            position: 'absolute', right: 0, top: 32,
-            width: 120,
-            background: Z.card, border: `1px solid ${Z.border}`,
-            borderRadius: 6, boxShadow: '0 4px 16px rgba(9,9,11,0.10)',
-            zIndex: 10, overflow: 'hidden',
-          }}>
-            {['Edit','Delete'].map((item, i) => (
-              <button key={item} style={{
-                display: 'block', width: '100%', padding: '9px 14px',
-                textAlign: 'left', fontSize: 13, fontFamily: 'inherit',
-                background: 'none', border: 'none',
-                borderTop: i > 0 ? `1px solid ${Z.border}` : 'none',
-                color: item === 'Delete' ? Z.destructive : Z.foreground,
-                cursor: 'pointer',
-              }}>{item}</button>
-            ))}
-          </div>
-        )}
+    </div>
+  );
+}
+
+const SORT_DISPLAY = {
+  date:     { asc: 'Date (oldest)', desc: 'Date (newest)' },
+  property: { asc: 'Property A–Z',  desc: 'Property Z–A' },
+  service:  { asc: 'Service A–Z',   desc: 'Service Z–A' },
+  amount:   { asc: 'Amount ↑',      desc: 'Amount ↓' },
+};
+
+const SORT_FIELDS = [
+  { id: 'date',     label: 'Date',     asc: 'Oldest first',  desc: 'Newest first' },
+  { id: 'property', label: 'Property', asc: 'A → Z',          desc: 'Z → A' },
+  { id: 'service',  label: 'Service',  asc: 'A → Z',          desc: 'Z → A' },
+  { id: 'amount',   label: 'Amount',   asc: 'Low → High',     desc: 'High → Low' },
+];
+
+function SortSheet({ open, onClose, sortField, sortDir, onSort }) {
+  if (!open) return null;
+  return (
+    <>
+      <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(9,9,11,0.4)', zIndex: 20 }}/>
+      <div style={{
+        position: 'fixed', left: 0, right: 0, bottom: 0,
+        background: Z.background,
+        borderRadius: '14px 14px 0 0',
+        zIndex: 21, padding: '0 16px 24px',
+        boxShadow: '0 -8px 32px rgba(9,9,11,0.12)',
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'center', padding: '10px 0 4px' }}>
+          <div style={{ width: 36, height: 4, borderRadius: 2, background: Z.border }}/>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 0 16px' }}>
+          <span style={{ fontSize: 15, fontWeight: 600 }}>Sort by</span>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}>
+            <BI_M.X/>
+          </button>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          {SORT_FIELDS.map(f => {
+            const isActive = sortField === f.id;
+            const dirLabel = sortDir === 'desc' ? f.desc : f.asc;
+            return (
+              <button
+                key={f.id}
+                onClick={() => { onSort(f.id); onClose(); }}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 10,
+                  width: '100%', padding: '12px 14px',
+                  background: isActive ? ACCENT_M.tintBg : Z.background,
+                  border: `1px solid ${isActive ? ACCENT_M.tintBorder : Z.border}`,
+                  borderRadius: 8, cursor: 'pointer', fontFamily: 'inherit',
+                }}
+              >
+                <span style={{ flex: 1, fontSize: 14, fontWeight: isActive ? 600 : 400, color: isActive ? ACCENT_M.solid : Z.foreground }}>
+                  {f.label}
+                </span>
+                {isActive && (
+                  <span style={{ fontSize: 12, color: ACCENT_M.solid, fontWeight: 500 }}>
+                    {dirLabel}
+                  </span>
+                )}
+                {isActive && (
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={ACCENT_M.solid} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    {sortDir === 'desc'
+                      ? <path d="m6 9 6 6 6-6"/>
+                      : <path d="m18 15-6-6-6 6"/>
+                    }
+                  </svg>
+                )}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    </>
+  );
+}
+
+// Page size selector (10 / 25 / 50 / 100)
+function PageSizeSelector({ value, onChange }) {
+  const sizes = [10, 25, 50, 100];
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+      <span style={{ fontSize: 12, color: Z.mutedFg, flexShrink: 0 }}>Show:</span>
+      <div style={{ display: 'flex', gap: 4 }}>
+        {sizes.map(s => (
+          <button key={s} onClick={() => onChange(s)} style={{
+            height: 28, minWidth: 38, padding: '0 8px',
+            fontSize: 12, fontWeight: 500,
+            background: s === value ? ACCENT_M.solid : Z.background,
+            color: s === value ? '#fff' : Z.mutedFg,
+            border: `1px solid ${s === value ? ACCENT_M.solid : Z.border}`,
+            borderRadius: 5, cursor: 'pointer', fontFamily: 'inherit',
+          }}>{s}</button>
+        ))}
       </div>
     </div>
   );
 }
 
-// Pagination strip (minimal — prev / page indicator / next)
+// Pagination strip — prev / page indicator / next
 function MobilePager({ page, total, perPage, onPrev, onNext }) {
-  const totalPages = Math.ceil(total / perPage);
+  const totalPages = Math.ceil(total / perPage) || 1;
   return (
     <div style={{
       display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-      padding: '14px 0 4px',
+      padding: '4px 0 0',
     }}>
       <button onClick={onPrev} disabled={page === 1} style={{
-        width: 36, height: 36, borderRadius: 8,
+        width: 32, height: 32, borderRadius: 6,
         border: `1px solid ${Z.border}`, background: Z.background,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         cursor: page === 1 ? 'default' : 'pointer',
-        opacity: page === 1 ? 0.4 : 1,
+        opacity: page === 1 ? 0.35 : 1,
       }}><BI_M.ChevL/></button>
-      <span style={{ fontSize: 13, color: Z.mutedFg }}>
+      <span style={{ fontSize: 13, color: Z.mutedFg, whiteSpace: 'nowrap' }}>
         Page <strong style={{ color: Z.foreground }}>{page}</strong> of {totalPages}
       </span>
       <button onClick={onNext} disabled={page === totalPages} style={{
-        width: 36, height: 36, borderRadius: 8,
+        width: 32, height: 32, borderRadius: 6,
         border: `1px solid ${Z.border}`, background: Z.background,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         cursor: page === totalPages ? 'default' : 'pointer',
-        opacity: page === totalPages ? 0.4 : 1,
+        opacity: page === totalPages ? 0.35 : 1,
       }}><BI_M.ChevRr/></button>
     </div>
   );
@@ -322,8 +441,23 @@ function MobilePager({ page, total, perPage, onPrev, onNext }) {
 function BillsListMobile() {
   const [filters, setFilters] = useStM({ prop:'all', svc:'all', period:'last12' });
   const [sheetOpen, setSheetOpen] = useStM(false);
+  const [sortField, setSortField] = useStM('date');
+  const [sortDir, setSortDir] = useStM('desc');
+  const [sortSheetOpen, setSortSheetOpen] = useStM(false);
   const [page, setPage] = useStM(1);
-  const PER_PAGE = 10;
+  const [perPage, setPerPage] = useStM(10);
+
+  const handlePerPageChange = (n) => { setPerPage(n); setPage(1); };
+
+  const handleSort = (field) => {
+    if (field === sortField) {
+      setSortDir(d => d === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortDir(field === 'date' || field === 'amount' ? 'desc' : 'asc');
+    }
+    setPage(1);
+  };
 
   const activeCount = [
     filters.prop !== 'all',
@@ -337,11 +471,20 @@ function BillsListMobile() {
     if (filters.svc    !== 'all') rows = rows.filter(r => r.service.id  === filters.svc);
     if (filters.period === 'last6') rows = rows.filter(r => r.periodSort >= 202410);
     if (filters.period === 'last3') rows = rows.filter(r => r.periodSort >= 202501);
+    rows.sort((a, b) => {
+      let av, bv;
+      if      (sortField === 'date')     { av = a.sortTs;        bv = b.sortTs; }
+      else if (sortField === 'property') { av = a.property.name; bv = b.property.name; }
+      else if (sortField === 'service')  { av = a.service.name;  bv = b.service.name; }
+      else                               { av = a.amount;        bv = b.amount; }
+      if (typeof av === 'string') return sortDir === 'asc' ? av.localeCompare(bv) : bv.localeCompare(av);
+      return sortDir === 'asc' ? av - bv : bv - av;
+    });
     return rows;
-  }, [filters]);
+  }, [filters, sortField, sortDir]);
 
   const total = filtered.reduce((s, r) => s + r.amount, 0);
-  const pageRows = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE);
+  const pageRows = filtered.slice((page - 1) * perPage, page * perPage);
 
   return (
     <div style={{
@@ -387,13 +530,26 @@ function BillsListMobile() {
             justifyContent: 'space-between', marginBottom: 14,
           }}>
             <FilterTrigger activeCount={activeCount} onOpen={() => setSheetOpen(true)}/>
-            {/* Sort hint */}
-            <div style={{
-              display: 'flex', alignItems: 'center', gap: 4,
-              fontSize: 12, color: Z.mutedFg,
-            }}>
-              <BI_M.SortAmt/> Date (newest)
-            </div>
+            {/* Sort trigger */}
+            <button
+              onClick={() => setSortSheetOpen(true)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 4,
+                height: 32, padding: '0 10px',
+                fontSize: 12, fontWeight: 500,
+                background: (sortField !== 'date' || sortDir !== 'desc') ? ACCENT_M.tintBg : 'transparent',
+                color:      (sortField !== 'date' || sortDir !== 'desc') ? ACCENT_M.solid  : Z.mutedFg,
+                border: `1px solid ${(sortField !== 'date' || sortDir !== 'desc') ? ACCENT_M.tintBorder : 'transparent'}`,
+                borderRadius: 6, cursor: 'pointer', fontFamily: 'inherit',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {sortDir === 'desc'
+                ? <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                : <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+              }
+              {SORT_DISPLAY[sortField][sortDir]}
+            </button>
           </div>
 
           {/* Active filter chips */}
@@ -424,27 +580,32 @@ function BillsListMobile() {
             ))}
           </div>
 
-          {/* Pagination */}
-          <MobilePager
-            page={page}
-            total={filtered.length}
-            perPage={PER_PAGE}
-            onPrev={() => setPage(p => Math.max(1, p - 1))}
-            onNext={() => setPage(p => Math.min(Math.ceil(filtered.length / PER_PAGE), p + 1))}
-          />
+          {/* Page size + Pagination */}
+          <div style={{ marginTop: 16 }}>
+            <PageSizeSelector value={perPage} onChange={handlePerPageChange}/>
+            <MobilePager
+              page={page}
+              total={filtered.length}
+              perPage={perPage}
+              onPrev={() => setPage(p => Math.max(1, p - 1))}
+              onNext={() => setPage(p => Math.min(Math.ceil(filtered.length / perPage), p + 1))}
+            />
+          </div>
 
-          {/* Footer total */}
+          {/* Totals */}
           <div style={{
-            marginTop: 16, padding: '14px', borderRadius: 8,
-            background: Z.card, border: `1px solid ${Z.border}`,
+            marginTop: 16,
+            borderTop: `1px solid ${Z.border}`,
+            paddingTop: 14,
             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            paddingBottom: 4,
           }}>
-            <span style={{ fontSize: 13, color: Z.mutedFg }}>Total (filtered)</span>
+            <span style={{ fontSize: 13, color: Z.mutedFg }}>Total paid</span>
             <span style={{
-              fontSize: 15, fontWeight: 700, color: Z.destructive,
-              fontFeatureSettings: '"tnum" 1',
+              fontSize: 15, fontWeight: 700, color: '#16a34a',
+              fontFeatureSettings: '"tnum" 1', whiteSpace: 'nowrap',
             }}>
-              −{total.toLocaleString()} UAH
+              {total.toLocaleString()} UAH
             </span>
           </div>
         </div>
@@ -456,6 +617,15 @@ function BillsListMobile() {
         onClose={() => setSheetOpen(false)}
         filters={filters}
         setFilters={setFilters}
+      />
+
+      {/* Sort bottom sheet */}
+      <SortSheet
+        open={sortSheetOpen}
+        onClose={() => setSortSheetOpen(false)}
+        sortField={sortField}
+        sortDir={sortDir}
+        onSort={handleSort}
       />
     </div>
   );
