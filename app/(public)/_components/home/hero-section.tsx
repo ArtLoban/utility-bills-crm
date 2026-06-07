@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { ROUTES } from "@/lib/routes";
+import { Button } from "@/components/ui/button";
 
 type TProps = {
   heroTitle: string;
@@ -58,13 +59,12 @@ export const HeroSection = ({ heroTitle, heroDesc }: TProps) => {
         </p>
 
         <div className="mt-8">
-          <Link
-            href={ROUTES.demo}
-            className="inline-flex items-center gap-1.5 rounded-md border border-zinc-200 px-4 py-2 text-sm font-medium text-zinc-900 transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-800"
-          >
-            Try demo
-            <ArrowRight className="size-3.5" strokeWidth={2} />
-          </Link>
+          <Button variant="active" size="lg" asChild>
+            <Link href={ROUTES.demo}>
+              Try demo
+              <ArrowRight className="size-3.5" strokeWidth={2} />
+            </Link>
+          </Button>
         </div>
       </div>
     </section>

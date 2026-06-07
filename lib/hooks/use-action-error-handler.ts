@@ -15,7 +15,7 @@ export const useActionErrorHandler = ({ onClose }: TOptions) => {
   return (error: DomainError) => {
     if (error.name === "DemoModeError") {
       // Intentionally no onClose — leave the modal open so the demo user keeps exploring.
-      toast.info(t("demoBlocked"));
+      toast.warning(t("demoBlocked"));
       return;
     }
     toast.error(t("saveError"));
