@@ -4,7 +4,7 @@ import { Inter } from "next/font/google";
 import { cookies } from "next/headers";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
-import { AppToaster } from "@/components/app-toaster";
+import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 import { auth } from "@/lib/auth";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -57,7 +57,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
             <TooltipProvider delayDuration={300}>
               <NuqsAdapter>{children}</NuqsAdapter>
             </TooltipProvider>
-            <AppToaster />
+            <Toaster />
           </ThemeProvider>
         </NextIntlClientProvider>
       </body>
