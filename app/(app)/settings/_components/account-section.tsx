@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
 import { signOutAllDevices } from "@/lib/auth/actions";
+import { useActionErrorHandler } from "@/lib/hooks/use-action-error-handler";
 
 import { SettingsCard, SettingsCardBody, SettingsCardHeader } from "./settings-card";
 import { IconBadge } from "@/components/icon-badge";
@@ -40,10 +41,15 @@ const AccountSection = ({ email }: TProps) => {
   const t = useTranslations("settings.account");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const handleError = useActionErrorHandler({ onClose: () => setDialogOpen(false) });
 
   const handleConfirm = () => {
     startTransition(async () => {
-      await signOutAllDevices();
+      const result = await signOutAllDevices();
+      if (result && !result.ok) {
+        handleError(result.error);
+        setDialogOpen(false);
+      }
     });
   };
 
@@ -98,6 +104,7 @@ const AccountSection = ({ email }: TProps) => {
         title={t("signOutEverywhere.dialog.title")}
         open={dialogOpen}
         onOpenChange={setDialogOpen}
+        onConfirm={handleConfirm}
         variant="warning"
         confirmIcon={LogOut}
         confirmLabel={t("signOutEverywhere.dialog.confirm")}
