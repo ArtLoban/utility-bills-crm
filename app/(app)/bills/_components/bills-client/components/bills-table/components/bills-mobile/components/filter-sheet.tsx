@@ -1,11 +1,10 @@
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { ChevronDown, X } from "lucide-react";
 
 import { Sheet, SheetClose, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { PRESETS } from "@/components/date-range-filter/constants";
 import type { TTimePeriod } from "@/components/date-range-filter/types";
 import { resolvePreset } from "@/components/date-range-filter/utils";
-import { ACCENT } from "@/lib/constants/ui-tokens";
 import { useServiceOptions } from "@/features/services/hooks/use-service-options";
 
 type TFilterOption = { id: string; name: string };
@@ -29,45 +28,25 @@ type TSheetSelectProps = {
   label: string;
   value: string;
   onChange: (value: string) => void;
-  children: React.ReactNode;
+  children: ReactNode;
 };
 
 const SheetSelect = ({ label, value, onChange, children }: TSheetSelectProps) => (
   <div>
-    <label style={{ fontSize: 12.5, fontWeight: 500, display: "block", marginBottom: 6 }}>
-      {label}
-    </label>
-    <div style={{ position: "relative" }}>
+    <label className="mb-1.5 block text-xs font-medium">{label}</label>
+    <div className="relative">
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="border border-zinc-200 bg-white text-zinc-950 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50"
-        style={{
-          appearance: "none",
-          width: "100%",
-          height: 38,
-          paddingLeft: 12,
-          paddingRight: 32,
-          fontSize: 14,
-          borderRadius: 6,
-          cursor: "pointer",
-          outline: "none",
-          fontFamily: "inherit",
-        }}
+        className="w-full cursor-pointer appearance-none rounded-sm border border-zinc-200 bg-white pr-8 pl-3 text-sm text-zinc-950 outline-none dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50"
+        style={{ height: 38 }}
       >
         {children}
       </select>
       <ChevronDown
         size={14}
         strokeWidth={2}
-        className="text-zinc-500 dark:text-zinc-400"
-        style={{
-          position: "absolute",
-          right: 10,
-          top: "50%",
-          transform: "translateY(-50%)",
-          pointerEvents: "none",
-        }}
+        className="pointer-events-none absolute top-1/2 right-2.5 -translate-y-1/2 text-zinc-500 dark:text-zinc-400"
       />
     </div>
   </div>
@@ -81,24 +60,13 @@ type TSheetDateInputProps = {
 
 const SheetDateInput = ({ label, value, onChange }: TSheetDateInputProps) => (
   <div>
-    <label style={{ fontSize: 12.5, fontWeight: 500, display: "block", marginBottom: 6 }}>
-      {label}
-    </label>
+    <label className="mb-1.5 block text-xs font-medium">{label}</label>
     <input
       type="date"
       value={value ?? ""}
       onChange={(e) => onChange(e.target.value || null)}
-      className="border border-zinc-200 bg-white text-zinc-950 [color-scheme:light] dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50 dark:[color-scheme:dark]"
-      style={{
-        width: "100%",
-        height: 38,
-        paddingLeft: 12,
-        paddingRight: 12,
-        fontSize: 14,
-        borderRadius: 6,
-        outline: "none",
-        fontFamily: "inherit",
-      }}
+      className="w-full rounded-sm border border-zinc-200 bg-white px-3 text-sm text-zinc-950 [color-scheme:light] outline-none dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50 dark:[color-scheme:dark]"
+      style={{ height: 38 }}
     />
   </div>
 );
@@ -145,45 +113,21 @@ const FilterSheet = ({ open, onOpenChange, filters, onFilterChange, propertyOpti
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="bottom" showCloseButton={false} className="gap-0 rounded-t-[14px] p-0">
         {/* Drag handle */}
-        <div style={{ display: "flex", justifyContent: "center", paddingTop: 10 }}>
-          <div
-            className="bg-zinc-200 dark:bg-zinc-700"
-            style={{ width: 36, height: 4, borderRadius: 2 }}
-          />
+        <div className="flex justify-center pt-2.5">
+          <div className="h-1 w-9 rounded-sm bg-zinc-200 dark:bg-zinc-700" />
         </div>
 
-        {/* Inner content */}
-        <div style={{ padding: "0 16px 24px" }}>
+        <div className="px-4 pb-6">
           {/* Header */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              padding: "10px 0 16px",
-            }}
-          >
-            <SheetTitle style={{ fontSize: 15, fontWeight: 600 }}>Filters</SheetTitle>
-            <SheetClose
-              style={{
-                width: 28,
-                height: 28,
-                borderRadius: 6,
-                border: "none",
-                background: "transparent",
-                cursor: "pointer",
-                display: "inline-flex",
-                alignItems: "center",
-                justifyContent: "center",
-                padding: 0,
-              }}
-            >
+          <div className="flex items-center justify-between pt-2.5 pb-4">
+            <SheetTitle className="text-[15px] font-semibold">Filters</SheetTitle>
+            <SheetClose className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-sm border-none bg-transparent p-0">
               <X size={16} className="text-zinc-500 dark:text-zinc-400" />
             </SheetClose>
           </div>
 
           {/* Controls */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+          <div className="flex flex-col gap-3.5">
             <SheetSelect
               label="Property"
               value={filters.propertyId ?? ""}
@@ -229,37 +173,16 @@ const FilterSheet = ({ open, onOpenChange, filters, onFilterChange, propertyOpti
           </div>
 
           {/* Action buttons */}
-          <div style={{ display: "flex", gap: 10, marginTop: 20 }}>
+          <div className="mt-5 flex gap-2.5">
             <button
               onClick={handleClear}
-              className="bg-zinc-100 text-zinc-950 dark:bg-zinc-800 dark:text-zinc-50"
-              style={{
-                flex: 1,
-                height: 40,
-                borderRadius: 8,
-                border: "none",
-                fontSize: 14,
-                fontFamily: "inherit",
-                fontWeight: 500,
-                cursor: "pointer",
-              }}
+              className="bg-secondary text-secondary-foreground h-10 flex-1 cursor-pointer rounded-lg border-0 text-sm font-medium"
             >
               Clear
             </button>
             <button
               onClick={() => onOpenChange(false)}
-              style={{
-                flex: 2,
-                height: 40,
-                borderRadius: 8,
-                border: "none",
-                background: ACCENT,
-                fontSize: 14,
-                fontFamily: "inherit",
-                fontWeight: 500,
-                cursor: "pointer",
-                color: "#fff",
-              }}
+              className="bg-primary text-primary-foreground h-10 flex-[2] cursor-pointer rounded-lg border-0 text-sm font-medium"
             >
               Apply
             </button>

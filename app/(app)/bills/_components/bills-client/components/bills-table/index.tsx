@@ -23,7 +23,7 @@ export const BillsTable = ({ billsList }: TProps) => {
           queryFilters={queryFilters}
         />
       </div>
-      <div className="-mx-8 md:hidden">
+      <div className="md:hidden">
         <BillsTableMobile
           billsList={billsList}
           listParams={listParams}
