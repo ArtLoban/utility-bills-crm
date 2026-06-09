@@ -1,11 +1,10 @@
 import { useState, type ReactNode } from "react";
-import { ChevronDown, X } from "lucide-react";
-
-import { Sheet, SheetClose, SheetContent, SheetTitle } from "@/components/ui/sheet";
+import { ChevronDown } from "lucide-react";
 import { PRESETS } from "@/components/date-range-filter/constants";
 import type { TTimePeriod } from "@/components/date-range-filter/types";
 import { resolvePreset } from "@/components/date-range-filter/utils";
 import { useServiceOptions } from "@/features/services/hooks/use-service-options";
+import { SheetDialog } from "@/components/sheet-dialog";
 
 type TFilterOption = { id: string; name: string };
 
@@ -71,7 +70,13 @@ const SheetDateInput = ({ label, value, onChange }: TSheetDateInputProps) => (
   </div>
 );
 
-const FilterSheet = ({ open, onOpenChange, filters, onFilterChange, propertyOptions }: TProps) => {
+export const FilterSheet = ({
+  open,
+  onOpenChange,
+  filters,
+  onFilterChange,
+  propertyOptions,
+}: TProps) => {
   const [timePeriod, setTimePeriod] = useState<TTimePeriod | null>(null);
   const serviceOptions = useServiceOptions();
 
@@ -110,87 +115,48 @@ const FilterSheet = ({ open, onOpenChange, filters, onFilterChange, propertyOpti
   };
 
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="bottom" showCloseButton={false} className="gap-0 rounded-t-[14px] p-0">
-        {/* Drag handle */}
-        <div className="flex justify-center pt-2.5">
-          <div className="h-1 w-9 rounded-sm bg-zinc-200 dark:bg-zinc-700" />
-        </div>
+    <SheetDialog title="Filters" open={open} onOpenChange={onOpenChange} onClose={handleClear}>
+      {/* Controls */}
+      <div className="flex flex-col gap-3.5">
+        <SheetSelect
+          label="Property"
+          value={filters.propertyId ?? ""}
+          onChange={setField("propertyId")}
+        >
+          <option value="">All properties</option>
+          {propertyOptions.map((p) => (
+            <option key={p.id} value={p.id}>
+              {p.name}
+            </option>
+          ))}
+        </SheetSelect>
 
-        <div className="px-4 pb-6">
-          {/* Header */}
-          <div className="flex items-center justify-between pt-2.5 pb-4">
-            <SheetTitle className="text-[15px] font-semibold">Filters</SheetTitle>
-            <SheetClose className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-sm border-none bg-transparent p-0">
-              <X size={16} className="text-zinc-500 dark:text-zinc-400" />
-            </SheetClose>
-          </div>
+        <SheetSelect label="Service" value={filters.services ?? ""} onChange={setField("services")}>
+          <option value="">All services</option>
+          {serviceOptions.map((s) => (
+            <option key={s.id} value={s.id}>
+              {s.name}
+            </option>
+          ))}
+        </SheetSelect>
 
-          {/* Controls */}
-          <div className="flex flex-col gap-3.5">
-            <SheetSelect
-              label="Property"
-              value={filters.propertyId ?? ""}
-              onChange={setField("propertyId")}
-            >
-              <option value="">All properties</option>
-              {propertyOptions.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.name}
-                </option>
-              ))}
-            </SheetSelect>
+        <SheetDateInput
+          label="Date from"
+          value={filters.dateFrom}
+          onChange={handleDateFromChange}
+        />
 
-            <SheetSelect
-              label="Service"
-              value={filters.services ?? ""}
-              onChange={setField("services")}
-            >
-              <option value="">All services</option>
-              {serviceOptions.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.name}
-                </option>
-              ))}
-            </SheetSelect>
+        <SheetDateInput label="Date to" value={filters.dateTo} onChange={handleDateToChange} />
 
-            <SheetDateInput
-              label="Date from"
-              value={filters.dateFrom}
-              onChange={handleDateFromChange}
-            />
-
-            <SheetDateInput label="Date to" value={filters.dateTo} onChange={handleDateToChange} />
-
-            <SheetSelect label="Time Period" value={timePeriod ?? ""} onChange={handlePresetChange}>
-              <option value="">Select period</option>
-              {PRESETS.map(({ id, label }) => (
-                <option key={id} value={id}>
-                  {label}
-                </option>
-              ))}
-            </SheetSelect>
-          </div>
-
-          {/* Action buttons */}
-          <div className="mt-5 flex gap-2.5">
-            <button
-              onClick={handleClear}
-              className="bg-secondary text-secondary-foreground h-10 flex-1 cursor-pointer rounded-lg border-0 text-sm font-medium"
-            >
-              Clear
-            </button>
-            <button
-              onClick={() => onOpenChange(false)}
-              className="bg-primary text-primary-foreground h-10 flex-[2] cursor-pointer rounded-lg border-0 text-sm font-medium"
-            >
-              Apply
-            </button>
-          </div>
-        </div>
-      </SheetContent>
-    </Sheet>
+        <SheetSelect label="Time Period" value={timePeriod ?? ""} onChange={handlePresetChange}>
+          <option value="">Select period</option>
+          {PRESETS.map(({ id, label }) => (
+            <option key={id} value={id}>
+              {label}
+            </option>
+          ))}
+        </SheetSelect>
+      </div>
+    </SheetDialog>
   );
 };
-
-export { FilterSheet };

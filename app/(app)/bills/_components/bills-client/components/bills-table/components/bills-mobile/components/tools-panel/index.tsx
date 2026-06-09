@@ -19,6 +19,8 @@ import { parseAsString, useQueryStates } from "nuqs";
 import { format, parseISO } from "date-fns";
 import { TQueryFilters } from "@/app/(app)/bills/_components/bills-client/components/bills-table/types";
 import type { TListParams } from "@/components/data-table/types";
+import { Button } from "@/components/ui/button";
+import { useTranslations } from "next-intl";
 
 type TProps = {
   queryFilters: TQueryFilters;
@@ -34,8 +36,9 @@ const formatDateRangeChip = (dateFrom: string | null, dateTo: string | null): st
 };
 
 export const ToolsPanel = ({ queryFilters, listParams }: TProps) => {
+  const { hasActiveFilters } = queryFilters;
   const { sorting, onSortingChange } = listParams;
-
+  const t = useTranslations("payments.list"); // TODO: path
   const { properties } = useBillsTable();
   const [sheetOpen, setSheetOpen] = useState(false);
   const [sortSheetOpen, setSortSheetOpen] = useState(false);
@@ -69,7 +72,7 @@ export const ToolsPanel = ({ queryFilters, listParams }: TProps) => {
 
   // Filter state
   const hasDateFilter = filters.dateFrom !== null || filters.dateTo !== null;
-  const activeFilterCount = [
+  const activeCount = [
     filters.propertyId !== null,
     filters.services !== null,
     hasDateFilter,
@@ -82,43 +85,21 @@ export const ToolsPanel = ({ queryFilters, listParams }: TProps) => {
   const serviceKey = filters.services ? dbCodeToServiceKey(filters.services) : undefined;
   const serviceColor = serviceKey ? SERVICE_COLORS[serviceKey] : undefined;
 
-  const { hasActiveFilters } = queryFilters;
-
   return (
     <div>
-      <div
-        className={`flex items-center justify-between ${hasActiveFilters ? "mb-2.5" : "mb-3.5"}`}
-      >
-        {/* Filter button */}
-        <button
-          onClick={() => setSheetOpen(true)}
-          className="inline-flex h-8 cursor-pointer items-center gap-1.5 rounded-md px-3 text-[13px] font-medium"
-          style={{
-            border: `1px solid ${hasActiveFilters ? "var(--field-tint-border)" : "var(--border)"}`,
-            background: hasActiveFilters ? "var(--field-tint-bg)" : "var(--background)",
-            color: hasActiveFilters ? "var(--field-tint-fg)" : "var(--foreground)",
-          }}
-        >
-          Filters
-          {hasActiveFilters && (
-            <span
-              className="inline-flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[10.5px] font-bold text-white"
-              style={{ background: "var(--field-tint-fg)" }}
-            >
-              {activeFilterCount}
+      <div className="mb-3.5 flex items-center justify-between">
+        <Button variant={activeCount > 0 ? "active" : "outline"} onClick={() => setSheetOpen(true)}>
+          {t("mobile.filters")}
+          {activeCount > 0 && (
+            <span className="bg-brand inline-flex min-w-4 items-center justify-center rounded-full px-1 text-[10.5px] font-bold text-white">
+              {activeCount}
             </span>
           )}
-        </button>
-
-        {/* Sort trigger */}
-        <button
+        </Button>
+        <Button
+          variant={isNonDefaultSort ? "active" : "outline"}
           onClick={() => setSortSheetOpen(true)}
-          className="flex h-8 cursor-pointer items-center gap-1 rounded-md px-2.5 text-xs font-medium whitespace-nowrap"
-          style={{
-            border: `1px solid ${isNonDefaultSort ? "var(--field-tint-border)" : "transparent"}`,
-            background: isNonDefaultSort ? "var(--field-tint-bg)" : "transparent",
-            color: isNonDefaultSort ? "var(--field-tint-fg)" : "var(--muted-foreground)",
-          }}
+          className="font-normal"
         >
           {currentDesc ? (
             <ChevronDown size={11} strokeWidth={2} />
@@ -126,7 +107,7 @@ export const ToolsPanel = ({ queryFilters, listParams }: TProps) => {
             <ChevronUp size={11} strokeWidth={2} />
           )}
           {sortTriggerLabel}
-        </button>
+        </Button>
       </div>
 
       {/* Active filter chips */}
