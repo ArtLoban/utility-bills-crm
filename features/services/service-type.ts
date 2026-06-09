@@ -1,4 +1,3 @@
-import type { ElementType } from "react";
 import {
   Building2,
   Droplets,
@@ -11,6 +10,7 @@ import {
   Truck,
   Wallet,
   Zap,
+  LucideIcon,
 } from "lucide-react";
 
 export const SERVICE_TYPE_CODES = {
@@ -31,7 +31,7 @@ export type TServiceTypeCode = (typeof SERVICE_TYPE_CODES)[keyof typeof SERVICE_
 
 export type TServiceTypeVisuals = {
   color: string;
-  Icon: ElementType;
+  Icon: LucideIcon;
 };
 
 export const SERVICE_TYPE_COLORS: Record<TServiceTypeCode, string> = {
@@ -48,7 +48,7 @@ export const SERVICE_TYPE_COLORS: Record<TServiceTypeCode, string> = {
   [SERVICE_TYPE_CODES.HOA_FEES]: "var(--service-hoa-fees)",
 };
 
-export const SERVICE_TYPE_ICONS: Record<TServiceTypeCode, ElementType> = {
+export const SERVICE_TYPE_ICONS: Record<TServiceTypeCode, LucideIcon> = {
   [SERVICE_TYPE_CODES.ELECTRICITY]: Zap,
   [SERVICE_TYPE_CODES.GAS]: Flame,
   [SERVICE_TYPE_CODES.COLD_WATER]: Droplets,
@@ -63,7 +63,7 @@ export const SERVICE_TYPE_ICONS: Record<TServiceTypeCode, ElementType> = {
 };
 
 const FALLBACK_COLOR = "var(--muted-foreground)";
-const FALLBACK_ICON: ElementType = Layers;
+const FALLBACK_ICON: LucideIcon = Layers;
 
 export const getServiceTypeVisuals = (code: TServiceTypeCode): TServiceTypeVisuals => ({
   color: SERVICE_TYPE_COLORS[code] ?? FALLBACK_COLOR,

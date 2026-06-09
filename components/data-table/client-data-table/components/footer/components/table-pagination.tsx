@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/pagination";
 import { cn } from "@/lib/utils";
 import { getPaginationRange } from "./utils/get-pagination-range";
-import { useDataTablePagination } from "@/components/data-table/data-table/hooks/use-data-table-pagination";
+import { useDataTablePagination } from "@/components/data-table/client-data-table/hooks/use-data-table-pagination";
 import { ELLIPSIS } from "@/components/data-table/constants";
 
 type TProps = {

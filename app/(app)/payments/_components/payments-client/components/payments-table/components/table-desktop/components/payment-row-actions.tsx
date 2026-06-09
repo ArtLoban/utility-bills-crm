@@ -3,8 +3,8 @@
 import { useTranslations } from "next-intl";
 import { Pencil, Trash2 } from "lucide-react";
 
-import type { TRowAction } from "@/components/data-table/cells/row-actions/types";
-import { RowActions } from "@/components/data-table/cells/row-actions";
+import type { TRowAction } from "@/components/data-table/components/row-actions/types";
+import { RowActions } from "@/components/data-table/components/row-actions";
 import type { TPaymentGlobalRow } from "@/features/payments/types";
 import { usePaymentsTable } from "../../../../../context";
 

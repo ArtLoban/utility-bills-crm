@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/pagination";
 import { cn } from "@/lib/utils";
 import { ELLIPSIS, PAGE_SIZE_OPTIONS } from "@/components/data-table/constants";
-import { getPaginationRange } from "@/components/data-table/data-table/components/footer/components/utils/get-pagination-range";
+import { getPaginationRange } from "@/components/data-table/client-data-table/components/footer/components/utils/get-pagination-range";
 
 type TProps = {
   page: number;

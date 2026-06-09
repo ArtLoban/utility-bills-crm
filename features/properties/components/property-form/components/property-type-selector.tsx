@@ -1,8 +1,8 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { TYPE_OPTIONS } from "@/features/properties/constants";
 import type { TPropertyType } from "@/lib/db/schema/properties";
+import { PROPERTY_TYPE_OPTIONS } from "@/features/properties/property-type";
 
 type TProps = {
   value: TPropertyType | "";
@@ -18,7 +18,7 @@ export const PropertyTypeSelector = ({ value, onChange }: TProps) => {
         {t("fields.type.label")}
       </label>
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-        {TYPE_OPTIONS.map(({ value: optionValue, Icon }) => {
+        {PROPERTY_TYPE_OPTIONS.map(({ value: optionValue, Icon }) => {
           const isSelected = value === optionValue;
           return (
             <button
@@ -39,7 +39,7 @@ export const PropertyTypeSelector = ({ value, onChange }: TProps) => {
                 className={isSelected ? "text-xs font-medium" : "text-xs font-normal"}
                 style={{ color: isSelected ? "var(--field-tint-fg)" : "var(--muted-foreground)" }}
               >
-                {t(`type.${optionValue}` as `type.${TPropertyType}`)}
+                {t(`type.${optionValue}`)}
               </span>
             </button>
           );

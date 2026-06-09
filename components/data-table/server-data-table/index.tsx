@@ -10,8 +10,8 @@ import {
 } from "@tanstack/react-table";
 
 import { Table } from "@/components/ui/table";
-import { Body } from "@/components/data-table/data-table/components/body";
-import { Header } from "@/components/data-table/data-table/components/header";
+import { Body } from "@/components/data-table/client-data-table/components/body";
+import { Header } from "@/components/data-table/client-data-table/components/header";
 import type { TServerPagination } from "@/lib/types/data-table";
 
 import { ServerFooter } from "./server-footer";

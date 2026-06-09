@@ -2,7 +2,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
-import { RowActions } from "@/components/data-table/cells/row-actions";
+import { RowActions } from "@/components/data-table/components/row-actions";
 import type { TAdminPropertyRow } from "@/features/admin-properties";
 import { usePropertiesTable } from "../../context";
 

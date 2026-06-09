@@ -29,7 +29,7 @@ export const RowActions = ({ items, triggerLabel }: TProps) => {
       >
         <MoreHorizontal size={16} />
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="start">
+      <DropdownMenuContent align="end">
         {items.map((item, idx) => {
           if (item.kind === "separator") {
             return <DropdownMenuSeparator key={`sep-${idx}`} />;
