@@ -8,7 +8,7 @@ import type { TServiceId } from "@/lib/db/schema/services";
 import { serviceTypes } from "@/lib/db/schema/service-types";
 import type { TServiceTypeUnit } from "@/lib/db/schema/service-types";
 import { properties, propertyAccess } from "@/lib/db/schema/properties";
-import type { PropertyId, TPropertyRole } from "@/lib/db/schema/properties";
+import type { PropertyId, TPropertyRole, TPropertyType } from "@/lib/db/schema/properties";
 import type { UserId } from "@/lib/db/schema/auth";
 import { NotFoundError, err, ok } from "@/lib/errors";
 import type { Result } from "@/lib/errors";
@@ -32,7 +32,7 @@ export type TBillGlobalRow = {
   >;
   serviceTypeCode: TServiceTypeCode;
   serviceTypeUnit: TServiceTypeUnit | null;
-  property: { id: PropertyId; name: string };
+  property: { id: PropertyId; name: string; type: TPropertyType };
   role: TPropertyRole;
 };
 
@@ -65,6 +65,7 @@ const BILL_SELECT = {
   serviceTypeUnit: serviceTypes.unit,
   propertyId: properties.id,
   propertyName: properties.name,
+  propertyType: properties.type,
   role: propertyAccess.propertyRole,
 } as const;
 
@@ -74,13 +75,14 @@ type TRawRow = Omit<TBillGlobalRow, "property" | "serviceTypeCode"> & {
   serviceTypeCode: string;
   propertyId: PropertyId;
   propertyName: string;
+  propertyType: TPropertyType;
 };
 
 const toRow = (r: TRawRow): TBillGlobalRow => ({
   bill: r.bill,
   serviceTypeCode: r.serviceTypeCode as TServiceTypeCode,
   serviceTypeUnit: r.serviceTypeUnit,
-  property: { id: r.propertyId, name: r.propertyName },
+  property: { id: r.propertyId, name: r.propertyName, type: r.propertyType },
   role: r.role,
 });
 

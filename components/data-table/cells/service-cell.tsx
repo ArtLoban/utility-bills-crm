@@ -1,7 +1,7 @@
-import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
-import { getServiceTypeVisuals, TServiceTypeCode } from "@/features/services/service-type";
+import { TServiceTypeCode } from "@/features/services/service-type";
 import { IconBadge } from "@/components/icon-badge";
+import { useServiceType } from "@/features/services/hooks/use-service-type";
 
 type TProps = {
   type: TServiceTypeCode;
@@ -10,10 +10,7 @@ type TProps = {
 };
 
 export const ServiceCell = ({ type, showLabel = true, className }: TProps) => {
-  const t = useTranslations("services.types");
-  const { color, Icon: icon } = getServiceTypeVisuals(type);
-
-  const label = t.has(type) ? t(type) : type;
+  const { color, Icon: icon, label } = useServiceType(type);
 
   return (
     <span className={cn("inline-flex items-center gap-2", className)} aria-label={label}>

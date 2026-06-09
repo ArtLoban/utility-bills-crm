@@ -1,42 +1,25 @@
 import { useFormatter } from "next-intl";
 
 import { cn } from "@/lib/utils";
-
-type TDateFormat = "short" | "full" | "month";
+import { format } from "date-fns";
 
 type TProps = {
-  /** Stored as UTC timestamptz in the DB. Accepts Date or ISO string. */
   value?: Date | string;
-
-  /**
-   * - `short` (default): "Oct 15, 2024" — for lists, tables, headers.
-   * - `full`: "October 15, 2024" — for legally/contextually important contexts.
-   * - `month`: "October 2024" — for bill periods.
-   */
-  format?: TDateFormat;
-
+  format?: "default" | "month";
   className?: string;
 };
 
-export const DateCell = ({ value, format: fmt = "short", className }: TProps) => {
+export const DateCell = ({ value, format: fmt = "default", className }: TProps) => {
   const formatter = useFormatter();
+
   if (!value) return null;
+
   const date = typeof value === "string" ? new Date(value) : value;
 
   const formatted =
-    fmt === "full"
-      ? formatter.dateTime(date, {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        })
-      : fmt === "month"
-        ? formatter.dateTime(date, { year: "numeric", month: "long" })
-        : formatter.dateTime(date, {
-            year: "numeric",
-            month: "short",
-            day: "numeric",
-          });
+    fmt === "month"
+      ? formatter.dateTime(date, { year: "numeric", month: "long" })
+      : format(date, "dd/MM/yyyy");
 
   return (
     <span className={cn("tabular-nums", className)}>

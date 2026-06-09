@@ -1,6 +1,6 @@
 import type { TServerPagination } from "@/lib/types/data-table";
 import type { TPayment } from "@/lib/db/schema/payments";
-import type { PropertyId, TPropertyRole } from "@/lib/db/schema/properties";
+import type { PropertyId, TPropertyRole, TPropertyType } from "@/lib/db/schema/properties";
 import type { TServiceTypeCode } from "@/features/services/service-type";
 import type { TServiceTypeUnit } from "@/lib/db/schema/service-types";
 import { TDataTableParams } from "@/components/data-table/types";
@@ -37,7 +37,7 @@ export type TPaymentGlobalRow = {
   payment: Pick<TPayment, "id" | "serviceId" | "paidAt" | "amount" | "notes" | "createdAt">;
   serviceTypeCode: TServiceTypeCode;
   serviceTypeUnit: TServiceTypeUnit | null;
-  property: { id: PropertyId; name: string };
+  property: { id: PropertyId; name: string; type: TPropertyType };
   role: TPropertyRole;
 };
 

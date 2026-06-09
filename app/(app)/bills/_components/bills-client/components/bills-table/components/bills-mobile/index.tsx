@@ -29,7 +29,7 @@ export const BillsTableMobile = (props: TProps) => {
       </div>
 
       <MobilePager pagination={pagination} listParams={listParams} />
-      <MobileTotals title="Total paid" amount={totals.amount} />
+      <MobileTotals title="Total" amount={totals.amount} />
     </div>
   );
 };

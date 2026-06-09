@@ -7,6 +7,7 @@ import { ServiceCell } from "@/components/data-table/cells/service-cell";
 import type { TPaymentGlobalRow } from "@/features/payments/types";
 
 import { PaymentRowActions } from "../components/payment-row-actions";
+import { PropertyCell } from "@/components/data-table/cells/property-cell";
 
 type TTranslateFn = ReturnType<typeof useTranslations<"payments.list">>;
 
@@ -15,13 +16,13 @@ export const getPaymentsColumns = (t: TTranslateFn): ColumnDef<TPaymentGlobalRow
     id: "paidAt",
     accessorFn: (row) => row.payment.paidAt,
     header: t("columns.date"),
-    cell: ({ row }) => <DateCell value={row.original.payment.paidAt} />,
+    cell: ({ row }) => <DateCell value={row.original.payment.paidAt} format="month" />,
   },
   {
     id: "property",
     accessorFn: (row) => row.property.name,
     header: t("columns.property"),
-    cell: ({ row }) => row.original.property.name,
+    cell: ({ row }) => <PropertyCell property={row.original.property} />,
   },
   {
     id: "service",

@@ -10,5 +10,6 @@ export const metadata: Metadata = {
 
 export default async function PropertiesPage() {
   const properties = await getPropertyList();
+
   return <PropertiesClient properties={properties} />;
 }

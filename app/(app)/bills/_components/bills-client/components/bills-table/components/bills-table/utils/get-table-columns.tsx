@@ -1,12 +1,11 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import { useTranslations } from "next-intl";
-
 import { AmountCell } from "@/components/data-table/cells/amount-cell";
 import { DateCell } from "@/components/data-table/cells/date-cell";
 import { ServiceCell } from "@/components/data-table/cells/service-cell";
 import type { TBillGlobalRow } from "@/lib/db/access/bills";
-
-import { BillRowActions } from "../components/bill-row-actions";
+import { BillRowActions } from "../../components/bill-row-actions";
+import { PropertyCell } from "@/components/data-table/cells/property-cell";
 
 type TTranslateFn = ReturnType<typeof useTranslations<"bills.list">>;
 
@@ -22,7 +21,7 @@ export const getBillsColumns = (t: TTranslateFn): ColumnDef<TBillGlobalRow>[] =>
     id: "property",
     accessorFn: (row) => row.property.name,
     header: t("columns.property"),
-    cell: ({ row }) => row.original.property.name,
+    cell: ({ row }) => <PropertyCell property={row.original.property} />,
   },
   {
     id: "service",
