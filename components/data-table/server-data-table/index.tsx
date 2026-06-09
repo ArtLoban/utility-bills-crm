@@ -19,10 +19,8 @@ import { ServerFooter } from "./server-footer";
 type TProps<T> = {
   data: T[];
   columns: ColumnDef<T>[];
-  // Sorting is controlled by the caller via URL state (useServerListParams).
   sorting: SortingState;
   onSortingChange: (updater: Updater<SortingState>) => void;
-  // Pagination metadata from the backend response.
   pagination: TServerPagination;
   onPageChange: (page: number) => void;
   onPageSizeChange: (size: number) => void;

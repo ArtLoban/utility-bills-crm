@@ -32,7 +32,7 @@ type TDataTableProps<T> = {
   onRowsChange?: (filteredRows: T[]) => void;
 };
 
-export const DataTable = <T,>(props: TDataTableProps<T>) => {
+export const ClientDataTable = <T,>(props: TDataTableProps<T>) => {
   const {
     data,
     columns,

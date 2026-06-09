@@ -1,19 +1,18 @@
 "use client";
 
 import { DateRangeInput } from "./components/date-range-input";
-import { DATE_PARAMS } from "@/lib/types/common";
+import { DATE_PARAMS, TDateParam } from "@/lib/types/common";
 
 type TDateRangeForm = {
-  setValue: (
-    name: "dateFrom" | "dateTo",
-    value: string | null,
-    options?: { shouldDirty?: boolean },
-  ) => void;
+  setValue: (name: TDateParam, value: string | null, options?: { shouldDirty?: boolean }) => void;
 };
 
 type TProps = {
   form: TDateRangeForm;
-  values: { dateFrom?: string | null; dateTo?: string | null };
+  values: {
+    [DATE_PARAMS.DATE_FROM]?: string | null;
+    [DATE_PARAMS.DATE_TO]?: string | null;
+  };
 };
 
 export const DateRangeFilter = ({ form, values }: TProps) => {

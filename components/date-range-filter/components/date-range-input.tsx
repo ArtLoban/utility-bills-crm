@@ -14,21 +14,19 @@ import { PRESETS } from "../constants";
 import type { TTimePeriod } from "../types";
 import { resolvePreset } from "../utils";
 import { DateInput } from "@/components/date-range-filter/components/date-input";
+import { DATE_PARAMS } from "@/lib/types/common";
 
 const CLEAR_VALUE = "__clear__";
 
 type TProps = {
-  dateFrom: string | null;
-  dateTo: string | null;
+  [DATE_PARAMS.DATE_FROM]: string | null;
+  [DATE_PARAMS.DATE_TO]: string | null;
   onChange: (dateFrom: string | null, dateTo: string | null) => void;
 };
 
+// TODO: properly refactor component
 export const DateRangeInput = ({ dateFrom, dateTo, onChange }: TProps) => {
   const [timePeriod, setTimePeriod] = useState<TTimePeriod | null>(null);
-
-  // Track previous prop values to detect external clears (e.g. "Clear filters" button).
-  // Calling setState during render is the React-canonical pattern for derived state from props:
-  // https://react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes
   const [prevDateFrom, setPrevDateFrom] = useState<string | null>(dateFrom);
   const [prevDateTo, setPrevDateTo] = useState<string | null>(dateTo);
 
