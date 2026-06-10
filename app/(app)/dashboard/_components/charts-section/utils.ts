@@ -9,6 +9,14 @@ export const formatMonthLabel = (isoDate: string): string =>
     timeZone: "UTC",
   });
 
+// Format "2025-06-01" → "June 2025" for tooltip headers (full month name + year).
+export const formatMonthFull = (isoDate: string): string =>
+  new Date(isoDate + "T00:00:00Z").toLocaleDateString("en-US", {
+    month: "long",
+    year: "numeric",
+    timeZone: "UTC",
+  });
+
 // Format "2025-06-01" → "Jun 2025" for tooltips.
 export const formatMonthLong = (isoDate: string): string =>
   new Date(isoDate + "T00:00:00Z").toLocaleDateString("en-US", {

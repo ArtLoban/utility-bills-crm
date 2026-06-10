@@ -11,6 +11,7 @@ import { toLineData } from "../../_data/chart-transforms";
 import { ChartTooltipCard } from "./components/chart-tooltip-card";
 import { LineChartLegend } from "./components/line-chart-legend";
 import {
+  formatMonthFull,
   formatMonthLabel,
   formatUah,
   formatUahTick,
@@ -70,7 +71,7 @@ const TrendLineChart = ({ aggregate, getServiceLabel }: TProps) => {
           content={({ active, payload, label }) =>
             active && payload?.length ? (
               <ChartTooltipCard
-                header={formatMonthLabel(String(label))}
+                header={formatMonthFull(String(label))}
                 rows={toTooltipRows(payload, getServiceLabel, formatUah)}
                 total={{ label: t("tooltip.total"), value: formatUah(sumTooltipValues(payload)) }}
               />

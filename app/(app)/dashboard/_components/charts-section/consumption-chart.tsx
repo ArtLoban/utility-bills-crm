@@ -9,7 +9,7 @@ import { SERVICE_TYPE_COLORS, type TServiceTypeCode } from "@/features/services/
 
 import { ChartTooltipCard } from "./components/chart-tooltip-card";
 import { LineChartLegend } from "./components/line-chart-legend";
-import { formatMonthLabel, sumTooltipValues, toTooltipRows } from "./utils";
+import { formatMonthFull, formatMonthLabel, sumTooltipValues, toTooltipRows } from "./utils";
 
 // Zone color palette for multi-zone meters — matches the meter detail consumption chart.
 // Hex required because these values are set on SVG stroke attributes via ChartContainer.
@@ -85,7 +85,7 @@ const ConsumptionChart = ({ aggregate }: TProps) => {
               content={({ active, payload, label }) =>
                 active && payload?.length ? (
                   <ChartTooltipCard
-                    header={formatMonthLabel(String(label))}
+                    header={formatMonthFull(String(label))}
                     rows={toTooltipRows(
                       payload,
                       (key) => String(chartConfig[key]?.label ?? key),

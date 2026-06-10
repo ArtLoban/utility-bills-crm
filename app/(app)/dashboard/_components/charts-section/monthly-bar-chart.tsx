@@ -15,6 +15,7 @@ import { toBarData } from "../../_data/chart-transforms";
 import { ChartTooltipCard } from "./components/chart-tooltip-card";
 import {
   buildBillsDrillUrl,
+  formatMonthFull,
   formatMonthLabel,
   formatUah,
   formatUahTick,
@@ -97,7 +98,7 @@ export const MonthlyBarChart = ({ aggregate, title, subtitle, getServiceLabel }:
             content={({ active, payload, label }) =>
               active && payload?.length ? (
                 <ChartTooltipCard
-                  header={formatMonthLabel(String(label))}
+                  header={formatMonthFull(String(label))}
                   rows={toTooltipRows(payload, getServiceLabel, formatUah)}
                   total={{ label: t("tooltip.total"), value: formatUah(sumTooltipValues(payload)) }}
                 />
