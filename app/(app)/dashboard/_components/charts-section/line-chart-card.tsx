@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 
 import { DataCard } from "@/components/data-card";
+import { cn } from "@/lib/utils";
 
 type TProps = {
   title: string;
@@ -41,10 +42,7 @@ export const LineChartCard = ({
       </div>
 
       <div className="flex shrink-0 items-center gap-2">
-        <div
-          className="flex items-center overflow-hidden rounded-[6px] border dark:border-zinc-700"
-          style={{ height: 32 }}
-        >
+        <div className="bg-muted flex items-center gap-0.5 rounded-[6px] border p-[3px] dark:border-zinc-700">
           {(
             [
               {
@@ -66,14 +64,12 @@ export const LineChartCard = ({
               type="button"
               disabled={disabled}
               onClick={mode === "money" ? onMoneyMode : onConsumptionMode}
-              className="cursor-pointer px-3 text-[12.5px] transition-colors disabled:cursor-not-allowed disabled:opacity-40"
-              style={{
-                height: "100%",
-                fontWeight: isActive ? 500 : 400,
-                background: isActive ? "var(--background)" : "transparent",
-                color: isActive ? "var(--foreground)" : "var(--muted-foreground)",
-                boxShadow: isActive ? "0 1px 2px rgba(0,0,0,0.05)" : "none",
-              }}
+              className={cn(
+                "cursor-pointer rounded-[4px] px-3 py-[5px] text-[12.5px] transition-colors disabled:cursor-not-allowed disabled:opacity-40",
+                isActive
+                  ? "bg-background text-foreground font-medium shadow-sm"
+                  : "text-muted-foreground font-normal",
+              )}
             >
               {label}
             </button>

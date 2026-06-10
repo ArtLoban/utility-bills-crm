@@ -214,7 +214,7 @@
       "line": {
         "title": "Consumption trend",
         "mode": {
-          "money": "Money",
+          "expenses": "Expenses (₴)",
           "consumption": "Consumption"
         }
       },

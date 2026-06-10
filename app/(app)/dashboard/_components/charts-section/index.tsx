@@ -4,6 +4,13 @@ import type { ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { parseAsString, parseAsStringLiteral, useQueryStates } from "nuqs";
 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useQueryFilters } from "@/lib/hooks/use-query-filters";
 import type { TMonthlyExpensesAggregate } from "@/features/ledger";
 import type { TAvailableConsumptionService } from "@/features/meters";
@@ -96,18 +103,21 @@ export const ChartsSection = ({
 
   const servicePickerSlot =
     isConsumptionMode && availableConsumptionServices.length > 1 ? (
-      <select
-        value={chartState.consumptionService ?? consumptionServiceCode ?? ""}
-        onChange={(e) => void setChartState({ consumptionService: e.target.value || null })}
-        className="cursor-pointer rounded-[6px] border px-2 text-[12.5px] dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50"
-        style={{ height: 32 }}
+      <Select
+        value={chartState.consumptionService ?? consumptionServiceCode ?? undefined}
+        onValueChange={(value) => void setChartState({ consumptionService: value })}
       >
-        {availableConsumptionServices.map((s) => (
-          <option key={s.code} value={s.code}>
-            {tServiceTypes(s.code as Parameters<typeof tServiceTypes>[0])}
-          </option>
-        ))}
-      </select>
+        <SelectTrigger size="sm" className="text-[12.5px]">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent align="end">
+          {availableConsumptionServices.map((s) => (
+            <SelectItem key={s.code} value={s.code}>
+              {tServiceTypes(s.code as Parameters<typeof tServiceTypes>[0])}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
     ) : null;
 
   return (
@@ -154,7 +164,7 @@ export const ChartsSection = ({
         isConsumptionMode={isConsumptionMode}
         onMoneyMode={() => void setChartState({ chartMode: null })}
         onConsumptionMode={() => void setChartState({ chartMode: "consumption" })}
-        moneyModeLabel={t("line.mode.money")}
+        moneyModeLabel={t("line.mode.expenses")}
         consumptionModeLabel={t("line.mode.consumption")}
         hasConsumptionData={hasConsumptionData}
         servicePickerSlot={servicePickerSlot}
