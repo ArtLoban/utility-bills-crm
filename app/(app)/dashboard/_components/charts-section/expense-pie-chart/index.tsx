@@ -4,18 +4,14 @@ import { useRouter } from "next/navigation";
 import { useFormatter, useTranslations } from "next-intl";
 import { Cell, Pie, PieChart } from "recharts";
 
-import {
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-  type ChartConfig,
-} from "@/components/ui/chart";
+import { ChartContainer, ChartTooltip, type ChartConfig } from "@/components/ui/chart";
 import { DataCard } from "@/components/data-card";
 import type { TMonthlyExpensesAggregate } from "@/features/ledger";
 import { SERVICE_TYPE_COLORS } from "@/features/services/service-type";
 
 import { toPieData } from "../../../_data/chart-transforms";
-import { buildBillsDrillUrl } from "../utils";
+import { ChartTooltipCard } from "../components/chart-tooltip-card";
+import { buildBillsDrillUrl, formatUah } from "../utils";
 import { PieLegend, type TPieLegendItem } from "./components/pie-legend";
 
 type TProps = {
@@ -81,13 +77,22 @@ export const ExpensePieChart = ({
             >
               <PieChart>
                 <ChartTooltip
-                  content={
-                    <ChartTooltipContent
-                      formatter={(value) => [
-                        typeof value === "number" ? `${value.toLocaleString()} UAH` : String(value),
-                      ]}
-                      hideLabel
-                    />
+                  isAnimationActive={false}
+                  wrapperStyle={{ zIndex: 50 }}
+                  content={({ active, payload }) =>
+                    active && payload?.length ? (
+                      <ChartTooltipCard
+                        rows={payload.map((p) => {
+                          const code = String(p.name);
+                          return {
+                            key: code,
+                            label: getServiceLabel(code),
+                            color: typeof p.color === "string" ? p.color : `var(--color-${code})`,
+                            value: formatUah(typeof p.value === "number" ? p.value : 0),
+                          };
+                        })}
+                      />
+                    ) : null
                   }
                 />
                 <Pie

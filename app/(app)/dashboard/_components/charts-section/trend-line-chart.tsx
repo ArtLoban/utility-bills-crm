@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 
 import {
@@ -7,14 +8,20 @@ import {
   ChartLegend,
   ChartLegendContent,
   ChartTooltip,
-  ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart";
 import type { TMonthlyExpensesAggregate } from "@/features/ledger";
 import { SERVICE_TYPE_COLORS } from "@/features/services/service-type";
 
 import { toLineData } from "../../_data/chart-transforms";
-import { formatMonthLabel, formatUahTick } from "./utils";
+import { ChartTooltipCard } from "./components/chart-tooltip-card";
+import {
+  formatMonthLabel,
+  formatUah,
+  formatUahTick,
+  sumTooltipValues,
+  toTooltipRows,
+} from "./utils";
 
 type TProps = {
   aggregate: TMonthlyExpensesAggregate;
@@ -22,6 +29,7 @@ type TProps = {
 };
 
 const TrendLineChart = ({ aggregate, getServiceLabel }: TProps) => {
+  const t = useTranslations("dashboard.charts");
   const lineData = toLineData(aggregate);
 
   const chartConfig: ChartConfig = Object.fromEntries(
@@ -62,13 +70,16 @@ const TrendLineChart = ({ aggregate, getServiceLabel }: TProps) => {
           tickFormatter={formatUahTick}
         />
         <ChartTooltip
-          content={
-            <ChartTooltipContent
-              labelFormatter={(label) => formatMonthLabel(String(label))}
-              formatter={(value) => [
-                typeof value === "number" ? `${value.toLocaleString()} UAH` : String(value),
-              ]}
-            />
+          isAnimationActive={false}
+          wrapperStyle={{ zIndex: 50 }}
+          content={({ active, payload, label }) =>
+            active && payload?.length ? (
+              <ChartTooltipCard
+                header={formatMonthLabel(String(label))}
+                rows={toTooltipRows(payload, getServiceLabel, formatUah)}
+                total={{ label: t("tooltip.total"), value: formatUah(sumTooltipValues(payload)) }}
+              />
+            ) : null
           }
         />
         <ChartLegend content={<ChartLegendContent />} align="left" />

@@ -210,6 +210,7 @@
         "title": "Monthly expenses",
         "subtitle": "Stacked by service, UAH"
       },
+      "tooltip": { "total": "Total" },
       "line": {
         "title": "Consumption trend",
         "mode": {

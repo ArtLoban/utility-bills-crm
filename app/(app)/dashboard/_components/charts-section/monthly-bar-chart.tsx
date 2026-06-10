@@ -2,22 +2,26 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
-import {
-  ChartContainer,
-  ChartLegend,
-  ChartTooltip,
-  ChartTooltipContent,
-  type ChartConfig,
-} from "@/components/ui/chart";
+import { ChartContainer, ChartLegend, ChartTooltip, type ChartConfig } from "@/components/ui/chart";
 import { DataCard } from "@/components/data-card";
 import { cn } from "@/lib/utils";
 import type { TMonthlyExpensesAggregate } from "@/features/ledger";
 import { SERVICE_TYPE_COLORS } from "@/features/services/service-type";
 
 import { toBarData } from "../../_data/chart-transforms";
-import { buildBillsDrillUrl, formatMonthLabel, formatUahTick, lastDayOfMonth } from "./utils";
+import { ChartTooltipCard } from "./components/chart-tooltip-card";
+import {
+  buildBillsDrillUrl,
+  formatMonthLabel,
+  formatUah,
+  formatUahTick,
+  lastDayOfMonth,
+  sumTooltipValues,
+  toTooltipRows,
+} from "./utils";
 
 type TProps = {
   aggregate: TMonthlyExpensesAggregate;
@@ -28,6 +32,7 @@ type TProps = {
 
 export const MonthlyBarChart = ({ aggregate, title, subtitle, getServiceLabel }: TProps) => {
   const router = useRouter();
+  const t = useTranslations("dashboard.charts");
   const [hiddenSeries, setHiddenSeries] = useState<Set<string>>(new Set());
 
   const barData = toBarData(aggregate);
@@ -87,13 +92,16 @@ export const MonthlyBarChart = ({ aggregate, title, subtitle, getServiceLabel }:
             tickFormatter={formatUahTick}
           />
           <ChartTooltip
-            content={
-              <ChartTooltipContent
-                labelFormatter={(label) => formatMonthLabel(String(label))}
-                formatter={(value) => [
-                  typeof value === "number" ? `${value.toLocaleString()} UAH` : String(value),
-                ]}
-              />
+            isAnimationActive={false}
+            wrapperStyle={{ zIndex: 50 }}
+            content={({ active, payload, label }) =>
+              active && payload?.length ? (
+                <ChartTooltipCard
+                  header={formatMonthLabel(String(label))}
+                  rows={toTooltipRows(payload, getServiceLabel, formatUah)}
+                  total={{ label: t("tooltip.total"), value: formatUah(sumTooltipValues(payload)) }}
+                />
+              ) : null
             }
           />
           <ChartLegend

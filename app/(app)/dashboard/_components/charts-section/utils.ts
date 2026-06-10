@@ -1,5 +1,7 @@
 import { ROUTES } from "@/lib/routes";
 
+import type { TTooltipRow } from "./components/chart-tooltip-card";
+
 // Format "2025-06-01" → "Jun" for X-axis tick labels.
 export const formatMonthLabel = (isoDate: string): string =>
   new Date(isoDate + "T00:00:00Z").toLocaleDateString("en-US", {
@@ -43,3 +45,40 @@ export const formatUahTick = (value: number): string => {
   if (value >= 1000) return `${(value / 1000).toFixed(1)}k`;
   return String(value);
 };
+
+// Format a UAH amount for tooltips: "1,234 UAH".
+export const formatUah = (value: number): string => `${value.toLocaleString()} UAH`;
+
+// Minimal shape of a Recharts tooltip payload item — only the fields the tooltip
+// adapters read. `unknown` keeps it assignable from Recharts' loose payload type
+// without a cast; values are narrowed at use.
+type TTooltipPayloadItem = {
+  dataKey?: unknown;
+  name?: unknown;
+  value?: unknown;
+  color?: string;
+};
+
+// Map a Recharts tooltip payload to tooltip rows: resolve each series' label via
+// `getLabel`, take its colour from the payload (CSS var resolves inside the chart),
+// and format the value. Items without a numeric value (hidden/empty series) drop out.
+export const toTooltipRows = (
+  payload: readonly TTooltipPayloadItem[],
+  getLabel: (key: string) => string,
+  formatValue: (value: number) => string,
+): TTooltipRow[] =>
+  payload
+    .filter((p): p is TTooltipPayloadItem & { value: number } => typeof p.value === "number")
+    .map((p) => {
+      const key = String(p.dataKey ?? p.name ?? "");
+      return {
+        key,
+        label: getLabel(key),
+        color: typeof p.color === "string" ? p.color : `var(--color-${key})`,
+        value: formatValue(p.value),
+      };
+    });
+
+// Sum the numeric values across a tooltip payload (for the "Total" footer).
+export const sumTooltipValues = (payload: readonly TTooltipPayloadItem[]): number =>
+  payload.reduce((sum, p) => sum + (typeof p.value === "number" ? p.value : 0), 0);

@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 
 import {
@@ -7,13 +8,13 @@ import {
   ChartLegend,
   ChartLegendContent,
   ChartTooltip,
-  ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart";
 import type { TMonthlyConsumptionAggregate } from "@/features/meters";
 import { SERVICE_TYPE_COLORS, type TServiceTypeCode } from "@/features/services/service-type";
 
-import { formatMonthLabel } from "./utils";
+import { ChartTooltipCard } from "./components/chart-tooltip-card";
+import { formatMonthLabel, sumTooltipValues, toTooltipRows } from "./utils";
 
 // Zone color palette for multi-zone meters — matches the meter detail consumption chart.
 // Hex required because these values are set on SVG stroke attributes via ChartContainer.
@@ -28,6 +29,7 @@ type TProps = {
 };
 
 const ConsumptionChart = ({ aggregate }: TProps) => {
+  const t = useTranslations("dashboard.charts");
   const isMultiZone = aggregate.zones.length > 1;
   const serviceColor =
     SERVICE_TYPE_COLORS[aggregate.serviceTypeCode as TServiceTypeCode] ?? "var(--muted-foreground)";
@@ -83,15 +85,27 @@ const ConsumptionChart = ({ aggregate }: TProps) => {
               tickFormatter={(v: number) => (v >= 1000 ? `${(v / 1000).toFixed(1)}k` : String(v))}
             />
             <ChartTooltip
-              content={
-                <ChartTooltipContent
-                  labelFormatter={(label) => formatMonthLabel(String(label))}
-                  formatter={(value) => [
-                    typeof value === "number"
-                      ? `${value.toLocaleString()} ${aggregate.unit}`
-                      : String(value),
-                  ]}
-                />
+              isAnimationActive={false}
+              wrapperStyle={{ zIndex: 50 }}
+              content={({ active, payload, label }) =>
+                active && payload?.length ? (
+                  <ChartTooltipCard
+                    header={formatMonthLabel(String(label))}
+                    rows={toTooltipRows(
+                      payload,
+                      (key) => String(chartConfig[key]?.label ?? key),
+                      (v) => `${v.toLocaleString()} ${aggregate.unit}`,
+                    )}
+                    total={
+                      isMultiZone
+                        ? {
+                            label: t("tooltip.total"),
+                            value: `${sumTooltipValues(payload).toLocaleString()} ${aggregate.unit}`,
+                          }
+                        : undefined
+                    }
+                  />
+                ) : null
               }
             />
             {isMultiZone && <ChartLegend content={<ChartLegendContent />} align="left" />}
