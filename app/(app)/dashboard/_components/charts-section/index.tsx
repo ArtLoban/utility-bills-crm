@@ -44,9 +44,10 @@ export const ChartsSection = ({
   // server queries and recomputes the aggregate (unlike the previous shallow writes).
   const queryFilters = useQueryFilters(URL_FIELDS, INITIAL_FILTERS, { syncPage: false });
 
-  // Chart-mode toggle and consumption-service picker keep their own client-side query
-  // state with nuqs default (shallow) routing: the consumption slot is pre-built on the
-  // server (Stage 3), so toggling mode must not trigger a server round-trip.
+  // Chart-mode toggle and consumption-service picker share one query state, separate from
+  // the filter bar. chartMode writes stay shallow (the slot is pre-built for both modes,
+  // Stage 3 — toggling just shows/hides it); the consumptionService picker overrides this
+  // with shallow:false per call, since each service is a distinct server query.
   const [chartState, setChartState] = useQueryStates({
     [DASHBOARD_CHART_PARAMS.CHART_MODE]: parseAsStringLiteral(CHART_MODES),
     [DASHBOARD_CHART_PARAMS.CONSUMPTION_SERVICE]: parseAsString,
@@ -94,7 +95,12 @@ export const ChartsSection = ({
     isConsumptionMode && availableConsumptionServices.length > 1 ? (
       <select
         value={chartState.consumptionService ?? consumptionServiceCode ?? ""}
-        onChange={(e) => void setChartState({ consumptionService: e.target.value || null })}
+        // shallow:false — unlike the chartMode toggle, switching the service needs a
+        // server round-trip so page.tsx rebuilds the pre-rendered slot for the new
+        // service (each service is a separate monthlyConsumptionByService query).
+        onChange={(e) =>
+          void setChartState({ consumptionService: e.target.value || null }, { shallow: false })
+        }
         className="cursor-pointer rounded-[6px] border px-2 text-[12.5px] dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50"
         style={{ height: 32 }}
       >
