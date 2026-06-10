@@ -45,13 +45,16 @@ export const ChartsSection = ({
   const queryFilters = useQueryFilters(URL_FIELDS, INITIAL_FILTERS, { syncPage: false });
 
   // Chart-mode toggle and consumption-service picker share one query state, separate from
-  // the filter bar. chartMode writes stay shallow (the slot is pre-built for both modes,
-  // Stage 3 — toggling just shows/hides it); the consumptionService picker overrides this
-  // with shallow:false per call, since each service is a distinct server query.
-  const [chartState, setChartState] = useQueryStates({
-    [DASHBOARD_CHART_PARAMS.CHART_MODE]: parseAsStringLiteral(CHART_MODES),
-    [DASHBOARD_CHART_PARAMS.CONSUMPTION_SERVICE]: parseAsString,
-  });
+  // the filter bar. Both write with shallow:false: switching to consumption (or changing
+  // the service) must re-render page.tsx so it builds the consumption slot on demand and
+  // runs the per-service query — money-only views never pay for it.
+  const [chartState, setChartState] = useQueryStates(
+    {
+      [DASHBOARD_CHART_PARAMS.CHART_MODE]: parseAsStringLiteral(CHART_MODES),
+      [DASHBOARD_CHART_PARAMS.CONSUMPTION_SERVICE]: parseAsString,
+    },
+    { shallow: false },
+  );
 
   const t = useTranslations("dashboard.charts");
   const tServiceTypes = useTranslations("services.types");
@@ -95,12 +98,7 @@ export const ChartsSection = ({
     isConsumptionMode && availableConsumptionServices.length > 1 ? (
       <select
         value={chartState.consumptionService ?? consumptionServiceCode ?? ""}
-        // shallow:false — unlike the chartMode toggle, switching the service needs a
-        // server round-trip so page.tsx rebuilds the pre-rendered slot for the new
-        // service (each service is a separate monthlyConsumptionByService query).
-        onChange={(e) =>
-          void setChartState({ consumptionService: e.target.value || null }, { shallow: false })
-        }
+        onChange={(e) => void setChartState({ consumptionService: e.target.value || null })}
         className="cursor-pointer rounded-[6px] border px-2 text-[12.5px] dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50"
         style={{ height: 32 }}
       >

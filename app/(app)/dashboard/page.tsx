@@ -120,13 +120,12 @@ export default async function DashboardPage({
   const consumptionServiceCode =
     chartParams.consumptionService ?? availableConsumptionServices[0]?.code ?? null;
 
-  // Build the slot unconditionally when a service is resolvable.
-  // nuqs v2 uses shallow routing by default — chartMode changes happen client-side without
-  // an RSC re-render, so a slot built only in consumption mode would stay null after toggle.
-  // Building it always ensures the slot is ready as soon as the page streams in, and the
-  // client just shows/hides it based on mode without needing a server round-trip.
+  // Build the slot on demand: only in consumption mode, and only when a service is
+  // resolvable. The chartMode toggle writes with shallow:false (see ChartsSection), so
+  // switching Money→Consumption re-renders this page and runs the consumption query
+  // exactly then — money-only views never pay for it.
   const consumptionLineChartSlot =
-    consumptionServiceCode !== null ? (
+    chartParams.chartMode === "consumption" && consumptionServiceCode !== null ? (
       <Suspense
         fallback={
           <div className="h-[320px] animate-pulse rounded-lg bg-zinc-100 dark:bg-zinc-800" />
