@@ -191,6 +191,29 @@
       "title": "Welcome to UtilityBills!",
       "body": "Start by adding your first property to track your utility bills.",
       "cta": "Add property"
+    },
+    "charts": {
+      "title": "Analytics",
+      "period": {
+        "label": "Period",
+        "last3m": "3 months",
+        "last6m": "6 months",
+        "last12m": "12 months",
+        "last24m": "24 months"
+      },
+      "property": {
+        "label": "Property",
+        "all": "All properties"
+      },
+      "service": {
+        "label": "Service",
+        "all": "All services",
+        "selected": "{count} services"
+      },
+      "pie": { "title": "Expense structure" },
+      "bar": { "title": "Monthly expenses" },
+      "line": { "title": "Expense trend" },
+      "empty": "No expense data for the selected period."
     }
   },
   "properties": {

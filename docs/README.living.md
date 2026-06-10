@@ -594,6 +594,15 @@ Rationale: the "product-first" framing had begun to systematically under-scope f
 > **#145 — "Payment deadline approaching" alert not implemented in MVP.**
 > No due-date is stored for any bill or service. Approximating one (e.g., a fixed calendar day) would duplicate the outstanding-debt signal already present in the attention block. The readings signal in the attention block is binary: "reading for {month} not yet submitted" — a binary present/absent check, not a date-based countdown. Payment deadline countdown is deferred to a future stage when payment due dates are a first-class data field.
 
+> **#146 — Monthly expense aggregation extends `features/ledger/`; a separate dashboard-specific query layer was rejected.**
+> The query groups bills by service type and month, which is a pure financial aggregation — the same responsibility as `balancesForProperties` and `balancesForServices` already in the ledger slice. Alternatives: a standalone `features/dashboard/` query module (wrong — dashboard owns no entity; it composes from other slices) or inlining inside `features/bills/` (wrong — bills does not aggregate cross-service views). Ledger extension is the correct home.
+
+> **#147 — Dashboard charts standardised on Recharts via `chart.tsx`; hand-rolled SVG bar/pie/line removed.**
+> The three prior SVG chart components were ad-hoc implementations with hardcoded dimensions, no accessible tooltips, and no connection to the design system's color tokens. Recharts with the existing shadcn `chart.tsx` wrapper provides `ChartContainer` (CSS token injection), `ChartTooltip`, `ChartLegend`, and responsive sizing out of the box. The alternative (keeping and iterating on the SVG approach) was rejected: the SVG components carried significant layout and tooltip complexity with no reusability benefit.
+
+> **#148 — Drill-down targets bills list's real nuqs params (`services` semicolon array, `dateFrom`/`dateTo`); bar stack range is that single month.**
+> Dashboard chart params intentionally share the same URL param names as the bills list (`dateFrom`, `dateTo`, `propertyId`, `services` with semicolon encoding) so that drill-down URLs are just bills-list URLs with pre-filled filters — no extra mapping layer. Pie segment click sets `services=[code]` over the full dashboard date range. Bar segment click sets `services=[code]` with `dateFrom=first-of-month` and `dateTo=last-of-month` for the clicked month. Line chart tooltip-only; no drill-down (no single-month semantics apply to a trend view).
+
 ## Open Questions
 
 Carried forward to Phase 7 (implementation) and beyond.

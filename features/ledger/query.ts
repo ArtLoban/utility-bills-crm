@@ -1,10 +1,11 @@
-import { and, asc, desc, eq, gt, inArray, isNull, lt, lte, or, sum } from "drizzle-orm";
+import { and, asc, desc, eq, gt, gte, inArray, isNull, lt, lte, or, sum } from "drizzle-orm";
 
 import { db } from "@/lib/db/client";
 import { bills } from "@/lib/db/schema/bills";
 import { payments } from "@/lib/db/schema/payments";
 import { services } from "@/lib/db/schema/services";
 import type { TServiceId } from "@/lib/db/schema/services";
+import { serviceTypes } from "@/lib/db/schema/service-types";
 import { properties, propertyAccess } from "@/lib/db/schema/properties";
 import type { PropertyId } from "@/lib/db/schema/properties";
 import { contracts } from "@/lib/db/schema/contracts";
@@ -14,7 +15,7 @@ import { meters } from "@/lib/db/schema/meters";
 import { readings } from "@/lib/db/schema/readings";
 import { serviceByIdForUser } from "@/lib/db/access/services";
 import type { UserId } from "@/lib/db/schema/auth";
-import type { TBalance, TReadingPair } from "./types";
+import type { TBalance, TMonthlyExpensesAggregate, TReadingPair } from "./types";
 import { computeBalance } from "./core";
 
 // Pure functions: userId is always a parameter when access scoping is needed.
@@ -259,4 +260,95 @@ export const readingsForPeriod = async (
     curr: readingRows[0] ?? null,
     prev: readingRows[1] ?? null,
   };
+};
+
+// Returns the ordered list of first-of-month "YYYY-MM-DD" strings covering
+// every calendar month between from and to (both inclusive, truncated to month).
+const generateMonthAxis = (from: string, to: string): string[] => {
+  const months: string[] = [];
+  // Truncate to first of the month in UTC to avoid DST edge cases.
+  const start = new Date(from.slice(0, 7) + "-01T00:00:00Z");
+  const end = new Date(to.slice(0, 7) + "-01T00:00:00Z");
+  const cur = new Date(start);
+  while (cur <= end) {
+    months.push(cur.toISOString().slice(0, 10));
+    cur.setUTCMonth(cur.getUTCMonth() + 1);
+  }
+  return months;
+};
+
+// Monthly expense aggregation across all accessible services for a user (Decision #146).
+// Single batched query — no N+1. Access-scoped via propertyAccess.
+// Caller must supply resolved dateFrom/dateTo (no defaulting here).
+export const monthlyExpensesByService = async (
+  userId: UserId,
+  params: {
+    dateFrom: string; // YYYY-MM-DD, inclusive
+    dateTo: string; // YYYY-MM-DD, inclusive
+    propertyId?: string | null;
+    serviceTypeCodes?: string[] | null;
+  },
+): Promise<TMonthlyExpensesAggregate> => {
+  const { dateFrom, dateTo, propertyId, serviceTypeCodes } = params;
+
+  // Same date-filter pattern as lib/db/access/bills.ts lines 100-101:
+  // gte/lte against a "YYYY-MM-DD" string works on Drizzle date columns.
+  // propertyAccess userId + deletedAt filters live in the JOIN condition (matching the
+  // existing balancesForProperties pattern in this file).
+  const conditions = and(
+    isNull(bills.deletedAt),
+    isNull(services.deletedAt),
+    isNull(properties.deletedAt),
+    gte(bills.periodMonth, dateFrom),
+    lte(bills.periodMonth, dateTo),
+    propertyId ? eq(properties.id, propertyId as PropertyId) : undefined,
+    serviceTypeCodes && serviceTypeCodes.length > 0
+      ? inArray(serviceTypes.code, serviceTypeCodes)
+      : undefined,
+  );
+
+  const rows = await db
+    .select({
+      code: serviceTypes.code,
+      month: bills.periodMonth,
+      total: sum(bills.amount),
+    })
+    .from(bills)
+    .innerJoin(services, eq(bills.serviceId, services.id))
+    .innerJoin(serviceTypes, eq(services.serviceTypeId, serviceTypes.id))
+    .innerJoin(properties, eq(services.propertyId, properties.id))
+    .innerJoin(
+      propertyAccess,
+      and(
+        eq(propertyAccess.propertyId, properties.id),
+        eq(propertyAccess.userId, userId),
+        isNull(propertyAccess.deletedAt),
+      ),
+    )
+    .where(conditions)
+    .groupBy(serviceTypes.code, bills.periodMonth)
+    .orderBy(asc(serviceTypes.code), asc(bills.periodMonth));
+
+  const months = generateMonthAxis(dateFrom, dateTo);
+
+  // Group by service type code — multiple service instances of the same type
+  // (e.g., electricity across two properties) are summed into one row per type.
+  // Drizzle returns date columns as "YYYY-MM-DD" strings in default (string) mode.
+  const amountByCodeAndMonth = new Map<string, Map<string, number>>();
+
+  for (const row of rows) {
+    if (!amountByCodeAndMonth.has(row.code)) {
+      amountByCodeAndMonth.set(row.code, new Map());
+    }
+    const monthKey = String(row.month).slice(0, 10);
+    const prev = amountByCodeAndMonth.get(row.code)!.get(monthKey) ?? 0;
+    amountByCodeAndMonth.get(row.code)!.set(monthKey, prev + parseFloat(row.total ?? "0"));
+  }
+
+  const serviceRows = [...amountByCodeAndMonth.entries()].map(([code, amountByMonth]) => ({
+    code,
+    monthlyAmounts: months.map((m) => amountByMonth.get(m) ?? 0),
+  }));
+
+  return { months, services: serviceRows };
 };

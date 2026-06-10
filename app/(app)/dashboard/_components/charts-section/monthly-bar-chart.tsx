@@ -1,270 +1,141 @@
 "use client";
 
 import { useState } from "react";
-import type { TServiceMonthlyExpense } from "../../_data/mock";
-import { SERVICE_COLORS } from "../../_data/mock";
-import { DataCard } from "@/components/data-card";
+import { useRouter } from "next/navigation";
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
+
+import {
+  ChartContainer,
+  ChartLegend,
+  ChartTooltip,
+  ChartTooltipContent,
+  type ChartConfig,
+} from "@/components/ui/chart";
+import type { TMonthlyExpensesAggregate } from "@/features/ledger";
+import { SERVICE_TYPE_COLORS } from "@/features/services/service-type";
+
+import { toBarData } from "../../_data/chart-transforms";
+import { buildBillsDrillUrl, formatMonthLabel, formatUahTick, lastDayOfMonth } from "./utils";
 
 type TProps = {
-  services: TServiceMonthlyExpense[];
-  months: string[];
+  aggregate: TMonthlyExpensesAggregate;
+  dateFrom: string;
+  dateTo: string;
+  getServiceLabel: (code: string) => string;
 };
 
-const W = 560,
-  H = 220,
-  PAD_L = 38,
-  PAD_R = 8,
-  PAD_T = 8,
-  PAD_B = 28;
-const CHART_H = H - PAD_T - PAD_B;
-const CHART_W = W - PAD_L - PAD_R;
+const MonthlyBarChart = ({ aggregate, dateFrom, dateTo, getServiceLabel }: TProps) => {
+  const router = useRouter();
+  const [hiddenSeries, setHiddenSeries] = useState<Set<string>>(new Set());
 
-export const MonthlyBarChart = ({ services, months }: TProps) => {
-  const [hiddenSeries, setHiddenSeries] = useState<Record<string, boolean>>({});
-  const [hoveredBarIndex, setHoveredBarIndex] = useState<number | null>(null);
+  const barData = toBarData(aggregate);
 
-  const toggleSeries = (key: string) => {
-    setHiddenSeries((prev) => ({ ...prev, [key]: !prev[key] }));
+  const chartConfig: ChartConfig = Object.fromEntries(
+    aggregate.services.map((s) => [
+      s.code,
+      {
+        label: getServiceLabel(s.code),
+        color: SERVICE_TYPE_COLORS[s.code as keyof typeof SERVICE_TYPE_COLORS] ?? "var(--muted)",
+      },
+    ]),
+  );
+
+  const toggleSeries = (code: string) => {
+    setHiddenSeries((prev) => {
+      const next = new Set(prev);
+      next.has(code) ? next.delete(code) : next.add(code);
+      return next;
+    });
   };
 
-  const visibleServices = services.filter((s) => !hiddenSeries[s.serviceKey]);
-
-  const chartData = months.map((month, i) => ({
-    month,
-    parts: services.map((s) => ({ key: s.serviceKey, value: s.monthlyAmounts[i] ?? 0 })),
-    visibleParts: visibleServices.map((s) => ({
-      key: s.serviceKey,
-      value: s.monthlyAmounts[i] ?? 0,
-    })),
-  }));
-
-  const maxTotal = Math.max(
-    ...chartData.map((d) => d.visibleParts.reduce((sum, p) => sum + p.value, 0)),
-    1,
-  );
-  const yMax = Math.ceil(maxTotal / 500) * 500 || 500;
-  const bw = CHART_W / months.length;
-  const barInner = bw * 0.62;
-  const yTicks = [0, yMax / 4, yMax / 2, (3 * yMax) / 4, yMax];
-
   return (
-    <DataCard className="p-5">
-      <h3 className="m-0 text-[14px] font-semibold tracking-[-0.1px] text-zinc-950 dark:text-zinc-50">
-        Monthly expenses
-      </h3>
-      <p className="mt-[2px] mb-0 text-[12px] text-zinc-500">Stacked by service, UAH</p>
-
-      {/* Scrollable chart — -mx/px trick lets chart bleed to card edge on mobile */}
-      <div className="-mx-5 mt-3 overflow-x-auto px-5 md:mx-0 md:px-0">
-        <div style={{ minWidth: 420, position: "relative" }}>
-          <svg
-            width="100%"
-            viewBox={`0 0 ${W} ${H}`}
-            style={{ display: "block" }}
-            onMouseLeave={() => setHoveredBarIndex(null)}
-          >
-            {/* Y-axis grid + labels */}
-            {yTicks.map((t, i) => {
-              const y = PAD_T + CHART_H - (t / yMax) * CHART_H;
-              const label = t >= 1000 ? `${(t / 1000).toFixed(1)}k` : String(t);
-              return (
-                <g key={i}>
-                  <line
-                    x1={PAD_L}
-                    x2={W - PAD_R}
-                    y1={y}
-                    y2={y}
-                    stroke="#e4e4e7"
-                    strokeDasharray={i === 0 ? "0" : "2 3"}
-                  />
-                  <text
-                    x={PAD_L - 6}
-                    y={y + 3}
-                    fontSize="10"
-                    fill="#71717a"
-                    textAnchor="end"
-                    fontFamily="inherit"
-                  >
-                    {label}
-                  </text>
-                </g>
-              );
-            })}
-
-            {/* Bars */}
-            {chartData.map((d, i) => {
-              const xCenter = PAD_L + i * bw + bw / 2;
-              const x = xCenter - barInner / 2;
-              let yCursor = PAD_T + CHART_H;
-              const isHovered = hoveredBarIndex === i;
-
-              return (
-                <g key={i}>
-                  {/* invisible hit area for the full column */}
-                  <rect
-                    x={PAD_L + i * bw}
-                    y={PAD_T}
-                    width={bw}
-                    height={CHART_H}
-                    fill="transparent"
-                    onMouseEnter={() => setHoveredBarIndex(i)}
-                  />
-
-                  {d.visibleParts.map((p) => {
-                    const ph = (p.value / yMax) * CHART_H;
-                    yCursor -= ph;
-                    return (
-                      <rect
-                        key={p.key}
-                        x={x}
-                        y={yCursor}
-                        width={barInner}
-                        height={ph}
-                        fill={SERVICE_COLORS[p.key as keyof typeof SERVICE_COLORS]}
-                        opacity={hoveredBarIndex == null || isHovered ? 1 : 0.45}
-                        style={{ transition: "opacity 120ms", pointerEvents: "none" }}
-                      />
-                    );
-                  })}
-
-                  <text
-                    x={xCenter}
-                    y={H - PAD_B + 14}
-                    fontSize="10.5"
-                    fill={isHovered ? "#09090b" : "#71717a"}
-                    fontWeight={isHovered ? 500 : 400}
-                    textAnchor="middle"
-                    fontFamily="inherit"
-                    style={{ pointerEvents: "none" }}
-                  >
-                    {d.month}
-                  </text>
-                </g>
-              );
-            })}
-          </svg>
-
-          {/* Tooltip */}
-          {hoveredBarIndex != null &&
-            (() => {
-              const d = chartData[hoveredBarIndex];
-              if (!d) return null;
-              const xPct = ((PAD_L + hoveredBarIndex * bw + bw / 2) / W) * 100;
-              const flipLeft = xPct > 72;
-              const visibleTotal = d.visibleParts.reduce((sum, p) => sum + p.value, 0);
-
-              return (
-                <div
-                  className="border border-zinc-200 bg-white text-zinc-950 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50"
-                  style={{
-                    position: "absolute",
-                    left: flipLeft ? `calc(${xPct}% - 16px)` : `calc(${xPct}% + 16px)`,
-                    top: 20,
-                    transform: flipLeft ? "translate(-100%, 0)" : "translate(0, 0)",
-                    borderRadius: 6,
-                    padding: "10px 12px",
-                    minWidth: 200,
-                    boxShadow:
-                      "0 4px 8px -2px rgba(24,24,27,0.08), 0 2px 4px -2px rgba(24,24,27,0.05)",
-                    pointerEvents: "none",
-                    zIndex: 5,
-                    fontSize: 12.5,
-                  }}
-                >
-                  <div
-                    className="border-b border-zinc-100 dark:border-zinc-700"
-                    style={{
-                      fontSize: 12,
-                      fontWeight: 600,
-                      marginBottom: 8,
-                      paddingBottom: 6,
-                    }}
-                  >
-                    {d.month}
-                  </div>
-
-                  <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
-                    {d.visibleParts.map((p) => {
-                      const svc = services.find((s) => s.serviceKey === p.key);
-                      return (
-                        <div key={p.key} style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                          <span
-                            style={{
-                              width: 8,
-                              height: 8,
-                              borderRadius: 2,
-                              background: SERVICE_COLORS[p.key as keyof typeof SERVICE_COLORS],
-                              flexShrink: 0,
-                            }}
-                          />
-                          <span className="text-zinc-500 dark:text-zinc-400" style={{ flex: 1 }}>
-                            {svc?.label ?? p.key}
-                          </span>
-                          <span
-                            style={{
-                              fontVariantNumeric: "tabular-nums",
-                              fontFeatureSettings: '"tnum" 1',
-                            }}
-                          >
-                            {p.value.toLocaleString("uk-UA")} UAH
-                          </span>
-                        </div>
-                      );
-                    })}
-                  </div>
-
-                  <div
-                    className="border-t border-zinc-100 dark:border-zinc-700"
-                    style={{
-                      marginTop: 8,
-                      paddingTop: 6,
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 8,
-                    }}
-                  >
-                    <span className="text-zinc-500 dark:text-zinc-400" style={{ flex: 1 }}>
-                      Total
-                    </span>
-                    <span
-                      style={{
-                        fontWeight: 600,
-                        fontVariantNumeric: "tabular-nums",
-                        fontFeatureSettings: '"tnum" 1',
-                      }}
-                    >
-                      {visibleTotal.toLocaleString("uk-UA")} UAH
-                    </span>
-                  </div>
-                </div>
-              );
-            })()}
-        </div>
-      </div>
-
-      {/* Clickable legend */}
-      <div className="mt-2 flex flex-wrap gap-3">
-        {services.map((s) => {
-          const isHidden = !!hiddenSeries[s.serviceKey];
-          return (
-            <button
-              key={s.serviceKey}
-              onClick={() => toggleSeries(s.serviceKey)}
-              className="inline-flex items-center gap-1.5 rounded border border-transparent bg-transparent px-1.5 py-[3px] text-[11.5px] transition-colors duration-[120ms] hover:bg-zinc-50 dark:hover:bg-zinc-800"
-              style={{
-                color: isHidden ? "var(--muted-foreground)" : "var(--foreground)",
-                textDecoration: isHidden ? "line-through" : "none",
-              }}
-            >
-              <span
-                className="h-[9px] w-[9px] shrink-0 rounded-[2px] transition-colors duration-[120ms]"
-                style={{ background: isHidden ? "var(--border)" : SERVICE_COLORS[s.serviceKey] }}
+    <div className="overflow-hidden rounded-[8px] border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
+      <ChartContainer
+        config={chartConfig}
+        className="h-[260px] w-full"
+        initialDimension={{ width: 560, height: 260 }}
+      >
+        <BarChart data={barData} margin={{ top: 8, right: 8, left: 0, bottom: 4 }}>
+          <CartesianGrid
+            vertical={false}
+            strokeDasharray="3 3"
+            className="stroke-zinc-100 dark:stroke-zinc-800"
+          />
+          <XAxis
+            dataKey="month"
+            tickLine={false}
+            axisLine={false}
+            tick={{ fontSize: 11.5, fill: "var(--color-muted-foreground)" }}
+            tickFormatter={formatMonthLabel}
+            interval="preserveStartEnd"
+          />
+          <YAxis
+            tickLine={false}
+            axisLine={false}
+            tick={{ fontSize: 11.5, fill: "var(--color-muted-foreground)" }}
+            width={44}
+            tickFormatter={formatUahTick}
+          />
+          <ChartTooltip
+            content={
+              <ChartTooltipContent
+                labelFormatter={(label) => formatMonthLabel(String(label))}
+                formatter={(value) => [
+                  typeof value === "number" ? `${value.toLocaleString()} UAH` : String(value),
+                ]}
               />
-              {s.label}
-            </button>
-          );
-        })}
-      </div>
-    </DataCard>
+            }
+          />
+          <ChartLegend
+            content={({ payload }) => (
+              <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+                {payload?.map((item) => {
+                  const code = String(item.dataKey);
+                  const hidden = hiddenSeries.has(code);
+                  return (
+                    <button
+                      key={code}
+                      type="button"
+                      onClick={() => toggleSeries(code)}
+                      className="flex cursor-pointer items-center gap-1.5 rounded px-1 text-xs transition-opacity"
+                      style={{ opacity: hidden ? 0.4 : 1 }}
+                    >
+                      <span
+                        className="h-2 w-2 shrink-0 rounded-[2px]"
+                        style={{ backgroundColor: item.color }}
+                      />
+                      {item.value}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          />
+          {aggregate.services.map((s) => (
+            <Bar
+              key={s.code}
+              dataKey={s.code}
+              stackId="a"
+              fill={`var(--color-${s.code})`}
+              hide={hiddenSeries.has(s.code)}
+              radius={[0, 0, 0, 0]}
+              cursor="pointer"
+              onClick={(data) => {
+                const month = String((data as unknown as Record<string, unknown>).month);
+                router.push(
+                  buildBillsDrillUrl({
+                    services: [s.code],
+                    dateFrom: month,
+                    dateTo: lastDayOfMonth(month),
+                  }),
+                );
+              }}
+            />
+          ))}
+        </BarChart>
+      </ChartContainer>
+    </div>
   );
 };
+
+export { MonthlyBarChart };
