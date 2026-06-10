@@ -14,12 +14,14 @@ type TProps<T extends FieldValues, E extends TSelectableEntity> = {
   field: Path<T>;
   options: E[];
   label: string;
+  size?: "default" | "sm";
+  className?: string;
 };
 
 export const SelectInput = <T extends FieldValues, E extends TSelectableEntity>(
   props: TProps<T, E>,
 ) => {
-  const { form, field, options = [], label } = props;
+  const { form, field, options = [], label, size = "default", className } = props;
   const value = useWatch({
     control: form.control,
     name: field,
@@ -43,7 +45,9 @@ export const SelectInput = <T extends FieldValues, E extends TSelectableEntity>(
         className={cn(
           "min-w-[140px] rounded-sm",
           isActive && "border-brand text-brand bg-brand-bg [&_svg]:text-inherit",
+          className,
         )}
+        size={size}
       >
         <SelectValue placeholder={label} />
       </SelectTrigger>

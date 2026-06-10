@@ -19,7 +19,7 @@ export const BillsTableMobile = (props: TProps) => {
   const { data, pagination, totals } = billsList;
 
   return (
-    <div className="pt-5 pb-8">
+    <div className="pt-2 pb-8">
       <ToolsPanel queryFilters={queryFilters} listParams={listParams} />
 
       <div className="flex flex-col gap-2">

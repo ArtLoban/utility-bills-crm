@@ -16,6 +16,7 @@ type TProps = {
   onOpenChange: (open: boolean) => void;
   description?: string;
   confirmLabel?: string;
+  closeLabel?: string;
   onClose?: () => void;
 };
 
@@ -27,6 +28,7 @@ export const SheetDialog = (props: TProps) => {
     onOpenChange,
     description,
     confirmLabel = "Apply",
+    closeLabel = "Close",
     onClose,
   } = props;
 
@@ -48,9 +50,9 @@ export const SheetDialog = (props: TProps) => {
         <div className="px-4">{children}</div>
         <SheetFooter>
           <Button variant="outline" onClick={handleClose} className="flex-1" size="lg">
-            Close
+            {closeLabel}
           </Button>
-          <Button type="submit" className="flex-1" size="lg">
+          <Button onClick={() => onOpenChange(false)} className="flex-1" size="lg">
             {confirmLabel}
           </Button>
         </SheetFooter>

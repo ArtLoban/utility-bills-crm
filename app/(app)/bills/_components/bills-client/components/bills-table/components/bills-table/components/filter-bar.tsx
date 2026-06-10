@@ -25,12 +25,14 @@ export const FilterBar = ({ queryFilters }: TProps) => {
         field={FiltersFormField.PROPERTY_ID}
         label="Property"
         options={properties}
+        size="sm"
       />
       <SelectInput
         form={form}
         field={FiltersFormField.SERVICES}
         label="Service"
         options={serviceOptions}
+        size="sm"
       />
     </TableFilters>
   );

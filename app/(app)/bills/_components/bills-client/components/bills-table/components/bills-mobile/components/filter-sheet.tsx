@@ -5,6 +5,11 @@ import type { TTimePeriod } from "@/components/date-range-filter/types";
 import { resolvePreset } from "@/components/date-range-filter/utils";
 import { useServiceOptions } from "@/features/services/hooks/use-service-options";
 import { SheetDialog } from "@/components/sheet-dialog";
+import { SelectInput } from "@/components/select-input";
+import { FiltersFormField, type TQueryFilters } from "../../../types";
+import { useBillsTable } from "@/app/(app)/bills/_components/bills-client/context";
+import { Form } from "@/components/ui/form";
+import { FormInput } from "@/components/form-input";
 
 type TFilterOption = { id: string; name: string };
 
@@ -13,14 +18,6 @@ type TFilters = {
   services: string | null;
   dateFrom: string | null;
   dateTo: string | null;
-};
-
-type TProps = {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  filters: TFilters;
-  onFilterChange: (filters: TFilters) => void;
-  propertyOptions: TFilterOption[];
 };
 
 type TSheetSelectProps = {
@@ -70,21 +67,24 @@ const SheetDateInput = ({ label, value, onChange }: TSheetDateInputProps) => (
   </div>
 );
 
+type TProps = {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  queryFilters: TQueryFilters;
+  filters: TFilters;
+  onFilterChange: (filters: TFilters) => void;
+  propertyOptions: TFilterOption[];
+};
+
 export const FilterSheet = ({
   open,
   onOpenChange,
+  queryFilters,
   filters,
   onFilterChange,
-  propertyOptions,
 }: TProps) => {
   const [timePeriod, setTimePeriod] = useState<TTimePeriod | null>(null);
   const serviceOptions = useServiceOptions();
-
-  const setField =
-    (key: keyof Pick<TFilters, "propertyId" | "services">) =>
-    (value: string): void => {
-      onFilterChange({ ...filters, [key]: value === "" ? null : value });
-    };
 
   const handleDateFromChange = (value: string | null) => {
     setTimePeriod(null);
@@ -108,55 +108,61 @@ export const FilterSheet = ({
     onFilterChange({ ...filters, dateFrom: resolved.dateFrom, dateTo: resolved.dateTo });
   };
 
-  const handleClear = () => {
+  const { form, handleClear } = queryFilters;
+  const { properties } = useBillsTable();
+
+  const handleClose = () => {
     setTimePeriod(null);
-    onFilterChange({ propertyId: null, services: null, dateFrom: null, dateTo: null });
+    handleClear();
     onOpenChange(false);
   };
 
   return (
-    <SheetDialog title="Filters" open={open} onOpenChange={onOpenChange} onClose={handleClear}>
-      {/* Controls */}
-      <div className="flex flex-col gap-3.5">
-        <SheetSelect
-          label="Property"
-          value={filters.propertyId ?? ""}
-          onChange={setField("propertyId")}
-        >
-          <option value="">All properties</option>
-          {propertyOptions.map((p) => (
-            <option key={p.id} value={p.id}>
-              {p.name}
-            </option>
-          ))}
-        </SheetSelect>
+    <SheetDialog
+      title="Filters"
+      open={open}
+      onOpenChange={onOpenChange}
+      onClose={handleClose}
+      closeLabel="Clear filters"
+    >
+      <Form {...form}>
+        <div className="flex flex-col gap-3">
+          <FormInput control={form.control} name={FiltersFormField.PROPERTY_ID} label="Property">
+            <SelectInput
+              form={form}
+              field={FiltersFormField.PROPERTY_ID}
+              label="All properties"
+              options={properties}
+              className="w-full"
+            />
+          </FormInput>
+          <FormInput control={form.control} name={FiltersFormField.SERVICES} label="Service">
+            <SelectInput
+              form={form}
+              field={FiltersFormField.SERVICES}
+              label="All services"
+              options={serviceOptions}
+              className="w-full"
+            />
+          </FormInput>
+          <SheetDateInput
+            label="Date from"
+            value={filters.dateFrom}
+            onChange={handleDateFromChange}
+          />
 
-        <SheetSelect label="Service" value={filters.services ?? ""} onChange={setField("services")}>
-          <option value="">All services</option>
-          {serviceOptions.map((s) => (
-            <option key={s.id} value={s.id}>
-              {s.name}
-            </option>
-          ))}
-        </SheetSelect>
+          <SheetDateInput label="Date to" value={filters.dateTo} onChange={handleDateToChange} />
 
-        <SheetDateInput
-          label="Date from"
-          value={filters.dateFrom}
-          onChange={handleDateFromChange}
-        />
-
-        <SheetDateInput label="Date to" value={filters.dateTo} onChange={handleDateToChange} />
-
-        <SheetSelect label="Time Period" value={timePeriod ?? ""} onChange={handlePresetChange}>
-          <option value="">Select period</option>
-          {PRESETS.map(({ id, label }) => (
-            <option key={id} value={id}>
-              {label}
-            </option>
-          ))}
-        </SheetSelect>
-      </div>
+          <SheetSelect label="Time Period" value={timePeriod ?? ""} onChange={handlePresetChange}>
+            <option value="">Select period</option>
+            {PRESETS.map(({ id, label }) => (
+              <option key={id} value={id}>
+                {label}
+              </option>
+            ))}
+          </SheetSelect>
+        </div>
+      </Form>
     </SheetDialog>
   );
 };

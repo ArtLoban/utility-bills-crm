@@ -52,6 +52,7 @@ export const FilterControls = ({ queryFilters }: TProps) => {
       <FilterSheet
         open={sheetOpen}
         onOpenChange={setSheetOpen}
+        queryFilters={queryFilters}
         filters={filters}
         onFilterChange={handleFilterChange}
         propertyOptions={properties}

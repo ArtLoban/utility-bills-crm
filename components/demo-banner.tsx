@@ -1,6 +1,7 @@
 import { useTranslations } from "next-intl";
 
 import { signOutToGoogleAction } from "@/lib/auth/actions";
+import { Button } from "./ui/button";
 
 export const DemoBanner = () => {
   const t = useTranslations("common.demoBanner");
@@ -10,12 +11,9 @@ export const DemoBanner = () => {
       <span className="text-muted-foreground">{t("message")}</span>
       <span className="text-muted-foreground">·</span>
       <form action={signOutToGoogleAction}>
-        <button
-          type="submit"
-          className="text-brand cursor-pointer font-medium underline underline-offset-2"
-        >
+        <Button variant="link" type="submit" className="px-0">
           {t("cta")}
-        </button>
+        </Button>
       </form>
     </div>
   );
