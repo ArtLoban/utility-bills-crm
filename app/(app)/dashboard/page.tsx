@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
@@ -11,6 +12,7 @@ import {
   balancesForServices,
   monthlyExpensesByService,
 } from "@/features/ledger";
+import { availableConsumptionServiceTypes } from "@/features/meters";
 import { missingCurrentMonthReadings } from "./_data/reads";
 import { loadDashboardChartParams } from "./_data/query-params";
 import { resolveDefaultDateRange } from "./_data/chart-transforms";
@@ -19,6 +21,8 @@ import { AttentionBlock } from "./_components/attention-block";
 import { BalanceBlock } from "./_components/balance-block";
 import { ChartsSection } from "./_components/charts-section";
 import { DashboardEmptyState } from "./_components/dashboard-empty-state";
+import { ConsumptionLineChartServer } from "./_components/charts-section/consumption-line-chart";
+import { ChartCardSkeleton } from "./_components/dashboard-skeleton/components/charts-section-skeleton/components/chart-card-skeleton";
 
 export const metadata: Metadata = {
   title: "Dashboard",
@@ -42,17 +46,19 @@ export default async function DashboardPage({
   const resolvedDateTo = chartParams.dateTo ?? defaultRange.dateTo;
 
   // Round 1: parallel — all queries need only userId (plus resolved date range for charts)
-  const [accessible, serviceIds, missingReadings, aggregate] = await Promise.all([
-    accessibleProperties(userId),
-    serviceIdsForUser(userId),
-    missingCurrentMonthReadings(userId),
-    monthlyExpensesByService(userId, {
-      dateFrom: resolvedDateFrom,
-      dateTo: resolvedDateTo,
-      propertyId: chartParams.propertyId,
-      serviceTypeCodes: chartParams.services,
-    }),
-  ]);
+  const [accessible, serviceIds, missingReadings, aggregate, availableConsumptionServices] =
+    await Promise.all([
+      accessibleProperties(userId),
+      serviceIdsForUser(userId),
+      missingCurrentMonthReadings(userId),
+      monthlyExpensesByService(userId, {
+        dateFrom: resolvedDateFrom,
+        dateTo: resolvedDateTo,
+        propertyId: chartParams.propertyId,
+        serviceTypeCodes: chartParams.services,
+      }),
+      availableConsumptionServiceTypes(userId, { propertyId: chartParams.propertyId }),
+    ]);
 
   if (accessible.length === 0) {
     return (
@@ -108,6 +114,32 @@ export default async function DashboardPage({
   const t = await getTranslations("dashboard");
   const properties = accessible.map(({ property }) => ({ id: property.id, name: property.name }));
 
+  // Resolve the effective consumption service for the slot and picker.
+  // consumptionService URL param is null when the user hasn't picked explicitly —
+  // fall back to the first available service. The default is NOT written to the URL here;
+  // only explicit user selection writes consumptionService to the URL (Decision for Stage 3).
+  const consumptionServiceCode =
+    chartParams.consumptionService ?? availableConsumptionServices[0]?.code ?? null;
+
+  const isConsumptionMode = chartParams.chartMode === "consumption";
+
+  // Build the Suspense slot only in consumption mode with a resolvable service.
+  // In money mode consumptionLineChartSlot is null and ChartsSection renders TrendLineChart.
+  const consumptionLineChartSlot =
+    isConsumptionMode && consumptionServiceCode !== null ? (
+      <Suspense
+        fallback={<ChartCardSkeleton titleClass="w-40" subClass="w-32" chartClass="h-[260px]" />}
+      >
+        <ConsumptionLineChartServer
+          userId={userId}
+          serviceTypeCode={consumptionServiceCode}
+          dateFrom={resolvedDateFrom}
+          dateTo={resolvedDateTo}
+          propertyId={chartParams.propertyId}
+        />
+      </Suspense>
+    ) : null;
+
   return (
     <div className="mx-auto w-full max-w-[1360px] px-3.5 pt-5 pb-9 md:px-8 md:pt-8 md:pb-12">
       <div className="mb-5 md:mb-7">
@@ -124,6 +156,9 @@ export default async function DashboardPage({
           properties={properties}
           resolvedDateFrom={resolvedDateFrom}
           resolvedDateTo={resolvedDateTo}
+          availableConsumptionServices={availableConsumptionServices}
+          consumptionServiceCode={consumptionServiceCode}
+          consumptionLineChartSlot={consumptionLineChartSlot}
         />
       </div>
     </div>

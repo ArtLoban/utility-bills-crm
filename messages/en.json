@@ -212,7 +212,17 @@
       },
       "pie": { "title": "Expense structure" },
       "bar": { "title": "Monthly expenses" },
-      "line": { "title": "Expense trend" },
+      "line": {
+        "title": "Expense trend",
+        "mode": {
+          "money": "Money",
+          "consumption": "Consumption"
+        }
+      },
+      "consumption": {
+        "servicePicker": "Service",
+        "noServices": "No metered services with readings in the selected period."
+      },
       "empty": "No expense data for the selected period."
     }
   },
