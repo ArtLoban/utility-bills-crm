@@ -138,7 +138,30 @@
   },
   "dashboard": {
     "signedInAs": "Вы вошли как",
-    "signOut": "Выйти"
+    "signOut": "Выйти",
+    "greeting": {
+      "withName": "Привет, {name}",
+      "fallback": "Привет!"
+    },
+    "attention": {
+      "title": "Требует внимания",
+      "debt": "<em>{amount}</em> UAH всего ({count, plural, one {# сервис} few {# сервиса} many {# сервисов} other {# сервисов}})",
+      "missingReading": "Показания за <em>{month}</em> ещё не переданы ({count, plural, one {# сервис} few {# сервиса} many {# сервисов} other {# сервисов}})",
+      "viewDetails": "Подробнее",
+      "goToMeters": "К счётчикам"
+    },
+    "balance": {
+      "title": "Текущий баланс",
+      "totalDebt": "Общий долг",
+      "totalOverpayment": "Переплата",
+      "acrossServices": "{count, plural, one {по # сервису} few {по # сервисам} many {по # сервисам} other {по # сервисам}}",
+      "byProperty": "По объектам"
+    },
+    "empty": {
+      "title": "Добро пожаловать в UtilityBills!",
+      "body": "Начните с добавления первого объекта для отслеживания коммунальных счетов.",
+      "cta": "Добавить объект"
+    }
   },
   "properties": {
     "list": {

@@ -1,13 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import type { TDashboardData } from "../../_data/mock";
+import type { TChartData } from "../../_data/mock";
 import { ExpensePieChart } from "./expense-pie-chart";
 import { MonthlyBarChart } from "./monthly-bar-chart";
 import { TrendLineChart } from "./trend-line-chart";
 
 type TProps = {
-  data: TDashboardData["charts"];
+  data: TChartData;
 };
 
 export const ChartsSection = ({ data }: TProps) => {

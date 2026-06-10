@@ -1,12 +1,14 @@
 import Link from "next/link";
 import { Home, TreePine, ChevronRight } from "lucide-react";
-import type { TDashboardData } from "../_data/mock";
+import { getTranslations, getFormatter } from "next-intl/server";
+
 import { DataCard } from "@/components/data-card";
 import { cn } from "@/lib/utils";
 import type { TPropertyType } from "@/lib/db/schema/properties";
+import type { TBalanceData } from "../_data/types";
 
 type TProps = {
-  data: TDashboardData["balance"];
+  data: TBalanceData;
 };
 
 const PropertyIcon = ({ type }: { type: TPropertyType }) => {
@@ -16,58 +18,67 @@ const PropertyIcon = ({ type }: { type: TPropertyType }) => {
   return <Home size={15} className="text-zinc-500" />;
 };
 
-const formatBalance = (balance: number): string => {
-  const sign = balance < 0 ? "−" : "+";
-  return `${sign}${Math.abs(balance).toLocaleString("uk-UA")} UAH`;
-};
-
 const balanceColor = (balance: number): string => {
   if (balance < 0) return "var(--destructive)";
   if (balance > 0) return "var(--success)";
   return "var(--muted-foreground)";
 };
 
-export const BalanceBlock = ({ data }: TProps) => {
+export const BalanceBlock = async ({ data }: TProps) => {
   const { totalDebt, debtServicesCount, totalOverpayment, overpayServicesCount, byProperty } = data;
+
+  const t = await getTranslations("dashboard.balance");
+  const format = await getFormatter();
+
+  const formatBalance = (balance: number): string => {
+    const sign = balance < 0 ? "−" : "+";
+    return `${sign}${format.number(Math.abs(balance), { maximumFractionDigits: 2, minimumFractionDigits: 0 })} UAH`;
+  };
 
   return (
     <DataCard className="overflow-hidden">
       {/* Top section — summary KV grid */}
       <div className="border-b px-6 pt-5 pb-4 dark:border-zinc-800">
         <div className="text-[12px] font-medium tracking-[0.2px] text-zinc-500 uppercase">
-          Current balance
+          {t("title")}
         </div>
 
         <div className="mt-3.5 grid grid-cols-2 gap-8">
           {/* Total debt */}
           <div>
-            <div className="mb-1.5 text-[12.5px] text-zinc-500">Total debt</div>
+            <div className="mb-1.5 text-[12.5px] text-zinc-500">{t("totalDebt")}</div>
             <div
               className="text-destructive text-2xl leading-none font-semibold tracking-[-0.8px] md:text-[30px]"
               style={{ fontVariantNumeric: "tabular-nums", fontFeatureSettings: '"tnum" 1' }}
             >
               {"−"}
-              {totalDebt.toLocaleString("uk-UA")}{" "}
+              {format.number(totalDebt, {
+                maximumFractionDigits: 2,
+                minimumFractionDigits: 0,
+              })}{" "}
               <span className="text-[15px] font-medium tracking-[-0.2px]">UAH</span>
             </div>
             <div className="mt-1.5 text-[12.5px] text-zinc-500">
-              across {debtServicesCount} services
+              {t("acrossServices", { count: debtServicesCount })}
             </div>
           </div>
 
           {/* Total overpayment */}
           <div>
-            <div className="mb-1.5 text-[12.5px] text-zinc-500">Total overpayment</div>
+            <div className="mb-1.5 text-[12.5px] text-zinc-500">{t("totalOverpayment")}</div>
             <div
               className="text-success text-2xl leading-none font-semibold tracking-[-0.8px] md:text-[30px]"
               style={{ fontVariantNumeric: "tabular-nums", fontFeatureSettings: '"tnum" 1' }}
             >
               {"+"}
-              {totalOverpayment.toLocaleString("uk-UA")}{" "}
+              {format.number(totalOverpayment, {
+                maximumFractionDigits: 2,
+                minimumFractionDigits: 0,
+              })}{" "}
               <span className="text-[15px] font-medium tracking-[-0.2px]">UAH</span>
             </div>
             <div className="mt-1.5 text-[12.5px] text-zinc-500">
-              across {overpayServicesCount} service
+              {t("acrossServices", { count: overpayServicesCount })}
             </div>
           </div>
         </div>
@@ -76,7 +87,7 @@ export const BalanceBlock = ({ data }: TProps) => {
       {/* By property section */}
       <div>
         <div className="px-6 pt-3 pb-2 text-[11.5px] font-medium tracking-[0.2px] text-zinc-500 uppercase">
-          By property
+          {t("byProperty")}
         </div>
 
         <div>

@@ -138,7 +138,30 @@
   },
   "dashboard": {
     "signedInAs": "Ви увійшли як",
-    "signOut": "Вийти"
+    "signOut": "Вийти",
+    "greeting": {
+      "withName": "Привіт, {name}",
+      "fallback": "Привіт!"
+    },
+    "attention": {
+      "title": "Потрібна увага",
+      "debt": "<em>{amount}</em> UAH всього ({count, plural, one {# сервіс} few {# сервіси} many {# сервісів} other {# сервісів}})",
+      "missingReading": "Показання за <em>{month}</em> ще не подано ({count, plural, one {# сервіс} few {# сервіси} many {# сервісів} other {# сервісів}})",
+      "viewDetails": "Деталі",
+      "goToMeters": "Перейти до лічильників"
+    },
+    "balance": {
+      "title": "Поточний баланс",
+      "totalDebt": "Загальний борг",
+      "totalOverpayment": "Переплата",
+      "acrossServices": "{count, plural, one {за # сервісом} few {за # сервісами} many {за # сервісами} other {за # сервісами}}",
+      "byProperty": "За об'єктами"
+    },
+    "empty": {
+      "title": "Ласкаво просимо до UtilityBills!",
+      "body": "Почніть з додавання першого об'єкта для відстеження комунальних рахунків.",
+      "cta": "Додати об'єкт"
+    }
   },
   "properties": {
     "list": {

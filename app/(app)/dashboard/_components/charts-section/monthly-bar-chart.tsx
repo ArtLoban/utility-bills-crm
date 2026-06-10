@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import type { TDashboardData } from "../../_data/mock";
+import type { TServiceMonthlyExpense } from "../../_data/mock";
 import { SERVICE_COLORS } from "../../_data/mock";
 import { DataCard } from "@/components/data-card";
 
 type TProps = {
-  services: TDashboardData["charts"]["services"];
+  services: TServiceMonthlyExpense[];
   months: string[];
 };
 

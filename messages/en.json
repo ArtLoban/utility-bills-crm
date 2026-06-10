@@ -168,7 +168,30 @@
   },
   "dashboard": {
     "signedInAs": "Signed in as",
-    "signOut": "Sign out"
+    "signOut": "Sign out",
+    "greeting": {
+      "withName": "Hi, {name}",
+      "fallback": "Hello!"
+    },
+    "attention": {
+      "title": "Attention required",
+      "debt": "<em>{amount}</em> UAH total ({count, plural, one {# service} other {# services}})",
+      "missingReading": "Reading for <em>{month}</em> not yet submitted ({count, plural, one {# service} other {# services}})",
+      "viewDetails": "View details",
+      "goToMeters": "Go to meters"
+    },
+    "balance": {
+      "title": "Current balance",
+      "totalDebt": "Total debt",
+      "totalOverpayment": "Total overpayment",
+      "acrossServices": "{count, plural, one {across # service} other {across # services}}",
+      "byProperty": "By property"
+    },
+    "empty": {
+      "title": "Welcome to UtilityBills!",
+      "body": "Start by adding your first property to track your utility bills.",
+      "cta": "Add property"
+    }
   },
   "properties": {
     "list": {

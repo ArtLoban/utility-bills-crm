@@ -2,6 +2,7 @@ import { and, eq, isNull } from "drizzle-orm";
 
 import { db } from "@/lib/db/client";
 import { propertyByIdForUser } from "@/lib/db/access/properties";
+import { properties, propertyAccess } from "@/lib/db/schema/properties";
 import type { PropertyId, TPropertyRole } from "@/lib/db/schema/properties";
 import { contracts } from "@/lib/db/schema/contracts";
 import type { TContract } from "@/lib/db/schema/contracts";
@@ -48,7 +49,29 @@ export type TServiceDetail = {
 
 // --- Queries ---
 // Pure functions: userId is always a parameter. Never read the auth session internally.
-// Access is derived through the parent property — both queries route through
+
+// Returns IDs of all non-deleted services the user can access through property_access.
+// No access check per-service — access is established by the propertyAccess join.
+// Used by callers that need to batch-query service-level data (e.g., balancesForServices).
+export const serviceIdsForUser = async (userId: UserId): Promise<TServiceId[]> => {
+  const rows = await db
+    .select({ serviceId: services.id })
+    .from(services)
+    .innerJoin(properties, eq(services.propertyId, properties.id))
+    .innerJoin(
+      propertyAccess,
+      and(
+        eq(propertyAccess.propertyId, properties.id),
+        eq(propertyAccess.userId, userId),
+        isNull(propertyAccess.deletedAt),
+      ),
+    )
+    .where(and(isNull(services.deletedAt), isNull(properties.deletedAt)));
+
+  return rows.map((r) => r.serviceId);
+};
+
+// Access is derived through the parent property — both queries below route through
 // propertyByIdForUser (Stage 2 helper) rather than duplicating access logic.
 
 export const servicesByPropertyId = async (

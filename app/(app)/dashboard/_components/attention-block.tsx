@@ -1,21 +1,27 @@
 import Link from "next/link";
 import { AlertTriangle, ChevronRight } from "lucide-react";
-import type { TDashboardData } from "../_data/mock";
+import { getTranslations, getFormatter } from "next-intl/server";
+
 import { DataCard } from "@/components/data-card";
+import type { TAttentionData } from "../_data/types";
 
 type TProps = {
-  data: NonNullable<TDashboardData["attention"]>;
+  data: TAttentionData;
 };
 
-export const AttentionBlock = ({ data }: TProps) => {
-  const { totalDebt, debtServicesCount, readingsDueCount, readingsDueDate } = data;
+export const AttentionBlock = async ({ data }: TProps) => {
+  const { totalDebt, debtServicesCount, missingReadingsCount, currentMonth } = data;
+
+  const t = await getTranslations("dashboard.attention");
+  const format = await getFormatter();
+  const monthLabel = format.dateTime(currentMonth, { year: "numeric", month: "long" });
 
   return (
     <DataCard className="border-l-warning flex flex-col gap-3 border-l-4 px-6 py-5">
       <div className="flex items-center gap-2.5">
         <AlertTriangle size={18} className="text-warning" />
         <h3 className="m-0 text-[14.5px] font-semibold tracking-[-0.1px] text-zinc-950 dark:text-zinc-50">
-          Attention required
+          {t("title")}
         </h3>
       </div>
 
@@ -24,35 +30,42 @@ export const AttentionBlock = ({ data }: TProps) => {
           <li className="flex items-baseline gap-2.5 text-[13.5px] text-zinc-950 dark:text-zinc-50">
             <span className="w-2 text-zinc-500">•</span>
             <span className="flex-1">
-              {"Debt: "}
-              <strong className="text-destructive font-semibold">
-                {Math.abs(totalDebt).toLocaleString("uk-UA")} UAH
-              </strong>
-              <span className="text-zinc-500"> total ({debtServicesCount} services)</span>
+              {t.rich("debt", {
+                em: (chunks) => (
+                  <strong className="text-destructive font-semibold">{chunks}</strong>
+                ),
+                amount: format.number(totalDebt, {
+                  maximumFractionDigits: 2,
+                  minimumFractionDigits: 0,
+                }),
+                count: debtServicesCount,
+              })}
             </span>
             <Link
               href="/bills"
               className="text-primary inline-flex shrink-0 items-center gap-0.5 text-[13px] font-medium no-underline"
             >
-              View details
+              {t("viewDetails")}
               <ChevronRight size={14} />
             </Link>
           </li>
         )}
 
-        {readingsDueCount > 0 && (
+        {missingReadingsCount > 0 && (
           <li className="flex items-baseline gap-2.5 text-[13.5px] text-zinc-950 dark:text-zinc-50">
             <span className="w-2 text-zinc-500">•</span>
             <span className="flex-1">
-              {"Submit readings by "}
-              <strong className="font-semibold">{readingsDueDate}</strong>
-              <span className="text-zinc-500"> ({readingsDueCount} meters)</span>
+              {t.rich("missingReading", {
+                em: (chunks) => <strong className="font-semibold">{chunks}</strong>,
+                month: monthLabel,
+                count: missingReadingsCount,
+              })}
             </span>
             <Link
-              href="/properties"
+              href="/meters"
               className="text-primary inline-flex shrink-0 items-center gap-0.5 text-[13px] font-medium no-underline"
             >
-              Go to meters
+              {t("goToMeters")}
               <ChevronRight size={14} />
             </Link>
           </li>

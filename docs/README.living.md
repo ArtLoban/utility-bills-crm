@@ -591,6 +591,9 @@ Rationale: the "product-first" framing had begun to systematically under-scope f
 > **#144 — All demo CTAs (`/`, `/auth/login`, `/project`) route to `/auth/demo`; the dead `liveDemoUrl` field is removed end to end.**
 > The three public entry points to the demo all navigate to the internal `/auth/demo` route handler, which creates a session and redirects to `/dashboard` (Decision #136). The `/` home hero gained a "Try demo →" CTA (previously had none). The `/project` links section now always shows a "Live demo" card pointing to `/auth/demo` — previously conditional on a CMS-managed external URL. The `liveDemoUrl` field (`links` table column, `globalSchema`, admin Global tab input, `INITIAL_GLOBAL` constant, public `LinksSection` prop, and related tests) is removed in full; migration `0020` drops the column. There is no external demo URL — the app is the demo.
 
+> **#145 — "Payment deadline approaching" alert not implemented in MVP.**
+> No due-date is stored for any bill or service. Approximating one (e.g., a fixed calendar day) would duplicate the outstanding-debt signal already present in the attention block. The readings signal in the attention block is binary: "reading for {month} not yet submitted" — a binary present/absent check, not a date-based countdown. Payment deadline countdown is deferred to a future stage when payment due dates are a first-class data field.
+
 ## Open Questions
 
 Carried forward to Phase 7 (implementation) and beyond.
