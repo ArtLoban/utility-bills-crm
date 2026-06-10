@@ -135,12 +135,14 @@ export const ChartsSection = ({
           aggregate={aggregate}
           dateFrom={resolvedDateFrom}
           dateTo={resolvedDateTo}
+          title={t("pie.title")}
+          subtitle={periodLabel}
           getServiceLabel={getServiceLabel}
         />
         <MonthlyBarChart
           aggregate={aggregate}
-          dateFrom={resolvedDateFrom}
-          dateTo={resolvedDateTo}
+          title={t("bar.title")}
+          subtitle={t("bar.subtitle")}
           getServiceLabel={getServiceLabel}
         />
       </div>

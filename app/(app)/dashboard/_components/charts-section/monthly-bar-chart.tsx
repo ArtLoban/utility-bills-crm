@@ -11,6 +11,8 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart";
+import { DataCard } from "@/components/data-card";
+import { cn } from "@/lib/utils";
 import type { TMonthlyExpensesAggregate } from "@/features/ledger";
 import { SERVICE_TYPE_COLORS } from "@/features/services/service-type";
 
@@ -19,12 +21,12 @@ import { buildBillsDrillUrl, formatMonthLabel, formatUahTick, lastDayOfMonth } f
 
 type TProps = {
   aggregate: TMonthlyExpensesAggregate;
-  dateFrom: string;
-  dateTo: string;
+  title: string;
+  subtitle: string;
   getServiceLabel: (code: string) => string;
 };
 
-const MonthlyBarChart = ({ aggregate, dateFrom, dateTo, getServiceLabel }: TProps) => {
+export const MonthlyBarChart = ({ aggregate, title, subtitle, getServiceLabel }: TProps) => {
   const router = useRouter();
   const [hiddenSeries, setHiddenSeries] = useState<Set<string>>(new Set());
 
@@ -43,13 +45,21 @@ const MonthlyBarChart = ({ aggregate, dateFrom, dateTo, getServiceLabel }: TProp
   const toggleSeries = (code: string) => {
     setHiddenSeries((prev) => {
       const next = new Set(prev);
-      next.has(code) ? next.delete(code) : next.add(code);
+      if (next.has(code)) next.delete(code);
+      else next.add(code);
       return next;
     });
   };
 
   return (
-    <div className="overflow-hidden rounded-[8px] border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
+    <DataCard className="p-5">
+      <div className="mb-4">
+        <h3 className="text-sm font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
+          {title}
+        </h3>
+        <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">{subtitle}</p>
+      </div>
+
       <ChartContainer
         config={chartConfig}
         className="h-[260px] w-full"
@@ -87,8 +97,9 @@ const MonthlyBarChart = ({ aggregate, dateFrom, dateTo, getServiceLabel }: TProp
             }
           />
           <ChartLegend
+            align="left"
             content={({ payload }) => (
-              <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+              <div className="flex flex-wrap items-center gap-2 pt-3">
                 {payload?.map((item) => {
                   const code = String(item.dataKey);
                   const hidden = hiddenSeries.has(code);
@@ -97,14 +108,16 @@ const MonthlyBarChart = ({ aggregate, dateFrom, dateTo, getServiceLabel }: TProp
                       key={code}
                       type="button"
                       onClick={() => toggleSeries(code)}
-                      className="flex cursor-pointer items-center gap-1.5 rounded px-1 text-xs transition-opacity"
-                      style={{ opacity: hidden ? 0.4 : 1 }}
+                      className={cn(
+                        "flex cursor-pointer items-center gap-1.5 rounded px-1.5 py-0.5 text-xs transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800",
+                        hidden && "text-muted-foreground line-through",
+                      )}
                     >
                       <span
                         className="h-2 w-2 shrink-0 rounded-[2px]"
-                        style={{ backgroundColor: item.color }}
+                        style={{ backgroundColor: hidden ? "var(--border)" : item.color }}
                       />
-                      {item.value}
+                      {getServiceLabel(code)}
                     </button>
                   );
                 })}
@@ -134,8 +147,6 @@ const MonthlyBarChart = ({ aggregate, dateFrom, dateTo, getServiceLabel }: TProp
           ))}
         </BarChart>
       </ChartContainer>
-    </div>
+    </DataCard>
   );
 };
-
-export { MonthlyBarChart };
