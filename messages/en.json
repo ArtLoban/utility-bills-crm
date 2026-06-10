@@ -194,21 +194,12 @@
     },
     "charts": {
       "title": "Analytics",
-      "period": {
-        "label": "Period",
-        "last3m": "3 months",
-        "last6m": "6 months",
-        "last12m": "12 months",
-        "last24m": "24 months"
-      },
       "property": {
-        "label": "Property",
-        "all": "All properties"
+        "label": "Property"
       },
       "service": {
         "label": "Service",
-        "all": "All services",
-        "selected": "{count} services"
+        "all": "All services"
       },
       "pie": { "title": "Expense structure" },
       "bar": { "title": "Monthly expenses" },

@@ -54,7 +54,7 @@ export default async function DashboardPage({
         dateFrom: resolvedDateFrom,
         dateTo: resolvedDateTo,
         propertyId: chartParams.propertyId,
-        serviceTypeCodes: chartParams.services,
+        serviceTypeCodes: chartParams.services ? [chartParams.services] : null,
       }),
       availableConsumptionServiceTypes(userId, { propertyId: chartParams.propertyId }),
     ]);
