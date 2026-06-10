@@ -14,6 +14,7 @@ import type { TMonthlyExpensesAggregate } from "@/features/ledger";
 import type { TAvailableConsumptionService } from "@/features/meters";
 import { dashboardChartSearchParams } from "../../_data/query-params";
 import { ExpensePieChart } from "./expense-pie-chart";
+import { LineChartCard } from "./line-chart-card";
 import { MonthlyBarChart } from "./monthly-bar-chart";
 import { TrendLineChart } from "./trend-line-chart";
 import { formatMonthLong } from "./utils";
@@ -110,6 +111,44 @@ export const ChartsSection = ({
   const isServiceChecked = (code: string): boolean =>
     !selectedServices || selectedServices.length === 0 || selectedServices.includes(code);
 
+  const effectiveServiceCode = params.consumptionService ?? consumptionServiceCode;
+  const effectiveService = availableConsumptionServices.find(
+    (s) => s.code === effectiveServiceCode,
+  );
+  const lineChartSubtitle =
+    isConsumptionMode && effectiveService
+      ? `${getServiceLabel(effectiveService.code)}, ${effectiveService.unit.toUpperCase()}`
+      : `${t("service.all")}, UAH`;
+
+  // null fallback covers the RSC transition window: isConsumptionMode flips on the client
+  // immediately when the URL updates, but consumptionLineChartSlot stays null until the
+  // server re-render completes. Show a skeleton instead of an empty card body.
+  const consumptionContent = !hasConsumptionData ? (
+    <div className="flex h-[320px] items-center justify-center">
+      <p className="text-sm text-zinc-400 dark:text-zinc-600">{t("consumption.noServices")}</p>
+    </div>
+  ) : (
+    (consumptionLineChartSlot ?? (
+      <div className="h-[320px] animate-pulse rounded-lg bg-zinc-100 dark:bg-zinc-800" />
+    ))
+  );
+
+  const servicePickerSlot =
+    isConsumptionMode && availableConsumptionServices.length > 1 ? (
+      <select
+        value={params.consumptionService ?? consumptionServiceCode ?? ""}
+        onChange={(e) => void setParams({ consumptionService: e.target.value || null })}
+        className="cursor-pointer rounded-[6px] border px-2 text-[12.5px] dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50"
+        style={{ height: 32 }}
+      >
+        {availableConsumptionServices.map((s) => (
+          <option key={s.code} value={s.code}>
+            {tServiceTypes(s.code as Parameters<typeof tServiceTypes>[0])}
+          </option>
+        ))}
+      </select>
+    ) : null;
+
   return (
     <div className="flex flex-col gap-4">
       {/* Mobile section header */}
@@ -196,55 +235,6 @@ export const ChartsSection = ({
           </DropdownMenu>
         )}
 
-        <div className="mx-1 h-5 w-px bg-zinc-200 dark:bg-zinc-700" />
-
-        {/* Line chart mode toggle: Money / Consumption */}
-        <div
-          className="flex items-center overflow-hidden rounded-[6px] border dark:border-zinc-700"
-          style={{ height: 32 }}
-        >
-          {(["money", "consumption"] as const).map((mode) => {
-            const isActive = mode === "consumption" ? isConsumptionMode : !isConsumptionMode;
-            const isDisabled = mode === "consumption" && !hasConsumptionData;
-            return (
-              <button
-                key={mode}
-                type="button"
-                disabled={isDisabled}
-                onClick={() =>
-                  void setParams({ chartMode: mode === "consumption" ? "consumption" : null })
-                }
-                className="cursor-pointer px-3 text-[12.5px] transition-colors disabled:cursor-not-allowed disabled:opacity-40"
-                style={{
-                  height: "100%",
-                  fontWeight: isActive ? 500 : 400,
-                  background: isActive ? "var(--background)" : "transparent",
-                  color: isActive ? "var(--foreground)" : "var(--muted-foreground)",
-                  boxShadow: isActive ? "0 1px 2px rgba(0,0,0,0.05)" : "none",
-                }}
-              >
-                {t(`line.mode.${mode}` as Parameters<typeof t>[0])}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Consumption service picker — only when in consumption mode and multiple options */}
-        {isConsumptionMode && availableConsumptionServices.length > 1 && (
-          <select
-            value={params.consumptionService ?? consumptionServiceCode ?? ""}
-            onChange={(e) => void setParams({ consumptionService: e.target.value || null })}
-            className="cursor-pointer rounded-[6px] border px-2 text-[12.5px] dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50"
-            style={{ height: 32 }}
-          >
-            {availableConsumptionServices.map((s) => (
-              <option key={s.code} value={s.code}>
-                {tServiceTypes(s.code as Parameters<typeof tServiceTypes>[0])}
-              </option>
-            ))}
-          </select>
-        )}
-
         <div className="flex-1" />
         <span className="text-[12px] text-zinc-500">{periodLabel}</span>
       </div>
@@ -265,20 +255,20 @@ export const ChartsSection = ({
         />
       </div>
 
-      {/* Bottom row: Line — money mode or consumption mode (on-demand Suspense slot) */}
-      {isConsumptionMode ? (
-        !hasConsumptionData ? (
-          <div className="flex h-[260px] items-center justify-center overflow-hidden rounded-[8px] border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
-            <p className="text-sm text-zinc-400 dark:text-zinc-600">
-              {t("consumption.noServices")}
-            </p>
-          </div>
-        ) : (
-          consumptionLineChartSlot
-        )
-      ) : (
-        <TrendLineChart aggregate={aggregate} getServiceLabel={getServiceLabel} />
-      )}
+      {/* Bottom row: Line chart card with in-card header and mode toggle */}
+      <LineChartCard
+        title={t("line.title")}
+        subtitle={lineChartSubtitle}
+        isConsumptionMode={isConsumptionMode}
+        onMoneyMode={() => void setParams({ chartMode: null })}
+        onConsumptionMode={() => void setParams({ chartMode: "consumption" })}
+        moneyModeLabel={t("line.mode.money")}
+        consumptionModeLabel={t("line.mode.consumption")}
+        hasConsumptionData={hasConsumptionData}
+        servicePickerSlot={servicePickerSlot}
+        moneySlot={<TrendLineChart aggregate={aggregate} getServiceLabel={getServiceLabel} />}
+        consumptionSlot={consumptionContent}
+      />
     </div>
   );
 };

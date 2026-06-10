@@ -213,7 +213,7 @@
       "pie": { "title": "Expense structure" },
       "bar": { "title": "Monthly expenses" },
       "line": {
-        "title": "Expense trend",
+        "title": "Consumption trend",
         "mode": {
           "money": "Money",
           "consumption": "Consumption"

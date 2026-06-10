@@ -54,12 +54,12 @@ const ConsumptionChart = ({ aggregate }: TProps) => {
   const hasData = aggregate.zones.some((z) => z.monthlyConsumption.some((v) => v > 0));
 
   return (
-    <div className="overflow-hidden rounded-[8px] border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
+    <>
       {hasData ? (
         <ChartContainer
           config={chartConfig}
-          className="h-[260px] w-full"
-          initialDimension={{ width: 560, height: 260 }}
+          className="h-[320px] w-full"
+          initialDimension={{ width: 560, height: 320 }}
         >
           <LineChart data={lineData} margin={{ top: 8, right: 8, left: 0, bottom: 4 }}>
             <CartesianGrid
@@ -94,7 +94,7 @@ const ConsumptionChart = ({ aggregate }: TProps) => {
                 />
               }
             />
-            {isMultiZone && <ChartLegend content={<ChartLegendContent />} />}
+            {isMultiZone && <ChartLegend content={<ChartLegendContent />} align="left" />}
             {aggregate.zones.map((zone) => (
               <Line
                 key={zone.key}
@@ -109,16 +109,13 @@ const ConsumptionChart = ({ aggregate }: TProps) => {
           </LineChart>
         </ChartContainer>
       ) : (
-        <div
-          className="flex h-[260px] items-center justify-center"
-          style={{ padding: "32px 24px" }}
-        >
+        <div className="flex h-[320px] items-center justify-center">
           <p className="text-sm text-zinc-400 dark:text-zinc-600">
             Submit readings to see the chart.
           </p>
         </div>
       )}
-    </div>
+    </>
   );
 };
 

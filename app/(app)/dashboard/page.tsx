@@ -22,7 +22,6 @@ import { BalanceBlock } from "./_components/balance-block";
 import { ChartsSection } from "./_components/charts-section";
 import { DashboardEmptyState } from "./_components/dashboard-empty-state";
 import { ConsumptionLineChartServer } from "./_components/charts-section/consumption-line-chart";
-import { ChartCardSkeleton } from "./_components/dashboard-skeleton/components/charts-section-skeleton/components/chart-card-skeleton";
 
 export const metadata: Metadata = {
   title: "Dashboard",
@@ -121,14 +120,17 @@ export default async function DashboardPage({
   const consumptionServiceCode =
     chartParams.consumptionService ?? availableConsumptionServices[0]?.code ?? null;
 
-  const isConsumptionMode = chartParams.chartMode === "consumption";
-
-  // Build the Suspense slot only in consumption mode with a resolvable service.
-  // In money mode consumptionLineChartSlot is null and ChartsSection renders TrendLineChart.
+  // Build the slot unconditionally when a service is resolvable.
+  // nuqs v2 uses shallow routing by default — chartMode changes happen client-side without
+  // an RSC re-render, so a slot built only in consumption mode would stay null after toggle.
+  // Building it always ensures the slot is ready as soon as the page streams in, and the
+  // client just shows/hides it based on mode without needing a server round-trip.
   const consumptionLineChartSlot =
-    isConsumptionMode && consumptionServiceCode !== null ? (
+    consumptionServiceCode !== null ? (
       <Suspense
-        fallback={<ChartCardSkeleton titleClass="w-40" subClass="w-32" chartClass="h-[260px]" />}
+        fallback={
+          <div className="h-[320px] animate-pulse rounded-lg bg-zinc-100 dark:bg-zinc-800" />
+        }
       >
         <ConsumptionLineChartServer
           userId={userId}

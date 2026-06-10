@@ -35,58 +35,56 @@ const TrendLineChart = ({ aggregate, getServiceLabel }: TProps) => {
   );
 
   return (
-    <div className="overflow-hidden rounded-[8px] border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
-      <ChartContainer
-        config={chartConfig}
-        className="h-[260px] w-full"
-        initialDimension={{ width: 560, height: 260 }}
-      >
-        <LineChart data={lineData} margin={{ top: 8, right: 8, left: 0, bottom: 4 }}>
-          <CartesianGrid
-            vertical={false}
-            strokeDasharray="3 3"
-            className="stroke-zinc-100 dark:stroke-zinc-800"
-          />
-          <XAxis
-            dataKey="month"
-            tickLine={false}
-            axisLine={false}
-            tick={{ fontSize: 11.5, fill: "var(--color-muted-foreground)" }}
-            tickFormatter={formatMonthLabel}
-            interval="preserveStartEnd"
-          />
-          <YAxis
-            tickLine={false}
-            axisLine={false}
-            tick={{ fontSize: 11.5, fill: "var(--color-muted-foreground)" }}
-            width={44}
-            tickFormatter={formatUahTick}
-          />
-          <ChartTooltip
-            content={
-              <ChartTooltipContent
-                labelFormatter={(label) => formatMonthLabel(String(label))}
-                formatter={(value) => [
-                  typeof value === "number" ? `${value.toLocaleString()} UAH` : String(value),
-                ]}
-              />
-            }
-          />
-          <ChartLegend content={<ChartLegendContent />} />
-          {aggregate.services.map((s) => (
-            <Line
-              key={s.code}
-              type="monotone"
-              dataKey={s.code}
-              stroke={`var(--color-${s.code})`}
-              strokeWidth={2}
-              dot={{ r: 3, fill: `var(--color-${s.code})`, strokeWidth: 0 }}
-              activeDot={{ r: 5 }}
+    <ChartContainer
+      config={chartConfig}
+      className="h-[320px] w-full"
+      initialDimension={{ width: 560, height: 320 }}
+    >
+      <LineChart data={lineData} margin={{ top: 8, right: 8, left: 0, bottom: 4 }}>
+        <CartesianGrid
+          vertical={false}
+          strokeDasharray="3 3"
+          className="stroke-zinc-100 dark:stroke-zinc-800"
+        />
+        <XAxis
+          dataKey="month"
+          tickLine={false}
+          axisLine={false}
+          tick={{ fontSize: 11.5, fill: "var(--color-muted-foreground)" }}
+          tickFormatter={formatMonthLabel}
+          interval="preserveStartEnd"
+        />
+        <YAxis
+          tickLine={false}
+          axisLine={false}
+          tick={{ fontSize: 11.5, fill: "var(--color-muted-foreground)" }}
+          width={44}
+          tickFormatter={formatUahTick}
+        />
+        <ChartTooltip
+          content={
+            <ChartTooltipContent
+              labelFormatter={(label) => formatMonthLabel(String(label))}
+              formatter={(value) => [
+                typeof value === "number" ? `${value.toLocaleString()} UAH` : String(value),
+              ]}
             />
-          ))}
-        </LineChart>
-      </ChartContainer>
-    </div>
+          }
+        />
+        <ChartLegend content={<ChartLegendContent />} align="left" />
+        {aggregate.services.map((s) => (
+          <Line
+            key={s.code}
+            type="monotone"
+            dataKey={s.code}
+            stroke={`var(--color-${s.code})`}
+            strokeWidth={2}
+            dot={{ r: 3, fill: `var(--color-${s.code})`, strokeWidth: 0 }}
+            activeDot={{ r: 5 }}
+          />
+        ))}
+      </LineChart>
+    </ChartContainer>
   );
 };
 
