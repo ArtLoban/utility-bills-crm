@@ -3,17 +3,12 @@
 import { useTranslations } from "next-intl";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 
-import {
-  ChartContainer,
-  ChartLegend,
-  ChartLegendContent,
-  ChartTooltip,
-  type ChartConfig,
-} from "@/components/ui/chart";
+import { ChartContainer, ChartLegend, ChartTooltip, type ChartConfig } from "@/components/ui/chart";
 import type { TMonthlyConsumptionAggregate } from "@/features/meters";
 import { SERVICE_TYPE_COLORS, type TServiceTypeCode } from "@/features/services/service-type";
 
 import { ChartTooltipCard } from "./components/chart-tooltip-card";
+import { LineChartLegend } from "./components/line-chart-legend";
 import { formatMonthLabel, sumTooltipValues, toTooltipRows } from "./utils";
 
 // Zone color palette for multi-zone meters — matches the meter detail consumption chart.
@@ -108,15 +103,33 @@ const ConsumptionChart = ({ aggregate }: TProps) => {
                 ) : null
               }
             />
-            {isMultiZone && <ChartLegend content={<ChartLegendContent />} align="left" />}
+            {isMultiZone && (
+              <ChartLegend
+                align="left"
+                content={() => (
+                  <LineChartLegend
+                    items={aggregate.zones.map((zone) => ({
+                      key: zone.key,
+                      label: String(chartConfig[zone.key]?.label ?? zone.key),
+                      color: `var(--color-${zone.key})`,
+                    }))}
+                  />
+                )}
+              />
+            )}
             {aggregate.zones.map((zone) => (
               <Line
                 key={zone.key}
-                type="monotone"
+                type="linear"
                 dataKey={zone.key}
                 stroke={`var(--color-${zone.key})`}
                 strokeWidth={2}
-                dot={{ r: 3, fill: `var(--color-${zone.key})`, strokeWidth: 0 }}
+                dot={{
+                  r: 2.5,
+                  fill: "var(--background)",
+                  stroke: `var(--color-${zone.key})`,
+                  strokeWidth: 1.5,
+                }}
                 activeDot={{ r: 5 }}
               />
             ))}

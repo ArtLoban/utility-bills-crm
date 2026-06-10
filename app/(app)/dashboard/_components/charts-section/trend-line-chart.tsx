@@ -3,18 +3,13 @@
 import { useTranslations } from "next-intl";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 
-import {
-  ChartContainer,
-  ChartLegend,
-  ChartLegendContent,
-  ChartTooltip,
-  type ChartConfig,
-} from "@/components/ui/chart";
+import { ChartContainer, ChartLegend, ChartTooltip, type ChartConfig } from "@/components/ui/chart";
 import type { TMonthlyExpensesAggregate } from "@/features/ledger";
 import { SERVICE_TYPE_COLORS } from "@/features/services/service-type";
 
 import { toLineData } from "../../_data/chart-transforms";
 import { ChartTooltipCard } from "./components/chart-tooltip-card";
+import { LineChartLegend } from "./components/line-chart-legend";
 import {
   formatMonthLabel,
   formatUah,
@@ -82,15 +77,31 @@ const TrendLineChart = ({ aggregate, getServiceLabel }: TProps) => {
             ) : null
           }
         />
-        <ChartLegend content={<ChartLegendContent />} align="left" />
+        <ChartLegend
+          align="left"
+          content={() => (
+            <LineChartLegend
+              items={aggregate.services.map((s) => ({
+                key: s.code,
+                label: getServiceLabel(s.code),
+                color: `var(--color-${s.code})`,
+              }))}
+            />
+          )}
+        />
         {aggregate.services.map((s) => (
           <Line
             key={s.code}
-            type="monotone"
+            type="linear"
             dataKey={s.code}
             stroke={`var(--color-${s.code})`}
             strokeWidth={2}
-            dot={{ r: 3, fill: `var(--color-${s.code})`, strokeWidth: 0 }}
+            dot={{
+              r: 2.5,
+              fill: "var(--background)",
+              stroke: `var(--color-${s.code})`,
+              strokeWidth: 1.5,
+            }}
             activeDot={{ r: 5 }}
           />
         ))}
