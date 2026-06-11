@@ -12,7 +12,7 @@ import {
 import { cn } from "@/lib/utils";
 import { SELECT_CLEAR_VALUE } from "@/lib/constants/select";
 import { DATE_PARAMS } from "@/lib/types/common";
-import { DateInput } from "@/components/date-range-filter/components/date-input";
+import { DatePicker } from "@/components/date-picker";
 import { PRESETS } from "../constants";
 import type { TDateRangeOrientation } from "../types";
 import { derivePreset, isTimePeriod, resolvePreset } from "../utils";
@@ -40,13 +40,13 @@ export const DateRangeInput = ({ dateFrom, dateTo, onChange, orientation = "inli
 
   return (
     <div className={cn("flex gap-2", isStacked ? "flex-col gap-3" : "items-center")}>
-      <DateInput
+      <DatePicker
         label={t("dateFrom")}
         value={dateFrom}
         fullWidth={isStacked}
         onChange={(value) => onChange(value, dateTo)}
       />
-      <DateInput
+      <DatePicker
         label={t("dateTo")}
         value={dateTo}
         fullWidth={isStacked}
