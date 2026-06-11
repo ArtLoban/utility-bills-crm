@@ -147,6 +147,12 @@ Read the relevant document(s) when working on a related task. Do not preload.
 - `.claude/rules/color-system.md` — where colors live, how to add new colors, anti-patterns.
   Read before adding any color or touching color-related code.
 
+**Forms:**
+
+- `.claude/instructions/forms-system.md` — the two form contexts (data-entry vs
+  filter), the reusable component inventory, the per-form status map, and the
+  migration recipe. Read before touching any form, input, select, or date control.
+
 ## 6. Git
 
 - Do not add `Co-Authored-By: Claude` lines.
