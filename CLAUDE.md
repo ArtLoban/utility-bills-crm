@@ -14,8 +14,9 @@ Think and write code like a senior engineer and architect — not a junior:
 
 Before writing any code:
 
+- Read every file in `.claude/lessons/` before starting — binding rules distilled from past mistakes (§9); never repeat a logged one. And when the author corrects a mistake or a wrong assumption, append a new lesson before finishing the task (§9).
 - Actually read the relevant project rules files (not from memory — open and read them).
-- Check existing code in the project for established patterns to follow.
+- Read the existing code to understand what's there — but it is **not** a pattern to copy (§1.8). Conform to the rules and best practices, not to whatever the code currently happens to do.
 - Apply DRY, correct decomposition, and consistent style before outputting anything.
 
 If I realize I'm about to violate a project rule — stop, flag it, fix the approach. Do not silently produce code with a known problem inside.
@@ -66,6 +67,15 @@ If a new dependency seems necessary, propose it with trade-offs first.
 The current codebase is in an early implementation state. Most pages and components
 are initial drafts that have not been brought up to the standards defined in this document and best practices.
 Treat existing code as _what was done_, not _what should be done_.
+
+**Never justify a decision with "the project already does X" or "that's the convention
+here."** This repo contains a large amount of bad code, requirement violations, and
+best-practice breaches that are explicitly slated for refactor. What exists is evidence
+of _what was done_ — never an argument for _what to do_. Everything we see in the code is
+a candidate for discussion and improvement, not an authority to imitate. Evaluate every
+choice on its own merits: UX, accessibility, type-safety, maintainability, and the rules
+in `.claude/rules/`. When the right approach diverges from existing code, take the right
+approach (proposing new dependencies per §1.7) and flag the legacy as tech debt.
 
 When you encounter a divergence — in structure, naming, or approach:
 
@@ -152,3 +162,17 @@ Explanations — match the user's language.
 Chromium is installed (`~/Library/Caches/ms-playwright/`) and persists across sessions.
 Do NOT run `playwright install` preemptively — assume the browser is present.
 Run `npx playwright install chromium` only if a run fails with "Executable doesn't exist" or "browser not found".
+
+## 9. Lessons (mandatory)
+
+`.claude/lessons/` holds hard-won rules distilled from past mistakes and corrections made
+in this project. They are binding — equal in force to the rules in `.claude/rules/`.
+
+- **Read every file in `.claude/lessons/` before starting any task.** Never repeat a
+  logged mistake.
+- **Record a new lesson whenever the author corrects a mistake or a wrong assumption** —
+  before finishing the task, add `NNNN-short-slug.md` (next number) capturing it. Do not
+  rely on memory; the lesson must live in the repo so every future session inherits it.
+- Keep lessons short and actionable: what went wrong, the rule, how to apply it.
+
+See `.claude/lessons/README.md` for the format.
