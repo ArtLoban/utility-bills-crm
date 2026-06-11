@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useLocale } from "next-intl";
-import { format, parse } from "date-fns";
+import { addYears, endOfYear, format, parse, startOfYear, subYears } from "date-fns";
 import { enUS, ru, uk } from "date-fns/locale";
 import type { Locale, Matcher } from "react-day-picker";
 import { Calendar as CalendarIcon } from "lucide-react";
@@ -13,6 +13,9 @@ import { Calendar } from "@/components/ui/calendar";
 
 const ISO_DATE = "yyyy-MM-dd";
 const DISPLAY_FORMAT = "PP"; // locale-aware medium date, e.g. "Jun 1, 2026" / "1 июн. 2026 г."
+
+const DROPDOWN_PAST_YEARS = 5;
+const DROPDOWN_FUTURE_YEARS = 1;
 
 // next-intl locale → date-fns locale for weekday/month labels and formatted display.
 const DATE_FNS_LOCALES: Record<string, Locale> = { en: enUS, ru, uk };
@@ -54,6 +57,11 @@ export const DatePicker = ({
   if (minDate) outOfRange.push({ before: minDate });
   if (maxDate) outOfRange.push({ after: maxDate });
 
+  // Bounds the month/year dropdowns. min/max win; otherwise a focused window around today.
+  const now = new Date();
+  const navStart = minDate ?? startOfYear(subYears(now, DROPDOWN_PAST_YEARS));
+  const navEnd = maxDate ?? endOfYear(addYears(now, DROPDOWN_FUTURE_YEARS));
+
   const handleSelect = (date: Date | undefined) => {
     onChange(date ? format(date, ISO_DATE) : null);
     setOpen(false);
@@ -94,12 +102,13 @@ export const DatePicker = ({
       <PopoverContent className="w-auto p-0" align="start">
         <Calendar
           mode="single"
+          captionLayout="dropdown"
           selected={selected}
           onSelect={handleSelect}
           defaultMonth={selected ?? maxDate}
           disabled={outOfRange}
-          startMonth={minDate}
-          endMonth={maxDate}
+          startMonth={navStart}
+          endMonth={navEnd}
           locale={dateFnsLocale}
           autoFocus
         />
