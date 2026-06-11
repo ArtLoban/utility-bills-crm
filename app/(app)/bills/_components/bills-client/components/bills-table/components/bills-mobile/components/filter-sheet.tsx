@@ -5,11 +5,10 @@ import type { TTimePeriod } from "@/components/date-range-filter/types";
 import { resolvePreset } from "@/components/date-range-filter/utils";
 import { useServiceOptions } from "@/features/services/hooks/use-service-options";
 import { SheetDialog } from "@/components/sheet-dialog";
-import { SelectInput } from "@/components/select-input";
 import { FiltersFormField, type TQueryFilters } from "../../../types";
 import { useBillsTable } from "@/app/(app)/bills/_components/bills-client/context";
 import { Form } from "@/components/ui/form";
-import { FormInput } from "@/components/form-input";
+import { FormSelectField } from "@/components/form/form-select-field";
 
 type TFilterOption = { id: string; name: string };
 
@@ -127,24 +126,22 @@ export const FilterSheet = ({
     >
       <Form {...form}>
         <div className="flex flex-col gap-3">
-          <FormInput control={form.control} name={FiltersFormField.PROPERTY_ID} label="Property">
-            <SelectInput
-              form={form}
-              field={FiltersFormField.PROPERTY_ID}
-              label="All properties"
-              options={properties}
-              className="w-full"
-            />
-          </FormInput>
-          <FormInput control={form.control} name={FiltersFormField.SERVICES} label="Service">
-            <SelectInput
-              form={form}
-              field={FiltersFormField.SERVICES}
-              label="All services"
-              options={serviceOptions}
-              className="w-full"
-            />
-          </FormInput>
+          <FormSelectField
+            control={form.control}
+            name={FiltersFormField.PROPERTY_ID}
+            label="Property"
+            placeholder="All properties"
+            options={properties}
+            clearable
+          />
+          <FormSelectField
+            control={form.control}
+            name={FiltersFormField.SERVICES}
+            label="Service"
+            placeholder="All services"
+            options={serviceOptions}
+            clearable
+          />
           <SheetDateInput
             label="Date from"
             value={filters.dateFrom}

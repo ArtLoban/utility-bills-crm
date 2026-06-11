@@ -299,6 +299,9 @@
         "required": "Name is required",
         "tooLong": "Name is too long (max 100 characters)"
       },
+      "type": {
+        "required": "Type is required"
+      },
       "address": {
         "tooLong": "Address is too long (max 200 characters)"
       },

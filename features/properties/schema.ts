@@ -15,7 +15,7 @@ export const propertySchema = z.object({
     .trim()
     .min(1, "validation.name.required")
     .max(PROPERTY_LIMITS.name, "validation.name.tooLong"),
-  type: z.enum(PROPERTY_TYPE_LIST),
+  type: z.enum(PROPERTY_TYPE_LIST, { error: "validation.type.required" }),
   address: z
     .string()
     .trim()

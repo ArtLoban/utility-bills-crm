@@ -1,8 +1,6 @@
-import type { TPropertyType } from "@/lib/db/schema/properties";
-
-export type TFormState = {
-  name: string;
-  type: TPropertyType | "";
-  address: string;
-  notes: string;
-};
+export const PropertyFormField = {
+  NAME: "name",
+  TYPE: "type",
+  ADDRESS: "address",
+  NOTES: "notes",
+} as const;
