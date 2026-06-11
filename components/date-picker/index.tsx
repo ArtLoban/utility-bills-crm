@@ -22,14 +22,13 @@ const parseIso = (value: string): Date => parse(value, ISO_DATE_FORMAT, new Date
 type TProps = {
   value: string | null; // ISO "yyyy-MM-dd"
   onChange: (value: string | null) => void;
-  min?: string; // ISO date — earliest selectable day
-  max?: string; // ISO date — latest selectable day
+  min?: string;
+  max?: string;
   disabled?: boolean;
   placeholder?: string;
   fullWidth?: boolean;
-  // Optional inline prefix rendered inside the trigger (e.g. "From"/"To" in a filter row).
-  // Data-entry usage leaves this unset — the label comes from the surrounding field shell.
   label?: string;
+  variant?: "field" | "filter";
 };
 
 export const DatePicker = ({
@@ -41,10 +40,12 @@ export const DatePicker = ({
   placeholder = DISPLAY_DATE_PLACEHOLDER,
   fullWidth = false,
   label,
+  variant = "field",
 }: TProps) => {
   const locale = useLocale();
   const [open, setOpen] = useState(false);
   const dateFnsLocale = DATE_FNS_LOCALES[locale] ?? enUS;
+  const isFilter = variant === "filter";
 
   const selected = value ? parseIso(value) : undefined;
   const minDate = min ? parseIso(min) : undefined;
@@ -72,19 +73,17 @@ export const DatePicker = ({
           disabled={disabled}
           data-filled={value ? true : undefined}
           className={cn(
-            "border-input focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:bg-input/30 flex h-9.5 items-center justify-between gap-1.5 rounded-sm border bg-transparent py-2 pr-2 pl-2.5 text-sm transition-colors outline-none focus-visible:ring-3 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:ring-3 data-[filled=true]:border-[var(--field-tint-border)] data-[filled=true]:bg-[var(--field-tint-bg)]",
+            "border-input focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:bg-input/30 flex items-center justify-between gap-1.5 rounded-sm border bg-transparent py-2 pr-2 pl-2.5 text-sm transition-colors outline-none focus-visible:ring-3 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:ring-3",
+            isFilter
+              ? "data-[filled=true]:border-brand data-[filled=true]:bg-brand-bg data-[filled=true]:text-brand h-8 data-[filled=true]:[&_svg]:text-inherit"
+              : "h-9.5 data-[filled=true]:border-[var(--field-tint-border)] data-[filled=true]:bg-[var(--field-tint-bg)]",
             fullWidth ? "w-full" : "w-auto min-w-[170px]",
             !disabled && "cursor-pointer",
           )}
         >
           <span className="flex min-w-0 items-center gap-1.5">
             {label && (
-              <span
-                className={cn(
-                  "shrink-0 font-medium",
-                  value ? "text-foreground" : "text-muted-foreground",
-                )}
-              >
+              <span className={cn("shrink-0 font-medium", !value && "text-muted-foreground")}>
                 {label}
               </span>
             )}

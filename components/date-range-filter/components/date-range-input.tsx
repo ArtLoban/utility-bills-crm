@@ -41,12 +41,14 @@ export const DateRangeInput = ({ dateFrom, dateTo, onChange, orientation = "inli
   return (
     <div className={cn("flex gap-2", isStacked ? "flex-col gap-3" : "items-center")}>
       <DatePicker
+        variant="filter"
         label={t("dateFrom")}
         value={dateFrom}
         fullWidth={isStacked}
         onChange={(value) => onChange(value, dateTo)}
       />
       <DatePicker
+        variant="filter"
         label={t("dateTo")}
         value={dateTo}
         fullWidth={isStacked}
@@ -55,6 +57,7 @@ export const DateRangeInput = ({ dateFrom, dateTo, onChange, orientation = "inli
 
       <Select value={activePreset ?? ""} onValueChange={handlePresetChange}>
         <SelectTrigger
+          size="sm"
           className={cn(
             "rounded-sm",
             isStacked ? "w-full" : "min-w-[140px]",
