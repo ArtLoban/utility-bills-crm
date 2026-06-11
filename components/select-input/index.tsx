@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { FieldValues, Path, UseFormReturn, useWatch, FieldPathValue } from "react-hook-form";
+import { SELECT_CLEAR_VALUE } from "@/lib/constants/select";
 import { TSelectableEntity } from "./types";
 
 type TProps<T extends FieldValues, E extends TSelectableEntity> = {
@@ -29,10 +30,8 @@ export const SelectInput = <T extends FieldValues, E extends TSelectableEntity>(
 
   const isActive = Boolean(value);
 
-  const CLEAR_VALUE = "__clear__";
-
   const handleChange = (v: FieldPathValue<FieldValues, string>) => {
-    form.setValue(field, v === CLEAR_VALUE ? null : v, {
+    form.setValue(field, v === SELECT_CLEAR_VALUE ? null : v, {
       shouldDirty: true,
       shouldTouch: true,
       shouldValidate: true,
@@ -52,7 +51,7 @@ export const SelectInput = <T extends FieldValues, E extends TSelectableEntity>(
         <SelectValue placeholder={label} />
       </SelectTrigger>
       <SelectContent align="start">
-        <SelectItem value={CLEAR_VALUE} className="text-muted-foreground">
+        <SelectItem value={SELECT_CLEAR_VALUE} className="text-muted-foreground">
           {label}
         </SelectItem>
         {options.map(({ id, name }) => (

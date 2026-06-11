@@ -13,8 +13,5 @@ export type TPreset = {
   label: string;
 };
 
-export type TProps = {
-  dateFrom: string | null;
-  dateTo: string | null;
-  onChange: (dateFrom: string | null, dateTo: string | null) => void;
-};
+// inline — desktop filter chips in a row; stacked — labeled vertical fields for a mobile sheet.
+export type TDateRangeOrientation = "inline" | "stacked";

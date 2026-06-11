@@ -11,6 +11,18 @@
     "form": {
       "saving": "Saving…",
       "syncNote": "Changes are saved to your account and synced across devices."
+    },
+    "dateRange": {
+      "dateFrom": "Date from",
+      "dateTo": "Date to",
+      "timePeriod": "Time period",
+      "presets": {
+        "thisMonth": "This month",
+        "lastMonth": "Last month",
+        "thisYear": "This year",
+        "last6Months": "Last 6 months",
+        "last12Months": "Last 12 months"
+      }
     }
   },
   "nav": {
