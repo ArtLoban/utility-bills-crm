@@ -3,6 +3,7 @@ import { format } from "date-fns";
 // Shared date-fns format tokens — one source so machine value and display stay consistent.
 export const ISO_DATE_FORMAT = "yyyy-MM-dd"; // machine value: URLs, DB, form state
 export const DISPLAY_DATE_FORMAT = "dd/MM/yyyy"; // human display, e.g. "10/06/2026"
+export const DISPLAY_DATE_PLACEHOLDER = "dd/mm/yyyy"; // empty-state hint matching DISPLAY_DATE_FORMAT
 
 export const formatDateShort = (sortTs: number): string => {
   const s = sortTs.toString();

@@ -8,7 +8,7 @@ import type { Locale, Matcher } from "react-day-picker";
 import { Calendar as CalendarIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import { DISPLAY_DATE_FORMAT, ISO_DATE_FORMAT } from "@/lib/format/date";
+import { DISPLAY_DATE_FORMAT, DISPLAY_DATE_PLACEHOLDER, ISO_DATE_FORMAT } from "@/lib/format/date";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 
@@ -38,7 +38,7 @@ export const DatePicker = ({
   min,
   max,
   disabled,
-  placeholder,
+  placeholder = DISPLAY_DATE_PLACEHOLDER,
   fullWidth = false,
   label,
 }: TProps) => {
@@ -73,7 +73,7 @@ export const DatePicker = ({
           data-filled={value ? true : undefined}
           className={cn(
             "border-input focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:bg-input/30 flex h-9.5 items-center justify-between gap-1.5 rounded-sm border bg-transparent py-2 pr-2 pl-2.5 text-sm transition-colors outline-none focus-visible:ring-3 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:ring-3 data-[filled=true]:border-[var(--field-tint-border)] data-[filled=true]:bg-[var(--field-tint-bg)]",
-            fullWidth ? "w-full" : "w-auto",
+            fullWidth ? "w-full" : "w-auto min-w-[170px]",
             !disabled && "cursor-pointer",
           )}
         >
@@ -81,7 +81,7 @@ export const DatePicker = ({
             {label && (
               <span
                 className={cn(
-                  "shrink-0 text-xs font-medium",
+                  "shrink-0 font-medium",
                   value ? "text-foreground" : "text-muted-foreground",
                 )}
               >
