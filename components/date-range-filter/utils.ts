@@ -1,6 +1,7 @@
 import { endOfMonth, endOfYear, format, startOfMonth, startOfYear, subMonths } from "date-fns";
 
 import { DATE_PARAMS } from "@/lib/types/common";
+import { ISO_DATE_FORMAT } from "@/lib/format/date";
 import { TIME_PERIOD } from "./types";
 import type { TTimePeriod } from "./types";
 
@@ -9,7 +10,7 @@ type TDateRange = {
   [DATE_PARAMS.DATE_TO]: string;
 };
 
-const fmt = (date: Date) => format(date, "yyyy-MM-dd");
+const fmt = (date: Date) => format(date, ISO_DATE_FORMAT);
 
 export const resolvePreset = (timePeriod: TTimePeriod): TDateRange => {
   const now = new Date();

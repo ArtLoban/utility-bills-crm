@@ -1,6 +1,7 @@
 import { useFormatter } from "next-intl";
 
 import { cn } from "@/lib/utils";
+import { DISPLAY_DATE_FORMAT } from "@/lib/format/date";
 import { format } from "date-fns";
 
 type TProps = {
@@ -19,7 +20,7 @@ export const DateCell = ({ value, format: fmt = "default", className }: TProps) 
   const formatted =
     fmt === "month"
       ? formatter.dateTime(date, { year: "numeric", month: "long" })
-      : format(date, "dd/MM/yyyy");
+      : format(date, DISPLAY_DATE_FORMAT);
 
   return (
     <span className={cn("tabular-nums", className)}>

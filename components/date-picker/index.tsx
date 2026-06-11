@@ -2,25 +2,22 @@
 
 import { useState } from "react";
 import { useLocale } from "next-intl";
-import { addYears, endOfYear, format, parse, startOfYear, subYears } from "date-fns";
+import { endOfYear, format, parse } from "date-fns";
 import { enUS, ru, uk } from "date-fns/locale";
 import type { Locale, Matcher } from "react-day-picker";
 import { Calendar as CalendarIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { DISPLAY_DATE_FORMAT, ISO_DATE_FORMAT } from "@/lib/format/date";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 
-const ISO_DATE = "yyyy-MM-dd";
-const DISPLAY_FORMAT = "PP"; // locale-aware medium date, e.g. "Jun 1, 2026" / "1 июн. 2026 г."
-
-const DROPDOWN_PAST_YEARS = 5;
-const DROPDOWN_FUTURE_YEARS = 1;
+const DROPDOWN_START_YEAR = 2000;
 
 // next-intl locale → date-fns locale for weekday/month labels and formatted display.
 const DATE_FNS_LOCALES: Record<string, Locale> = { en: enUS, ru, uk };
 
-const parseIso = (value: string): Date => parse(value, ISO_DATE, new Date());
+const parseIso = (value: string): Date => parse(value, ISO_DATE_FORMAT, new Date());
 
 type TProps = {
   value: string | null; // ISO "yyyy-MM-dd"
@@ -57,13 +54,12 @@ export const DatePicker = ({
   if (minDate) outOfRange.push({ before: minDate });
   if (maxDate) outOfRange.push({ after: maxDate });
 
-  // Bounds the month/year dropdowns. min/max win; otherwise a focused window around today.
-  const now = new Date();
-  const navStart = minDate ?? startOfYear(subYears(now, DROPDOWN_PAST_YEARS));
-  const navEnd = maxDate ?? endOfYear(addYears(now, DROPDOWN_FUTURE_YEARS));
+  // Bounds the month/year dropdowns. min/max win; otherwise 2000 → end of the current year.
+  const navStart = minDate ?? new Date(DROPDOWN_START_YEAR, 0, 1);
+  const navEnd = maxDate ?? endOfYear(new Date());
 
   const handleSelect = (date: Date | undefined) => {
-    onChange(date ? format(date, ISO_DATE) : null);
+    onChange(date ? format(date, ISO_DATE_FORMAT) : null);
     setOpen(false);
   };
 
@@ -93,7 +89,7 @@ export const DatePicker = ({
               </span>
             )}
             <span className={cn("truncate", !value && "text-muted-foreground")}>
-              {selected ? format(selected, DISPLAY_FORMAT, { locale: dateFnsLocale }) : placeholder}
+              {selected ? format(selected, DISPLAY_DATE_FORMAT) : placeholder}
             </span>
           </span>
           <CalendarIcon className="text-muted-foreground pointer-events-none size-4 shrink-0" />

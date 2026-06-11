@@ -2,6 +2,7 @@
 
 import { format } from "date-fns";
 import { useFormatter } from "next-intl";
+import { DISPLAY_DATE_FORMAT } from "@/lib/format/date";
 import type { TBillGlobalRow } from "@/lib/db/access/bills";
 import { IconBadge } from "@/components/icon-badge";
 import { BillRowActions } from "../../components/bill-row-actions";
@@ -16,7 +17,7 @@ export const BillCard = ({ row }: TProps) => {
   const formatter = useFormatter();
   const { color, Icon, label: serviceName } = useServiceType(serviceTypeCode);
 
-  const dateStr = format(new Date(bill.createdAt), "dd/MM/yyyy");
+  const dateStr = format(new Date(bill.createdAt), DISPLAY_DATE_FORMAT);
   const periodLabel = formatter.dateTime(new Date(bill.periodMonth), {
     year: "numeric",
     month: "long",
