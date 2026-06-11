@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 
 import { auth } from "@/lib/auth";
 import type { UserId } from "@/lib/db/schema/auth";
@@ -15,6 +16,7 @@ type TProps = {
 
 export default async function EditBillPage({ params }: TProps) {
   const { id } = await params;
+  const t = await getTranslations("bills");
   const session = await auth();
   const userId = session?.user?.id as UserId;
 
@@ -25,15 +27,14 @@ export default async function EditBillPage({ params }: TProps) {
 
   return (
     <PageContainer
-      title="Edit Bill"
+      title={t("modal.edit.title")}
       breadcrumbs={[
-        { label: "Bills", href: ROUTES.bills },
-        { label: `Edit ${getServiceLabel(bill.serviceTypeCode)} bill` },
+        { label: t("list.title"), href: ROUTES.bills },
+        { label: t("page.edit.breadcrumb", { service: getServiceLabel(bill.serviceTypeCode) }) },
       ]}
+      meta={<span className="text-muted-foreground text-sm">{t("page.edit.meta")}</span>}
     >
-      <div className="max-w-2xl">
-        <BillFormContent bill={bill} />
-      </div>
+      <BillFormContent bill={bill} />
     </PageContainer>
   );
 }

@@ -21,6 +21,9 @@ type TProps<T extends FieldValues, E extends TSelectableEntity> = TFormFieldBase
   placeholder?: string;
   clearable?: boolean;
   disabled?: boolean;
+  // Fires after the field updates — use it to react to the change, e.g. reset a
+  // dependent field (property → service).
+  onValueChange?: (value: string | null) => void;
 };
 
 export const FormSelectField = <T extends FieldValues, E extends TSelectableEntity>({
@@ -33,6 +36,7 @@ export const FormSelectField = <T extends FieldValues, E extends TSelectableEnti
   placeholder,
   clearable = false,
   disabled,
+  onValueChange,
 }: TProps<T, E>) => (
   <FormFieldShell
     control={control}
@@ -44,7 +48,11 @@ export const FormSelectField = <T extends FieldValues, E extends TSelectableEnti
     {(field) => (
       <Select
         value={field.value == null ? "" : String(field.value)}
-        onValueChange={(value) => field.onChange(clearable && value === CLEAR_VALUE ? null : value)}
+        onValueChange={(value) => {
+          const next = clearable && value === CLEAR_VALUE ? null : value;
+          field.onChange(next);
+          onValueChange?.(next);
+        }}
         disabled={disabled}
       >
         <FormControl>

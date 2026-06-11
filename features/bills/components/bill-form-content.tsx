@@ -3,7 +3,8 @@
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 
-import { Modal } from "@/components/modal";
+import { FormContainer } from "@/components/form-container";
+import { ROUTES } from "@/lib/routes";
 import type { PropertyId } from "@/lib/db/schema/properties";
 import type { TBillGlobalRow, TServiceOption } from "@/lib/db/access/bills";
 import { useBillForm } from "@/features/bills/hooks/use-bill-form";
@@ -15,9 +16,10 @@ type TProps = {
   serviceOptions?: Record<PropertyId, TServiceOption[]>;
 };
 
-export const BillModal = ({ bill, propertyOptions = [], serviceOptions = {} }: TProps) => {
+export const BillFormContent = ({ bill, propertyOptions = [], serviceOptions = {} }: TProps) => {
   const router = useRouter();
   const t = useTranslations("bills");
+  const tForm = useTranslations("common.form");
   const onClose = () => router.back();
 
   const {
@@ -33,13 +35,14 @@ export const BillModal = ({ bill, propertyOptions = [], serviceOptions = {} }: T
   } = useBillForm({ bill, serviceOptions, onClose });
 
   return (
-    <Modal
-      open
-      onOpenChange={(open) => !open && onClose()}
-      title={t(isEditMode ? "modal.edit.title" : "modal.add.title")}
-      confirmLabel={t(isEditMode ? "modal.edit.submit" : "modal.add.submit")}
-      cancelLabel={t("modal.cancel")}
-      onConfirm={handleSave}
+    <FormContainer
+      onSubmit={handleSave}
+      backHref={ROUTES.bills}
+      submitText={t(isEditMode ? "modal.edit.submit" : "modal.add.submit")}
+      cancelText={t("modal.cancel")}
+      savingText={tForm("saving")}
+      footerText={tForm("syncNote")}
+      size="sm"
       isSaving={isSaving}
     >
       <BillForm
@@ -52,6 +55,6 @@ export const BillModal = ({ bill, propertyOptions = [], serviceOptions = {} }: T
         lockedPropertyName={lockedPropertyName}
         lockedServiceCode={lockedServiceCode}
       />
-    </Modal>
+    </FormContainer>
   );
 };

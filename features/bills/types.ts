@@ -24,3 +24,12 @@ export type TBillsListParams = TDataTableParams &
     [BILLS_FILTERS.PROPERTY_ID]?: string | null;
     [BILLS_FILTERS.SERVICES]?: string[] | null;
   };
+
+// --- Bill form fields ---
+export const BillFormField = {
+  PROPERTY: "property",
+  SERVICE_ID: "serviceId",
+  MONTH: "month",
+  AMOUNT: "amount",
+  NOTES: "notes",
+} as const;

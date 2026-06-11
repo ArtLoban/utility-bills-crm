@@ -4,8 +4,10 @@ export const BILL_LIMITS = {
   notes: 1000,
 } as const;
 
-// "YYYY-MM" format — the action expands this into the date triple.
-const monthSchema = z.string().regex(/^\d{4}-\d{2}$/, "Invalid month format — expected YYYY-MM");
+// "YYYY-MM" — the period month. The action expands it into the date triple.
+export const MONTH_PATTERN = /^\d{4}-\d{2}$/;
+
+const monthSchema = z.string().regex(MONTH_PATTERN, "Invalid month format — expected YYYY-MM");
 
 export const createBillSchema = z.object({
   serviceId: z.string().uuid("Invalid service"),
@@ -32,3 +34,28 @@ export const updateBillSchema = z.object({
 
 export type TCreateBillInput = z.infer<typeof createBillSchema>;
 export type TUpdateBillInput = z.infer<typeof updateBillSchema>;
+
+// Client form schema. Messages are relative i18n keys under the "bills" namespace,
+// translated by useZodForm. `amount` stays a string (the input model) and is converted
+// to a number at the action boundary, which keeps this schema transform-free.
+// `property` is a UI-only field that filters the service options — it is not persisted.
+export const billFormSchema = z.object({
+  property: z.string(),
+  serviceId: z.string().min(1, "validation.service.required"),
+  month: z.string().regex(MONTH_PATTERN, "validation.month.invalid"),
+  amount: z
+    .string()
+    .min(1, "validation.amount.required")
+    .refine(
+      (value) => value !== "" && !Number.isNaN(Number(value)) && Number(value) >= 0,
+      "validation.amount.invalid",
+    ),
+  notes: z
+    .string()
+    .trim()
+    .max(BILL_LIMITS.notes, "validation.notes.tooLong")
+    .optional()
+    .or(z.literal("")),
+});
+
+export type TBillFormValues = z.infer<typeof billFormSchema>;

@@ -10,16 +10,10 @@ export const ServiceChip = ({ serviceId }: TProps) => {
 
   return (
     <span
+      className="inline-flex items-center gap-1.5 rounded-full py-0.5 pr-2 pl-[5px] text-xs font-medium"
       style={{
-        display: "inline-flex",
-        alignItems: "center",
-        gap: 5,
-        padding: "2px 8px 2px 5px",
-        background: color + "18",
-        border: `1px solid ${color}2A`,
-        borderRadius: 999,
-        fontSize: 12,
-        fontWeight: 500,
+        background: `color-mix(in srgb, ${color} 10%, transparent)`,
+        border: `1px solid color-mix(in srgb, ${color} 16%, transparent)`,
       }}
     >
       <Icon size={12} style={{ color }} strokeWidth={1.75} />

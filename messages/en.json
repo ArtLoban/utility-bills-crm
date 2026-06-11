@@ -7,6 +7,10 @@
     "demoBanner": {
       "message": "Demo mode",
       "cta": "Sign in with Google for full access"
+    },
+    "form": {
+      "saving": "Saving…",
+      "syncNote": "Changes are saved to your account and synced across devices."
     }
   },
   "nav": {
@@ -69,6 +73,7 @@
   },
   "bills": {
     "list": {
+      "title": "Bills",
       "columns": {
         "date": "Date",
         "property": "Property",
@@ -92,6 +97,70 @@
       },
       "footer": {
         "total": "Total"
+      }
+    },
+    "modal": {
+      "add": {
+        "title": "Add Bill",
+        "submit": "Add Bill"
+      },
+      "edit": {
+        "title": "Edit Bill",
+        "submit": "Update Bill"
+      },
+      "cancel": "Cancel",
+      "formError": "Please check the form and try again."
+    },
+    "fields": {
+      "property": {
+        "label": "Property",
+        "placeholder": "Select property",
+        "selectFirst": "Select a property first"
+      },
+      "service": {
+        "label": "Service",
+        "placeholder": "Select service",
+        "selected": "Selected:"
+      },
+      "month": {
+        "label": "Month",
+        "placeholder": "Select month"
+      },
+      "amount": {
+        "label": "Amount",
+        "placeholder": "e.g. 680",
+        "expected": "Expected: {amount}"
+      },
+      "notes": {
+        "label": "Notes"
+      }
+    },
+    "validation": {
+      "service": {
+        "required": "Service is required"
+      },
+      "month": {
+        "invalid": "Invalid month"
+      },
+      "amount": {
+        "required": "Amount is required",
+        "invalid": "Enter a valid amount"
+      },
+      "notes": {
+        "tooLong": "Notes are too long (max 1000 characters)"
+      }
+    },
+    "toast": {
+      "added": "Bill added.",
+      "updated": "Bill updated."
+    },
+    "page": {
+      "new": {
+        "meta": "Create new Bill"
+      },
+      "edit": {
+        "meta": "Edit bill details",
+        "breadcrumb": "Edit {service} bill"
       }
     }
   },
@@ -210,7 +279,9 @@
         "title": "Monthly expenses",
         "subtitle": "Stacked by service, UAH"
       },
-      "tooltip": { "total": "Total" },
+      "tooltip": {
+        "total": "Total"
+      },
       "line": {
         "title": "Consumption trend",
         "mode": {

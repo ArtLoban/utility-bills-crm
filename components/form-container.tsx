@@ -15,6 +15,9 @@ type TProps = {
   onSubmit: () => void;
   backHref: string;
   submitText?: string;
+  cancelText?: string;
+  savingText?: string;
+  footerText?: string;
   canSave?: boolean;
   isSaving?: boolean;
   size?: keyof typeof SIZE_MAP;
@@ -28,6 +31,9 @@ export const FormContainer = (props: TProps) => {
     onSubmit,
     backHref,
     submitText = "Save",
+    cancelText = "Cancel",
+    savingText = "Saving…",
+    footerText = "Changes are saved to your account and synced across devices.",
     canSave = true,
     isSaving = false,
     size = "sm",
@@ -44,23 +50,21 @@ export const FormContainer = (props: TProps) => {
         <Button variant="outline" asChild>
           <Link href={backHref}>
             <ChevronLeft size={16} />
-            Cancel
+            {cancelText}
           </Link>
         </Button>
         <Button type="button" onClick={onSubmit} disabled={isSaving || !canSave}>
           {isSaving ? (
             <>
               <Loader2 size={14} className="animate-spin" />
-              Saving…
+              {savingText}
             </>
           ) : (
             submitText
           )}
         </Button>
       </div>
-      <div className="mt-4 text-center text-xs text-zinc-500">
-        Changes are saved to your account and synced across devices.
-      </div>
+      <div className="mt-4 text-center text-xs text-zinc-500">{footerText}</div>
     </div>
   );
 };

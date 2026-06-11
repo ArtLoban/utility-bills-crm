@@ -27,6 +27,7 @@ export type TProps = {
   onOpenChange: (open: boolean) => void;
   onConfirm?: () => void;
   confirmLabel?: string;
+  cancelLabel?: string;
   confirmIcon?: LucideIcon;
   canSave?: boolean;
   isSaving?: boolean;
@@ -43,6 +44,7 @@ export const Modal = (props: TProps) => {
     onOpenChange,
     onConfirm,
     confirmLabel = "Save",
+    cancelLabel = "Cancel",
     confirmIcon: ConfirmIcon,
     canSave = true,
     isSaving = false,
@@ -60,7 +62,7 @@ export const Modal = (props: TProps) => {
         {children && <div>{children}</div>}
         <DialogFooter>
           <Button variant="outline" asChild>
-            <DialogClose>Cancel</DialogClose>
+            <DialogClose>{cancelLabel}</DialogClose>
           </Button>
           <Button
             type="button"
