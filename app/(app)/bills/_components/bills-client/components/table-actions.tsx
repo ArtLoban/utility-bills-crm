@@ -43,7 +43,7 @@ export const BillsTableActions = ({ children, properties }: TProps) => {
         open={rowToDelete !== null}
         onOpenChange={(open) => !open && setRowToDelete(null)}
         onConfirm={handleConfirmDelete}
-        variant="strongDestructive"
+        variant="destructiveStrong"
         confirmIcon={Trash2}
         confirmLabel="Delete"
         isSaving={isPending}

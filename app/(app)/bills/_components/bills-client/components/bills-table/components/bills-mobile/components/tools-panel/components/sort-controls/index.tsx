@@ -19,18 +19,16 @@ export const SortControls = ({ listParams }: TProps) => {
     handleSort,
   } = useSortControls(listParams);
 
+  const Icon = currentDesc ? ChevronDown : ChevronUp;
+
   return (
     <>
       <Button
-        variant={isNonDefaultSort ? "active" : "outline"}
+        variant={isNonDefaultSort ? "activeSoft" : "outline"}
         onClick={() => setSheetOpen(true)}
         className="font-normal"
       >
-        {currentDesc ? (
-          <ChevronDown size={11} strokeWidth={2} />
-        ) : (
-          <ChevronUp size={11} strokeWidth={2} />
-        )}
+        <Icon size={11} strokeWidth={2} />
         {sortTriggerLabel}
       </Button>
       <SortSheet

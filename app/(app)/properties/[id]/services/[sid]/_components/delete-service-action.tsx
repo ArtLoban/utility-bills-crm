@@ -69,7 +69,7 @@ const DeleteServiceAction = ({ serviceId, propertyId, serviceName }: TProps) => 
         open={confirmOpen}
         onOpenChange={setConfirmOpen}
         onConfirm={handleDelete}
-        variant="strongDestructive"
+        variant="destructiveStrong"
         confirmIcon={Trash2}
         confirmLabel="Delete"
         isSaving={isDeleting}

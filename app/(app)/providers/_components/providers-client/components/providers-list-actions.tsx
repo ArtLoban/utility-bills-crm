@@ -58,7 +58,7 @@ export const ProvidersListActions = ({ children }: { children: ReactNode }) => {
         open={itemToDelete !== null}
         onOpenChange={(open) => !open && setItemToDelete(null)}
         onConfirm={handleDelete}
-        variant="strongDestructive"
+        variant="destructiveStrong"
         confirmIcon={Trash2}
         confirmLabel={t("delete.menuItem")}
         isSaving={isDeleting}

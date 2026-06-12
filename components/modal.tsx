@@ -32,7 +32,7 @@ export type TProps = {
   canSave?: boolean;
   isSaving?: boolean;
   size?: TSize;
-  variant?: "default" | "warning" | "destructive" | "strongDestructive";
+  variant?: "default" | "warning" | "destructive" | "destructiveStrong";
 };
 
 export const Modal = (props: TProps) => {
