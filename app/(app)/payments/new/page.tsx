@@ -1,7 +1,4 @@
-import { notFound } from "next/navigation";
-
-import { auth } from "@/lib/auth";
-import type { UserId } from "@/lib/db/schema/auth";
+import { requireUser } from "@/lib/auth/guards";
 import { accessibleProperties } from "@/lib/db/access/properties";
 import { servicesForPaymentForm } from "@/lib/db/access/payments";
 import { PaymentFormContent } from "@/features/payments";
@@ -9,11 +6,7 @@ import { PageContainer } from "@/components/page-container";
 import { ROUTES } from "@/lib/routes";
 
 export default async function NewPaymentPage() {
-  const session = await auth();
-  if (!session) notFound();
-
-  const userId = session.user?.id as UserId;
-
+  const userId = await requireUser();
   const [serviceOptions, propertiesWithRole] = await Promise.all([
     servicesForPaymentForm(userId),
     accessibleProperties(userId),

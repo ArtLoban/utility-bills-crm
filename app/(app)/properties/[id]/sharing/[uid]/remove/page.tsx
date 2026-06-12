@@ -1,23 +1,19 @@
 import { notFound } from "next/navigation";
 
-import { auth } from "@/lib/auth";
+import { requireUser } from "@/lib/auth/guards";
 import { propertyMembers } from "@/features/sharing";
 import { getPropertyDetail } from "../../../_data/queries";
 import { RemoveUserModal } from "../../../_components/sharing-tab/components/remove-user-modal";
 import type { PropertyId } from "@/lib/db/schema/properties";
-import type { UserId } from "@/lib/db/schema/auth";
 
 type TProps = {
   params: Promise<{ id: string; uid: string }>;
 };
 
 export default async function RemoveUserPage({ params }: TProps) {
+  const userId = await requireUser();
   const { id, uid } = await params;
   const propertyId = id as PropertyId;
-
-  const session = await auth();
-  const userId = session?.user?.id as UserId | undefined;
-  if (!userId) notFound();
 
   const [membersResult, propertyResult] = await Promise.all([
     propertyMembers(userId, propertyId),

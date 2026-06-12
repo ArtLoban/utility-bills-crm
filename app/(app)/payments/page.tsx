@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 
-import { auth } from "@/lib/auth";
-import type { UserId } from "@/lib/db/schema/auth";
+import { requireUser } from "@/lib/auth/guards";
 import { accessibleProperties } from "@/lib/db/access/properties";
 import { getPaymentsList } from "@/lib/db/access/payments";
 import { loadPaymentsParams } from "@/features/payments/query-params";
@@ -17,9 +16,7 @@ export default async function PaymentsPage({
 }: {
   searchParams: Promise<Record<string, string>>;
 }) {
-  const session = await auth();
-  const userId = session?.user?.id as UserId;
-
+  const userId = await requireUser();
   const params = await loadPaymentsParams(searchParams);
 
   const [result, propertiesWithRole] = await Promise.all([

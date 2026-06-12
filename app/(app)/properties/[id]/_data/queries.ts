@@ -1,10 +1,9 @@
 import { cache } from "react";
 
-import { auth } from "@/lib/auth";
+import { requireUser } from "@/lib/auth/guards";
 import { propertyByIdForUser } from "@/lib/db/access/properties";
-import type { UserId } from "@/lib/db/schema/auth";
 import type { PropertyId, TProperty, TPropertyRole } from "@/lib/db/schema/properties";
-import { NotFoundError, err, ok } from "@/lib/errors";
+import { NotFoundError, ok } from "@/lib/errors";
 import type { Result } from "@/lib/errors";
 
 // Named by screen purpose, not field composition (per DATA_MODEL.md type naming convention).
@@ -15,10 +14,7 @@ export type TPropertyDetail = TProperty & {
 
 export const getPropertyDetail = cache(
   async (propertyId: PropertyId): Promise<Result<TPropertyDetail, NotFoundError>> => {
-    const session = await auth();
-    if (!session?.user.id) return err(new NotFoundError("property", propertyId));
-
-    const userId = session.user.id as UserId;
+    const userId = await requireUser();
     const result = await propertyByIdForUser(userId, propertyId);
     if (!result.ok) return result;
 

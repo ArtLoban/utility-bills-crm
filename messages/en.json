@@ -2,6 +2,7 @@
   "common": {
     "appName": "Utility Bills CRM",
     "signIn": "Sign in",
+    "sessionExpired": "Your session has expired. Please sign in again.",
     "demoBlocked": "This action isn't available in demo mode.",
     "saveError": "Failed to save. Please try again.",
     "demoBanner": {

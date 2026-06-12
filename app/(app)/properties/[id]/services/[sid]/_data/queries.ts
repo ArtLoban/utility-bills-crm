@@ -1,6 +1,6 @@
 import { and, asc, eq, isNull } from "drizzle-orm";
 
-import { auth } from "@/lib/auth";
+import { requireUser } from "@/lib/auth/guards";
 import { db } from "@/lib/db/client";
 import { contractsByServiceId } from "@/lib/db/access/contracts";
 import type { TContractWithProvider } from "@/lib/db/access/contracts";
@@ -20,9 +20,8 @@ import { accountNumbers } from "@/lib/db/schema/account-numbers";
 import type { TAccountNumber } from "@/lib/db/schema/account-numbers";
 import { paymentDetails } from "@/lib/db/schema/payment-details";
 import type { TPaymentDetails } from "@/lib/db/schema/payment-details";
-import type { UserId } from "@/lib/db/schema/auth";
 import type { TServiceId } from "@/lib/db/schema/services";
-import { NotFoundError, err, ok } from "@/lib/errors";
+import { NotFoundError, ok } from "@/lib/errors";
 import type { Result } from "@/lib/errors";
 
 export type { TServiceDetail };
@@ -38,30 +37,23 @@ export type TAttributeHistory = {
 export const getServiceDetail = async (
   serviceId: TServiceId,
 ): Promise<Result<TServiceDetail, NotFoundError>> => {
-  const session = await auth();
-  if (!session?.user.id) return err(new NotFoundError("service", serviceId));
+  const userId = await requireUser();
 
-  const userId = session.user.id as UserId;
   return serviceByIdForUser(userId, serviceId);
 };
 
 export const getContractHistory = async (
   serviceId: TServiceId,
 ): Promise<Result<TContractWithProvider[], NotFoundError>> => {
-  const session = await auth();
-  if (!session?.user.id) return err(new NotFoundError("service", serviceId));
+  const userId = await requireUser();
 
-  const userId = session.user.id as UserId;
   return contractsByServiceId(userId, serviceId);
 };
 
 export const getAttributeHistory = async (
   serviceId: TServiceId,
 ): Promise<Result<TAttributeHistory, NotFoundError>> => {
-  const session = await auth();
-  if (!session?.user.id) return err(new NotFoundError("service", serviceId));
-
-  const userId = session.user.id as UserId;
+  const userId = await requireUser();
 
   // Access check: routes through serviceByIdForUser → propertyByIdForUser.
   const serviceAccess = await serviceByIdForUser(userId, serviceId);
@@ -135,10 +127,8 @@ export const getAttributeHistory = async (
 };
 
 export const getProvidersForContractPage = async (): Promise<TProvider[]> => {
-  const session = await auth();
-  if (!session?.user.id) return [];
+  const userId = await requireUser();
 
-  const userId = session.user.id as UserId;
   return providersByUserId(userId);
 };
 
@@ -146,10 +136,7 @@ export const getProvidersForContractPage = async (): Promise<TProvider[]> => {
 // Performs its own access check so it can be called in parallel with getServiceDetail.
 // Returns null when no active meter exists (not an error condition).
 export const getCurrentMeterForService = async (serviceId: TServiceId): Promise<TMeter | null> => {
-  const session = await auth();
-  if (!session?.user.id) return null;
-
-  const userId = session.user.id as UserId;
+  const userId = await requireUser();
   const serviceResult = await serviceByIdForUser(userId, serviceId);
   if (!serviceResult.ok) return null;
 
@@ -160,10 +147,7 @@ export const getCurrentMeterForService = async (serviceId: TServiceId): Promise<
 };
 
 export const getLastReadingForMeter = async (meter: TMeter): Promise<TReading | null> => {
-  const session = await auth();
-  if (!session?.user.id) return null;
-
-  const userId = session.user.id as UserId;
+  const userId = await requireUser();
   const result = await mostRecentReadingForMeter(userId, meter.id);
   return result.ok ? result.value : null;
 };

@@ -1,9 +1,8 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
-import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 
-import { auth } from "@/lib/auth";
+import { requireSession } from "@/lib/auth/guards";
 import type { UserId } from "@/lib/db/schema/auth";
 import { accessibleProperties } from "@/lib/db/access/properties";
 import { serviceIdsForUser } from "@/lib/db/access/services";
@@ -33,11 +32,9 @@ export default async function DashboardPage({
 }: {
   searchParams: Promise<Record<string, string>>;
 }) {
-  const session = await auth();
-  if (!session) redirect("/login");
-
-  const userId = session.user.id as UserId;
-  const firstName = session.user.name?.split(" ")[0] ?? null;
+  const user = await requireSession();
+  const userId = user.id as UserId;
+  const firstName = user.name?.split(" ")[0] ?? null;
 
   const chartParams = await loadDashboardChartParams(searchParams);
   const defaultRange = resolveDefaultDateRange();

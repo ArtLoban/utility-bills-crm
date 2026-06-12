@@ -14,3 +14,11 @@ export const SYSTEM_ROLE_LIST = [SYSTEM_ROLES.USER, SYSTEM_ROLES.ADMIN] as const
 export const DEMO_EMAIL = "utility-bills-demo@crm.local";
 // Secondary fixture user — editor on the apartment, no auth path.
 export const FAMILY_DEMO_EMAIL = "family-demo@crm.local";
+
+// Why the user landed on /login. Passed as ?reason= on the redirect from the
+// auth guards so the login page can explain itself instead of appearing blank.
+export const LOGIN_REASONS = {
+  SESSION_EXPIRED: "session-expired",
+} as const;
+
+export type TLoginReason = (typeof LOGIN_REASONS)[keyof typeof LOGIN_REASONS];

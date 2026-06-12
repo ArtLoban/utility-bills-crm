@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
-import { redirect } from "next/navigation";
 
-import { auth } from "@/lib/auth";
-import { ROUTES } from "@/lib/routes";
+import { requireSession } from "@/lib/auth/guards";
 
 import { AccountSection } from "./_components/account-section";
 import { PreferencesSection } from "./_components/preferences-section";
@@ -14,10 +12,7 @@ export const metadata: Metadata = {
 };
 
 export default async function SettingsPage() {
-  const session = await auth();
-  if (!session) redirect(ROUTES.login);
-
-  const { name, email, image, ruLocaleEnabled } = session.user;
+  const { name, email, image, ruLocaleEnabled } = await requireSession();
 
   return (
     <div className="flex-1 bg-zinc-50 dark:bg-zinc-950">

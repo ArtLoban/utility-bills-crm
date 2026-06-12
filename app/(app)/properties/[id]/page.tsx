@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { auth } from "@/lib/auth";
+import { requireUser } from "@/lib/auth/guards";
 import { servicesByPropertyId } from "@/lib/db/access/services";
 import { balancesForServices } from "@/features/ledger";
 import type { TBalance } from "@/features/ledger";
@@ -21,7 +21,6 @@ import { MetersClient } from "./meters/_components/meters-client";
 import { SharingTab } from "./_components/sharing-tab";
 import type { PropertyId } from "@/lib/db/schema/properties";
 import type { TServiceId } from "@/lib/db/schema/services";
-import type { UserId } from "@/lib/db/schema/auth";
 
 type TProps = {
   params: Promise<{ id: string }>;
@@ -40,24 +39,21 @@ export async function generateMetadata({ params }: TProps): Promise<Metadata> {
 }
 
 export default async function PropertyPage({ params, searchParams }: TProps) {
+  const userId = await requireUser();
   const { id } = await params;
   const { tab } = await searchParams;
   const propertyId = id as PropertyId;
   const activeTab = resolveTab(tab);
 
-  const [session, result] = await Promise.all([auth(), getPropertyDetail(propertyId)]);
-
+  const result = await getPropertyDetail(propertyId);
   if (!result.ok) notFound();
 
   const property = result.value;
-  const userId = session?.user?.id as UserId | undefined;
 
   let tabContent: ReactNode;
 
   if (activeTab === TABS.OVERVIEW) {
-    const servicesResult = userId
-      ? await servicesByPropertyId(userId, propertyId)
-      : { ok: false as const };
+    const servicesResult = await servicesByPropertyId(userId, propertyId);
     const services = servicesResult.ok ? servicesResult.value : [];
     const serviceIds = services.map((s) => s.service.id as TServiceId);
     const serviceBalances =
@@ -81,7 +77,6 @@ export default async function PropertyPage({ params, searchParams }: TProps) {
     tabContent = <MetersClient propertyId={id} meters={metersResult.value} role={property.role} />;
   } else {
     // TABS.SHARING
-    if (!userId) notFound();
     const membersResult = await propertyMembers(userId, propertyId);
     if (!membersResult.ok) notFound();
 

@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
 
-import { auth } from "@/lib/auth";
-import type { UserId } from "@/lib/db/schema/auth";
+import { requireUser } from "@/lib/auth/guards";
 import { accessibleProperties } from "@/lib/db/access/properties";
 import { paymentByIdForUser, servicesForPaymentForm } from "@/lib/db/access/payments";
 import type { PaymentId } from "@/lib/db/schema/payments";
@@ -14,11 +13,8 @@ type TProps = {
 };
 
 export default async function EditPaymentPage({ params }: TProps) {
+  const userId = await requireUser();
   const { id } = await params;
-  const session = await auth();
-  if (!session) notFound();
-
-  const userId = session.user?.id as UserId;
 
   const [paymentResult, serviceOptions, propertiesWithRole] = await Promise.all([
     paymentByIdForUser(userId, id as PaymentId),

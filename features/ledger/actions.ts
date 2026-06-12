@@ -1,9 +1,8 @@
 "use server";
 
-import { auth } from "@/lib/auth";
+import { requireUser } from "@/lib/auth/guards";
 import { serviceByIdForUser } from "@/lib/db/access/services";
 import type { TServiceId } from "@/lib/db/schema/services";
-import type { UserId } from "@/lib/db/schema/auth";
 import type { TBalance, TExpectedAmount } from "./types";
 import { computeExpectedFixed, computeExpectedMetered } from "./core";
 import { balanceForService, readingsForPeriod, tariffForServicePeriod } from "./query";
@@ -20,9 +19,8 @@ const lastDayOfMonth = (month: string): string => {
 
 // Returns the current balance for a service. Called from the Record Payment modal.
 export const getServiceBalanceAction = async (serviceId: string): Promise<TBalance | null> => {
-  const session = await auth();
-  if (!session?.user.id) return null;
-  return balanceForService(session.user.id as UserId, serviceId as TServiceId);
+  const userId = await requireUser();
+  return balanceForService(userId, serviceId as TServiceId);
 };
 
 // Returns the expected bill amount for a service + month combination.
@@ -31,10 +29,7 @@ export const getExpectedAmountHintAction = async (
   serviceId: string,
   month: string, // "YYYY-MM"
 ): Promise<TExpectedAmount | null> => {
-  const session = await auth();
-  if (!session?.user.id) return null;
-
-  const userId = session.user.id as UserId;
+  const userId = await requireUser();
   const serviceResult = await serviceByIdForUser(userId, serviceId as TServiceId);
   if (!serviceResult.ok) return null;
 

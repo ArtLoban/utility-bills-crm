@@ -1,23 +1,33 @@
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { signIn } from "@/lib/auth";
+import { LOGIN_REASONS } from "@/lib/auth/constants";
 import { ROUTES } from "@/lib/routes";
 import { Logo } from "@/components/logo";
 import { AuthCard } from "@/app/(auth)/_components/auth-card";
 import { GoogleIcon } from "./_components/google-icon";
 import { RememberMe } from "./_components/remember-me";
+import { SessionExpiredNotice } from "./_components/session-expired-notice";
 
 const googleSignIn = async () => {
   "use server";
   await signIn("google", { redirectTo: ROUTES.dashboard });
 };
 
-export default async function LoginPage() {
+type TProps = {
+  searchParams: Promise<{ reason?: string }>;
+};
+
+export default async function LoginPage({ searchParams }: TProps) {
+  const { reason } = await searchParams;
+
   return (
     <AuthCard>
       <div className="mb-7 flex justify-center">
         <Logo href={ROUTES.home} />
       </div>
+
+      {reason === LOGIN_REASONS.SESSION_EXPIRED && <SessionExpiredNotice />}
 
       <h1 className="mb-1.5 text-center text-2xl font-bold">Sign in</h1>
       <p className="mb-7 text-center text-sm text-zinc-500">
