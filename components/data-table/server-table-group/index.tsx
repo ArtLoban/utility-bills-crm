@@ -9,6 +9,7 @@ import { Table } from "@/components/ui/table";
 import { ReactNode } from "react";
 import { TListParams } from "../types";
 import { EmptyState } from "@/components/data-table/components/empty-state";
+import { resolveEmptyKind } from "@/components/data-table/utils/resolve-empty-kind";
 
 type TProps<T> = {
   data: T[];
@@ -36,10 +37,7 @@ export const ServerTableGroup = <T,>(props: TProps<T>) => {
     getCoreRowModel: getCoreRowModel(),
   });
 
-  const noData = data.length === 0;
-  const emptyKind = noData && hasActiveFilters ? "noResults" : "empty";
-
-  if (noData) return <EmptyState kind={emptyKind} />;
+  if (data.length === 0) return <EmptyState kind={resolveEmptyKind(Boolean(hasActiveFilters))} />;
 
   return (
     <div className="border-border overflow-hidden rounded-lg border">

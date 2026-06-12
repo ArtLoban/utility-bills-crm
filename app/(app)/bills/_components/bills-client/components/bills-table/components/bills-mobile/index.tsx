@@ -7,6 +7,8 @@ import type { TQueryFilters } from "@/app/(app)/bills/_components/bills-client/c
 import { ToolsPanel } from "./components/tools-panel";
 import { MobilePager } from "@/components/data-table/components/mobile-pager";
 import { MobileTotals } from "@/components/data-table/components/mobile-totals";
+import { EmptyState } from "@/components/data-table/components/empty-state";
+import { resolveEmptyKind } from "@/components/data-table/utils/resolve-empty-kind";
 
 type TProps = {
   billsList: TBillsListResult;
@@ -22,14 +24,20 @@ export const BillsTableMobile = (props: TProps) => {
     <div className="pt-2 pb-8">
       <ToolsPanel queryFilters={queryFilters} listParams={listParams} />
 
-      <div className="flex flex-col gap-2">
-        {data.map((row) => (
-          <BillCard key={row.bill.id} row={row} />
-        ))}
-      </div>
+      {data.length === 0 ? (
+        <EmptyState kind={resolveEmptyKind(queryFilters.hasActiveFilters)} />
+      ) : (
+        <>
+          <div className="flex flex-col gap-2">
+            {data.map((row) => (
+              <BillCard key={row.bill.id} row={row} />
+            ))}
+          </div>
 
-      <MobilePager pagination={pagination} listParams={listParams} />
-      <MobileTotals amount={totals.amount} />
+          <MobilePager pagination={pagination} listParams={listParams} />
+          <MobileTotals amount={totals.amount} />
+        </>
+      )}
     </div>
   );
 };

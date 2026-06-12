@@ -16,6 +16,13 @@ export const SORT_ORDER = {
 
 export type TSortOrder = (typeof SORT_ORDER)[keyof typeof SORT_ORDER];
 
+export const EMPTY_STATE_KINDS = {
+  EMPTY: "empty",
+  NO_RESULTS: "noResults",
+} as const;
+
+export type TEmptyStateKind = (typeof EMPTY_STATE_KINDS)[keyof typeof EMPTY_STATE_KINDS];
+
 export type TDefaultSorting = {
   [DATA_TABLE_PARAMS.SORT_BY]: string;
   [DATA_TABLE_PARAMS.SORT_ORDER]?: TSortOrder;
