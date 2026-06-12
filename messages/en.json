@@ -881,6 +881,26 @@
       }
     }
   },
+  "auth": {
+    "backToHome": "Back to home",
+    "login": {
+      "title": "Sign in",
+      "subtitle": "Track your utility bills across properties.",
+      "google": "Continue with Google",
+      "rememberMe": "Remember me for 30 days",
+      "divider": "or",
+      "demo": "Try demo",
+      "demoHint": "View a sample workspace. No account needed."
+    },
+    "error": {
+      "title": "Sign-in didn't complete",
+      "description": "Access was denied during the sign-in process. This usually happens when sign-in is canceled or permission is declined.",
+      "tryAgain": "Try again"
+    },
+    "legal": {
+      "agreement": "By signing in you agree to the <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>."
+    }
+  },
   "notFound": {
     "title": "Page not found",
     "description": "The page you're looking for doesn't exist or may have been moved.",
