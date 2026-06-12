@@ -9,6 +9,13 @@ They are **binding** — equal in force to `.claude/rules/`. See `CLAUDE.md` §9
 - **When the author corrects a mistake or a wrong assumption, add a lesson** before
   finishing the task. The correction must outlive the conversation.
 
+## Threshold (don't log trifles)
+
+A lesson is for a **significant, repeatable** correction — a real principle worth carrying
+into every future session. Do **not** log one-off trivia (a single file placement, a typo, a
+rename) the author would never want re-surfaced. When in doubt, leave it out. Keep every
+lesson **short and to the point** — the rule and how to apply it, no padding.
+
 ## Format
 
 One file per lesson, named `NNNN-short-slug.md` (zero-padded, next free number).
