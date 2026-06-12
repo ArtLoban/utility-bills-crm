@@ -7,7 +7,6 @@ import { Controller } from "react-hook-form";
 
 import { FormField } from "@/components/form-field";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import type { TServiceType } from "@/lib/db/schema/service-types";
 import { ZONE_LABELS } from "../constants";
 import type { TFormValues } from "../schema";

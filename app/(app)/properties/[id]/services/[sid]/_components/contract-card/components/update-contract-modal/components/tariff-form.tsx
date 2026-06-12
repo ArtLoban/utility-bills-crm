@@ -1,4 +1,4 @@
-import { Calendar, Info } from "lucide-react";
+import { Info } from "lucide-react";
 import { format, subDays } from "date-fns";
 
 import type { TServiceType } from "@/lib/db/schema/service-types";

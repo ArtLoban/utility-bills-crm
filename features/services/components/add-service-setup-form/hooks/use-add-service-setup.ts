@@ -86,6 +86,9 @@ export const useAddServiceSetup = ({ propertyId, serviceTypes }: TParams) => {
     },
   });
 
+  // react-hook-form's watch() returns a non-memoizable function; React Compiler
+  // flags it as an incompatible library. Known RHF limitation, safe to ignore here.
+  // eslint-disable-next-line react-hooks/incompatible-library
   const selectedTypeId = form.watch("serviceTypeId");
   const meterZoneCount = form.watch("meter.zoneCount");
 
