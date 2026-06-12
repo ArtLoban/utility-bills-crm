@@ -300,7 +300,24 @@
     }
   },
   "dataTable": {
-    "rowActions": "todo",
+    "filters": {
+      "label": "Фильтр",
+      "clear": "Сбросить фильтры"
+    },
+    "list": {
+      "empty": {
+        "title": "Здесь пока ничего нет",
+        "body": "Нет данных для отображения"
+      },
+      "noResults": {
+        "title": "Нет записей по вашим фильтрам"
+      }
+    },
+    "rowActions": {
+      "edit": "Редактировать",
+      "delete": "Удалить",
+      "ariaLabel": "Открыть действия со строкой"
+    },
     "pagination": {
       "perPage": "{count} на странице",
       "perPageLabel": "Строк на странице",

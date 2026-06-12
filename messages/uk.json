@@ -300,7 +300,24 @@
     }
   },
   "dataTable": {
-    "rowActions": "todo",
+    "filters": {
+      "label": "Фільтр",
+      "clear": "Скинути фільтри"
+    },
+    "list": {
+      "empty": {
+        "title": "Тут поки нічого немає",
+        "body": "Немає даних для відображення"
+      },
+      "noResults": {
+        "title": "Немає записів за вашими фільтрами"
+      }
+    },
+    "rowActions": {
+      "edit": "Редагувати",
+      "delete": "Видалити",
+      "ariaLabel": "Відкрити дії з рядком"
+    },
     "pagination": {
       "perPage": "{count} на сторінці",
       "perPageLabel": "Рядків на сторінці",
