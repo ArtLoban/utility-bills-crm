@@ -608,6 +608,37 @@
         "clear": "Сбросить фильтры",
         "from": "От {date}",
         "to": "До {date}"
+      },
+      "sort": {
+        "title": "Сортировка",
+        "periodMonth": {
+          "label": "Дата",
+          "desc": "Сначала новые",
+          "asc": "Сначала старые",
+          "triggerDesc": "Дата (новые)",
+          "triggerAsc": "Дата (старые)"
+        },
+        "property": {
+          "label": "Объект",
+          "desc": "Я → А",
+          "asc": "А → Я",
+          "triggerDesc": "Объект Я–А",
+          "triggerAsc": "Объект А–Я"
+        },
+        "service": {
+          "label": "Услуга",
+          "desc": "Я → А",
+          "asc": "А → Я",
+          "triggerDesc": "Услуга Я–А",
+          "triggerAsc": "Услуга А–Я"
+        },
+        "amount": {
+          "label": "Сумма",
+          "desc": "Больше → меньше",
+          "asc": "Меньше → больше",
+          "triggerDesc": "Сумма ↓",
+          "triggerAsc": "Сумма ↑"
+        }
       }
     },
     "modal": {

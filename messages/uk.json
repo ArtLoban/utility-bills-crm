@@ -608,6 +608,37 @@
         "clear": "Скинути фільтри",
         "from": "Від {date}",
         "to": "До {date}"
+      },
+      "sort": {
+        "title": "Сортування",
+        "periodMonth": {
+          "label": "Дата",
+          "desc": "Спочатку нові",
+          "asc": "Спочатку старі",
+          "triggerDesc": "Дата (нові)",
+          "triggerAsc": "Дата (старі)"
+        },
+        "property": {
+          "label": "Об'єкт",
+          "desc": "Я → А",
+          "asc": "А → Я",
+          "triggerDesc": "Об'єкт Я–А",
+          "triggerAsc": "Об'єкт А–Я"
+        },
+        "service": {
+          "label": "Послуга",
+          "desc": "Я → А",
+          "asc": "А → Я",
+          "triggerDesc": "Послуга Я–А",
+          "triggerAsc": "Послуга А–Я"
+        },
+        "amount": {
+          "label": "Сума",
+          "desc": "Більше → менше",
+          "asc": "Менше → більше",
+          "triggerDesc": "Сума ↓",
+          "triggerAsc": "Сума ↑"
+        }
       }
     },
     "modal": {

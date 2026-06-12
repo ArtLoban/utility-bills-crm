@@ -121,6 +121,37 @@
         "clear": "Clear filters",
         "from": "From {date}",
         "to": "To {date}"
+      },
+      "sort": {
+        "title": "Sort by",
+        "periodMonth": {
+          "label": "Date",
+          "desc": "Newest first",
+          "asc": "Oldest first",
+          "triggerDesc": "Date (newest)",
+          "triggerAsc": "Date (oldest)"
+        },
+        "property": {
+          "label": "Property",
+          "desc": "Z → A",
+          "asc": "A → Z",
+          "triggerDesc": "Property Z–A",
+          "triggerAsc": "Property A–Z"
+        },
+        "service": {
+          "label": "Service",
+          "desc": "Z → A",
+          "asc": "A → Z",
+          "triggerDesc": "Service Z–A",
+          "triggerAsc": "Service A–Z"
+        },
+        "amount": {
+          "label": "Amount",
+          "desc": "High → Low",
+          "asc": "Low → High",
+          "triggerDesc": "Amount ↓",
+          "triggerAsc": "Amount ↑"
+        }
       }
     },
     "modal": {

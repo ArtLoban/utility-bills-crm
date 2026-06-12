@@ -1,13 +1,7 @@
-import { useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SortSheet } from "@/app/(app)/bills/_components/bills-client/components/bills-table/components/bills-mobile/components/sort-sheet";
-import {
-  DEFAULT_SORT_DESC,
-  DEFAULT_SORT_ID,
-  SORT_FIELDS,
-} from "@/app/(app)/bills/_components/bills-client/components/bills-table/components/bills-mobile/constants";
-import type { TBillSortColumn } from "@/features/bills";
+import { useSortControls } from "@/app/(app)/bills/_components/bills-client/components/bills-table/components/bills-mobile/components/tools-panel/components/sort-controls/hooks/use-sort-controls";
 import type { TListParams } from "@/components/data-table/types";
 
 type TProps = {
@@ -15,24 +9,15 @@ type TProps = {
 };
 
 export const SortControls = ({ listParams }: TProps) => {
-  const [sheetOpen, setSheetOpen] = useState(false);
-  const { sorting, onSortingChange } = listParams;
-
-  const currentSort = sorting[0];
-  const currentSortId = currentSort?.id ?? DEFAULT_SORT_ID;
-  const currentDesc = currentSort?.desc ?? DEFAULT_SORT_DESC;
-  const isNonDefaultSort = currentSortId !== DEFAULT_SORT_ID || currentDesc !== DEFAULT_SORT_DESC;
-
-  const activeSortField = SORT_FIELDS.find((f) => f.id === currentSortId);
-  const sortTriggerLabel = activeSortField
-    ? currentDesc
-      ? activeSortField.triggerDesc
-      : activeSortField.triggerAsc
-    : "Date (newest)";
-
-  const handleSort = (id: TBillSortColumn, desc: boolean) => {
-    onSortingChange([{ id, desc }]);
-  };
+  const {
+    sheetOpen,
+    setSheetOpen,
+    currentSortId,
+    currentDesc,
+    isNonDefaultSort,
+    sortTriggerLabel,
+    handleSort,
+  } = useSortControls(listParams);
 
   return (
     <>
