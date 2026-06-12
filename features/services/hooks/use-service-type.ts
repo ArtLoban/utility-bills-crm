@@ -1,13 +1,20 @@
 import { useTranslations } from "next-intl";
-import { getServiceTypeVisuals, TServiceTypeCode } from "@/features/services/service-type";
+import {
+  getServiceTypeVisuals,
+  type TServiceTypeCode,
+  type TServiceTypeVisuals,
+} from "@/features/services/service-type";
 
-export const useServiceType = (type: TServiceTypeCode) => {
+type TServiceTypeMeta = TServiceTypeVisuals & { label: string };
+
+export const useServiceTypeMetaFactory = () => {
   const t = useTranslations("services.types");
 
-  const visuals = getServiceTypeVisuals(type);
-
-  return {
+  return (type: TServiceTypeCode): TServiceTypeMeta => ({
     label: t.has(type) ? t(type) : type,
-    ...visuals,
-  };
+    ...getServiceTypeVisuals(type),
+  });
 };
+
+export const useServiceTypeMeta = (type: TServiceTypeCode): TServiceTypeMeta =>
+  useServiceTypeMetaFactory()(type);

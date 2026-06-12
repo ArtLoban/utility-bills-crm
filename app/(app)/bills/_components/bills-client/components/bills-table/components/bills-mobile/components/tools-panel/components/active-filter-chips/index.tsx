@@ -1,37 +1,41 @@
 import { format, parseISO } from "date-fns";
+import { Calendar } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { DISPLAY_DATE_FORMAT } from "@/lib/format/date";
-import { FilterChip } from "@/app/(app)/bills/_components/bills-client/components/bills-table/components/bills-mobile/components/filter-chip";
 import { useBillsTable } from "@/app/(app)/bills/_components/bills-client/context";
 import {
   FiltersFormField,
   type TQueryFilters,
 } from "@/app/(app)/bills/_components/bills-client/components/bills-table/types";
 import { DATE_PARAMS } from "@/lib/types/common";
-import {
-  dbCodeToServiceKey,
-  getServiceLabel,
-  SERVICE_COLORS,
-} from "@/lib/constants/service-colors";
+import { useServiceTypeMetaFactory } from "@/features/services/hooks/use-service-type";
+import type { TServiceTypeCode } from "@/features/services/service-type";
+import { PROPERTY_TYPE_ICONS } from "@/features/properties/property-type";
+import { FilterChip } from "./components/filter-chip";
 
 type TProps = {
   queryFilters: TQueryFilters;
 };
 
-const fmtDate = (d: string) => format(parseISO(d), DISPLAY_DATE_FORMAT);
+const fmtDate = (date: string) => format(parseISO(date), DISPLAY_DATE_FORMAT);
 
 export const ActiveFilterChips = ({ queryFilters }: TProps) => {
-  const t = useTranslations("bills.list.filters");
   const { hasActiveFilters, values, form } = queryFilters;
+  const t = useTranslations("bills.list.filters");
   const { properties } = useBillsTable();
+  const getServiceTypeMeta = useServiceTypeMetaFactory();
 
   if (!hasActiveFilters) return null;
 
-  const propertyId = values.propertyId ?? null;
-  const services = values.services ?? null;
-  const dateFrom = values.dateFrom ?? null;
-  const dateTo = values.dateTo ?? null;
-  const hasDateFilter = dateFrom !== null || dateTo !== null;
+  const propertyId = values[FiltersFormField.PROPERTY_ID];
+  const services = values[FiltersFormField.SERVICES];
+  const dateFrom = values[DATE_PARAMS.DATE_FROM];
+  const dateTo = values[DATE_PARAMS.DATE_TO];
+
+  const property = propertyId ? properties.find(({ id }) => id === propertyId) : undefined;
+  const propertyIcon = property ? PROPERTY_TYPE_ICONS[property.type] : PROPERTY_TYPE_ICONS.other;
+
+  const service = services ? getServiceTypeMeta(services as TServiceTypeCode) : undefined;
 
   const dateRangeLabel =
     dateFrom && dateTo
@@ -42,30 +46,27 @@ export const ActiveFilterChips = ({ queryFilters }: TProps) => {
           ? t("to", { date: fmtDate(dateTo) })
           : null;
 
-  const propertyName = propertyId
-    ? (properties.find((p) => p.id === propertyId)?.name ?? propertyId)
-    : null;
-  const serviceName = services ? getServiceLabel(services) : null;
-  const serviceKey = services ? dbCodeToServiceKey(services) : undefined;
-  const serviceColor = serviceKey ? SERVICE_COLORS[serviceKey] : undefined;
-
   return (
     <div className="mb-3.5 flex flex-wrap gap-1.5">
-      {propertyName && (
+      {property && (
         <FilterChip
-          label={propertyName}
+          icon={propertyIcon}
+          label={property.name}
+          color="var(--brand)"
           onRemove={() => form.setValue(FiltersFormField.PROPERTY_ID, null)}
         />
       )}
-      {serviceName && (
+      {service && (
         <FilterChip
-          label={serviceName}
-          color={serviceColor}
+          icon={service.Icon}
+          label={service.label}
+          color={service.color}
           onRemove={() => form.setValue(FiltersFormField.SERVICES, null)}
         />
       )}
-      {hasDateFilter && dateRangeLabel && (
+      {dateRangeLabel && (
         <FilterChip
+          icon={Calendar}
           label={dateRangeLabel}
           onRemove={() => {
             form.setValue(DATE_PARAMS.DATE_FROM, null);

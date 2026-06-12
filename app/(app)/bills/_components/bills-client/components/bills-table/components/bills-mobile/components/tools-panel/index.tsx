@@ -1,8 +1,8 @@
 import { FilterControls } from "@/app/(app)/bills/_components/bills-client/components/bills-table/components/bills-mobile/components/tools-panel/components/filter-controls";
 import { SortControls } from "@/app/(app)/bills/_components/bills-client/components/bills-table/components/bills-mobile/components/tools-panel/components/sort-controls";
-import { ActiveFilterChips } from "@/app/(app)/bills/_components/bills-client/components/bills-table/components/bills-mobile/components/tools-panel/components/active-filter-chips";
 import type { TQueryFilters } from "@/app/(app)/bills/_components/bills-client/components/bills-table/types";
 import type { TListParams } from "@/components/data-table/types";
+import { ActiveFilterChips } from "./components/active-filter-chips";
 
 type TProps = {
   queryFilters: TQueryFilters;

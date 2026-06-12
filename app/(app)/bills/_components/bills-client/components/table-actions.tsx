@@ -9,12 +9,12 @@ import { getServiceLabel } from "@/lib/constants/service-colors";
 import type { TBillGlobalRow } from "@/lib/db/access/bills";
 import { IconBadge } from "@/components/icon-badge";
 import { Modal } from "@/components/modal";
-import type { TSelectableEntity } from "@/components/select-input/types";
+import type { TPropertyOption } from "@/features/properties";
 import { BillsTableContext } from "@/app/(app)/bills/_components/bills-client/context";
 
 type TProps = {
   children: ReactNode;
-  properties: TSelectableEntity[];
+  properties: TPropertyOption[];
 };
 
 export const BillsTableActions = ({ children, properties }: TProps) => {

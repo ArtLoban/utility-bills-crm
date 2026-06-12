@@ -1,25 +1,35 @@
+import { Slot } from "@radix-ui/react-slot";
+import { cva, type VariantProps } from "class-variance-authority";
+import type { ComponentProps } from "react";
+
 import { cn } from "@/lib/utils";
 
-type TVariant = "default" | "outline";
-
-type TProps = {
-  children: React.ReactNode;
-  variant?: TVariant;
-  className?: string;
-};
-
-const Badge = ({ children, variant = "default", className }: TProps) => (
-  <span
-    className={cn(
-      "inline-flex items-center rounded border px-1.5 py-0.5 text-xs font-medium",
-      variant === "default" &&
-        "border-transparent bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300",
-      variant === "outline" && "border-current bg-transparent",
-      className,
-    )}
-  >
-    {children}
-  </span>
+const badgeVariants = cva(
+  "inline-flex w-fit shrink-0 items-center justify-center gap-1 rounded-md border px-2 py-0.5 text-xs font-medium whitespace-nowrap transition-colors [&>svg]:pointer-events-none [&>svg]:size-3",
+  {
+    variants: {
+      variant: {
+        default: "border-transparent bg-muted text-muted-foreground",
+        outline: "text-foreground",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+    },
+  },
 );
 
-export { Badge };
+type TBadgeProps = ComponentProps<"span"> &
+  VariantProps<typeof badgeVariants> & {
+    asChild?: boolean;
+  };
+
+const Badge = ({ className, variant, asChild = false, ...props }: TBadgeProps) => {
+  const Comp = asChild ? Slot : "span";
+
+  return (
+    <Comp data-slot="badge" className={cn(badgeVariants({ variant, className }))} {...props} />
+  );
+};
+
+export { Badge, badgeVariants };

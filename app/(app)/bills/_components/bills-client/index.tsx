@@ -6,14 +6,14 @@ import { TBillsListResult } from "@/lib/db/access/bills";
 import { BillsTable } from "./components/bills-table";
 import { formatUAH } from "@/lib/format/currency";
 import { useTranslations } from "next-intl";
-import { TSelectableEntity } from "@/components/select-input/types";
+import { TPropertyOption } from "@/features/properties";
 import { AddButton } from "@/components/add-button";
 import { ROUTES } from "@/lib/routes";
 import { BillsTableActions } from "./components/table-actions";
 
 type TProps = {
   billsList: TBillsListResult;
-  properties: TSelectableEntity[];
+  properties: TPropertyOption[];
 };
 
 export const BillsClient = ({ billsList, properties }: TProps) => {

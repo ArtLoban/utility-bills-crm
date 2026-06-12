@@ -6,7 +6,7 @@ import { DISPLAY_DATE_FORMAT } from "@/lib/format/date";
 import type { TBillGlobalRow } from "@/lib/db/access/bills";
 import { IconBadge } from "@/components/icon-badge";
 import { BillRowActions } from "../../components/bill-row-actions";
-import { useServiceType } from "@/features/services/hooks/use-service-type";
+import { useServiceTypeMeta } from "@/features/services/hooks/use-service-type";
 
 type TProps = {
   row: TBillGlobalRow;
@@ -15,7 +15,7 @@ type TProps = {
 export const BillCard = ({ row }: TProps) => {
   const { serviceTypeCode, bill, property } = row;
   const formatter = useFormatter();
-  const { color, Icon, label: serviceName } = useServiceType(serviceTypeCode);
+  const { color, Icon, label: serviceName } = useServiceTypeMeta(serviceTypeCode);
 
   const dateStr = format(new Date(bill.createdAt), DISPLAY_DATE_FORMAT);
   const periodLabel = formatter.dateTime(new Date(bill.periodMonth), {
