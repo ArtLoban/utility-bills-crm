@@ -1,4 +1,6 @@
 import { format, parseISO } from "date-fns";
+import { useTranslations } from "next-intl";
+import { DISPLAY_DATE_FORMAT } from "@/lib/format/date";
 import { FilterChip } from "@/app/(app)/bills/_components/bills-client/components/bills-table/components/bills-mobile/components/filter-chip";
 import { useBillsTable } from "@/app/(app)/bills/_components/bills-client/context";
 import {
@@ -16,15 +18,10 @@ type TProps = {
   queryFilters: TQueryFilters;
 };
 
-const fmtDate = (d: string) => format(parseISO(d), "MMM d, yyyy");
-
-const formatDateRangeChip = (dateFrom: string | null, dateTo: string | null): string => {
-  if (dateFrom && dateTo) return `${fmtDate(dateFrom)} – ${fmtDate(dateTo)}`;
-  if (dateFrom) return `From ${fmtDate(dateFrom)}`;
-  return `To ${fmtDate(dateTo!)}`;
-};
+const fmtDate = (d: string) => format(parseISO(d), DISPLAY_DATE_FORMAT);
 
 export const ActiveFilterChips = ({ queryFilters }: TProps) => {
+  const t = useTranslations("bills.list.filters");
   const { hasActiveFilters, values, form } = queryFilters;
   const { properties } = useBillsTable();
 
@@ -35,6 +32,15 @@ export const ActiveFilterChips = ({ queryFilters }: TProps) => {
   const dateFrom = values.dateFrom ?? null;
   const dateTo = values.dateTo ?? null;
   const hasDateFilter = dateFrom !== null || dateTo !== null;
+
+  const dateRangeLabel =
+    dateFrom && dateTo
+      ? `${fmtDate(dateFrom)} – ${fmtDate(dateTo)}`
+      : dateFrom
+        ? t("from", { date: fmtDate(dateFrom) })
+        : dateTo
+          ? t("to", { date: fmtDate(dateTo) })
+          : null;
 
   const propertyName = propertyId
     ? (properties.find((p) => p.id === propertyId)?.name ?? propertyId)
@@ -58,9 +64,9 @@ export const ActiveFilterChips = ({ queryFilters }: TProps) => {
           onRemove={() => form.setValue(FiltersFormField.SERVICES, null)}
         />
       )}
-      {hasDateFilter && (
+      {hasDateFilter && dateRangeLabel && (
         <FilterChip
-          label={formatDateRangeChip(dateFrom, dateTo)}
+          label={dateRangeLabel}
           onRemove={() => {
             form.setValue(DATE_PARAMS.DATE_FROM, null);
             form.setValue(DATE_PARAMS.DATE_TO, null);

@@ -2,8 +2,7 @@ import { endOfMonth, endOfYear, format, startOfMonth, startOfYear, subMonths } f
 
 import { DATE_PARAMS } from "@/lib/types/common";
 import { ISO_DATE_FORMAT } from "@/lib/format/date";
-import { TIME_PERIOD } from "./types";
-import type { TTimePeriod } from "./types";
+import { TIME_PERIODS, type TTimePeriod } from "./types";
 
 type TDateRange = {
   [DATE_PARAMS.DATE_FROM]: string;
@@ -16,13 +15,13 @@ export const resolvePreset = (timePeriod: TTimePeriod): TDateRange => {
   const now = new Date();
 
   switch (timePeriod) {
-    case TIME_PERIOD.THIS_MONTH:
+    case TIME_PERIODS.THIS_MONTH:
       return {
         [DATE_PARAMS.DATE_FROM]: fmt(startOfMonth(now)),
         [DATE_PARAMS.DATE_TO]: fmt(endOfMonth(now)),
       };
 
-    case TIME_PERIOD.LAST_MONTH: {
+    case TIME_PERIODS.LAST_MONTH: {
       const prev = subMonths(now, 1);
       return {
         [DATE_PARAMS.DATE_FROM]: fmt(startOfMonth(prev)),
@@ -30,19 +29,19 @@ export const resolvePreset = (timePeriod: TTimePeriod): TDateRange => {
       };
     }
 
-    case TIME_PERIOD.THIS_YEAR:
+    case TIME_PERIODS.THIS_YEAR:
       return {
         [DATE_PARAMS.DATE_FROM]: fmt(startOfYear(now)),
         [DATE_PARAMS.DATE_TO]: fmt(endOfYear(now)),
       };
 
-    case TIME_PERIOD.LAST_6_MONTHS:
+    case TIME_PERIODS.LAST_6_MONTHS:
       return {
         [DATE_PARAMS.DATE_FROM]: fmt(startOfMonth(subMonths(now, 5))),
         [DATE_PARAMS.DATE_TO]: fmt(endOfMonth(now)),
       };
 
-    case TIME_PERIOD.LAST_12_MONTHS:
+    case TIME_PERIODS.LAST_12_MONTHS:
       return {
         [DATE_PARAMS.DATE_FROM]: fmt(startOfMonth(subMonths(now, 11))),
         [DATE_PARAMS.DATE_TO]: fmt(endOfMonth(now)),
@@ -51,7 +50,7 @@ export const resolvePreset = (timePeriod: TTimePeriod): TDateRange => {
 };
 
 export const isTimePeriod = (value: string): value is TTimePeriod =>
-  Object.values(TIME_PERIOD).some((id) => id === value);
+  Object.values(TIME_PERIODS).some((id) => id === value);
 
 // The preset whose resolved range exactly matches the current dates, or null when the
 // dates are partial/custom. Keeps the preset highlight a pure function of the dates —
@@ -62,7 +61,7 @@ export const derivePreset = (
 ): TTimePeriod | null => {
   if (!dateFrom || !dateTo) return null;
 
-  for (const id of Object.values(TIME_PERIOD)) {
+  for (const id of Object.values(TIME_PERIODS)) {
     const resolved = resolvePreset(id);
     if (resolved[DATE_PARAMS.DATE_FROM] === dateFrom && resolved[DATE_PARAMS.DATE_TO] === dateTo) {
       return id;

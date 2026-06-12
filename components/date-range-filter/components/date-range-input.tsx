@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { useTranslations } from "next-intl";
 
 import {
@@ -13,9 +14,10 @@ import { cn } from "@/lib/utils";
 import { SELECT_CLEAR_VALUE } from "@/lib/constants/select";
 import { DATE_PARAMS } from "@/lib/types/common";
 import { DatePicker } from "@/components/date-picker";
-import { PRESETS } from "../constants";
+import { TIME_PERIOD_PRESETS } from "../constants";
 import type { TDateRangeOrientation } from "../types";
 import { derivePreset, isTimePeriod, resolvePreset } from "../utils";
+import { LabeledField } from "./labeled-field";
 
 type TProps = {
   [DATE_PARAMS.DATE_FROM]: string | null;
@@ -38,45 +40,56 @@ export const DateRangeInput = ({ dateFrom, dateTo, onChange, orientation = "inli
     onChange(resolved[DATE_PARAMS.DATE_FROM], resolved[DATE_PARAMS.DATE_TO]);
   };
 
+  const field = (label: string, control: ReactNode) =>
+    isStacked ? <LabeledField label={label}>{control}</LabeledField> : control;
+
   return (
     <div className={cn("flex gap-2", isStacked ? "flex-col gap-3" : "items-center")}>
-      <DatePicker
-        variant="filter"
-        label={t("dateFrom")}
-        value={dateFrom}
-        fullWidth={isStacked}
-        onChange={(value) => onChange(value, dateTo)}
-      />
-      <DatePicker
-        variant="filter"
-        label={t("dateTo")}
-        value={dateTo}
-        fullWidth={isStacked}
-        onChange={(value) => onChange(dateFrom, value)}
-      />
-
-      <Select value={activePreset ?? ""} onValueChange={handlePresetChange}>
-        <SelectTrigger
-          size="sm"
-          className={cn(
-            "rounded-sm",
-            isStacked ? "w-full" : "min-w-[140px]",
-            activePreset && "border-brand text-brand bg-brand-bg [&_svg]:text-inherit",
-          )}
-        >
-          <SelectValue placeholder={t("timePeriod")} />
-        </SelectTrigger>
-        <SelectContent align="start">
-          <SelectItem value={SELECT_CLEAR_VALUE} className="text-muted-foreground">
-            {t("timePeriod")}
-          </SelectItem>
-          {PRESETS.map(({ id }) => (
-            <SelectItem key={id} value={id}>
-              {t(`presets.${id}`)}
+      {field(
+        t("dateFrom"),
+        <DatePicker
+          variant={isStacked ? "field" : "filter"}
+          label={isStacked ? undefined : t("dateFrom")}
+          value={dateFrom}
+          fullWidth={isStacked}
+          onChange={(value) => onChange(value, dateTo)}
+        />,
+      )}
+      {field(
+        t("dateTo"),
+        <DatePicker
+          variant={isStacked ? "field" : "filter"}
+          label={isStacked ? undefined : t("dateTo")}
+          value={dateTo}
+          fullWidth={isStacked}
+          onChange={(value) => onChange(dateFrom, value)}
+        />,
+      )}
+      {field(
+        t("timePeriod"),
+        <Select value={activePreset ?? ""} onValueChange={handlePresetChange}>
+          <SelectTrigger
+            size={isStacked ? "default" : "sm"}
+            className={cn(
+              "rounded-sm",
+              isStacked ? "w-full" : "min-w-[140px]",
+              activePreset && "border-brand text-brand bg-brand-bg [&_svg]:text-inherit",
+            )}
+          >
+            <SelectValue placeholder={isStacked ? t("selectPeriod") : t("timePeriod")} />
+          </SelectTrigger>
+          <SelectContent align="start">
+            <SelectItem value={SELECT_CLEAR_VALUE} className="text-muted-foreground">
+              {t("timePeriod")}
             </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+            {TIME_PERIOD_PRESETS.map((id) => (
+              <SelectItem key={id} value={id}>
+                {t(`presets.${id}`)}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>,
+      )}
     </div>
   );
 };

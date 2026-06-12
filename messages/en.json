@@ -16,6 +16,7 @@
       "dateFrom": "Date from",
       "dateTo": "Date to",
       "timePeriod": "Time period",
+      "selectPeriod": "Select period",
       "presets": {
         "thisMonth": "This month",
         "lastMonth": "Last month",
@@ -109,6 +110,16 @@
       },
       "footer": {
         "total": "Total"
+      },
+      "filters": {
+        "label": "Filters",
+        "property": "Property",
+        "service": "Service",
+        "allProperties": "All properties",
+        "allServices": "All services",
+        "clear": "Clear filters",
+        "from": "From {date}",
+        "to": "To {date}"
       }
     },
     "modal": {

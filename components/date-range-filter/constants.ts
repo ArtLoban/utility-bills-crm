@@ -1,10 +1,9 @@
-import { TIME_PERIOD } from "./types";
-import type { TPreset } from "./types";
+import { TIME_PERIODS, type TTimePeriod } from "./types";
 
-export const PRESETS: readonly TPreset[] = [
-  { id: TIME_PERIOD.THIS_MONTH, label: "This month" },
-  { id: TIME_PERIOD.LAST_MONTH, label: "Last month" },
-  { id: TIME_PERIOD.THIS_YEAR, label: "This year" },
-  { id: TIME_PERIOD.LAST_6_MONTHS, label: "Last 6 months" },
-  { id: TIME_PERIOD.LAST_12_MONTHS, label: "Last 12 months" },
-] as const;
+export const TIME_PERIOD_PRESETS: TTimePeriod[] = [
+  TIME_PERIODS.THIS_MONTH,
+  TIME_PERIODS.LAST_MONTH,
+  TIME_PERIODS.THIS_YEAR,
+  TIME_PERIODS.LAST_6_MONTHS,
+  TIME_PERIODS.LAST_12_MONTHS,
+];

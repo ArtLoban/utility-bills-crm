@@ -16,6 +16,7 @@
       "dateFrom": "Дата з",
       "dateTo": "Дата по",
       "timePeriod": "Період",
+      "selectPeriod": "Виберіть період",
       "presets": {
         "thisMonth": "Цей місяць",
         "lastMonth": "Минулий місяць",
@@ -579,6 +580,16 @@
       "title": "Рахунки",
       "footer": {
         "total": "Всього"
+      },
+      "filters": {
+        "label": "Фільтри",
+        "property": "Об'єкт",
+        "service": "Послуга",
+        "allProperties": "Усі об'єкти",
+        "allServices": "Усі послуги",
+        "clear": "Скинути фільтри",
+        "from": "Від {date}",
+        "to": "До {date}"
       }
     },
     "modal": {

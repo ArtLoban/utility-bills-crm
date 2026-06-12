@@ -16,6 +16,7 @@
       "dateFrom": "Дата с",
       "dateTo": "Дата по",
       "timePeriod": "Период",
+      "selectPeriod": "Выберите период",
       "presets": {
         "thisMonth": "Этот месяц",
         "lastMonth": "Прошлый месяц",
@@ -579,6 +580,16 @@
       "title": "Счета",
       "footer": {
         "total": "Итого"
+      },
+      "filters": {
+        "label": "Фильтры",
+        "property": "Объект",
+        "service": "Услуга",
+        "allProperties": "Все объекты",
+        "allServices": "Все услуги",
+        "clear": "Сбросить фильтры",
+        "from": "От {date}",
+        "to": "До {date}"
       }
     },
     "modal": {
