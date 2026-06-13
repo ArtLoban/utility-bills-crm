@@ -11,9 +11,9 @@ export const SYSTEM_ROLE_LIST = [SYSTEM_ROLES.USER, SYSTEM_ROLES.ADMIN] as const
 // Single source of truth for the persistent demo account identities.
 // Reused by the demo sign-in action (startDemoSessionAction / createDemoSession),
 // the demo data seed, and the mutation-blocking guard.
-export const DEMO_EMAIL = "utility-bills-demo@crm.local";
+export const DEMO_EMAIL = "alexander.miller@example.com";
 // Secondary fixture user — editor on the apartment, no auth path.
-export const FAMILY_DEMO_EMAIL = "family-demo@crm.local";
+export const FAMILY_DEMO_EMAIL = "anna.miller@example.com";
 
 // Why the user landed on /login. Passed as ?reason= on the redirect from the
 // auth guards so the login page can explain itself instead of appearing blank.
