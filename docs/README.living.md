@@ -4,6 +4,8 @@ A multi-tenant web application for tracking utility bills across multiple proper
 
 > This is a living document. It evolves with the project. Decisions are explained where they happen, deviations from plan are tracked, and open questions are held here until resolved.
 
+> **Status (June 2026):** the MVP feature set is complete and the application is deployed and live in production. The project is at the threshold of its next stage — onboarding the first real user, which is the only remaining MVP criterion ("real users in active use").
+
 ## Table of Contents
 
 1. [Project Background](#project-background)
@@ -34,7 +36,7 @@ Goal ordering matters. An earlier version of this README framed the MVP around "
 
 ## MVP Scope
 
-MVP is defined as a **minimum viable portfolio piece** — a project that demonstrates senior/architect-level frontend engineering and is functional end-to-end.
+MVP is defined as a **minimum viable portfolio piece** — a project that demonstrates senior/architect-level frontend engineering and is functional end-to-end. As of June 2026 this scope is **built and live in production**; the items below describe achieved, shipped capabilities.
 
 ### In scope for v1 (MVP)
 
@@ -645,7 +647,7 @@ Carried forward to Phase 7 (implementation) and beyond.
 
 ## Roadmap
 
-### v1 (MVP) — Current scope
+### v1 (MVP) — Complete, deployed to production
 
 - Public landing page (SEO, portfolio showcase)
 - Authenticated CRM with full domain
@@ -654,7 +656,7 @@ Carried forward to Phase 7 (implementation) and beyond.
 - Admin section with property oversight, recovery, hard delete, and landing CMS
 - Multi-language (en/uk/ru), light/dark theme
 
-See earlier sections for details.
+See earlier sections for details. The next stage is onboarding the first real user — the only remaining MVP criterion ("real users in active use").
 
 ### v2 — Extensions
 

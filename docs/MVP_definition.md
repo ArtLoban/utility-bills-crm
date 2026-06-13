@@ -4,6 +4,8 @@
 > Assembled from the outcomes of domain discovery, user research, product definition, architecture, data model, and UI design phases.
 > The source of truth for what we are building in v1.
 
+> **Status (June 2026):** the MVP feature set is complete and the application is deployed and live in production. The only remaining MVP criterion is real users in active use — see §2.
+
 ---
 
 ## 1. About the product
@@ -39,6 +41,10 @@ This criterion unifies the three goals. A piece of work is in MVP if and only if
 - A capability that an actual user needs to use the system for its stated purpose.
 
 Everything that does not serve any of these three goes to the roadmap.
+
+### Where the project stands
+
+Two of the three conditions are met: the build demonstrates the intended senior/architect-level engineering, and the application is functional end-to-end — the full MVP scope in §3 is implemented, deployed, and live in production. The single remaining condition is **real users in active use**. The project is therefore at the threshold of its next stage: onboarding the first real user (the author's wife, replacing her paper notebook). Once that user is actively tracking bills in the system, the MVP criterion is fully satisfied.
 
 ---
 
