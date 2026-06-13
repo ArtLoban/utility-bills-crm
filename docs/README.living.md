@@ -20,7 +20,8 @@ A multi-tenant web application for tracking utility bills across multiple proper
 10. [Getting Started](#getting-started)
 11. [Project Structure](#project-structure)
 12. [Development Workflow](#development-workflow)
-13. [Contributing](#contributing)
+13. [Deployment](#deployment)
+14. [Contributing](#contributing)
 
 ---
 
@@ -60,11 +61,12 @@ See [Roadmap](#roadmap). Key items:
 
 ## Application Structure
 
-The application has **three distinct surfaces** with different access models:
+The application has **four distinct surfaces** with different access models:
 
 - **Public** — SEO-indexed landing page and marketing pages, accessible without authentication. Doubles as the developer's portfolio.
 - **Authenticated app** — the CRM itself, accessible to logged-in users.
 - **Admin** — restricted to users with `systemRole === 'admin'`. Defense-in-depth via middleware + layout checks.
+- **Auth** — sign-in, sign-out, and error pages (the `(auth)/` route group).
 
 Routing uses Next.js route groups:
 
@@ -84,7 +86,7 @@ The public layout reads the auth session to adapt its header (Login for anonymou
 
 | Layer     | Choice                                    |
 | --------- | ----------------------------------------- |
-| Runtime   | Node.js (LTS)                             |
+| Runtime   | Node.js 22 LTS                            |
 | Framework | Next.js (App Router, full-stack with RSC) |
 | Language  | TypeScript (strict, maximum practical)    |
 
@@ -624,19 +626,6 @@ Carried forward to Phase 7 (implementation) and beyond.
 - Indexing strategy for common dashboard queries (balance computation, monthly aggregation).
 - Sentry integration: deferred within Phase 7 — timing and error policy TBD when integration begins.
 
-**For Claude Design (remaining visualizations):**
-
-- Bills list empty states (both variants)
-- Add Bill modal
-- Service detail
-- Meter detail + readings history
-- Payments screens (can likely be inferred from Bills)
-- Sharing tab + invite modal
-- Settings page
-- Admin screens (dashboard, properties, users, landing CMS) with amber accent
-- Public landing pages (`/`, `/about`, `/project`)
-- Login screen + error variant
-
 **For future versions (v2+):**
 
 - `gas_delivery` transition to metered: when legislation changes, execute manual admin migration per Approach A. May require creating Meter entities for services that previously had none.
@@ -686,8 +675,6 @@ See earlier sections for details. The next stage is onboarding the first real us
 
 ## Getting Started
 
-> Will be populated when the project is scaffolded.
-
 ### Prerequisites
 
 - Node.js 22 LTS
@@ -712,9 +699,9 @@ cp .env.example .env.local
 #   ADMIN_EMAILS=...             comma-separated, gets systemRole='admin' on first sign-in
 #   SENTRY_DSN=...               optional, not yet integrated
 
-# 3. Apply database schema
-#   Dev (push directly):   npm run db:push
-#   Prod (migrations):     npm run db:migrate
+# 3. Apply the database schema (migrations — same path in dev and prod)
+#   npm run db:migrate           apply pending migrations
+#   npm run db:generate          generate a new migration after a schema change
 
 # 4. Start dev server
 npm run dev
@@ -738,7 +725,6 @@ npm run test:ui       # Vitest UI
 
 npm run db:generate   # generate Drizzle migration from schema changes
 npm run db:migrate    # apply migrations
-npm run db:push       # push schema directly (dev only)
 npm run db:studio     # Drizzle Studio
 ```
 
@@ -817,10 +803,39 @@ docs/                   project documentation
 - Conventional Commits (`feat:`, `fix:`, `refactor:`, `chore:`, `docs:`).
 - Keep commits focused and reviewable.
 
-### Deployment
+## Deployment
 
-- Push to feature branch → Vercel preview deployment with isolated Neon branch.
-- Merge to `main` → production deployment.
+The application is deployed and live in production.
+
+### Hosting
+
+- **App:** Vercel — deploys automatically from `main` (push to a feature branch → preview deployment with an isolated Neon branch; merge to `main` → production deployment).
+- **Database:** Neon (serverless Postgres) for production.
+
+### Database connection — pooled vs. direct
+
+A single `DATABASE_URL` drives both the runtime and migrations — `lib/db/client.ts` and `drizzle.config.ts` read the same variable. The pooled-vs-direct distinction is operational (which connection string `DATABASE_URL` holds in each context), not two separate variables:
+
+- The deployed app's `DATABASE_URL` points at Neon's **pooled** endpoint (PgBouncer), suited to serverless function connections.
+- **Migrations** run with `DATABASE_URL` pointed at Neon's **direct** (unpooled) endpoint — DDL and the migration session do not go through the transaction pooler.
+
+See Decision #149 for the driver strategy and the deferred `neon-serverless` upgrade path.
+
+### Production environment variables
+
+Set in the Vercel dashboard (names only):
+
+- `DATABASE_URL` — Postgres connection string (pooled endpoint in production)
+- `AUTH_SECRET` — Auth.js signing key
+- `AUTH_URL` — canonical site URL; drives secure-cookie selection and the Google OAuth redirect (required in production)
+- `NEXT_PUBLIC_SITE_URL` — public site URL for `metadataBase`, sitemap, and robots
+- `ADMIN_EMAILS` — comma-separated emails promoted to `systemRole = 'admin'` on sign-in
+- `AUTH_GOOGLE_ID` / `AUTH_GOOGLE_SECRET` — Google OAuth credentials
+
+### Schema and data in production
+
+- **Schema:** `npm run db:migrate` (drizzle-kit) applies migrations against the direct endpoint. The `service_types` catalog and the landing CMS baseline content ship inside migrations, so they need no separate seed step.
+- **Demo data:** `npm run seed:demo` (optional, opt-in) populates the demo account's dataset against whatever `DATABASE_URL` resolves to.
 
 ## Contributing
 
