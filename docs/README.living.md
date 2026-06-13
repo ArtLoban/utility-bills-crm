@@ -603,6 +603,9 @@ Rationale: the "product-first" framing had begun to systematically under-scope f
 > **#148 — Drill-down targets bills list's real nuqs params (`services` semicolon array, `dateFrom`/`dateTo`); bar stack range is that single month.**
 > Dashboard chart params intentionally share the same URL param names as the bills list (`dateFrom`, `dateTo`, `propertyId`, `services` with semicolon encoding) so that drill-down URLs are just bills-list URLs with pre-filled filters — no extra mapping layer. Pie segment click sets `services=[code]` over the full dashboard date range. Bar segment click sets `services=[code]` with `dateFrom=first-of-month` and `dateTo=last-of-month` for the clicked month. Line chart tooltip-only; no drill-down (no single-month semantics apply to a trend view).
 
+> **#149 — Production DB driver strategy: `node-postgres` Pool against Neon's pooled endpoint; migrations against the direct endpoint; deferred serverless path is `neon-serverless` (WebSocket), not `neon-http`.**
+> The production runtime keeps the existing `node-postgres` `Pool` (`lib/db/client.ts`), pointed at Neon's **pooled** connection endpoint (PgBouncer) via `DATABASE_URL`. Migrations (`db:migrate`) run against Neon's **direct** (unpooled) endpoint, since DDL and the migration session don't go through the transaction pooler. If connection pressure on serverless ever warrants it, the deferred upgrade is `drizzle-orm/neon-serverless` (the WebSocket `Pool` from `@neondatabase/serverless`), which preserves interactive transactions. `neon-http` (`drizzle-orm/neon-http`) is rejected as the upgrade path: it has no interactive transaction support, and Server Actions and `seed:demo` compose Drizzle `tx`. No runtime change ships now — this records the chosen direction. The Node runtime is pinned to the 22 LTS line (`engines.node`, `.nvmrc`) to keep local and Vercel builds aligned.
+
 ## Open Questions
 
 Carried forward to Phase 7 (implementation) and beyond.
@@ -685,7 +688,7 @@ See earlier sections for details.
 
 ### Prerequisites
 
-- Node.js (LTS)
+- Node.js 22 LTS
 - npm
 - A Neon PostgreSQL project (free tier)
 - Google OAuth credentials

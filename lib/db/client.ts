@@ -1,7 +1,8 @@
-// Driver isolation point — switching to Neon touches only this file:
-//   import { neon } from "@neondatabase/serverless";
-//   import { drizzle } from "drizzle-orm/neon-http";
-//   export const db = drizzle(neon(process.env.DATABASE_URL!), { schema });
+// Driver isolation point — switching to Neon's serverless WebSocket driver touches only this file:
+//   import { Pool } from "@neondatabase/serverless";
+//   import { drizzle } from "drizzle-orm/neon-serverless";
+//   export const db = drizzle(new Pool({ connectionString: process.env.DATABASE_URL }), { schema });
+// neon-http is NOT the path: it has no interactive transactions, which Server Actions and seed:demo rely on.
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 
