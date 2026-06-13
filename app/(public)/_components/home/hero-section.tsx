@@ -1,7 +1,6 @@
-import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { ROUTES } from "@/lib/routes";
 import { Button } from "@/components/ui/button";
+import { TryDemoForm } from "@/components/try-demo-form";
 
 type TProps = {
   heroTitle: string;
@@ -58,14 +57,12 @@ export const HeroSection = ({ heroTitle, heroDesc }: TProps) => {
           who&apos;s been tracking two apartments in a paper notebook for years.
         </p>
 
-        <div className="mt-8">
-          <Button variant="active" size="lg" asChild>
-            <Link href={ROUTES.demo}>
-              Try demo
-              <ArrowRight className="size-3.5" strokeWidth={2} />
-            </Link>
+        <TryDemoForm className="mt-8">
+          <Button variant="active" size="lg" type="submit">
+            Try demo
+            <ArrowRight className="size-3.5" strokeWidth={2} />
           </Button>
-        </div>
+        </TryDemoForm>
       </div>
     </section>
   );

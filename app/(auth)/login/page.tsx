@@ -5,6 +5,7 @@ import { signIn } from "@/lib/auth";
 import { LOGIN_REASONS } from "@/lib/auth/constants";
 import { ROUTES } from "@/lib/routes";
 import { Logo } from "@/components/logo";
+import { TryDemoForm } from "@/components/try-demo-form";
 import { AuthCard } from "@/app/(auth)/_components/auth-card";
 import { GoogleIcon } from "./_components/google-icon";
 import { RememberMe } from "./_components/remember-me";
@@ -52,13 +53,15 @@ export default async function LoginPage({ searchParams }: TProps) {
         <div className="h-px flex-1 bg-zinc-200 dark:bg-zinc-800" />
       </div>
 
-      <Link
-        href="/auth/demo"
-        className="mt-4 mb-2 flex h-9 w-full items-center justify-center gap-1.5 rounded-md border border-zinc-200 text-sm font-medium text-zinc-900 transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-800"
-      >
-        {t("login.demo")}
-        <ArrowRight className="size-3.5" strokeWidth={2} />
-      </Link>
+      <TryDemoForm className="mt-4 mb-2">
+        <button
+          type="submit"
+          className="flex h-9 w-full cursor-pointer items-center justify-center gap-1.5 rounded-md border border-zinc-200 text-sm font-medium text-zinc-900 transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-800"
+        >
+          {t("login.demo")}
+          <ArrowRight className="size-3.5" strokeWidth={2} />
+        </button>
+      </TryDemoForm>
       <p className="text-center text-xs text-zinc-500">{t("login.demoHint")}</p>
 
       <Link

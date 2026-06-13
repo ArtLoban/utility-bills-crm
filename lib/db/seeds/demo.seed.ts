@@ -301,19 +301,19 @@ const main = async (): Promise<void> => {
       // -----------------------------------------------------------------------
       const [primaryUser] = await tx
         .insert(users)
-        .values({ name: "Олексій Коваленко", email: DEMO_EMAIL, isDemo: true })
+        .values({ name: "Alexander Miller", email: DEMO_EMAIL, isDemo: true })
         .onConflictDoUpdate({
           target: users.email,
-          set: { isDemo: true, name: "Олексій Коваленко" },
+          set: { isDemo: true, name: "Alexander Miller" },
         })
         .returning();
 
       const [familyUser] = await tx
         .insert(users)
-        .values({ name: "Марія Коваленко", email: FAMILY_DEMO_EMAIL, isDemo: true })
+        .values({ name: "Anna Miller", email: FAMILY_DEMO_EMAIL, isDemo: true })
         .onConflictDoUpdate({
           target: users.email,
-          set: { isDemo: true, name: "Марія Коваленко" },
+          set: { isDemo: true, name: "Anna Miller" },
         })
         .returning();
 
@@ -343,12 +343,12 @@ const main = async (): Promise<void> => {
         .insert(providers)
         .values([
           { name: "YASNO", ownerId: primaryId },
-          { name: "Нафтогаз України", ownerId: primaryId },
-          { name: "Київводоканал", ownerId: primaryId },
-          { name: "Київтеплоенерго", ownerId: primaryId },
-          { name: 'ОСББ "Хрещатик"', ownerId: primaryId },
-          { name: "ГРМ-Сервіс", ownerId: primaryId },
-          { name: 'ТОВ "Чисте місто"', ownerId: primaryId },
+          { name: "Naftogaz Ukraine", ownerId: primaryId },
+          { name: "Kyivvodokanal", ownerId: primaryId },
+          { name: "Kyivteploenergo", ownerId: primaryId },
+          { name: "Khreshchatyk HOA", ownerId: primaryId },
+          { name: "GRM-Service", ownerId: primaryId },
+          { name: "Clean City LLC", ownerId: primaryId },
           { name: "Lanet", ownerId: primaryId },
           { name: "Kyivstar Home", ownerId: primaryId },
         ])
@@ -364,14 +364,14 @@ const main = async (): Promise<void> => {
       console.log("Providers created.");
 
       // -----------------------------------------------------------------------
-      // Property: Квартира
+      // Property: Apartment
       // -----------------------------------------------------------------------
       const [aptProp] = await tx
         .insert(properties)
         .values({
-          name: "Квартира на Хрещатику",
+          name: "Apartment on Khreshchatyk",
           type: "apartment",
-          address: "вул. Хрещатик, 22, кв. 5, Київ",
+          address: "22 Khreshchatyk St, Apt 5, Kyiv",
         })
         .returning({ id: properties.id });
 
@@ -417,24 +417,24 @@ const main = async (): Promise<void> => {
         null,
       );
 
-      const aptColdC = await contractInsert(tx, aptColdSvc, pId("Київводоканал"), START_DATE, null);
+      const aptColdC = await contractInsert(tx, aptColdSvc, pId("Kyivvodokanal"), START_DATE, null);
       await tariffInsert(tx, aptColdC, { rateT1: "16.00" }, START_DATE, null);
       await acctInsert(tx, aptColdC, "KVK-2024-0045", START_DATE, null);
       await pdInsert(
         tx,
         aptColdC,
-        "IBAN UA00 3220 0150 0000 0260 0000 1234 — Київводоканал",
+        "IBAN UA00 3220 0150 0000 0260 0000 1234 — Kyivvodokanal",
         START_DATE,
         null,
       );
 
-      const aptHotC = await contractInsert(tx, aptHotSvc, pId("Київводоканал"), START_DATE, null);
+      const aptHotC = await contractInsert(tx, aptHotSvc, pId("Kyivvodokanal"), START_DATE, null);
       await tariffInsert(tx, aptHotC, { rateT1: "95.00" }, START_DATE, null);
       await acctInsert(tx, aptHotC, "KVK-2024-0046", START_DATE, null);
       await pdInsert(
         tx,
         aptHotC,
-        "IBAN UA00 3220 0150 0000 0260 0000 1235 — Київводоканал",
+        "IBAN UA00 3220 0150 0000 0260 0000 1235 — Kyivvodokanal",
         START_DATE,
         null,
       );
@@ -442,7 +442,7 @@ const main = async (): Promise<void> => {
       const aptGasC = await contractInsert(
         tx,
         aptGasSvc,
-        pId("Нафтогаз України"),
+        pId("Naftogaz Ukraine"),
         START_DATE,
         null,
       );
@@ -451,7 +451,7 @@ const main = async (): Promise<void> => {
       await pdInsert(
         tx,
         aptGasC,
-        "IBAN UA80 0021 3001 0460 0000 3000 0001 — Нафтогаз",
+        "IBAN UA80 0021 3001 0460 0000 3000 0001 — Naftogaz",
         START_DATE,
         null,
       );
@@ -459,7 +459,7 @@ const main = async (): Promise<void> => {
       const aptHeatC = await contractInsert(
         tx,
         aptHeatSvc,
-        pId("Київтеплоенерго"),
+        pId("Kyivteploenergo"),
         START_DATE,
         null,
       );
@@ -468,7 +468,7 @@ const main = async (): Promise<void> => {
       await pdInsert(
         tx,
         aptHeatC,
-        "IBAN UA11 3253 0000 0002 6007 3000 0010 — Київтеплоенерго",
+        "IBAN UA11 3253 0000 0002 6007 3000 0010 — Kyivteploenergo",
         START_DATE,
         null,
       );
@@ -476,7 +476,7 @@ const main = async (): Promise<void> => {
       const aptMaintC = await contractInsert(
         tx,
         aptMaintSvc,
-        pId('ОСББ "Хрещатик"'),
+        pId("Khreshchatyk HOA"),
         START_DATE,
         null,
       );
@@ -485,7 +485,7 @@ const main = async (): Promise<void> => {
       await pdInsert(
         tx,
         aptMaintC,
-        "ФОП Ковальчук — IBAN UA55 3003 5000 0002 0006 0010 1234",
+        "Kovalchuk (sole proprietor) — IBAN UA55 3003 5000 0002 0006 0010 1234",
         START_DATE,
         null,
       );
@@ -494,24 +494,24 @@ const main = async (): Promise<void> => {
       const aptNetCA = await contractInsert(tx, aptNetSvc, pId("Lanet"), START_DATE, CHANGE_DATE);
       await tariffInsert(tx, aptNetCA, { fixedAmount: "299.00" }, START_DATE, CHANGE_DATE);
       await acctInsert(tx, aptNetCA, "LN-2024-78301", START_DATE, CHANGE_DATE);
-      await pdInsert(tx, aptNetCA, "lk.lanet.ua — рахунок LN-2024-78301", START_DATE, CHANGE_DATE);
+      await pdInsert(tx, aptNetCA, "lk.lanet.ua — account LN-2024-78301", START_DATE, CHANGE_DATE);
 
       const aptNetCB = await contractInsert(tx, aptNetSvc, pId("Kyivstar Home"), CHANGE_DATE, null);
       await tariffInsert(tx, aptNetCB, { fixedAmount: "349.00" }, CHANGE_DATE, null);
       await acctInsert(tx, aptNetCB, "KS-HOME-44129", CHANGE_DATE, null);
-      await pdInsert(tx, aptNetCB, "kyivstar.ua — договір KS-HOME-44129", CHANGE_DATE, null);
+      await pdInsert(tx, aptNetCB, "kyivstar.ua — contract KS-HOME-44129", CHANGE_DATE, null);
 
       console.log("Apartment structure done.");
 
       // -----------------------------------------------------------------------
-      // Property: Будинок
+      // Property: House
       // -----------------------------------------------------------------------
       const [houseProp] = await tx
         .insert(properties)
         .values({
-          name: "Заміський будинок",
+          name: "Country house",
           type: "house",
-          address: "с. Петрівське, вул. Садова, 14",
+          address: "14 Sadova St, Petrivske village",
         })
         .returning({ id: properties.id });
 
@@ -561,7 +561,7 @@ const main = async (): Promise<void> => {
       const houseGasC = await contractInsert(
         tx,
         houseGasSvc,
-        pId("Нафтогаз України"),
+        pId("Naftogaz Ukraine"),
         START_DATE,
         null,
       );
@@ -571,7 +571,7 @@ const main = async (): Promise<void> => {
       await pdInsert(
         tx,
         houseGasC,
-        "IBAN UA80 0021 3001 0460 0000 3000 0002 — Нафтогаз",
+        "IBAN UA80 0021 3001 0460 0000 3000 0002 — Naftogaz",
         START_DATE,
         null,
       );
@@ -579,7 +579,7 @@ const main = async (): Promise<void> => {
       const houseColdC = await contractInsert(
         tx,
         houseColdSvc,
-        pId("Київводоканал"),
+        pId("Kyivvodokanal"),
         START_DATE,
         null,
       );
@@ -588,7 +588,7 @@ const main = async (): Promise<void> => {
       await pdInsert(
         tx,
         houseColdC,
-        "IBAN UA00 3220 0150 0000 0260 0000 7700 — Київводоканал",
+        "IBAN UA00 3220 0150 0000 0260 0000 7700 — Kyivvodokanal",
         START_DATE,
         null,
       );
@@ -596,33 +596,37 @@ const main = async (): Promise<void> => {
       const houseGarbC = await contractInsert(
         tx,
         houseGarbSvc,
-        pId('ТОВ "Чисте місто"'),
+        pId("Clean City LLC"),
         START_DATE,
         null,
       );
       await tariffInsert(tx, houseGarbC, { fixedAmount: "145.00" }, START_DATE, null);
       await acctInsert(tx, houseGarbC, "CM-2024-0331", START_DATE, null);
-      await pdInsert(tx, houseGarbC, "Рахунок CM-2024-0331 — ТОВ Чисте місто", START_DATE, null);
+      await pdInsert(tx, houseGarbC, "Invoice CM-2024-0331 — Clean City LLC", START_DATE, null);
 
       const houseGasDelC = await contractInsert(
         tx,
         houseGasDelSvc,
-        pId("ГРМ-Сервіс"),
+        pId("GRM-Service"),
         START_DATE,
         null,
       );
       await tariffInsert(tx, houseGasDelC, { fixedAmount: "190.00" }, START_DATE, null);
       await acctInsert(tx, houseGasDelC, "GRM-2024-0055", START_DATE, null);
-      await pdInsert(tx, houseGasDelC, "ГРМ-Сервіс — рахунок GRM-2024-0055", START_DATE, null);
+      await pdInsert(tx, houseGasDelC, "GRM-Service — invoice GRM-2024-0055", START_DATE, null);
 
       console.log("House structure done.");
 
       // -----------------------------------------------------------------------
-      // Property: Дача
+      // Property: Cottage
       // -----------------------------------------------------------------------
       const [cottageProp] = await tx
         .insert(properties)
-        .values({ name: "Дача", type: "cottage", address: "Київська обл., Бориспільський р-н" })
+        .values({
+          name: "Summer cottage",
+          type: "cottage",
+          address: "Boryspil district, Kyiv region",
+        })
         .returning({ id: properties.id });
 
       if (!cottageProp) throw new Error("Failed to insert cottage");

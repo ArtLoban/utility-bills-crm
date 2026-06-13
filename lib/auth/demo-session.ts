@@ -1,17 +1,16 @@
-import { NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
 import { db } from "@/lib/db/client";
 import { sessions, users } from "@/lib/db/schema";
-import type { UserId } from "@/lib/db/schema";
 import { DEMO_EMAIL } from "@/lib/auth/constants";
-import { getSessionCookieConfig } from "@/lib/auth/cookie";
-import { ROUTES } from "@/lib/routes";
 
 const DEMO_SESSION_DURATION_MS = 60 * 60 * 1000; // 1 hour — non-rememberMe policy
 
-export const GET = async (request: Request): Promise<Response> => {
-  // Find or create the persistent demo user. onConflictDoUpdate ensures
-  // isDemo is set to true even if the row pre-dated the isDemo column migration.
+// Provisions the shared demo account and a fresh database session for it, returning
+// the token + expiry for the caller to set as a cookie. Kept free of cookie/redirect
+// side effects so it can be exercised directly in integration tests.
+export const createDemoSession = async (): Promise<{ sessionToken: string; expires: Date }> => {
+  // Find or create the persistent demo user. onConflictDoUpdate ensures isDemo is set
+  // to true even if the row pre-dated the isDemo column migration.
   await db
     .insert(users)
     .values({ name: "Demo User", email: DEMO_EMAIL, isDemo: true })
@@ -22,7 +21,7 @@ export const GET = async (request: Request): Promise<Response> => {
   });
 
   if (!demoUser) {
-    return new Response("Failed to provision demo user", { status: 500 });
+    throw new Error("Failed to provision demo user");
   }
 
   const sessionToken = crypto.randomUUID();
@@ -30,15 +29,11 @@ export const GET = async (request: Request): Promise<Response> => {
 
   await db.insert(sessions).values({
     sessionToken,
-    userId: demoUser.id as UserId,
+    userId: demoUser.id,
     expires,
     rememberMe: false,
     absoluteExpires: null,
   });
 
-  const { name, options } = getSessionCookieConfig();
-  const response = NextResponse.redirect(new URL(ROUTES.dashboard, request.url));
-  response.cookies.set(name, sessionToken, { ...options, expires });
-
-  return response;
+  return { sessionToken, expires };
 };

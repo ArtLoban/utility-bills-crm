@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { ROUTES } from "@/lib/routes";
+import { TryDemoForm } from "@/components/try-demo-form";
 
 type TProps = {
   projectRepoUrl: string;
@@ -27,15 +28,17 @@ export const LinksSection = ({ projectRepoUrl }: TProps) => {
             </span>
           </a>
 
-          <Link href={ROUTES.demo} className={cardClass}>
-            <span className={cardLabel}>
-              Live demo
-              <ArrowRight className="size-3.5" strokeWidth={2} />
-            </span>
-            <span className="text-sm leading-[1.55] text-zinc-500">
-              view-only, with sample data.
-            </span>
-          </Link>
+          <TryDemoForm className="contents">
+            <button type="submit" className={`${cardClass} cursor-pointer text-left`}>
+              <span className={cardLabel}>
+                Live demo
+                <ArrowRight className="size-3.5" strokeWidth={2} />
+              </span>
+              <span className="text-sm leading-[1.55] text-zinc-500">
+                view-only, with sample data.
+              </span>
+            </button>
+          </TryDemoForm>
 
           <Link href={ROUTES.about} className={cardClass}>
             <span className={cardLabel}>

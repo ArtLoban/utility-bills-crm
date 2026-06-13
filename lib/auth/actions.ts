@@ -1,12 +1,26 @@
 "use server";
 
 import { eq } from "drizzle-orm";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import { signOut } from "@/lib/auth";
 import { db } from "@/lib/db/client";
 import { sessions } from "@/lib/db/schema";
+import { getSessionCookieConfig } from "@/lib/auth/cookie";
+import { createDemoSession } from "@/lib/auth/demo-session";
 import { requireMutableUser } from "@/lib/auth/guards";
 import { ok, type Result, type DemoModeError } from "@/lib/errors";
 import { ROUTES } from "@/lib/routes";
+
+// Demo sign-in is a state-changing operation, so it must run on POST only.
+// A GET route handler would be prefetched by Next in production, silently
+// creating sessions without any user action.
+export const startDemoSessionAction = async () => {
+  const { sessionToken, expires } = await createDemoSession();
+  const { name, options } = getSessionCookieConfig();
+  (await cookies()).set(name, sessionToken, { ...options, expires });
+  redirect(ROUTES.dashboard);
+};
 
 export const signOutAction = async () => {
   await signOut({ redirectTo: "/" });
