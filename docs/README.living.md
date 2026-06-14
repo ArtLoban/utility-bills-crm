@@ -53,8 +53,8 @@ MVP is defined as a **minimum viable portfolio piece** — a project that demons
 See [Roadmap](#roadmap). Key items:
 
 - Email/password auth (Google OAuth only in MVP)
-- File storage (Google Drive integration)
 - Telegram notifications
+- File storage (Google Drive integration)
 - Custom user-defined services
 - Data export
 - Search
@@ -610,6 +610,9 @@ Rationale: the "product-first" framing had begun to systematically under-scope f
 > **#149 — Production DB driver strategy: `node-postgres` Pool against Neon's pooled endpoint; migrations against the direct endpoint; deferred serverless path is `neon-serverless` (WebSocket), not `neon-http`.**
 > The production runtime keeps the existing `node-postgres` `Pool` (`lib/db/client.ts`), pointed at Neon's **pooled** connection endpoint (PgBouncer) via `DATABASE_URL`. Migrations (`db:migrate`) run against Neon's **direct** (unpooled) endpoint, since DDL and the migration session don't go through the transaction pooler. If connection pressure on serverless ever warrants it, the deferred upgrade is `drizzle-orm/neon-serverless` (the WebSocket `Pool` from `@neondatabase/serverless`), which preserves interactive transactions. `neon-http` (`drizzle-orm/neon-http`) is rejected as the upgrade path: it has no interactive transaction support, and Server Actions and `seed:demo` compose Drizzle `tx`. No runtime change ships now — this records the chosen direction. The Node runtime is pinned to the 22 LTS line (`engines.node`, `.nvmrc`) to keep local and Vercel builds aligned.
 
+> **#150 — Beyond v1 direction: OCR cut, working order set, Telegram reframed.**
+> Three direction-level decisions for post-MVP work. **(1) OCR permanently cut** — OCR on scanned/photographed bills is removed from the project entirely, not deferred or roadmapped: near-zero value for low-volume monthly manual entry across two properties, high cost (per-provider layout parsing, an external model, error correction), and a weak portfolio signal (mostly glue around a third-party API). **(2) Working order fixed** — the actual Beyond-v1 build sequence is **Telegram notifications → Google Drive file storage → remaining roadmap items**, distinct from the categorized v2/v3/v4 menu. **(3) Telegram reframed** — from signal/deadline-driven alerts (reading-deadline, payment-deadline, debt) to **user-authored monthly recurring self-reminders**: the user creates reminders per service (anchor = a specific day of the month or N days before month-end, plus required text), delivered as a single daily Telegram digest. The system is a dumb scheduler that computes no signals; this **removes the feature's dependency on Decision #145** (the dashboard "payment deadline approaching" signal stays deferred and is unrelated). The detailed Telegram design (entity shape, anchors, delivery, linking, gating) is logged stage-by-stage when the feature is actually built.
+
 ## Open Questions
 
 Carried forward to Phase 7 (implementation) and beyond.
@@ -647,11 +650,13 @@ Carried forward to Phase 7 (implementation) and beyond.
 
 See earlier sections for details. The next stage is onboarding the first real user — the only remaining MVP criterion ("real users in active use").
 
+**Working order (Beyond v1).** The categorized v2/v3/v4 lists below are a menu, not the build sequence. The actual next sequence is: **Telegram notifications → Google Drive file storage → remaining items**.
+
 ### v2 — Extensions
 
 - Email/password authentication alongside Google
+- Telegram notifications — user-authored monthly recurring self-reminders, one per service (anchored to a specific day of the month or N days before month-end, plus a required text), delivered as a single daily digest. A dumb scheduler, not signal-driven; does not depend on Decision #145.
 - Google Drive integration for bill photos and receipts
-- Telegram notifications for reading deadlines, payment deadlines, debts
 
 ### v3 — Convenience and analytics
 
@@ -663,7 +668,6 @@ See earlier sections for details. The next stage is onboarding the first real us
 ### v4+ — Automation
 
 - Email bill parsing
-- OCR for scanned bills
 - Integrations with provider APIs
 - Structured bill components for provider reconciliation
 

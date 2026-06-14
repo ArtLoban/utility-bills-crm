@@ -4,6 +4,8 @@ A personal multi-tenant application for tracking utility bills across multiple p
 
 Built primarily as a senior/architect-level growth playground in frontend engineering, with a real product target: my wife, who currently tracks two apartments on paper.
 
+**Live:** [utility-bills-crm.vercel.app](https://utility-bills-crm.vercel.app) — includes a built-in demo that requires no signup.
+
 ## Project Goals (in priority order)
 
 1. **Grow as a frontend/architect-level engineer.** Every decision is made with senior-level rigor. The stack and architecture reflect practices to internalize, not the fastest path to features.
@@ -12,15 +14,12 @@ Built primarily as a senior/architect-level growth playground in frontend engine
 
 ## Status
 
-- Phase 4 complete — architecture and stack finalized.
-- Phase 5 complete — data model designed. See `db/DATA_MODEL.md` and `db/SCHEMA_REFERENCE.md`.
-- Phase 6 complete — UI architecture designed. See `docs/UI_ARCHITECTURE.md`.
-- Phase 7 in progress — build MVP.
-  - Infrastructure complete: scaffold, DB schema + migrations, Auth.js v5 + Google OAuth, design system (shadcn/ui + Radix), i18n (next-intl), logging (pino).
-  - Public landing pages (`/`, `/about`, `/project`) — complete.
-  - Admin section — complete: dashboard, properties oversight, users, landing CMS.
-  - Authenticated CRM — UI and pages complete across all screens (dashboard with charts, properties, meters, services, bills, payments, sharing, settings); backend CRUD integration (Server Actions, business logic) in progress.
-  - Remaining: bill/reading server actions, demo mode, Sentry integration, strategic tests.
+**MVP complete and deployed to production.** The full v1 scope is built and live: public landing pages (`/`, `/about`, `/project`), the authenticated CRM across all screens (dashboard with charts, properties, meters, services, bills, payments, sharing, settings) with Server Actions and business logic, the admin section (dashboard, properties oversight, users, landing CMS), demo mode, and strategic tests for ledger, temporal lookups, aggregations, and critical actions.
+
+- Phases 4–6 complete — architecture, data model, and UI design. See `db/DATA_MODEL.md`, `db/SCHEMA_REFERENCE.md`, `docs/UI_ARCHITECTURE.md`.
+- Phase 7 (build MVP) complete — deployed and live.
+- The only remaining MVP criterion is **real users in active use** — onboarding the first real user (my wife, replacing the paper notebook).
+- Sentry error tracking is intentionally deferred (optional, planned) — see Tech Stack below.
 
 ## MVP Scope
 
@@ -149,8 +148,8 @@ Public landing, authenticated CRM, sharing, admin with CMS, i18n, theming.
 ### v2 — Extensions
 
 - Email/password authentication alongside Google
+- Telegram notifications — user-authored monthly recurring self-reminders, one per service (anchored to a day of the month or N days before month-end, plus a required text), delivered as a single daily digest
 - Google Drive integration for bill photos and receipts
-- Telegram notifications for deadlines and debts
 
 ### v3 — Convenience and analytics
 
@@ -162,7 +161,6 @@ Public landing, authenticated CRM, sharing, admin with CMS, i18n, theming.
 ### v4+ — Automation
 
 - Email bill parsing
-- OCR for scanned bills
 - Integrations with provider APIs
 - Structured bill components for provider reconciliation
 

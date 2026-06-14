@@ -377,7 +377,7 @@ Baseline level:
 ### 4.3. Automation
 
 - **Email bill parsing** from providers.
-- **OCR** on scanned or photographed bills.
+- **OCR** on scanned or photographed bills — **permanently out of scope** (cut from the project, not a future roadmap item). Near-zero value for low-volume manual entry, high cost (per-provider layout parsing, an external model, error correction), and a weak portfolio signal (mostly glue around a third-party API).
 - **Provider API integrations** (submit readings, fetch bills).
 - **Automatic reconciliation** with provider ledgers through a "provider-reported debt" field.
 
@@ -395,11 +395,15 @@ Baseline level:
 
 The order is preliminary and will be adjusted based on MVP outcomes.
 
+**Working order (Beyond v1).** The categorized v2/v3/v4 lists below are a menu, not the build
+sequence. The actual next sequence is: **Telegram notifications → Google Drive file storage →
+remaining items**.
+
 ### v2 — Core convenience extensions
 
 1. **Email/password authentication** alongside Google.
 2. **Google Drive integration** for file storage — bill photos, receipts, meter photos. Connected at the property level by the owner.
-3. **Telegram notifications** — reading deadlines, payment deadlines, debt alerts.
+3. **Telegram notifications** — user-authored monthly recurring self-reminders, one per service (anchored to a specific day of the month or N days before month-end, plus a required text), delivered as a single daily Telegram digest. A dumb scheduler that does not compute signals; does not depend on Decision #145.
 4. **Accept/decline invitation flow** for sharing, including email-based invitations to users without accounts.
 
 ### v3 — Analytics and polish
@@ -412,9 +416,8 @@ The order is preliminary and will be adjusted based on MVP outcomes.
 ### v4+ — Automation
 
 9. **Email bill parsing.**
-10. **OCR from scanned bills.**
-11. **Integrations with provider portals** where APIs are available.
-12. **Structured bill components** (debt, overpayment, recalculation, allowances) for provider reconciliation.
+10. **Integrations with provider portals** where APIs are available.
+11. **Structured bill components** (debt, overpayment, recalculation, allowances) for provider reconciliation.
 
 ### Possibly someday
 
