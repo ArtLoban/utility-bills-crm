@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { getPublicHome } from "@/features/landing-cms";
+import { ROUTES } from "@/lib/routes";
 import { CmsText } from "@/components/cms-text";
+import { MOCKUP_HOST } from "./_components/home/constants";
 import { HeroSection } from "./_components/home/hero-section";
 import { MockupSection } from "./_components/home/mockup-section";
 import { FeaturesSection } from "./_components/home/features-section";
@@ -52,7 +54,7 @@ export default async function LandingPage() {
       <HeroSection heroTitle={homeHero?.heroTitle ?? ""} heroDesc={homeHero?.heroDesc ?? ""} />
 
       <MockupSection
-        url="app.utilitybills.dev/dashboard"
+        url={`${MOCKUP_HOST}${ROUTES.dashboard}`}
         caption={<CmsText value={homeHero?.dashboardCaption ?? ""} />}
       >
         <DashboardMockup />
@@ -61,7 +63,7 @@ export default async function LandingPage() {
       <FeaturesSection cards={featureCards} />
 
       <MockupSection
-        url="app.utilitybills.dev/properties/1"
+        url={`${MOCKUP_HOST}${ROUTES.properties}/1`}
         caption={<CmsText value={homeHero?.propertyCaption ?? ""} />}
       >
         <PropertyDetailMockup />
