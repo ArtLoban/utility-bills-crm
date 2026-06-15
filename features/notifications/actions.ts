@@ -1,6 +1,6 @@
 "use server";
 
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 import { requireMutableUser } from "@/lib/auth/guards";
 import { roleAtLeast } from "@/lib/db/access/properties";
@@ -23,8 +23,8 @@ import type { Result } from "@/lib/errors";
 import { createReminderSchema, editReminderSchema } from "./schema";
 import type { TCreateReminderInput, TEditReminderInput } from "./schema";
 
-// Authorization is anchored on the reminder's target service, never on reminder ownership:
-// any editor/owner on the service's property may manage reminders there (per slice spec).
+// Create authorizes on the target service: any editor/owner on the service's property may
+// add a reminder there. (Edit/delete authorize differently — by reminder ownership.)
 //   NotFoundError  — service missing or wholly inaccessible (404-masked in serviceByIdForUser).
 //   ForbiddenError — caller can see the service (viewer) but lacks editor rights. A viewer
 //                    already knows the service exists, so this leaks nothing and still maps
@@ -72,7 +72,7 @@ export const createReminder = async (
 export const editReminder = async (
   reminderId: ReminderId,
   input: TEditReminderInput,
-): Promise<Result<void, ValidationError | NotFoundError | ForbiddenError | DemoModeError>> => {
+): Promise<Result<void, ValidationError | NotFoundError | DemoModeError>> => {
   const parsed = editReminderSchema.safeParse(input);
   if (!parsed.success) {
     return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
@@ -82,19 +82,17 @@ export const editReminder = async (
   if (!authGuard.ok) return authGuard;
   const userId = authGuard.value;
 
-  // Load the reminder to find its service — authorization is anchored on that service.
+  // Edit is scoped to the owner: a reminder owned by another user is indistinguishable
+  // from a nonexistent one — both surface as NotFoundError. No service-role gate.
   const [existing] = await db
-    .select({ serviceId: reminders.serviceId })
+    .select({ id: reminders.id })
     .from(reminders)
-    .where(eq(reminders.id, reminderId))
+    .where(and(eq(reminders.id, reminderId), eq(reminders.userId, userId)))
     .limit(1);
 
   if (!existing) {
     return err(new NotFoundError("reminder", reminderId));
   }
-
-  const guard = await requireServiceEditor(userId, existing.serviceId);
-  if (!guard.ok) return guard;
 
   const { anchorType, anchorValue, text } = parsed.data;
 
@@ -108,23 +106,21 @@ export const editReminder = async (
 
 export const deleteReminder = async (
   reminderId: ReminderId,
-): Promise<Result<void, NotFoundError | ForbiddenError | DemoModeError>> => {
+): Promise<Result<void, NotFoundError | DemoModeError>> => {
   const authGuard = await requireMutableUser();
   if (!authGuard.ok) return authGuard;
   const userId = authGuard.value;
 
+  // Delete is scoped to the owner: another user's reminder reads as NotFoundError.
   const [existing] = await db
-    .select({ serviceId: reminders.serviceId })
+    .select({ id: reminders.id })
     .from(reminders)
-    .where(eq(reminders.id, reminderId))
+    .where(and(eq(reminders.id, reminderId), eq(reminders.userId, userId)))
     .limit(1);
 
   if (!existing) {
     return err(new NotFoundError("reminder", reminderId));
   }
-
-  const guard = await requireServiceEditor(userId, existing.serviceId);
-  if (!guard.ok) return guard;
 
   // Hard-delete — reminders carry no audit value and have no incoming foreign keys.
   await db.delete(reminders).where(eq(reminders.id, reminderId));

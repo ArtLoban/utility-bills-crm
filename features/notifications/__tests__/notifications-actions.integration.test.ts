@@ -270,9 +270,9 @@ describe("createReminder", () => {
 // --- editReminder ---
 
 describe("editReminder", () => {
-  it("editor edits — anchor and text are updated", async () => {
+  it("owner edits their own reminder — anchor and text are updated", async () => {
     const reminderId = await seedReminder();
-    mockAuth(editorUserId);
+    mockAuth(ownerUserId);
 
     const result = await editReminder(reminderId, {
       anchorType: REMINDER_ANCHOR_TYPES.DAYS_BEFORE_END,
@@ -287,9 +287,9 @@ describe("editReminder", () => {
     expect(row!.text).toBe("updated");
   });
 
-  it("viewer — ForbiddenError, row unchanged", async () => {
-    const reminderId = await seedReminder();
-    mockAuth(viewerUserId);
+  it("another user's reminder — NotFoundError, row unchanged", async () => {
+    const reminderId = await seedReminder(); // owned by ownerUserId
+    mockAuth(editorUserId); // property editor, but not the reminder's owner
 
     const result = await editReminder(reminderId, {
       anchorType: REMINDER_ANCHOR_TYPES.DAY_OF_MONTH,
@@ -298,7 +298,7 @@ describe("editReminder", () => {
     });
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.error).toBeInstanceOf(ForbiddenError);
+    expect(result.error).toBeInstanceOf(NotFoundError);
 
     const [row] = await db.select().from(reminders).where(eq(reminders.id, reminderId)).limit(1);
     expect(row!.text).toBe("original");
@@ -346,7 +346,7 @@ describe("editReminder", () => {
 // --- deleteReminder ---
 
 describe("deleteReminder", () => {
-  it("owner deletes — row is hard-removed", async () => {
+  it("owner deletes their own reminder — row is hard-removed", async () => {
     const reminderId = await seedReminder();
     mockAuth(ownerUserId);
 
@@ -357,14 +357,14 @@ describe("deleteReminder", () => {
     expect(rows).toHaveLength(0);
   });
 
-  it("viewer — ForbiddenError, row preserved", async () => {
-    const reminderId = await seedReminder();
-    mockAuth(viewerUserId);
+  it("another user's reminder — NotFoundError, row preserved", async () => {
+    const reminderId = await seedReminder(); // owned by ownerUserId
+    mockAuth(editorUserId); // property editor, but not the reminder's owner
 
     const result = await deleteReminder(reminderId);
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.error).toBeInstanceOf(ForbiddenError);
+    expect(result.error).toBeInstanceOf(NotFoundError);
 
     const rows = await db.select().from(reminders).where(eq(reminders.id, reminderId));
     expect(rows).toHaveLength(1);
