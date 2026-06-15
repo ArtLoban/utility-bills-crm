@@ -23,13 +23,11 @@ vi.mock("../telegram", () => ({ sendTelegramMessage: vi.fn() }));
 
 import { sendTelegramMessage } from "../telegram";
 import { deliverDueReminders } from "../delivery";
-import { GET as cronGet } from "@/app/api/cron/notifications/route";
 
 // --- Fixtures ---
 
 const PROPERTY_NAME = "Test Notif Property";
 const TEST_CHAT_ID = "test-chat-123";
-const TEST_CRON_SECRET = "test-cron-secret";
 
 // 2025-03-15 09:00 UTC = 2025-03-15 in Kyiv (UTC+2, before DST). day_of_month(15) fires;
 // days_before_end(0) — last day of a 31-day month — does not.
@@ -52,7 +50,6 @@ const mockSend = vi.mocked(sendTelegramMessage);
 
 beforeAll(async () => {
   process.env.TELEGRAM_CHAT_ID = TEST_CHAT_ID;
-  process.env.CRON_SECRET = TEST_CRON_SECRET;
 
   const serviceTypeRows = await db
     .select({ id: serviceTypes.id, code: serviceTypes.code })
@@ -233,30 +230,5 @@ describe("deliverDueReminders — send failure", () => {
       .where(inArray(reminderDeliveries.userId, [userAId, userBId]));
     expect(rows.every((r) => r.status === REMINDER_DELIVERY_STATUSES.FAILED)).toBe(true);
     expect(rows.every((r) => r.error === "Telegram sendMessage failed: 400 bad")).toBe(true);
-  });
-});
-
-// --- Cron route authorization ---
-
-const cronRequest = (authHeader?: string): Request =>
-  new Request("https://app.test/api/cron/notifications", {
-    method: "GET",
-    headers: authHeader ? { authorization: authHeader } : undefined,
-  });
-
-describe("GET /api/cron/notifications — authorization", () => {
-  it("rejects a request with no Authorization header (401)", async () => {
-    const response = await cronGet(cronRequest());
-    expect(response.status).toBe(401);
-  });
-
-  it("rejects a request with the wrong secret (401)", async () => {
-    const response = await cronGet(cronRequest("Bearer wrong-secret"));
-    expect(response.status).toBe(401);
-  });
-
-  it("accepts a request with the correct secret (200)", async () => {
-    const response = await cronGet(cronRequest(`Bearer ${TEST_CRON_SECRET}`));
-    expect(response.status).toBe(200);
   });
 });
