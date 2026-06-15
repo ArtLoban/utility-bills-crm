@@ -1,14 +1,19 @@
 import { sql } from "drizzle-orm";
-import { check, index, integer, pgTable, text, uuid } from "drizzle-orm/pg-core";
+import { check, date, index, integer, pgTable, text, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 
 import { type UserId, users } from "./auth";
 import { type TServiceId, services } from "./services";
 import { brandedUuidPk, textEnum, timestamps } from "./helpers";
 
-// --- Branded type ---
+// --- Branded types ---
 
 declare const reminderIdBrand: unique symbol;
 export type ReminderId = string & { readonly [reminderIdBrand]: typeof reminderIdBrand };
+
+declare const reminderDeliveryIdBrand: unique symbol;
+export type ReminderDeliveryId = string & {
+  readonly [reminderDeliveryIdBrand]: typeof reminderDeliveryIdBrand;
+};
 
 // --- Enum const-objects (canonical source for column + CHECK constraint + domain logic) ---
 
@@ -68,3 +73,52 @@ export const reminders = pgTable(
 
 export type TReminder = typeof reminders.$inferSelect;
 export type TNewReminder = typeof reminders.$inferInsert;
+
+// --- Delivery ledger (slice 2) ---
+
+// Per-(user × delivery date) idempotency record and delivery log for the daily digest job.
+// One row claims a user's digest for a Kyiv civil date before sending; the UNIQUE constraint
+// makes an accidental double-invocation a no-op (the second claim conflicts and is skipped).
+// Status walks claimed → sent | failed: the row is inserted `claimed` at claim time, then the
+// outcome is recorded after the send attempt (failure detail in `error`).
+
+export const REMINDER_DELIVERY_STATUSES = {
+  CLAIMED: "claimed",
+  SENT: "sent",
+  FAILED: "failed",
+} as const;
+
+export type TReminderDeliveryStatus =
+  (typeof REMINDER_DELIVERY_STATUSES)[keyof typeof REMINDER_DELIVERY_STATUSES];
+
+export const REMINDER_DELIVERY_STATUS_LIST = [
+  REMINDER_DELIVERY_STATUSES.CLAIMED,
+  REMINDER_DELIVERY_STATUSES.SENT,
+  REMINDER_DELIVERY_STATUSES.FAILED,
+] as const;
+
+export const reminderDeliveries = pgTable(
+  "reminder_deliveries",
+  {
+    id: brandedUuidPk<ReminderDeliveryId>(),
+    userId: uuid("user_id")
+      .notNull()
+      .$type<UserId>()
+      .references(() => users.id, { onDelete: "cascade" }),
+    // Civil DATE in Europe/Kyiv (the job's single delivery timezone in slice 2) — not an
+    // instant; one digest per user per calendar day.
+    deliveryDate: date("delivery_date").notNull(),
+    status: textEnum("status", REMINDER_DELIVERY_STATUS_LIST).notNull(),
+    // Failure detail for status = 'failed'; NULL otherwise.
+    error: text("error"),
+    ...timestamps(),
+  },
+  (t) => [
+    // The idempotency guarantee: at most one delivery row per user per day.
+    uniqueIndex("reminder_deliveries_user_date_unique_idx").on(t.userId, t.deliveryDate),
+    check("reminder_deliveries_status_check", sql`${t.status} IN ('claimed', 'sent', 'failed')`),
+  ],
+);
+
+export type TReminderDelivery = typeof reminderDeliveries.$inferSelect;
+export type TNewReminderDelivery = typeof reminderDeliveries.$inferInsert;

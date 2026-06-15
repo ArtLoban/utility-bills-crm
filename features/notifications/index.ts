@@ -1,5 +1,7 @@
 export { createReminder, editReminder, deleteReminder } from "./actions";
-export { reminderFiresOn } from "./core";
+export { deliverDueReminders } from "./delivery";
+export type { TDeliverySummary } from "./delivery";
+export { reminderFiresOn, kyivCivilDate, toIsoDate } from "./core";
 export type { TReminderAnchor, TCivilDate } from "./core";
 export {
   REMINDER_LIMITS,

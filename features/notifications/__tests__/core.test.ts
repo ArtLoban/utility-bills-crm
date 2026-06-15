@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { REMINDER_ANCHOR_TYPES } from "@/lib/db/schema/notifications";
 import type { TCivilDate, TReminderAnchor } from "../core";
-import { reminderFiresOn } from "../core";
+import { kyivCivilDate, reminderFiresOn, toIsoDate } from "../core";
 
 // --- Fixture helpers ---
 
@@ -100,5 +100,43 @@ describe("reminderFiresOn — days_before_end", () => {
 
   it("value 27 fires on the 4th of a 31-day month (31 − 27)", () => {
     expect(reminderFiresOn(daysBeforeEnd(27), date(2025, 1, 4))).toBe(true);
+  });
+});
+
+// --- kyivCivilDate ---
+// Europe/Kyiv is UTC+2 in winter (EET) and UTC+3 in summer (EEST). The civil date can differ
+// from the UTC date around midnight Kyiv — these cases pin the offset is actually applied.
+
+describe("kyivCivilDate", () => {
+  it("returns the same civil date for a midday-UTC instant", () => {
+    expect(kyivCivilDate(new Date("2025-01-15T12:00:00Z"))).toEqual(date(2025, 1, 15));
+  });
+
+  it("rolls to the next day for an instant just before midnight Kyiv in winter (UTC+2)", () => {
+    // 22:30 UTC on Jan 15 = 00:30 Kyiv on Jan 16.
+    expect(kyivCivilDate(new Date("2025-01-15T22:30:00Z"))).toEqual(date(2025, 1, 16));
+  });
+
+  it("rolls to the next day for an instant just before midnight Kyiv in summer (UTC+3)", () => {
+    // 21:30 UTC on Jul 15 = 00:30 Kyiv on Jul 16.
+    expect(kyivCivilDate(new Date("2025-07-15T21:30:00Z"))).toEqual(date(2025, 7, 16));
+  });
+
+  it("stays on the same day at 06:00 UTC (the cron hour is ~09:00 Kyiv, unambiguous)", () => {
+    expect(kyivCivilDate(new Date("2025-07-15T06:00:00Z"))).toEqual(date(2025, 7, 15));
+  });
+
+  it("crosses a month boundary at the last instant of the month", () => {
+    // 22:30 UTC on Jan 31 = 00:30 Kyiv on Feb 1.
+    expect(kyivCivilDate(new Date("2025-01-31T22:30:00Z"))).toEqual(date(2025, 2, 1));
+  });
+});
+
+// --- toIsoDate ---
+
+describe("toIsoDate", () => {
+  it("serializes to YYYY-MM-DD with zero-padding", () => {
+    expect(toIsoDate(date(2025, 1, 5))).toBe("2025-01-05");
+    expect(toIsoDate(date(2025, 12, 31))).toBe("2025-12-31");
   });
 });
