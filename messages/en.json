@@ -857,6 +857,24 @@
         "hint": "Timezone selection comes in a future release. Times are shown in Europe/Kyiv for now."
       }
     },
+    "telegram": {
+      "title": "Telegram reminders",
+      "description": "Connect Telegram to receive your daily reminder digest.",
+      "notConnected": {
+        "hint": "You'll get one message a day with the reminders you set on your services.",
+        "connect": "Connect Telegram"
+      },
+      "pending": {
+        "instruction": "Open Telegram and press Start to finish connecting.",
+        "open": "Open Telegram",
+        "waiting": "Waiting for confirmation…"
+      },
+      "connected": {
+        "status": "Connected",
+        "statusAs": "Connected as {label}",
+        "disconnect": "Disconnect"
+      }
+    },
     "account": {
       "title": "Account",
       "description": "Sign-in and session management.",

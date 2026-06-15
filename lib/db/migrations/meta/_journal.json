@@ -162,6 +162,13 @@
       "when": 1781523298780,
       "tag": "0022_wooden_hardball",
       "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1781535954512,
+      "tag": "0023_neat_valkyrie",
+      "breakpoints": true
     }
   ]
 }

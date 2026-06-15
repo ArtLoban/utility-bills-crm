@@ -14,6 +14,7 @@ import {
   REMINDER_DELIVERY_STATUSES,
   reminderDeliveries,
   reminders,
+  telegramChannels,
 } from "@/lib/db/schema/notifications";
 import { LOCALES } from "@/lib/locale/constants";
 
@@ -27,7 +28,10 @@ import { deliverDueReminders } from "../delivery";
 // --- Fixtures ---
 
 const PROPERTY_NAME = "Test Notif Property";
-const TEST_CHAT_ID = "test-chat-123";
+// Per-user Telegram chat ids (slice 3): bigint values beyond int32, distinct per user. Delivery
+// now resolves each user's real channel from telegram_channels — no single env chat.
+const CHAT_ID_A = 7_700_000_001;
+const CHAT_ID_B = 7_700_000_002;
 
 // 2025-03-15 09:00 UTC = 2025-03-15 in Kyiv (UTC+2, before DST). day_of_month(15) fires;
 // days_before_end(0) — last day of a 31-day month — does not.
@@ -49,8 +53,6 @@ let gasServiceId: TServiceId;
 const mockSend = vi.mocked(sendTelegramMessage);
 
 beforeAll(async () => {
-  process.env.TELEGRAM_CHAT_ID = TEST_CHAT_ID;
-
   const serviceTypeRows = await db
     .select({ id: serviceTypes.id, code: serviceTypes.code })
     .from(serviceTypes)
@@ -118,11 +120,20 @@ beforeAll(async () => {
   ]);
 });
 
-// Reset the ledger and the send mock before each test so claims and call history start clean.
+// Reset the ledger + channels and the send mock before each test, then re-establish a channel
+// for A and B (not the demo user). Channels are reset per-test so the no-channel case can delete
+// one in isolation without leaking into the next test.
 beforeEach(async () => {
   await db
     .delete(reminderDeliveries)
     .where(inArray(reminderDeliveries.userId, [userAId, userBId, demoUserId]));
+  await db
+    .delete(telegramChannels)
+    .where(inArray(telegramChannels.userId, [userAId, userBId, demoUserId]));
+  await db.insert(telegramChannels).values([
+    { userId: userAId, chatId: CHAT_ID_A, label: "User A" },
+    { userId: userBId, chatId: CHAT_ID_B, label: "User B" },
+  ]);
   mockSend.mockReset();
   mockSend.mockResolvedValue({ ok: true, value: undefined });
 });
@@ -148,9 +159,10 @@ describe("deliverDueReminders — due-today grouping", () => {
     });
     expect(mockSend).toHaveBeenCalledTimes(2);
 
-    // Every send went to the single configured chat, and none carried the demo reminder.
+    // Every send went to one of the two users' own resolved channels, and none carried the
+    // demo reminder.
     for (const [chatId, message] of mockSend.mock.calls) {
-      expect(chatId).toBe(TEST_CHAT_ID);
+      expect([String(CHAT_ID_A), String(CHAT_ID_B)]).toContain(chatId);
       expect(message).not.toContain(TEXT_DEMO);
     }
 
@@ -211,6 +223,36 @@ describe("deliverDueReminders — idempotency", () => {
       .from(reminderDeliveries)
       .where(inArray(reminderDeliveries.userId, [userAId, userBId]));
     expect(deliveryRows).toHaveLength(2);
+  });
+});
+
+// --- Channel gating ---
+
+describe("deliverDueReminders — channel gating", () => {
+  it("skips a due user with no channel without claiming a ledger row", async () => {
+    await db.delete(telegramChannels).where(eq(telegramChannels.userId, userBId));
+
+    const summary = await deliverDueReminders(FIXED_NOW);
+
+    expect(summary).toEqual({
+      deliveryDate: FIXED_DELIVERY_DATE,
+      dueUsers: 2,
+      sent: 1,
+      failed: 0,
+      skipped: 1,
+    });
+
+    // Only A was sent; B carried no message.
+    expect(mockSend).toHaveBeenCalledTimes(1);
+    expect(mockSend.mock.calls[0]![0]).toBe(String(CHAT_ID_A));
+
+    // A claimed a row; B did not — a later link must not be blocked by a phantom row.
+    const rows = await db
+      .select()
+      .from(reminderDeliveries)
+      .where(inArray(reminderDeliveries.userId, [userAId, userBId]));
+    expect(rows).toHaveLength(1);
+    expect(rows[0]!.userId).toBe(userAId);
   });
 });
 

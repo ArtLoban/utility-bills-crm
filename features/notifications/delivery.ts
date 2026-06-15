@@ -14,6 +14,7 @@ import { kyivCivilDate, reminderFiresOn, toIsoDate } from "./core";
 import { dueReminderCandidates } from "./query";
 import type { TReminderCandidate } from "./query";
 import { sendTelegramMessage } from "./telegram";
+import { resolveChannelForUser } from "./channel";
 
 // What one daily run did — returned to the cron caller and logged. `skipped` covers both the
 // idempotency skip (a user already claimed today) and the no-channel skip.
@@ -24,11 +25,6 @@ export type TDeliverySummary = {
   failed: number;
   skipped: number;
 };
-
-// The Telegram channel for a user. Slice 2 uses a single hardcoded test chat for everyone;
-// per-user channels (resolved by userId) arrive with linking in slice 3. A missing channel
-// means "skip without claiming" so a later link is not blocked by a phantom ledger row.
-const resolveChannel = (): string | null => process.env.TELEGRAM_CHAT_ID ?? null;
 
 // Atomically claims (user, date). The UNIQUE(user_id, delivery_date) index makes a second
 // claim for the same day a no-op: onConflictDoNothing returns no row → already handled → skip.
@@ -111,16 +107,15 @@ export const deliverDueReminders = async (now: Date = new Date()): Promise<TDeli
     skipped: 0,
   };
 
-  const channel = resolveChannel();
-  if (!channel) {
-    // No channel configured at all → skip everyone without claiming (forward-compatible with
-    // per-user channels in slice 3, where this branch becomes per-user).
-    summary.skipped = byUser.size;
-    logger.warn({ deliveryDate, dueUsers: byUser.size }, "no Telegram channel configured; skipped");
-    return summary;
-  }
-
   for (const [userId, blocks] of byUser) {
+    // Resolve the channel before claiming: a user with no channel is skipped WITHOUT a ledger
+    // claim, so a later link is not blocked by a phantom row for today.
+    const channel = await resolveChannelForUser(userId);
+    if (!channel) {
+      summary.skipped += 1;
+      continue;
+    }
+
     const deliveryId = await claimDelivery(userId, deliveryDate);
     if (!deliveryId) {
       summary.skipped += 1;

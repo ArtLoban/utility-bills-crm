@@ -1,5 +1,16 @@
 import { sql } from "drizzle-orm";
-import { check, date, index, integer, pgTable, text, uniqueIndex, uuid } from "drizzle-orm/pg-core";
+import {
+  bigint,
+  check,
+  date,
+  index,
+  integer,
+  pgTable,
+  text,
+  timestamp,
+  uniqueIndex,
+  uuid,
+} from "drizzle-orm/pg-core";
 
 import { type UserId, users } from "./auth";
 import { type TServiceId, services } from "./services";
@@ -122,3 +133,69 @@ export const reminderDeliveries = pgTable(
 
 export type TReminderDelivery = typeof reminderDeliveries.$inferSelect;
 export type TNewReminderDelivery = typeof reminderDeliveries.$inferInsert;
+
+// --- Telegram linking (slice 3) ---
+
+declare const telegramChannelIdBrand: unique symbol;
+export type TelegramChannelId = string & {
+  readonly [telegramChannelIdBrand]: typeof telegramChannelIdBrand;
+};
+
+declare const telegramLinkTokenIdBrand: unique symbol;
+export type TelegramLinkTokenId = string & {
+  readonly [telegramLinkTokenIdBrand]: typeof telegramLinkTokenIdBrand;
+};
+
+// Durable per-user Telegram binding — the channel delivery resolves a real chat_id against,
+// replacing slice 2's single hardcoded env chat. 1:1 with the user (UNIQUE userId). Hard-delete
+// on disconnect: operational/service data with no audit value (cf. sessions, DATA_MODEL §auth).
+// `chatId` is a Postgres bigint (Telegram ids exceed int32) read as a JS number — Telegram
+// guarantees ids fit in 52 bits, and a number serializes into the sendMessage JSON body where a
+// JS BigInt would throw.
+export const telegramChannels = pgTable(
+  "telegram_channels",
+  {
+    id: brandedUuidPk<TelegramChannelId>(),
+    userId: uuid("user_id")
+      .notNull()
+      .$type<UserId>()
+      .references(() => users.id, { onDelete: "cascade" }),
+    chatId: bigint("chat_id", { mode: "number" }).notNull(),
+    // Display label captured from the start update (username or first name) for the Settings
+    // "Connected" state. Nullable — Telegram may supply neither.
+    label: text("label"),
+    // The moment of (re)binding; distinct from createdAt, which stays at first link across re-links.
+    linkedAt: timestamp("linked_at", { withTimezone: true }).notNull().defaultNow(),
+    ...timestamps(),
+  },
+  (t) => [uniqueIndex("telegram_channels_user_id_unique_idx").on(t.userId)],
+);
+
+export type TTelegramChannel = typeof telegramChannels.$inferSelect;
+export type TNewTelegramChannel = typeof telegramChannels.$inferInsert;
+
+// Transient one-time link token — binds a Start deep-link to a user until consumed or expired.
+// Separated from the channel by lifetime: ephemeral and prunable. One active token per user
+// (issuing a new one deletes the prior unconsumed token). Hard-delete; no audit value.
+export const telegramLinkTokens = pgTable(
+  "telegram_link_tokens",
+  {
+    id: brandedUuidPk<TelegramLinkTokenId>(),
+    token: text("token").notNull(),
+    userId: uuid("user_id")
+      .notNull()
+      .$type<UserId>()
+      .references(() => users.id, { onDelete: "cascade" }),
+    expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+    // Single-use marker: NULL = live, non-null = consumed at that moment.
+    consumedAt: timestamp("consumed_at", { withTimezone: true }),
+    ...timestamps(),
+  },
+  (t) => [
+    uniqueIndex("telegram_link_tokens_token_unique_idx").on(t.token),
+    index("telegram_link_tokens_user_id_idx").on(t.userId),
+  ],
+);
+
+export type TTelegramLinkToken = typeof telegramLinkTokens.$inferSelect;
+export type TNewTelegramLinkToken = typeof telegramLinkTokens.$inferInsert;

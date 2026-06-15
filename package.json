@@ -25,7 +25,8 @@
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",
     "db:seed:cms-content": "tsx lib/db/seeds/cms-content.seed.ts",
-    "seed:demo": "tsx lib/db/seeds/demo.seed.ts"
+    "seed:demo": "tsx lib/db/seeds/demo.seed.ts",
+    "telegram:register-webhook": "tsx scripts/register-telegram-webhook.ts"
   },
   "lint-staged": {
     "*.{ts,tsx,js,mjs,cjs}": [
