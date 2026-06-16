@@ -632,6 +632,7 @@ Rationale: the "product-first" framing had begun to systematically under-scope f
 > **Chosen: build-time migrate over a GitHub Action.** Correct ordering (migration completes before the artifact is promoted) and fail-safe with zero new infrastructure, and no CI exists today. The decoupled migrate-then-deploy-hook pipeline (Vercel git auto-deploy disabled) is the **upgrade path**, not a technical rejection — revisit if CI is introduced or a second contributor joins. A naive Action on push to `main` running _alongside_ Vercel's git deploy was rejected outright (the two would race with no ordering guarantee). Per-preview Neon branch migrate is a further future enhancement, out of scope.
 > **Programmatic migrator over the `drizzle-kit migrate` CLI** — needed for custom logic the CLI can't express: the `VERCEL_ENV` gate, `MIGRATE_DATABASE_URL` selection, and the pooled-fallback warning. (Both `tsx` and `drizzle-kit` are build-available devDependencies, so this is about control, not avoiding a dependency.)
 > **Additive-only policy (project rule, not just a caveat).** During the build→promote window the old code briefly serves the new schema, which is safe only for additive changes (new tables / nullable columns / indexes). Destructive or narrowing changes (`DROP`, rename, `NOT NULL` on an existing column, type narrowing) must use **expand/contract** across deploys. Auto-migrate makes additive migrations safe; the policy keeps destructive ones safe. All migrations through `0023` are additive. Lesson 0010's "flag the manual prod migration" rule now narrows to destructive migrations.
+> **Preview deploys share the production database (accepted).** `DATABASE_URL` is scoped to Production + Preview with no Neon↔Vercel integration, so preview deployments read and write the prod DB. Accepted at the current stage: solo developer; login is effectively unavailable on preview URLs (dynamic `*-git-*.vercel.app` hosts are not in the Google OAuth redirect URIs while `AUTH_URL` targets prod), so login-gated writes cannot occur on previews, and demo data is `isDemo`-filtered. This confirms the production-only migrate gate is correct — previews must not migrate the shared prod DB. Revisit (give the Preview environment its own Neon branch via a Preview-scoped `DATABASE_URL`, which would then also require branch-scoped migrate) if preview login flows are ever tested or a second contributor joins.
 
 ## Open Questions
 
@@ -833,7 +834,7 @@ The application is deployed and live in production.
 
 ### Hosting
 
-- **App:** Vercel — deploys automatically from `main` (push to a feature branch → preview deployment with an isolated Neon branch; merge to `main` → production deployment).
+- **App:** Vercel — deploys automatically (push to a feature branch → preview deployment; merge to `main` → production deployment). Preview deployments currently **share the production database** — `DATABASE_URL` is scoped to Production + Preview and no Neon↔Vercel branch integration is installed. Per-preview isolated Neon branches are a future enhancement (#153).
 - **Database:** Neon (serverless Postgres) for production.
 
 ### Database connection — pooled vs. direct
