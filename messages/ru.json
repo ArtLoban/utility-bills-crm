@@ -290,18 +290,26 @@
   "properties": {
     "list": {
       "title": "Мои объекты",
-      "addButton": "Добавить объект"
+      "addButton": "Добавить объект",
+      "meta": {
+        "owned": "{count, plural, one {# свой объект} few {# своих объекта} many {# своих объектов} other {# своих объектов}}",
+        "shared": "{count, plural, one {# общий} few {# общих} many {# общих} other {# общих}}"
+      }
     },
     "empty": {
       "title": "Объектов пока нет",
       "body": "Добавьте первый объект, чтобы начать отслеживать коммунальные платежи."
     },
     "card": {
-      "servicePlaceholder": "— услуг",
+      "services": "{count, plural, one {# услуга} few {# услуги} many {# услуг} other {# услуг}}",
       "balance": "Баланс",
-      "balancePlaceholder": "—",
       "shared": "Общий",
       "role": "Роль",
+      "roles": {
+        "owner": "Владелец",
+        "editor": "Редактор",
+        "viewer": "Читатель"
+      },
       "open": "Открыть"
     },
     "detail": {

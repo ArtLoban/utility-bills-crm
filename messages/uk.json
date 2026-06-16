@@ -290,18 +290,26 @@
   "properties": {
     "list": {
       "title": "Мої об'єкти",
-      "addButton": "Додати об'єкт"
+      "addButton": "Додати об'єкт",
+      "meta": {
+        "owned": "{count, plural, one {# власний об'єкт} few {# власні об'єкти} many {# власних об'єктів} other {# власних об'єктів}}",
+        "shared": "{count, plural, one {# спільний} few {# спільні} many {# спільних} other {# спільних}}"
+      }
     },
     "empty": {
       "title": "Поки немає об'єктів",
       "body": "Додайте перший об'єкт, щоб почати відстежувати комунальні платежі."
     },
     "card": {
-      "servicePlaceholder": "— послуг",
+      "services": "{count, plural, one {# послуга} few {# послуги} many {# послуг} other {# послуг}}",
       "balance": "Баланс",
-      "balancePlaceholder": "—",
       "shared": "Спільний",
       "role": "Роль",
+      "roles": {
+        "owner": "Власник",
+        "editor": "Редактор",
+        "viewer": "Глядач"
+      },
       "open": "Відкрити"
     },
     "detail": {

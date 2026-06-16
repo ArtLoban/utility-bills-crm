@@ -426,18 +426,26 @@
   "properties": {
     "list": {
       "title": "My Properties",
-      "addButton": "Add property"
+      "addButton": "Add property",
+      "meta": {
+        "owned": "{count, plural, one {# owned property} other {# owned properties}}",
+        "shared": "{count, plural, one {# shared with you} other {# shared with you}}"
+      }
     },
     "empty": {
       "title": "No properties yet",
       "body": "Add your first property to start tracking utility bills."
     },
     "card": {
-      "servicePlaceholder": "— services",
+      "services": "{count, plural, one {# service} other {# services}}",
       "balance": "Balance",
-      "balancePlaceholder": "—",
       "shared": "Shared",
       "role": "Role",
+      "roles": {
+        "owner": "Owner",
+        "editor": "Editor",
+        "viewer": "Viewer"
+      },
       "open": "Open"
     },
     "detail": {

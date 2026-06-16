@@ -23,3 +23,9 @@ server graph; a barrel that mixes actions with side-effectful server modules doe
 - Type-only imports from such a barrel are fine (erased at compile). The hazard is runtime values.
 - Verify boundary changes with `next build` (not just `tsc` or a dev redirect): the client bundle
   is only compiled when a route actually renders the client component.
+- **Export side (the symmetric trap):** before adding a re-export to a `@/features/<slice>` barrel,
+  check whether that barrel is imported by any `"use client"` file. If it is, only add exports that
+  are `"use server"` or pure — never a plain server module that loads `lib/db/client` (a raw query,
+  delivery, webhook logic). A server-only consumer must deep-import that module from its own path
+  (e.g. `@/features/services/query`), keeping the barrel client-safe. Adding a DB query to a
+  client-imported barrel reintroduces the exact `Can't resolve 'dns'` failure from the import side.

@@ -3,11 +3,13 @@ import { accessibleProperties } from "@/lib/db/access/properties";
 import type { PropertyId, TProperty, TPropertyRole } from "@/lib/db/schema/properties";
 import { balancesForProperties } from "@/features/ledger";
 import type { TBalance } from "@/features/ledger";
+import { serviceCountsForProperties } from "@/features/services/query";
 
 // Named by screen purpose, not field composition (per DATA_MODEL.md type naming convention).
 export type TPropertyListItem = TProperty & {
   role: TPropertyRole;
   balance: TBalance;
+  serviceCount: number;
 };
 
 export const getPropertyList = async (): Promise<TPropertyListItem[]> => {
@@ -15,7 +17,10 @@ export const getPropertyList = async (): Promise<TPropertyListItem[]> => {
   const rows = await accessibleProperties(userId);
 
   const propertyIds = rows.map(({ property }) => property.id);
-  const balancesMap = await balancesForProperties(userId, propertyIds);
+  const [balancesMap, serviceCountsMap] = await Promise.all([
+    balancesForProperties(userId, propertyIds),
+    serviceCountsForProperties(propertyIds),
+  ]);
 
   return rows.map(({ property, role }) => ({
     ...property,
@@ -25,5 +30,6 @@ export const getPropertyList = async (): Promise<TPropertyListItem[]> => {
       paymentsTotal: 0,
       balance: 0,
     },
+    serviceCount: serviceCountsMap.get(property.id as PropertyId) ?? 0,
   }));
 };

@@ -13,3 +13,4 @@ export {
   totalBalance,
 } from "./query";
 export { getServiceBalanceAction, getExpectedAmountHintAction } from "./actions";
+export { formatBalanceUAH } from "./format";
