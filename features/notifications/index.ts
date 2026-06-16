@@ -3,6 +3,13 @@ export { deliverDueReminders } from "./delivery";
 export type { TDeliverySummary } from "./delivery";
 export { reminderFiresOn, kyivCivilDate, toIsoDate } from "./core";
 export type { TReminderAnchor, TCivilDate } from "./core";
+export { remindersForUserService } from "./query";
+export type { TReminderListItem } from "./query";
+export { describeReminderAnchor } from "./anchor-label";
+export type { TAnchorDescription } from "./anchor-label";
+export { ReminderModal } from "./components/reminder-modal";
+export { ReminderFormContent } from "./components/reminder-form-content";
+export { RemindersSection } from "./components/reminders-section";
 export {
   REMINDER_LIMITS,
   REMINDER_ANCHOR_RANGES,

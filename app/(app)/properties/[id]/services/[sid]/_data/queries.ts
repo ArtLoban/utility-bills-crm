@@ -10,6 +10,8 @@ import { mostRecentReadingForMeter } from "@/lib/db/access/readings";
 import type { TReading } from "@/lib/db/schema/readings";
 import { serviceByIdForUser } from "@/lib/db/access/services";
 import type { TServiceDetail } from "@/lib/db/access/services";
+import { remindersForUserService, telegramLinkStatus } from "@/features/notifications";
+import type { TReminderListItem } from "@/features/notifications";
 import { providersByUserId } from "@/lib/db/access/providers";
 import type { TProvider } from "@/lib/db/schema/providers";
 import { contracts } from "@/lib/db/schema/contracts";
@@ -150,4 +152,23 @@ export const getLastReadingForMeter = async (meter: TMeter): Promise<TReading | 
   const userId = await requireUser();
   const result = await mostRecentReadingForMeter(userId, meter.id);
   return result.ok ? result.value : null;
+};
+
+// The current user's own reminders for this service. Per-user scoped, so it returns only the
+// caller's rows; the service's visibility is governed by the page's getServiceDetail.
+export const getRemindersForService = async (
+  serviceId: TServiceId,
+): Promise<TReminderListItem[]> => {
+  const userId = await requireUser();
+
+  return remindersForUserService(userId, serviceId);
+};
+
+// Whether the current user has a linked Telegram channel — gates the Reminders section's
+// create affordance (creating a reminder is only useful once delivery has somewhere to go).
+export const getTelegramLinked = async (): Promise<boolean> => {
+  const userId = await requireUser();
+  const status = await telegramLinkStatus(userId);
+
+  return status.connected;
 };

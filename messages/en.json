@@ -1,4 +1,76 @@
 {
+  "reminders": {
+    "title": "Reminders",
+    "monthlyNote": "Reminders repeat every month.",
+    "add": "Add reminder",
+    "anchor": {
+      "dayOfMonth": "On the {day, selectordinal, one {#st} two {#nd} few {#rd} other {#th}}",
+      "lastDay": "On the last day",
+      "daysBeforeEnd": "{days, plural, one {# day before month end} other {# days before month end}}"
+    },
+    "empty": {
+      "linked": {
+        "title": "No reminders yet",
+        "body": "Add a reminder to get a monthly Telegram nudge for this service."
+      },
+      "unlinked": {
+        "title": "No reminders yet",
+        "body": "Connect Telegram to start getting monthly reminders for this service.",
+        "cta": "Connect Telegram"
+      }
+    },
+    "disconnected": {
+      "message": "Telegram is disconnected — reminders won't be delivered until you reconnect.",
+      "cta": "Open settings"
+    },
+    "addDisabledTooltip": "Connect Telegram first",
+    "row": {
+      "edit": "Edit reminder",
+      "delete": "Delete reminder"
+    },
+    "delete": {
+      "title": "Delete reminder",
+      "description": "This reminder will be permanently deleted.",
+      "confirm": "Delete"
+    },
+    "modal": {
+      "add": { "title": "Add reminder", "submit": "Add reminder" },
+      "edit": { "title": "Edit reminder", "submit": "Save changes" },
+      "cancel": "Cancel",
+      "formError": "Something went wrong. Please try again."
+    },
+    "fields": {
+      "mode": {
+        "label": "When to remind",
+        "dayOfMonth": "Specific day of month",
+        "daysBeforeEnd": "Before end of month"
+      },
+      "day": {
+        "label": "Day of month",
+        "hint": "Months without this day will fire on the last day instead."
+      },
+      "preset": {
+        "label": "When to remind",
+        "lastDay": "Last day of month",
+        "daysBefore": "{days, plural, one {# day before end} other {# days before end}}"
+      },
+      "text": {
+        "label": "Reminder text",
+        "placeholder": "e.g. Submit the meter reading and pay the bill"
+      }
+    },
+    "validation": {
+      "text": {
+        "required": "Reminder text is required",
+        "tooLong": "Reminder text is too long (max 280 characters)"
+      }
+    },
+    "toast": {
+      "added": "Reminder added",
+      "updated": "Reminder updated",
+      "deleted": "Reminder deleted"
+    }
+  },
   "common": {
     "appName": "Utility Bills CRM",
     "signIn": "Sign in",

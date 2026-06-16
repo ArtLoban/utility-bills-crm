@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { REMINDER_ANCHOR_TYPES } from "@/lib/db/schema/notifications";
+import { REMINDER_ANCHOR_TYPES, REMINDER_ANCHOR_TYPE_LIST } from "@/lib/db/schema/notifications";
 
 // Canonical JS-side limits — the Zod source of truth. The DB CHECK constraints repeat
 // these literals as defense-in-depth, exactly as every other table hardcodes its checks.
@@ -54,3 +54,16 @@ export const editReminderSchema = z.discriminatedUnion("anchorType", [
 
 export type TCreateReminderInput = z.infer<typeof createReminderSchema>;
 export type TEditReminderInput = z.infer<typeof editReminderSchema>;
+
+// The flat client form model, shared by create and edit. anchorValue is the selected option's
+// value as a string (FormSelectField is string-based, and the picker only offers in-range
+// values), parsed back to a number at the action boundary. serviceId is supplied from the route
+// on create and the reminder id is a separate action argument on edit — neither belongs in the
+// form. createReminderSchema/editReminderSchema remain the authoritative server-side gate.
+export const reminderFormSchema = z.object({
+  anchorType: z.enum(REMINDER_ANCHOR_TYPE_LIST),
+  anchorValue: z.string(),
+  text: textField,
+});
+
+export type TReminderFormValues = z.infer<typeof reminderFormSchema>;

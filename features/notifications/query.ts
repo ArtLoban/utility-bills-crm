@@ -4,11 +4,12 @@ import { db } from "@/lib/db/client";
 import { users } from "@/lib/db/schema/auth";
 import type { UserId } from "@/lib/db/schema/auth";
 import { reminders } from "@/lib/db/schema/notifications";
+import type { ReminderId, TReminderAnchorType } from "@/lib/db/schema/notifications";
 import { properties } from "@/lib/db/schema/properties";
 import { services } from "@/lib/db/schema/services";
+import type { TServiceId } from "@/lib/db/schema/services";
 import { serviceTypes } from "@/lib/db/schema/service-types";
 import type { TLocale } from "@/lib/locale/constants";
-import type { TReminderAnchorType } from "@/lib/db/schema/notifications";
 
 // A reminder enriched with everything the delivery job needs: the firing inputs (anchor),
 // the owner's id + locale (grouping + rendering), and the digest's display fields.
@@ -45,3 +46,31 @@ export const dueReminderCandidates = async (): Promise<TReminderCandidate[]> =>
     .innerJoin(serviceTypes, eq(services.serviceTypeId, serviceTypes.id))
     .where(and(isNull(services.deletedAt), isNull(properties.deletedAt), eq(users.isDemo, false)))
     .orderBy(asc(reminders.userId), asc(properties.name), asc(serviceTypes.sortOrder));
+
+// A reminder as rendered in the service-detail Reminders section: just the firing inputs,
+// the user's text, and the id needed for edit/delete. Reminders are per-user, so the list
+// query is scoped to the owner.
+export type TReminderListItem = {
+  id: ReminderId;
+  anchorType: TReminderAnchorType;
+  anchorValue: number;
+  text: string;
+};
+
+// The caller's own reminders for one service, oldest first. Scoped to userId — it cannot
+// surface another user's rows — so the section's access check (the page's serviceByIdForUser)
+// governs visibility of the service, while ownership governs which reminders are returned.
+export const remindersForUserService = async (
+  userId: UserId,
+  serviceId: TServiceId,
+): Promise<TReminderListItem[]> =>
+  db
+    .select({
+      id: reminders.id,
+      anchorType: reminders.anchorType,
+      anchorValue: reminders.anchorValue,
+      text: reminders.text,
+    })
+    .from(reminders)
+    .where(and(eq(reminders.userId, userId), eq(reminders.serviceId, serviceId)))
+    .orderBy(asc(reminders.createdAt));

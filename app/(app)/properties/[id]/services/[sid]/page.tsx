@@ -4,12 +4,15 @@ import { getTranslations } from "next-intl/server";
 import { getPropertyDetail } from "@/app/(app)/properties/[id]/_data/queries";
 import { balancesForServices } from "@/features/ledger";
 import type { TBalance } from "@/features/ledger";
+import { RemindersSection } from "@/features/notifications";
 import {
   getAttributeHistory,
   getContractHistory,
   getCurrentMeterForService,
   getLastReadingForMeter,
+  getRemindersForService,
   getServiceDetail,
+  getTelegramLinked,
 } from "./_data/queries";
 import { ActivityCard } from "./_components/activity-card";
 import { BalanceCard } from "./_components/balance-card";
@@ -38,6 +41,8 @@ export default async function ServicePage({ params }: TProps) {
     attributeHistoryResult,
     currentMeter,
     serviceBalances,
+    reminders,
+    isTelegramLinked,
   ] = await Promise.all([
     getPropertyDetail(id as PropertyId),
     getServiceDetail(sid as TServiceId),
@@ -45,6 +50,8 @@ export default async function ServicePage({ params }: TProps) {
     getAttributeHistory(sid as TServiceId),
     getCurrentMeterForService(sid as TServiceId),
     balancesForServices([sid as TServiceId]),
+    getRemindersForService(sid as TServiceId),
+    getTelegramLinked(),
   ]);
 
   const lastMeterReading = currentMeter ? await getLastReadingForMeter(currentMeter) : null;
@@ -113,6 +120,14 @@ export default async function ServicePage({ params }: TProps) {
         )}
         <ActivityCard />
         <NotesCard notes={service.notes ?? null} editHref={editHref} role={role} />
+        {role !== "viewer" && (
+          <RemindersSection
+            reminders={reminders}
+            isTelegramLinked={isTelegramLinked}
+            propertyId={id}
+            serviceId={sid as TServiceId}
+          />
+        )}
       </div>
     </div>
   );
