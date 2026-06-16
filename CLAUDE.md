@@ -153,12 +153,6 @@ Read the relevant document(s) when working on a related task. Do not preload.
   filter), the reusable component inventory, the per-form status map, and the
   migration recipe. Read before touching any form, input, select, or date control.
 
-**Deployment:**
-
-- `docs/deploy-readiness-audit.md` — factual audit of deployment-relevant config
-  (DB driver, migrations, Auth.js prod settings, edge compatibility, env vars, CI,
-  build). Read before any deploy, CI, env-var, or production-config task.
-
 ## 6. Git
 
 - Do not add `Co-Authored-By: Claude` lines.
