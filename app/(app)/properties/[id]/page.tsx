@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 
 import { requireUser } from "@/lib/auth/guards";
 import { servicesByPropertyId } from "@/lib/db/access/services";
+import { lastReadingDatesByServiceType } from "@/lib/db/access/readings";
 import { balancesForServices } from "@/features/ledger";
 import type { TBalance } from "@/features/ledger";
 import { propertyMembers } from "@/features/sharing";
@@ -56,10 +57,10 @@ export default async function PropertyPage({ params, searchParams }: TProps) {
     const servicesResult = await servicesByPropertyId(userId, propertyId);
     const services = servicesResult.ok ? servicesResult.value : [];
     const serviceIds = services.map((s) => s.service.id as TServiceId);
-    const serviceBalances =
-      serviceIds.length > 0
-        ? await balancesForServices(serviceIds)
-        : new Map<TServiceId, TBalance>();
+    const [serviceBalances, lastReadingByServiceType] = await Promise.all([
+      serviceIds.length > 0 ? balancesForServices(serviceIds) : new Map<TServiceId, TBalance>(),
+      lastReadingDatesByServiceType(propertyId),
+    ]);
 
     tabContent = (
       <OverviewTab
@@ -67,6 +68,7 @@ export default async function PropertyPage({ params, searchParams }: TProps) {
         role={property.role}
         propertyId={id}
         serviceBalances={serviceBalances}
+        lastReadingByServiceType={lastReadingByServiceType}
       />
     );
   } else if (activeTab === TABS.METERS) {

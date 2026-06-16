@@ -449,7 +449,13 @@
       "open": "Open"
     },
     "detail": {
-      "createdOn": "Created {date}"
+      "services": "{count, plural, one {# service} other {# services}}",
+      "createdOn": "Created {date}",
+      "row": {
+        "lastReading": "Last reading: {date}",
+        "noReadings": "No readings yet",
+        "noMeter": "No meter"
+      }
     },
     "delete": {
       "menuItem": "Delete property",

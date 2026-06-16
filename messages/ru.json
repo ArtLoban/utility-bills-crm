@@ -313,7 +313,13 @@
       "open": "Открыть"
     },
     "detail": {
-      "createdOn": "Создан {date}"
+      "services": "{count, plural, one {# услуга} few {# услуги} many {# услуг} other {# услуг}}",
+      "createdOn": "Создан {date}",
+      "row": {
+        "lastReading": "Последнее показание: {date}",
+        "noReadings": "Показаний пока нет",
+        "noMeter": "Без счётчика"
+      }
     },
     "delete": {
       "menuItem": "Удалить объект",

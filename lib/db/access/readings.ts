@@ -3,7 +3,10 @@ import { and, desc, eq, inArray, isNull, max, sql } from "drizzle-orm";
 import { db } from "@/lib/db/client";
 import { readings } from "@/lib/db/schema/readings";
 import type { ReadingId, TReading } from "@/lib/db/schema/readings";
+import { meters } from "@/lib/db/schema/meters";
 import type { MeterId } from "@/lib/db/schema/meters";
+import type { PropertyId } from "@/lib/db/schema/properties";
+import type { TServiceTypeId } from "@/lib/db/schema/service-types";
 import type { UserId } from "@/lib/db/schema/auth";
 import { meterByIdForUser } from "./meters";
 import { NotFoundError, err, ok } from "@/lib/errors";
@@ -104,5 +107,32 @@ export const lastReadingsByMeterIds = async (
       map.set(reading.meterId, reading);
     }
   }
+  return map;
+};
+
+// Latest reading date per service type for one property, in a single grouped query.
+// A meter belongs to (propertyId, serviceTypeId) — not to a service directly — so the
+// "last reading" of a service is the most recent reading across that property's meters of
+// the same service type. No access check: the caller has already verified property access.
+export const lastReadingDatesByServiceType = async (
+  propertyId: PropertyId,
+): Promise<Map<TServiceTypeId, Date>> => {
+  const rows = await db
+    .select({
+      serviceTypeId: meters.serviceTypeId,
+      lastReadAt: max(readings.readAt),
+    })
+    .from(readings)
+    .innerJoin(meters, eq(readings.meterId, meters.id))
+    .where(
+      and(eq(meters.propertyId, propertyId), isNull(meters.deletedAt), isNull(readings.deletedAt)),
+    )
+    .groupBy(meters.serviceTypeId);
+
+  const map = new Map<TServiceTypeId, Date>();
+  for (const { serviceTypeId, lastReadAt } of rows) {
+    if (lastReadAt) map.set(serviceTypeId, lastReadAt);
+  }
+
   return map;
 };

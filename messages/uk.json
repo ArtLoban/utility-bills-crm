@@ -313,7 +313,13 @@
       "open": "Відкрити"
     },
     "detail": {
-      "createdOn": "Створено {date}"
+      "services": "{count, plural, one {# послуга} few {# послуги} many {# послуг} other {# послуг}}",
+      "createdOn": "Створено {date}",
+      "row": {
+        "lastReading": "Останнє показання: {date}",
+        "noReadings": "Ще немає показань",
+        "noMeter": "Без лічильника"
+      }
     },
     "delete": {
       "menuItem": "Видалити об'єкт",

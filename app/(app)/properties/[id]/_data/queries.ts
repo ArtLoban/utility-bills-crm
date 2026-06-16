@@ -5,11 +5,11 @@ import { propertyByIdForUser } from "@/lib/db/access/properties";
 import type { PropertyId, TProperty, TPropertyRole } from "@/lib/db/schema/properties";
 import { NotFoundError, ok } from "@/lib/errors";
 import type { Result } from "@/lib/errors";
+import { serviceCountsForProperties } from "@/features/services/query";
 
-// Named by screen purpose, not field composition (per DATA_MODEL.md type naming convention).
-// Tab content (Overview / Meters / Sharing) and service list are added in later steps.
 export type TPropertyDetail = TProperty & {
   role: TPropertyRole;
+  serviceCount: number;
 };
 
 export const getPropertyDetail = cache(
@@ -18,6 +18,12 @@ export const getPropertyDetail = cache(
     const result = await propertyByIdForUser(userId, propertyId);
     if (!result.ok) return result;
 
-    return ok({ ...result.value.property, role: result.value.role });
+    const serviceCounts = await serviceCountsForProperties([propertyId]);
+
+    return ok({
+      ...result.value.property,
+      role: result.value.role,
+      serviceCount: serviceCounts.get(propertyId) ?? 0,
+    });
   },
 );
