@@ -23,6 +23,7 @@
     "db:reset": "docker compose down -v && docker compose up -d",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
+    "db:migrate:deploy": "tsx scripts/migrate-deploy.ts",
     "db:studio": "drizzle-kit studio",
     "db:seed:cms-content": "tsx lib/db/seeds/cms-content.seed.ts",
     "seed:demo": "tsx lib/db/seeds/demo.seed.ts",

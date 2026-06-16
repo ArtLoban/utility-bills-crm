@@ -85,6 +85,11 @@ npm run dev
 | `npm run db:studio`   | Open Drizzle Studio at https://local.drizzle.studio |
 | `npm run seed:demo`   | Seed (or re-seed) the demo dataset — idempotent     |
 
+> In production, pending migrations are **applied automatically on deploy** (Vercel `buildCommand`
+> runs `db:migrate:deploy` before `next build`); `db:migrate` above is the local/manual command.
+> Migrations must be **additive** — destructive changes use expand/contract. See `docs/README.living.md`
+> → "Schema and data in production" and Decision #153.
+
 Required environment variables:
 
 - `DATABASE_URL` — PostgreSQL connection string

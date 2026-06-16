@@ -6,16 +6,25 @@ to prod, but the migration was not applied there — prod 500'd with `relation "
 does not exist` (42P01). The project has no automated migration-on-deploy (migrations are manual,
 #149), so this gap is invisible unless flagged.
 
-**Rule:** Whenever a change adds or alters a migration, the production migration is a **required,
-explicitly-stated deploy step** — call it out at delivery, every time, until auto-migrate-on-deploy
-exists (`.claude/instructions/deploy-auto-migrate.md`). New code may assume its own migration ran;
-the deploy must guarantee it. Never silently ship migration-dependent code.
+**Update (Decision #153): auto-migrate-on-deploy now exists.** Production deploys apply pending
+migrations during the Vercel build (`vercel.json` `buildCommand` → `db:migrate:deploy`, gated on
+`VERCEL_ENV === "production"`). For **additive** migrations (new tables / nullable columns / indexes)
+no manual step and no flag is needed — the build applies them before the new code serves.
+
+**Rule (now narrowed to destructive migrations):** additive migrations are handled automatically.
+But a **destructive or narrowing** change (`DROP`, rename, adding `NOT NULL` to an existing column,
+type narrowing) is **not** safe to ship in one deploy: during the build→promote window the old code
+briefly serves the new schema. These require **expand/contract** across deploys and must be flagged
+explicitly at delivery. New code may assume its own additive migration ran; never ship a destructive
+schema change as a single step.
 
 **How to apply:**
 
-- At delivery of any change touching `lib/db/migrations/` (or `lib/db/schema/`), state plainly:
-  "This adds migration `00NN`; run `npm run db:migrate` against the prod **direct** endpoint before
-  or with this deploy." Give the exact command.
-- Migrations must target the **direct (unpooled)** Neon endpoint (#149), not the pooler.
-- Don't make the reading code defensively swallow a missing table — that masks the real problem.
-  The invariant is "migrate before deploy," not "tolerate an un-migrated DB."
+- Additive migration → no action; auto-migrate covers it.
+- Destructive/narrowing migration → state plainly at delivery that it needs expand/contract
+  (deploy tolerant code → additive migration → deploy code using new schema → later contract
+  migration), and do not collapse it into one deploy.
+- Migrations target the **direct (unpooled)** Neon endpoint (#149); on Vercel set
+  `MIGRATE_DATABASE_URL` to the direct endpoint when `DATABASE_URL` is pooled.
+- Don't make reading code defensively swallow a missing table — that masks the real problem.
+  The invariant is "migrate before the new code serves," not "tolerate an un-migrated DB."

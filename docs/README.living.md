@@ -627,6 +627,12 @@ Rationale: the "product-first" framing had begun to systematically under-scope f
 > **`"use server"` separation.** A `"use server"` module exposes every export as an RPC endpoint, so the webhook-invoked binding logic (`consumeStartToken`) and token issuance live in a plain `linking.ts`; only the three Settings actions (`startTelegramLink` / `getTelegramLinkStatus` / `disconnectTelegram`, all `requireMutableUser` → owner-only + demo-blocked) sit in `linking-actions.ts`. Settings polls `getTelegramLinkStatus` (an action, not a new public GET) so the "Connected" state flips when the binding arrives out-of-band.
 > **Delivery rewired to per-user channels.** Slice 2's single hardcoded `TELEGRAM_CHAT_ID` env is removed; `deliverDueReminders` now resolves each user's real `chat_id` from `telegram_channels` inside the loop, **before** claiming — a user with no channel is skipped without a ledger claim, so a later link is not blocked by a phantom row.
 
+> **#153 — Database migrations auto-apply on production deploy via a build-time migrate step; additive-only migration policy is a project rule.**
+> Closes the manual-migration gap that broke prod once (notification slices shipped reading `telegram_channels` before the migration was applied — `42P01`, lesson 0010). `vercel.json` `buildCommand` is `npm run db:migrate:deploy && npm run build`; `scripts/migrate-deploy.ts` is a programmatic `drizzle-orm/node-postgres` migrator that gates on `VERCEL_ENV === "production"` (preview/local are no-ops), runs against the direct endpoint (`MIGRATE_DATABASE_URL` → `DATABASE_URL` fallback, warns on a pooled-host fallback), and `process.exit(1)` on failure so the build aborts and the previous deployment stays live.
+> **Chosen: build-time migrate over a GitHub Action.** Correct ordering (migration completes before the artifact is promoted) and fail-safe with zero new infrastructure, and no CI exists today. The decoupled migrate-then-deploy-hook pipeline (Vercel git auto-deploy disabled) is the **upgrade path**, not a technical rejection — revisit if CI is introduced or a second contributor joins. A naive Action on push to `main` running _alongside_ Vercel's git deploy was rejected outright (the two would race with no ordering guarantee). Per-preview Neon branch migrate is a further future enhancement, out of scope.
+> **Programmatic migrator over the `drizzle-kit migrate` CLI** — needed for custom logic the CLI can't express: the `VERCEL_ENV` gate, `MIGRATE_DATABASE_URL` selection, and the pooled-fallback warning. (Both `tsx` and `drizzle-kit` are build-available devDependencies, so this is about control, not avoiding a dependency.)
+> **Additive-only policy (project rule, not just a caveat).** During the build→promote window the old code briefly serves the new schema, which is safe only for additive changes (new tables / nullable columns / indexes). Destructive or narrowing changes (`DROP`, rename, `NOT NULL` on an existing column, type narrowing) must use **expand/contract** across deploys. Auto-migrate makes additive migrations safe; the policy keeps destructive ones safe. All migrations through `0023` are additive. Lesson 0010's "flag the manual prod migration" rule now narrows to destructive migrations.
+
 ## Open Questions
 
 Carried forward to Phase 7 (implementation) and beyond.
@@ -835,15 +841,16 @@ The application is deployed and live in production.
 A single `DATABASE_URL` drives both the runtime and migrations — `lib/db/client.ts` and `drizzle.config.ts` read the same variable. The pooled-vs-direct distinction is operational (which connection string `DATABASE_URL` holds in each context), not two separate variables:
 
 - The deployed app's `DATABASE_URL` points at Neon's **pooled** endpoint (PgBouncer), suited to serverless function connections.
-- **Migrations** run with `DATABASE_URL` pointed at Neon's **direct** (unpooled) endpoint — DDL and the migration session do not go through the transaction pooler.
+- **Migrations** run against Neon's **direct** (unpooled) endpoint — DDL and the migration session do not go through the transaction pooler. The build-time migrator reads `MIGRATE_DATABASE_URL` (the direct endpoint), falling back to `DATABASE_URL`. When the runtime `DATABASE_URL` is the pooled endpoint, set `MIGRATE_DATABASE_URL` to the direct one in Vercel.
 
-See Decision #149 for the driver strategy and the deferred `neon-serverless` upgrade path.
+See Decision #149 for the driver strategy and the deferred `neon-serverless` upgrade path, and Decision #153 for build-time auto-migrate.
 
 ### Production environment variables
 
 Set in the Vercel dashboard (names only):
 
 - `DATABASE_URL` — Postgres connection string (pooled endpoint in production)
+- `MIGRATE_DATABASE_URL` — direct (unpooled) endpoint for the build-time migrator; optional, falls back to `DATABASE_URL` (#153)
 - `AUTH_SECRET` — Auth.js signing key
 - `AUTH_URL` — canonical site URL; drives secure-cookie selection and the Google OAuth redirect (required in production)
 - `NEXT_PUBLIC_SITE_URL` — public site URL for `metadataBase`, sitemap, and robots
@@ -852,7 +859,8 @@ Set in the Vercel dashboard (names only):
 
 ### Schema and data in production
 
-- **Schema:** `npm run db:migrate` (drizzle-kit) applies migrations against the direct endpoint. The `service_types` catalog and the landing CMS baseline content ship inside migrations, so they need no separate seed step.
+- **Schema:** production deploys **auto-apply pending migrations** during the Vercel build. `vercel.json` sets `buildCommand` to `npm run db:migrate:deploy && npm run build`; the migrator (`scripts/migrate-deploy.ts`) gates on `VERCEL_ENV === "production"` and runs against the **direct** endpoint (`MIGRATE_DATABASE_URL`, falling back to `DATABASE_URL`). A failed migration aborts the build, so the previous deployment stays live. Preview and local builds never migrate the prod DB. The `service_types` catalog and the landing CMS baseline content ship inside migrations, so they need no separate seed step. (`npm run db:migrate` remains the local/manual command — see Decision #153.)
+- **Migration policy — additive-only by default (project rule):** between a migration applying and the new deployment being promoted, the **old code briefly serves against the new schema**. That is only safe for **additive, backward-compatible** changes: new tables, new nullable columns, new indexes. Destructive or narrowing changes (`DROP`, rename, adding `NOT NULL` to an existing column, type narrowing) must be split across deploys via **expand/contract**: (1) deploy code tolerant of both old and new schema, (2) apply the additive part, (3) deploy code that uses the new schema, (4) contract in a later migration. Auto-migrate makes additive migrations safe; this policy is what keeps destructive ones safe.
 - **Demo data:** `npm run seed:demo` (optional, opt-in) populates the demo account's dataset against whatever `DATABASE_URL` resolves to.
 
 ## Contributing

@@ -8,6 +8,14 @@ command run was `npm run build`, once (§8).
 Facts only. Where something is absent, it is stated explicitly. Closing section lists
 observations that would block or complicate a first deploy — observations, not prescriptions.
 
+> **Update (2026-06-16):** Two facts in this snapshot have since changed. (1) **Migrations now
+> auto-apply on production deploy** — `vercel.json` sets `buildCommand` to
+> `npm run db:migrate:deploy && npm run build`; `scripts/migrate-deploy.ts` gates on
+> `VERCEL_ENV === "production"` and runs against the direct endpoint
+> (`MIGRATE_DATABASE_URL` → `DATABASE_URL` fallback). This supersedes §2's "manual `db:migrate`"
+> and closing observation #6's "No `vercel.json`". (2) A `vercel.json` now exists (also carrying
+> the notifications cron). See Decision #153 and README.living.md → "Schema and data in production".
+
 ---
 
 ## 1. Database driver and connection
