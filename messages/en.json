@@ -312,7 +312,40 @@
         "allPeriods": "All periods",
         "periodLast12": "Last 12 months",
         "periodLast6": "Last 6 months",
-        "periodLast3": "Last 3 months"
+        "periodLast3": "Last 3 months",
+        "from": "From {date}",
+        "to": "To {date}"
+      },
+      "sort": {
+        "title": "Sort by",
+        "paidAt": {
+          "label": "Date",
+          "desc": "Newest first",
+          "asc": "Oldest first",
+          "triggerDesc": "Date (newest)",
+          "triggerAsc": "Date (oldest)"
+        },
+        "property": {
+          "label": "Property",
+          "desc": "Z → A",
+          "asc": "A → Z",
+          "triggerDesc": "Property Z–A",
+          "triggerAsc": "Property A–Z"
+        },
+        "service": {
+          "label": "Service",
+          "desc": "Z → A",
+          "asc": "A → Z",
+          "triggerDesc": "Service Z–A",
+          "triggerAsc": "Service A–Z"
+        },
+        "amount": {
+          "label": "Amount",
+          "desc": "High → Low",
+          "asc": "Low → High",
+          "triggerDesc": "Amount ↓",
+          "triggerAsc": "Amount ↑"
+        }
       },
       "columns": {
         "date": "Date",
@@ -334,12 +367,6 @@
         "page": "Page {page} of {total}",
         "prev": "Previous",
         "next": "Next"
-      },
-      "mobile": {
-        "filters": "Filters",
-        "add": "Add",
-        "apply": "Apply",
-        "sortDefault": "Date (newest)"
       },
       "empty": {
         "noPayments": {

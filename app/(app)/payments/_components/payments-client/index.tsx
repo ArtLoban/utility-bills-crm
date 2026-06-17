@@ -9,12 +9,12 @@ import type { TPaymentsListResult } from "@/features/payments/types";
 import { ROUTES } from "@/lib/routes";
 import { PaymentsTable } from "./components/payments-table";
 import { PaymentsTableActions } from "./components/table-actions";
-import { TSelectableEntity } from "@/components/select-input/types";
+import type { TPropertyOption } from "@/features/properties";
 import { formatUAH } from "@/lib/format/currency";
 
 type TProps = {
   paymentsList: TPaymentsListResult;
-  properties: TSelectableEntity[];
+  properties: TPropertyOption[];
 };
 
 export const PaymentsClient = ({ paymentsList, properties }: TProps) => {

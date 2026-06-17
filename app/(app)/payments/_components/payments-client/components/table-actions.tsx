@@ -6,12 +6,12 @@ import { Modal } from "@/components/modal";
 import { Trash2 } from "lucide-react";
 import { IconBadge } from "@/components/icon-badge";
 import { getServiceLabel } from "@/lib/constants/service-colors";
-import type { TSelectableEntity } from "@/components/select-input/types";
+import type { TPropertyOption } from "@/features/properties";
 import { PaymentsTableContext } from "../context";
 
 type TProps = {
   children: ReactNode;
-  properties: TSelectableEntity[];
+  properties: TPropertyOption[];
 };
 
 export const PaymentsTableActions = ({ children, properties }: TProps) => {

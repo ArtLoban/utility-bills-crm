@@ -177,7 +177,40 @@
         "allPeriods": "Все периоды",
         "periodLast12": "Последние 12 месяцев",
         "periodLast6": "Последние 6 месяцев",
-        "periodLast3": "Последние 3 месяца"
+        "periodLast3": "Последние 3 месяца",
+        "from": "От {date}",
+        "to": "До {date}"
+      },
+      "sort": {
+        "title": "Сортировка",
+        "paidAt": {
+          "label": "Дата",
+          "desc": "Сначала новые",
+          "asc": "Сначала старые",
+          "triggerDesc": "Дата (новые)",
+          "triggerAsc": "Дата (старые)"
+        },
+        "property": {
+          "label": "Объект",
+          "desc": "Я → А",
+          "asc": "А → Я",
+          "triggerDesc": "Объект Я–А",
+          "triggerAsc": "Объект А–Я"
+        },
+        "service": {
+          "label": "Услуга",
+          "desc": "Я → А",
+          "asc": "А → Я",
+          "triggerDesc": "Услуга Я–А",
+          "triggerAsc": "Услуга А–Я"
+        },
+        "amount": {
+          "label": "Сумма",
+          "desc": "Больше → меньше",
+          "asc": "Меньше → больше",
+          "triggerDesc": "Сумма ↓",
+          "triggerAsc": "Сумма ↑"
+        }
       },
       "columns": {
         "date": "Дата",
@@ -198,12 +231,6 @@
         "page": "Страница {page} из {total}",
         "prev": "Назад",
         "next": "Вперёд"
-      },
-      "mobile": {
-        "filters": "Фильтры",
-        "add": "Добавить",
-        "apply": "Применить",
-        "sortDefault": "Дата (новые)"
       },
       "empty": {
         "noPayments": {

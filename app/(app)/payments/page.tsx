@@ -24,9 +24,10 @@ export default async function PaymentsPage({
     accessibleProperties(userId),
   ]);
 
-  const propertyOptions = propertiesWithRole.map(({ property }) => ({
-    id: property.id,
-    name: property.name,
+  const propertyOptions = propertiesWithRole.map(({ property: { id, name, type } }) => ({
+    id,
+    name,
+    type,
   }));
 
   return <PaymentsClient paymentsList={result} properties={propertyOptions} />;

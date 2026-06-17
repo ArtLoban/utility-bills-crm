@@ -2,11 +2,11 @@
 
 import { createSafeContext } from "@/lib/utils/create-safe-context";
 import type { TPaymentGlobalRow } from "@/features/payments/types";
-import type { TSelectableEntity } from "@/components/select-input/types";
+import type { TPropertyOption } from "@/features/properties";
 
 type TPaymentsTableContext = {
   requestDelete: (payment: TPaymentGlobalRow) => void;
-  properties: TSelectableEntity[];
+  properties: TPropertyOption[];
 };
 
 export const [PaymentsTableContext, usePaymentsTable] =
