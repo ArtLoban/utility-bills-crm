@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { AlertTriangle, ChevronRight } from "lucide-react";
-import { getTranslations, getFormatter } from "next-intl/server";
+import { getTranslations, getFormatter, getLocale } from "next-intl/server";
 
 import { DataCard } from "@/components/data-card";
+import { formatMoney } from "@/lib/format/money";
 import type { TAttentionData } from "../_data/types";
 
 type TProps = {
@@ -14,6 +15,7 @@ export const AttentionBlock = async ({ data }: TProps) => {
 
   const t = await getTranslations("dashboard.attention");
   const format = await getFormatter();
+  const locale = await getLocale();
   const monthLabel = format.dateTime(currentMonth, { year: "numeric", month: "long" });
 
   return (
@@ -34,10 +36,7 @@ export const AttentionBlock = async ({ data }: TProps) => {
                 em: (chunks) => (
                   <strong className="text-destructive font-semibold">{chunks}</strong>
                 ),
-                amount: format.number(totalDebt, {
-                  maximumFractionDigits: 2,
-                  minimumFractionDigits: 0,
-                }),
+                amount: formatMoney(totalDebt, locale),
                 count: debtServicesCount,
               })}
             </span>

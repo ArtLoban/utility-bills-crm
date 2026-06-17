@@ -184,7 +184,7 @@
         "date": "Дата",
         "property": "Об'єкт",
         "service": "Послуга",
-        "amount": "Сума"
+        "amount": "Сума, ₴"
       },
       "actions": {
         "edit": "Редагувати",
@@ -236,7 +236,7 @@
     },
     "attention": {
       "title": "Потрібна увага",
-      "debt": "<em>{amount}</em> UAH всього ({count, plural, one {# сервіс} few {# сервіси} many {# сервісів} other {# сервісів}})",
+      "debt": "<em>{amount}</em> всього ({count, plural, one {# сервіс} few {# сервіси} many {# сервісів} other {# сервісів}})",
       "missingReading": "Показання за <em>{month}</em> ще не подано ({count, plural, one {# сервіс} few {# сервіси} many {# сервісів} other {# сервісів}})",
       "viewDetails": "Деталі",
       "goToMeters": "Перейти до лічильників"
@@ -683,6 +683,14 @@
   "bills": {
     "list": {
       "title": "Рахунки",
+      "columns": {
+        "date": "Дата",
+        "property": "Об'єкт",
+        "service": "Послуга",
+        "period": "Період",
+        "amount": "Сума, ₴",
+        "actions": "Дії"
+      },
       "footer": {
         "total": "Всього"
       },

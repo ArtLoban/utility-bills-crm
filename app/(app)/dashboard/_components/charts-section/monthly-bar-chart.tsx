@@ -8,6 +8,7 @@ import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import { ChartContainer, ChartLegend, ChartTooltip, type ChartConfig } from "@/components/ui/chart";
 import { DataCard } from "@/components/data-card";
 import { cn } from "@/lib/utils";
+import { useFormatMoney } from "@/lib/format/use-format-money";
 import type { TMonthlyExpensesAggregate } from "@/features/ledger";
 import { SERVICE_TYPE_COLORS } from "@/features/services/service-type";
 
@@ -17,7 +18,6 @@ import {
   buildBillsDrillUrl,
   formatMonthFull,
   formatMonthLabel,
-  formatUah,
   formatUahTick,
   lastDayOfMonth,
   sumTooltipValues,
@@ -34,6 +34,7 @@ type TProps = {
 export const MonthlyBarChart = ({ aggregate, title, subtitle, getServiceLabel }: TProps) => {
   const router = useRouter();
   const t = useTranslations("dashboard.charts");
+  const formatMoney = useFormatMoney();
   const [hiddenSeries, setHiddenSeries] = useState<Set<string>>(new Set());
 
   const barData = toBarData(aggregate);
@@ -99,8 +100,11 @@ export const MonthlyBarChart = ({ aggregate, title, subtitle, getServiceLabel }:
               active && payload?.length ? (
                 <ChartTooltipCard
                   header={formatMonthFull(String(label))}
-                  rows={toTooltipRows(payload, getServiceLabel, formatUah)}
-                  total={{ label: t("tooltip.total"), value: formatUah(sumTooltipValues(payload)) }}
+                  rows={toTooltipRows(payload, getServiceLabel, formatMoney)}
+                  total={{
+                    label: t("tooltip.total"),
+                    value: formatMoney(sumTooltipValues(payload)),
+                  }}
                 />
               ) : null
             }

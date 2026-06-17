@@ -1,6 +1,7 @@
 import { Wallet } from "lucide-react";
+import { useLocale } from "next-intl";
 
-import { formatUAH } from "@/lib/format/currency";
+import { formatMoney } from "@/lib/format/money";
 import type { TBalance } from "@/features/ledger";
 
 type TProps = {
@@ -8,6 +9,7 @@ type TProps = {
 };
 
 const BalanceCard = ({ balance }: TProps) => {
+  const locale = useLocale();
   const isEmpty = balance.billsTotal === 0 && balance.paymentsTotal === 0;
 
   return (
@@ -43,7 +45,7 @@ const BalanceCard = ({ balance }: TProps) => {
             }`}
             style={{ fontSize: 28 }}
           >
-            {formatUAH(Math.abs(balance.balance))}
+            {formatMoney(Math.abs(balance.balance), locale)}
           </p>
 
           <div className="flex flex-col gap-2">
@@ -55,7 +57,7 @@ const BalanceCard = ({ balance }: TProps) => {
                 className="text-zinc-950 tabular-nums dark:text-zinc-50"
                 style={{ fontSize: 13, fontWeight: 500 }}
               >
-                {formatUAH(balance.billsTotal)}
+                {formatMoney(balance.billsTotal, locale)}
               </span>
             </div>
             <div className="flex items-center justify-between">
@@ -63,7 +65,7 @@ const BalanceCard = ({ balance }: TProps) => {
                 Paid
               </span>
               <span className="text-success tabular-nums" style={{ fontSize: 13, fontWeight: 500 }}>
-                {formatUAH(balance.paymentsTotal)}
+                {formatMoney(balance.paymentsTotal, locale)}
               </span>
             </div>
           </div>

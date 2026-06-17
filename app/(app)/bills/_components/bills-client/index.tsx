@@ -4,7 +4,7 @@ import { PageContainer } from "@/components/page-container";
 import { PageMeta } from "@/components/page-meta";
 import { TBillsListResult } from "@/lib/db/access/bills";
 import { BillsTable } from "./components/bills-table";
-import { formatUAH } from "@/lib/format/currency";
+import { useFormatMoney } from "@/lib/format/use-format-money";
 import { useTranslations } from "next-intl";
 import { TPropertyOption } from "@/features/properties";
 import { AddButton } from "@/components/add-button";
@@ -20,7 +20,8 @@ export const BillsClient = ({ billsList, properties }: TProps) => {
   const { pagination, totals } = billsList;
 
   const t = useTranslations("bills.list");
-  const meta = [t("meta.records", { count: pagination.total }), formatUAH(Number(totals.amount))];
+  const formatMoney = useFormatMoney();
+  const meta = [t("meta.records", { count: pagination.total }), formatMoney(totals.amount)];
 
   return (
     <PageContainer

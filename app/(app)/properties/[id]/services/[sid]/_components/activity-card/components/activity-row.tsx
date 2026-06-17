@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ChevronRight, Receipt, Wallet } from "lucide-react";
 
 import { DESTRUCTIVE, SUCCESS } from "@/lib/constants/ui-tokens";
+import { useFormatMoney } from "@/lib/format/use-format-money";
 import type { TActivityItem } from "../../../_data/mock";
 
 type TProps = { item: TActivityItem; isLast: boolean };
@@ -13,6 +14,7 @@ const PAYMENT_COLOR = "#16a34a";
 
 const ActivityRow = ({ item, isLast }: TProps) => {
   const [hovered, setHovered] = useState(false);
+  const formatMoney = useFormatMoney();
 
   const isBill = item.type === "bill";
   const iconColor = isBill ? BILL_COLOR : PAYMENT_COLOR;
@@ -79,7 +81,7 @@ const ActivityRow = ({ item, isLast }: TProps) => {
         }}
       >
         {amountPrefix}
-        {item.amount.toLocaleString("en-US", { minimumFractionDigits: 2 })} ₴
+        {formatMoney(item.amount)}
       </div>
 
       {/* Chevron */}

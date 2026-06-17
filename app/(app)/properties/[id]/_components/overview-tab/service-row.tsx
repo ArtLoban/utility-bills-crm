@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { format } from "date-fns";
 import { ChevronRight } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 import { IconBadge } from "@/components/icon-badge";
 import type { TService } from "@/lib/db/schema/services";
@@ -11,7 +11,7 @@ import {
   METERED_SERVICE_CODES,
   TServiceTypeCode,
 } from "@/features/services/service-type";
-import { formatBalanceUAH } from "@/features/ledger";
+import { formatBalance } from "@/features/ledger";
 import type { TBalance } from "@/features/ledger/types";
 import { DISPLAY_DATE_FORMAT } from "@/lib/format/date";
 
@@ -36,6 +36,7 @@ const ServiceRow = ({
 }: TProps) => {
   const tType = useTranslations("services.types");
   const tRow = useTranslations("properties.detail.row");
+  const locale = useLocale();
 
   const code = serviceType.code as TServiceTypeCode;
   const { color, Icon } = getServiceTypeVisuals(code);
@@ -71,7 +72,7 @@ const ServiceRow = ({
                 : "text-zinc-500"
         }`}
       >
-        {balance === null ? "—" : formatBalanceUAH(balance.balance)}
+        {balance === null ? "—" : formatBalance(balance.balance, locale)}
       </p>
 
       <ChevronRight

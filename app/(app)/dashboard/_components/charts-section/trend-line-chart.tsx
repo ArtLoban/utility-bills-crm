@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 
 import { ChartContainer, ChartLegend, ChartTooltip, type ChartConfig } from "@/components/ui/chart";
+import { useFormatMoney } from "@/lib/format/use-format-money";
 import type { TMonthlyExpensesAggregate } from "@/features/ledger";
 import { SERVICE_TYPE_COLORS } from "@/features/services/service-type";
 
@@ -13,7 +14,6 @@ import { LineChartLegend } from "./components/line-chart-legend";
 import {
   formatMonthFull,
   formatMonthLabel,
-  formatUah,
   formatUahTick,
   sumTooltipValues,
   toTooltipRows,
@@ -26,6 +26,7 @@ type TProps = {
 
 const TrendLineChart = ({ aggregate, getServiceLabel }: TProps) => {
   const t = useTranslations("dashboard.charts");
+  const formatMoney = useFormatMoney();
   const lineData = toLineData(aggregate);
 
   const chartConfig: ChartConfig = Object.fromEntries(
@@ -72,8 +73,8 @@ const TrendLineChart = ({ aggregate, getServiceLabel }: TProps) => {
             active && payload?.length ? (
               <ChartTooltipCard
                 header={formatMonthFull(String(label))}
-                rows={toTooltipRows(payload, getServiceLabel, formatUah)}
-                total={{ label: t("tooltip.total"), value: formatUah(sumTooltipValues(payload)) }}
+                rows={toTooltipRows(payload, getServiceLabel, formatMoney)}
+                total={{ label: t("tooltip.total"), value: formatMoney(sumTooltipValues(payload)) }}
               />
             ) : null
           }

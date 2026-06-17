@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { Home, TreePine, ChevronRight } from "lucide-react";
-import { getTranslations, getFormatter } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
 
 import { DataCard } from "@/components/data-card";
+import { formatMoney } from "@/lib/format/money";
 import { cn } from "@/lib/utils";
 import type { TPropertyType } from "@/lib/db/schema/properties";
 import type { TBalanceData } from "../_data/types";
@@ -28,11 +29,11 @@ export const BalanceBlock = async ({ data }: TProps) => {
   const { totalDebt, debtServicesCount, totalOverpayment, overpayServicesCount, byProperty } = data;
 
   const t = await getTranslations("dashboard.balance");
-  const format = await getFormatter();
+  const locale = await getLocale();
 
   const formatBalance = (balance: number): string => {
     const sign = balance < 0 ? "−" : "+";
-    return `${sign}${format.number(Math.abs(balance), { maximumFractionDigits: 2, minimumFractionDigits: 0 })} UAH`;
+    return `${sign}${formatMoney(Math.abs(balance), locale)}`;
   };
 
   return (
@@ -52,11 +53,7 @@ export const BalanceBlock = async ({ data }: TProps) => {
               style={{ fontVariantNumeric: "tabular-nums", fontFeatureSettings: '"tnum" 1' }}
             >
               {"−"}
-              {format.number(totalDebt, {
-                maximumFractionDigits: 2,
-                minimumFractionDigits: 0,
-              })}{" "}
-              <span className="text-[15px] font-medium tracking-[-0.2px]">UAH</span>
+              {formatMoney(totalDebt, locale)}
             </div>
             <div className="mt-1.5 text-[12.5px] text-zinc-500">
               {t("acrossServices", { count: debtServicesCount })}
@@ -71,11 +68,7 @@ export const BalanceBlock = async ({ data }: TProps) => {
               style={{ fontVariantNumeric: "tabular-nums", fontFeatureSettings: '"tnum" 1' }}
             >
               {"+"}
-              {format.number(totalOverpayment, {
-                maximumFractionDigits: 2,
-                minimumFractionDigits: 0,
-              })}{" "}
-              <span className="text-[15px] font-medium tracking-[-0.2px]">UAH</span>
+              {formatMoney(totalOverpayment, locale)}
             </div>
             <div className="mt-1.5 text-[12.5px] text-zinc-500">
               {t("acrossServices", { count: overpayServicesCount })}

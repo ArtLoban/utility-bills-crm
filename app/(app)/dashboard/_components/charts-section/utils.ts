@@ -54,9 +54,6 @@ export const formatUahTick = (value: number): string => {
   return String(value);
 };
 
-// Format a UAH amount for tooltips: "1,234 UAH".
-export const formatUah = (value: number): string => `${value.toLocaleString()} UAH`;
-
 // Minimal shape of a Recharts tooltip payload item — only the fields the tooltip
 // adapters read. `unknown` keeps it assignable from Recharts' loose payload type
 // without a cast; values are narrowed at use.

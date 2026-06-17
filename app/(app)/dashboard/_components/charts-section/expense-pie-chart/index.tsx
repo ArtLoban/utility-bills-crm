@@ -1,17 +1,18 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useFormatter, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { Cell, Pie, PieChart } from "recharts";
 
 import { ChartContainer, ChartTooltip, type ChartConfig } from "@/components/ui/chart";
 import { DataCard } from "@/components/data-card";
+import { useFormatMoney } from "@/lib/format/use-format-money";
 import type { TMonthlyExpensesAggregate } from "@/features/ledger";
 import { SERVICE_TYPE_COLORS } from "@/features/services/service-type";
 
 import { toPieData } from "../../../_data/chart-transforms";
 import { ChartTooltipCard } from "../components/chart-tooltip-card";
-import { buildBillsDrillUrl, formatUah } from "../utils";
+import { buildBillsDrillUrl } from "../utils";
 import { PieLegend, type TPieLegendItem } from "./components/pie-legend";
 
 type TProps = {
@@ -36,7 +37,7 @@ export const ExpensePieChart = ({
 }: TProps) => {
   const router = useRouter();
   const t = useTranslations("dashboard.charts");
-  const format = useFormatter();
+  const formatMoney = useFormatMoney();
   const pieData = toPieData(aggregate);
 
   const chartConfig: ChartConfig = Object.fromEntries(
@@ -88,7 +89,7 @@ export const ExpensePieChart = ({
                             key: code,
                             label: getServiceLabel(code),
                             color: typeof p.color === "string" ? p.color : `var(--color-${code})`,
-                            value: formatUah(typeof p.value === "number" ? p.value : 0),
+                            value: formatMoney(typeof p.value === "number" ? p.value : 0),
                           };
                         })}
                       />
@@ -122,9 +123,8 @@ export const ExpensePieChart = ({
                 {t("pie.total")}
               </span>
               <span className="mt-0.5 text-2xl font-semibold tracking-[-0.5px] text-zinc-900 tabular-nums dark:text-zinc-50">
-                {format.number(total, { maximumFractionDigits: 2, minimumFractionDigits: 0 })}
+                {formatMoney(total)}
               </span>
-              <span className="text-muted-foreground text-xs">UAH</span>
             </div>
           </div>
 

@@ -166,7 +166,7 @@
         "property": "Property",
         "service": "Service",
         "period": "Period",
-        "amount": "Amount",
+        "amount": "Amount, ₴",
         "actions": "Actions"
       },
       "meta": {
@@ -352,7 +352,7 @@
         "date": "Date",
         "property": "Property",
         "service": "Service",
-        "amount": "Amount",
+        "amount": "Amount, ₴",
         "actions": "Actions"
       },
       "actions": {
@@ -399,7 +399,7 @@
     },
     "attention": {
       "title": "Attention required",
-      "debt": "<em>{amount}</em> UAH total ({count, plural, one {# service} other {# services}})",
+      "debt": "<em>{amount}</em> total ({count, plural, one {# service} other {# services}})",
       "missingReading": "Reading for <em>{month}</em> not yet submitted ({count, plural, one {# service} other {# services}})",
       "viewDetails": "View details",
       "goToMeters": "Go to meters"

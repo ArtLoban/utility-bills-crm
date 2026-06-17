@@ -39,7 +39,7 @@ export const getBillsColumns = (t: TTranslateFn): ColumnDef<TBillGlobalRow>[] =>
   {
     id: "amount",
     accessorFn: (row) => row.bill.amount,
-    header: `${t("columns.amount")}, ₴`,
+    header: t("columns.amount"),
     cell: ({ row }) => <AmountCell value={parseFloat(row.original.bill.amount)} kind="expense" />,
     enableSorting: true,
     meta: { align: "right" },

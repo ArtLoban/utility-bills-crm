@@ -1,9 +1,9 @@
-import { formatUAH } from "@/lib/format/currency";
+import { formatMoney } from "@/lib/format/money";
 
-export const formatBalanceUAH = (balance: number): string => {
-  if (balance === 0) return formatUAH(0);
+export const formatBalance = (balance: number, locale: string): string => {
+  if (balance === 0) return formatMoney(0, locale);
 
   const sign = balance > 0 ? "−" : "+";
 
-  return `${sign}${formatUAH(Math.abs(balance))}`;
+  return `${sign}${formatMoney(Math.abs(balance), locale)}`;
 };

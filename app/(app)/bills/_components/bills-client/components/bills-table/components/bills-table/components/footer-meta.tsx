@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 
-import { formatUAH } from "@/lib/format/currency";
+import { useFormatMoney } from "@/lib/format/use-format-money";
 
 type TProps = {
   totalAmount: string;
@@ -10,13 +10,12 @@ type TProps = {
 
 export const FooterMeta = ({ totalAmount }: TProps) => {
   const t = useTranslations("bills.list");
+  const formatMoney = useFormatMoney();
 
   return (
     <span className="text-muted-foreground text-sm">
       {t("footer.total")}:{" "}
-      <span className="text-success font-semibold tabular-nums">
-        {formatUAH(Number(totalAmount))}
-      </span>
+      <span className="text-success font-semibold tabular-nums">{formatMoney(totalAmount)}</span>
     </span>
   );
 };

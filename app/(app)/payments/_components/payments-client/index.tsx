@@ -10,7 +10,7 @@ import { ROUTES } from "@/lib/routes";
 import { PaymentsTable } from "./components/payments-table";
 import { PaymentsTableActions } from "./components/table-actions";
 import type { TPropertyOption } from "@/features/properties";
-import { formatUAH } from "@/lib/format/currency";
+import { useFormatMoney } from "@/lib/format/use-format-money";
 
 type TProps = {
   paymentsList: TPaymentsListResult;
@@ -20,7 +20,8 @@ type TProps = {
 export const PaymentsClient = ({ paymentsList, properties }: TProps) => {
   const { pagination, totals } = paymentsList;
   const t = useTranslations("payments.list");
-  const meta = [t("meta.records", { count: pagination.total }), formatUAH(Number(totals.amount))];
+  const formatMoney = useFormatMoney();
+  const meta = [t("meta.records", { count: pagination.total }), formatMoney(totals.amount)];
 
   return (
     <PageContainer

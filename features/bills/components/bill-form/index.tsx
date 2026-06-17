@@ -11,7 +11,7 @@ import { FormTextField } from "@/components/form/form-text-field";
 import { FormTextareaField } from "@/components/form/form-textarea-field";
 import { currentYearMonth } from "@/components/month-picker/utils";
 import { getServiceLabel } from "@/lib/constants/service-colors";
-import { formatUAH } from "@/lib/format/currency";
+import { useFormatMoney } from "@/lib/format/use-format-money";
 import type { PropertyId } from "@/lib/db/schema/properties";
 import type { TServiceOption } from "@/lib/db/access/bills";
 import { BILL_LIMITS, type TBillFormValues } from "@/features/bills/schema";
@@ -42,6 +42,7 @@ export const BillForm = ({
   lockedServiceCode,
 }: TProps) => {
   const t = useTranslations("bills.fields");
+  const formatMoney = useFormatMoney();
   const { control, formState } = form;
   const rootError = formState.errors.root?.message;
 
@@ -52,7 +53,7 @@ export const BillForm = ({
 
   const expectedHint =
     expectedAmount?.kind === "computed"
-      ? t("amount.expected", { amount: formatUAH(expectedAmount.amount) })
+      ? t("amount.expected", { amount: formatMoney(expectedAmount.amount) })
       : undefined;
 
   return (

@@ -1,4 +1,6 @@
-import { NUMBER_FORMATTER } from "@/lib/format/currency";
+"use client";
+
+import { useFormatMoney } from "@/lib/format/use-format-money";
 
 export const MOBILE_TOTALS_TONE = {
   NEGATIVE: "negative",
@@ -13,8 +15,10 @@ type TProps = {
 };
 
 export const MobileTotals = ({ amount, tone = MOBILE_TOTALS_TONE.NEGATIVE }: TProps) => {
-  const value = NUMBER_FORMATTER.format(Number(amount));
+  const formatMoney = useFormatMoney();
+
   const isNegative = tone === MOBILE_TOTALS_TONE.NEGATIVE;
+  const value = formatMoney(amount);
   const amountStr = isNegative ? `−${value}` : value;
 
   return (
@@ -24,7 +28,6 @@ export const MobileTotals = ({ amount, tone = MOBILE_TOTALS_TONE.NEGATIVE }: TPr
         <span className={isNegative ? "text-destructive font-bold" : "text-success font-bold"}>
           {amountStr}
         </span>
-        <span className="text-muted-foreground ml-0.5 shrink-0">UAH</span>
       </div>
     </div>
   );

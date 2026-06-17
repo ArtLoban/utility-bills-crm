@@ -1,10 +1,10 @@
 import Link from "next/link";
 import { ChevronRight, Users } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import type { TPropertyListItem } from "@/app/(app)/properties/_data/queries";
 import { PROPERTY_ROLES } from "@/lib/db/schema/properties";
 import { PROPERTY_TYPE_ICONS } from "@/features/properties/property-type";
-import { formatBalanceUAH } from "@/features/ledger";
+import { formatBalance } from "@/features/ledger";
 
 type TProps = {
   property: TPropertyListItem;
@@ -12,6 +12,7 @@ type TProps = {
 
 export const PropertyCard = ({ property }: TProps) => {
   const t = useTranslations("properties");
+  const locale = useLocale();
   const Icon = PROPERTY_TYPE_ICONS[property.type];
   const isShared = property.role !== PROPERTY_ROLES.OWNER;
   const { balance } = property.balance;
@@ -81,7 +82,7 @@ export const PropertyCard = ({ property }: TProps) => {
                   : "text-zinc-400 dark:text-zinc-600"
             }`}
           >
-            {formatBalanceUAH(balance)}
+            {formatBalance(balance, locale)}
           </p>
         </div>
 
