@@ -9,7 +9,7 @@ export const StatusSection = ({ status }: TProps) => {
 
   return (
     <section className="py-[56px] md:py-[92px]">
-      <div className="mx-auto max-w-[1100px] px-4 md:px-6">
+      <div className="mx-auto max-w-6xl px-4 md:px-6">
         <div className="max-w-[640px]">
           <h2 className="mb-8 text-[clamp(28px,3vw,38px)] font-semibold tracking-[-0.025em] text-zinc-900 dark:text-zinc-50">
             Status

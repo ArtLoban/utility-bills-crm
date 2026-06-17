@@ -57,7 +57,7 @@ export const FeaturesSection = ({ cards }: TProps) => {
           background: "radial-gradient(at 30% 70%, var(--section-glow) 0%, transparent 62%)",
         }}
       />
-      <div className="relative mx-auto max-w-[1100px] px-4 md:px-6">
+      <div className="relative mx-auto max-w-6xl px-4 md:px-6">
         <div className="mb-8 md:mb-12">
           <p className="mb-2.5 text-xs font-medium tracking-[0.08em] text-violet-600 uppercase dark:text-violet-400">
             Features

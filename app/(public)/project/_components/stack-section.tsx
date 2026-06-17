@@ -26,7 +26,7 @@ const BACKEND_CHIPS = [
 export const StackSection = () => {
   return (
     <section className="bg-zinc-100/45 py-[56px] md:py-[92px] dark:bg-zinc-900/80">
-      <div className="mx-auto max-w-[1100px] px-4 md:px-6">
+      <div className="mx-auto max-w-6xl px-4 md:px-6">
         <p className="mb-3 text-xs font-medium tracking-[0.08em] text-violet-600 uppercase dark:text-violet-400">
           Stack
         </p>

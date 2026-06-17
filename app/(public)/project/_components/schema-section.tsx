@@ -37,7 +37,7 @@ export const SchemaSection = () => {
         }}
       />
 
-      <div className="relative mx-auto max-w-[1100px] px-4 md:px-6">
+      <div className="relative mx-auto max-w-6xl px-4 md:px-6">
         <p
           className="mb-3 text-xs font-medium tracking-[0.08em] uppercase"
           style={{ color: "#cbb6f5" }}

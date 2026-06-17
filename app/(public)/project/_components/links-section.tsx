@@ -16,7 +16,7 @@ const cardLabel =
 export const LinksSection = ({ projectRepoUrl }: TProps) => {
   return (
     <section className="border-border border-t py-[56px] md:py-[92px]">
-      <div className="mx-auto max-w-[1100px] px-4 md:px-6">
+      <div className="mx-auto max-w-6xl px-4 md:px-6">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <a href={projectRepoUrl} target="_blank" rel="noopener noreferrer" className={cardClass}>
             <span className={cardLabel}>

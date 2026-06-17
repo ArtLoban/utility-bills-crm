@@ -23,7 +23,7 @@ export const ProseSection = ({ worksWithTitle, worksWith }: TProps) => {
         }}
       />
 
-      <div className="relative mx-auto max-w-[1100px] px-4 md:px-6">
+      <div className="relative mx-auto max-w-6xl px-4 md:px-6">
         <div className="flex max-w-[640px] flex-col gap-[22px] md:mx-auto">
           <p className="text-[19px] leading-[1.75] font-medium text-zinc-900 dark:text-zinc-50">
             <CmsText value={worksWithTitle} />

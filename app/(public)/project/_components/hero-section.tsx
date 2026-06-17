@@ -50,7 +50,7 @@ export const HeroSection = ({ title, desc, githubUrl }: TProps) => {
         }}
       />
 
-      <div className="relative mx-auto max-w-[1100px] px-4 md:px-6">
+      <div className="relative mx-auto max-w-6xl px-4 md:px-6">
         <h1 className="mb-5 max-w-[680px] text-[clamp(38px,5vw,60px)] leading-[1.12] font-semibold tracking-[-0.035em] text-zinc-900 dark:text-zinc-50">
           {title}
         </h1>

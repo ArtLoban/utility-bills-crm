@@ -32,7 +32,7 @@ export const HeroSection = ({ heroTitle, heroDesc }: TProps) => {
         }}
       />
 
-      <div className="relative mx-auto max-w-[1100px] px-4 md:px-6">
+      <div className="relative mx-auto max-w-6xl px-4 md:px-6">
         {/* Eyebrow badge */}
         <div className="mb-6 inline-flex items-center gap-1.5 rounded-full border border-violet-200 bg-violet-50 px-2.5 py-1 dark:border-violet-800/50 dark:bg-violet-950/40">
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">

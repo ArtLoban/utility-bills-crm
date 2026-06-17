@@ -10,7 +10,7 @@ type TProps = {
 export const MockupSection = ({ url, caption, children }: TProps) => {
   return (
     <section className="py-14 md:py-[108px]" style={{ background: "var(--lander-band-bg)" }}>
-      <div className="mx-auto flex max-w-[1100px] flex-col items-center px-4 md:px-6">
+      <div className="mx-auto flex max-w-6xl flex-col items-center px-4 md:px-6">
         {/* Mobile: fixed 900px renders the full desktop UI, zoom scales it to the ~342px column.
             Desktop: responsive width up to 900px, no zoom. */}
         <div className="relative w-[900px] [zoom:0.4] md:w-full md:max-w-[900px] md:[zoom:1]">

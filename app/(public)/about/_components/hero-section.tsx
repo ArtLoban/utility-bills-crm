@@ -33,7 +33,7 @@ export const HeroSection = ({ greeting, desc, text }: TProps) => {
         }}
       />
 
-      <div className="relative mx-auto max-w-[1100px] px-4 md:px-6">
+      <div className="relative mx-auto max-w-6xl px-4 md:px-6">
         <div className="max-w-[720px]">
           <h1 className="mb-[22px] text-[clamp(40px,5vw,64px)] leading-[1.06] font-semibold tracking-[-0.035em] text-zinc-900 dark:text-zinc-50">
             {greeting}

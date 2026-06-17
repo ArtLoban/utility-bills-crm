@@ -25,7 +25,7 @@ export const PublicHeader = async () => {
 
   return (
     <PublicHeaderShell>
-      <div className="mx-auto flex h-full max-w-[1100px] items-center gap-8 px-6">
+      <div className="mx-auto flex h-full max-w-6xl items-center gap-8 px-6">
         <PublicLogo />
 
         <PublicNav links={navLinks} />

@@ -10,7 +10,7 @@ type TProps = {
 export const LinksSection = ({ linkedinUrl, githubUrl }: TProps) => {
   return (
     <section className="border-border border-t py-14 md:py-[88px]">
-      <div className="mx-auto max-w-[1100px] px-4 md:px-6">
+      <div className="mx-auto max-w-6xl px-4 md:px-6">
         <div className="flex max-w-[640px] flex-col gap-[26px]">
           <div className="flex flex-col gap-1">
             <a
