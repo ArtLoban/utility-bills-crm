@@ -26,7 +26,7 @@ export const PaymentCard = ({ payment }: TProps) => {
           <span className="min-w-0 flex-1 truncate font-semibold tracking-tight">
             {serviceName}
           </span>
-          <span className="shrink-0 font-bold whitespace-nowrap text-green-600 tabular-nums dark:text-green-500">
+          <span className="text-success shrink-0 font-bold whitespace-nowrap tabular-nums">
             {amountStr}
           </span>
           <span className="text-muted-foreground ml-0.5 shrink-0 text-xs">UAH</span>

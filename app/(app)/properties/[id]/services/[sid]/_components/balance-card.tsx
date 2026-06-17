@@ -38,7 +38,7 @@ const BalanceCard = ({ balance }: TProps) => {
               balance.balance > 0
                 ? "text-destructive"
                 : balance.balance < 0
-                  ? "text-green-600 dark:text-green-500"
+                  ? "text-success"
                   : "text-zinc-950 dark:text-zinc-50"
             }`}
             style={{ fontSize: 28 }}
@@ -62,10 +62,7 @@ const BalanceCard = ({ balance }: TProps) => {
               <span className="text-zinc-500 dark:text-zinc-400" style={{ fontSize: 13 }}>
                 Paid
               </span>
-              <span
-                className="text-green-600 tabular-nums dark:text-green-500"
-                style={{ fontSize: 13, fontWeight: 500 }}
-              >
+              <span className="text-success tabular-nums" style={{ fontSize: 13, fontWeight: 500 }}>
                 {formatUAH(balance.paymentsTotal)}
               </span>
             </div>

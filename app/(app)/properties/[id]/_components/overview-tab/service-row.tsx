@@ -67,7 +67,7 @@ const ServiceRow = ({
             : balance.balance > 0
               ? "text-destructive"
               : balance.balance < 0
-                ? "text-green-600 dark:text-green-500"
+                ? "text-success"
                 : "text-zinc-500"
         }`}
       >

@@ -77,7 +77,7 @@ export const PropertyCard = ({ property }: TProps) => {
               balance > 0
                 ? "text-destructive"
                 : balance < 0
-                  ? "text-green-600 dark:text-green-500"
+                  ? "text-success"
                   : "text-zinc-400 dark:text-zinc-600"
             }`}
           >

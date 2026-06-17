@@ -55,8 +55,8 @@
     /* Status */
     --red-600: oklch(0.577 0.245 27.325);
     --red-400: oklch(0.704 0.191 22.216);
-    --green-500: oklch(0.642 0.165 162); /* #10b981 — success/confirmed state */
-    --green-400: oklch(0.73 0.148 162); /* #34d399 — dark-mode success */
+    --green-600: oklch(0.596 0.127 163.2); /* #059669 — positive amounts / success on light bg */
+    --green-500: oklch(0.696 0.149 162.5); /* #10b981 — positive amounts / success on dark bg */
 
     /* ─── Layer 2: Semantic — light ───────────────────────────────── */
 
@@ -75,7 +75,7 @@
     --accent: var(--neutral-100);
     --accent-foreground: var(--neutral-900);
     --destructive: var(--red-600);
-    --success: var(--green-500);
+    --success: var(--green-600);
     --warning: var(--amber-500);
     --border: var(--neutral-200);
     --input: var(--neutral-200);
@@ -167,7 +167,7 @@
     --accent: var(--neutral-800);
     --accent-foreground: var(--neutral-50);
     --destructive: var(--red-400);
-    --success: var(--green-400);
+    --success: var(--green-500);
     --border: oklch(1 0 0 / 10%);
     --input: oklch(1 0 0 / 15%);
     --ring: var(--purple-650);

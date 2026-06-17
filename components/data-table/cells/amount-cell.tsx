@@ -25,7 +25,7 @@ export const AmountCell = ({ value, kind = "neutral", currency = "UAH", classNam
       className={cn(
         "tabular-nums",
         kind === "expense" && "text-destructive",
-        kind === "payment" && "text-green-600 dark:text-green-500",
+        kind === "payment" && "text-success",
         className,
       )}
     >
