@@ -32,7 +32,7 @@ export const AdminUserDropdown = ({ user }: TProps) => {
         aria-label="User menu"
         className="hover:bg-accent flex cursor-pointer items-center gap-2 rounded-full py-1 pr-1 pl-2 outline-none"
       >
-        <span className="hidden max-w-[9rem] truncate text-sm font-medium sm:block">
+        <span className="hidden max-w-[9rem] truncate text-sm font-medium lg:block">
           {name ?? email}
         </span>
         {image ? (

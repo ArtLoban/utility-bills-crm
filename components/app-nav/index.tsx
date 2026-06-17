@@ -1,15 +1,19 @@
 "use client";
 
+import { useMemo } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Shield } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { ROUTES } from "@/lib/routes";
+import { cn } from "@/lib/utils";
 import { Logo } from "@/components/logo";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { AppNavMobileMenu } from "./components/app-nav-mobile-menu";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { NavLink } from "./components/nav-link";
+import { OverflowNav } from "@/components/overflow-nav";
+import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { UserDropdown } from "@/components/user-dropdown";
 import type { TNavUser } from "./types";
 
@@ -30,25 +34,34 @@ export const AppNav = ({ user }: TProps) => {
   const pathname = usePathname();
   const t = useTranslations("nav");
 
-  const isActive = (href: string) =>
-    href === ROUTES.dashboard ? pathname === href : pathname.startsWith(href);
-
-  const links = NAV_LINKS.map(({ key, href }) => ({
-    href,
-    label: t(key),
-    active: isActive(href),
-  }));
+  const links = useMemo(
+    () =>
+      NAV_LINKS.map(({ key, href }) => ({
+        href,
+        label: t(key),
+        active: href === ROUTES.dashboard ? pathname === href : pathname.startsWith(href),
+      })),
+    [pathname, t],
+  );
 
   return (
     <header className="bg-background/80 sticky top-0 z-50 h-16 border-b backdrop-blur-sm">
-      <div className="mx-auto flex h-full max-w-screen-2xl items-center gap-16 px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex h-full max-w-screen-2xl items-center gap-6 px-4 sm:px-6 lg:px-8">
         <Logo href={ROUTES.home} />
 
-        <nav className="hidden items-center gap-6 md:flex">
-          {links.map((link) => (
-            <NavLink key={link.href} {...link} />
-          ))}
-        </nav>
+        <OverflowNav
+          items={links}
+          moreLabel={t("more")}
+          triggerAccentClassName="text-primary"
+          renderInline={(item) => <NavLink {...item} />}
+          renderMenuItem={(item) => (
+            <DropdownMenuItem key={item.href} asChild>
+              <Link href={item.href} className={cn(item.active && "text-primary font-medium")}>
+                {item.label}
+              </Link>
+            </DropdownMenuItem>
+          )}
+        />
 
         <div className="ml-auto flex items-center gap-1">
           <div className="hidden items-center gap-1 md:flex">

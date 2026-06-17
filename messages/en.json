@@ -107,7 +107,8 @@
     "bills": "Bills",
     "payments": "Payments",
     "settings": "Settings",
-    "adminDashboard": "Dashboard"
+    "adminDashboard": "Dashboard",
+    "more": "More"
   },
   "meters": {
     "list": {

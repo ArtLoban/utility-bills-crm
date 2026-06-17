@@ -1,10 +1,14 @@
 "use client";
 
+import { useMemo } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Shield } from "lucide-react";
 import { ROUTES } from "@/lib/routes";
+import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { OverflowNav } from "@/components/overflow-nav";
+import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import type { TNavUser } from "@/lib/types/nav";
 import { AdminNavMobileMenu } from "./components/admin-nav-mobile-menu";
 import { AdminUserDropdown } from "./components/admin-user-dropdown";
@@ -24,20 +28,21 @@ type TProps = {
 export const AdminNav = ({ user }: TProps) => {
   const pathname = usePathname();
 
-  const isActive = (href: string) =>
-    href === ROUTES.admin.root ? pathname === href : pathname.startsWith(href);
-
-  const links = NAV_LINKS.map(({ label, href }) => ({
-    href,
-    label,
-    active: isActive(href),
-  }));
+  const links = useMemo(
+    () =>
+      NAV_LINKS.map(({ label, href }) => ({
+        href,
+        label,
+        active: href === ROUTES.admin.root ? pathname === href : pathname.startsWith(href),
+      })),
+    [pathname],
+  );
 
   return (
     <>
       <div className="h-[2px] w-full bg-amber-500" />
       <header className="bg-background/80 sticky top-0 z-50 h-16 border-b backdrop-blur-sm">
-        <div className="mx-auto flex h-full max-w-screen-2xl items-center gap-16 px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto flex h-full max-w-screen-2xl items-center gap-6 px-4 sm:px-6 lg:px-8">
           <Link href={ROUTES.home} className="flex items-center gap-2">
             <div className="flex size-7 items-center justify-center rounded-[7px] bg-violet-600">
               <Shield className="size-[15px] text-white" strokeWidth={1.75} />
@@ -45,11 +50,22 @@ export const AdminNav = ({ user }: TProps) => {
             <span className="text-md font-bold tracking-[-0.2px]">UtilityBills</span>
           </Link>
 
-          <nav className="hidden items-center gap-6 md:flex">
-            {links.map((link) => (
-              <NavLink key={link.href} {...link} />
-            ))}
-          </nav>
+          <OverflowNav
+            items={links}
+            moreLabel="More"
+            triggerAccentClassName="text-amber-600 dark:text-amber-400"
+            renderInline={(item) => <NavLink {...item} />}
+            renderMenuItem={(item) => (
+              <DropdownMenuItem key={item.href} asChild>
+                <Link
+                  href={item.href}
+                  className={cn(item.active && "font-medium text-amber-600 dark:text-amber-400")}
+                >
+                  {item.label}
+                </Link>
+              </DropdownMenuItem>
+            )}
+          />
 
           <div className="ml-auto flex items-center gap-1">
             <div className="hidden items-center gap-1 md:flex">

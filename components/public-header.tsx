@@ -7,7 +7,7 @@ import { PublicMobileMenu } from "@/components/public-mobile-menu";
 import { auth } from "@/lib/auth";
 import { ROUTES } from "@/lib/routes";
 import { PublicHeaderShell } from "@/components/public-header-shell";
-import { PublicNavLink } from "@/components/public-nav-link";
+import { PublicNav } from "@/components/public-nav";
 import { getPublicLinks } from "@/features/landing-cms";
 
 export const PublicHeader = async () => {
@@ -17,16 +17,18 @@ export const PublicHeader = async () => {
   const showAbout = links?.aboutNavVisible ?? true;
   const showProject = links?.projectNavVisible ?? true;
 
+  const navLinks = [
+    { href: ROUTES.home, label: "Home" },
+    ...(showAbout ? [{ href: ROUTES.about, label: "About" }] : []),
+    ...(showProject ? [{ href: ROUTES.project, label: "Project" }] : []),
+  ];
+
   return (
     <PublicHeaderShell>
       <div className="mx-auto flex h-full max-w-[1100px] items-center gap-8 px-6">
         <PublicLogo />
 
-        <nav className="hidden flex-1 items-center justify-center gap-1 md:flex">
-          <PublicNavLink href={ROUTES.home} label="Home" />
-          {showAbout && <PublicNavLink href={ROUTES.about} label="About" />}
-          {showProject && <PublicNavLink href={ROUTES.project} label="Project" />}
-        </nav>
+        <PublicNav links={navLinks} />
 
         <div className="hidden items-center gap-2 md:flex">
           {user && (

@@ -107,7 +107,8 @@
     "bills": "Рахунки",
     "payments": "Платежі",
     "settings": "Налаштування",
-    "adminDashboard": "Панель"
+    "adminDashboard": "Панель",
+    "more": "Ще"
   },
   "meters": {
     "list": {
