@@ -1,22 +1,17 @@
 import { count, isNotNull, isNull } from "drizzle-orm";
-import { notFound } from "next/navigation";
 
 import { db } from "@/lib/db/client";
 import { users } from "@/lib/db/schema/auth";
 import { properties } from "@/lib/db/schema/properties";
 import { bills } from "@/lib/db/schema/bills";
 import { requireAdmin } from "@/lib/auth/guards";
-import { shouldHideAsNotFound } from "@/lib/errors";
+import { unwrapOrThrow } from "@/lib/unwrap-or-throw";
 import type { TAdminDashboardStats } from "./types";
 
 // Verifies admin session as a third defense-in-depth layer.
 // Layer 1: (admin) layout guard. Layer 2: page-level requireAdmin(). Layer 3: here.
 const assertAdmin = async (): Promise<void> => {
-  const result = await requireAdmin();
-  if (!result.ok) {
-    if (shouldHideAsNotFound(result.error)) notFound();
-    throw result.error;
-  }
+  await unwrapOrThrow(await requireAdmin());
 };
 
 export const getAdminDashboardStats = async (): Promise<TAdminDashboardStats> => {

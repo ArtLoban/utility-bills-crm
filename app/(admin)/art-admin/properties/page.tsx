@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
 import { eq } from "drizzle-orm";
 
 import { requireAdmin } from "@/lib/auth/guards";
-import { shouldHideAsNotFound } from "@/lib/errors";
+import { unwrapOrThrow } from "@/lib/unwrap-or-throw";
 import { db } from "@/lib/db/client";
 import { users } from "@/lib/db/schema/auth";
 import type { UserId } from "@/lib/db/schema/auth";
@@ -18,11 +17,7 @@ export default async function AdminPropertiesPage({
 }: {
   searchParams: Promise<Record<string, string>>;
 }) {
-  const guard = await requireAdmin();
-  if (!guard.ok) {
-    if (shouldHideAsNotFound(guard.error)) notFound();
-    throw guard.error;
-  }
+  await unwrapOrThrow(await requireAdmin());
 
   const raw = await searchParams;
   const params = parseAdminPropertiesParams(raw);

@@ -1,5 +1,4 @@
 import { cache } from "react";
-import { notFound } from "next/navigation";
 
 import { db } from "@/lib/db/client";
 import { aboutHero, cmsFeatures, cmsLinks, homeHero, projectHero } from "@/lib/db/schema/cms";
@@ -11,7 +10,7 @@ import type {
   TProjectHero,
 } from "@/lib/db/schema/cms";
 import { requireAdmin } from "@/lib/auth/guards";
-import { shouldHideAsNotFound } from "@/lib/errors";
+import { unwrapOrThrow } from "@/lib/unwrap-or-throw";
 
 // ---------------------------------------------------------------------------
 // Admin guard
@@ -19,11 +18,7 @@ import { shouldHideAsNotFound } from "@/lib/errors";
 // ---------------------------------------------------------------------------
 
 const assertAdmin = async (): Promise<void> => {
-  const result = await requireAdmin();
-  if (!result.ok) {
-    if (shouldHideAsNotFound(result.error)) notFound();
-    throw result.error;
-  }
+  await unwrapOrThrow(await requireAdmin());
 };
 
 // ---------------------------------------------------------------------------

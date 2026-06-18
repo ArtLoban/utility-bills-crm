@@ -1,13 +1,13 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { notFound } from "next/navigation";
 
 import { db } from "@/lib/db/client";
 import { aboutHero, cmsFeatures, cmsLinks, homeHero, projectHero } from "@/lib/db/schema/cms";
 import { requireAdmin } from "@/lib/auth/guards";
-import { ValidationError, err, ok, shouldHideAsNotFound } from "@/lib/errors";
+import { ValidationError, err, ok } from "@/lib/errors";
 import type { Result } from "@/lib/errors";
+import { unwrapOrThrow } from "@/lib/unwrap-or-throw";
 
 import { aboutSchema, globalSchema, homeSchema, projectSchema } from "./schema";
 import type { TAboutPayload, TGlobalPayload, THomePayload, TProjectPayload } from "./types";
@@ -18,11 +18,7 @@ import type { TAboutPayload, TGlobalPayload, THomePayload, TProjectPayload } fro
 // ---------------------------------------------------------------------------
 
 const assertAdmin = async (): Promise<void> => {
-  const result = await requireAdmin();
-  if (!result.ok) {
-    if (shouldHideAsNotFound(result.error)) notFound();
-    throw result.error;
-  }
+  await unwrapOrThrow(await requireAdmin());
 };
 
 // ---------------------------------------------------------------------------

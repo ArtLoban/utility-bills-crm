@@ -17,15 +17,12 @@ import type { PropertyId } from "@/lib/db/schema/properties";
 import { services } from "@/lib/db/schema/services";
 import { tariffs } from "@/lib/db/schema/tariffs";
 import { requireAdmin } from "@/lib/auth/guards";
-import { DomainError, shouldHideAsNotFound, err, ok } from "@/lib/errors";
+import { DomainError, err, ok } from "@/lib/errors";
 import type { Result } from "@/lib/errors";
+import { unwrapOrThrow } from "@/lib/unwrap-or-throw";
 
 const guardAdmin = async (): Promise<void> => {
-  const result = await requireAdmin();
-  if (!result.ok) {
-    if (shouldHideAsNotFound(result.error)) notFound();
-    throw result.error;
-  }
+  await unwrapOrThrow(await requireAdmin());
 };
 
 // Restores a soft-deleted property and all children that share its deletedAt timestamp.

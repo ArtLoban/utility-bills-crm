@@ -1,5 +1,4 @@
 import { and, asc, count, desc, eq, inArray, isNotNull, isNull, sql } from "drizzle-orm";
-import { notFound } from "next/navigation";
 
 import { db } from "@/lib/db/client";
 import { users } from "@/lib/db/schema/auth";
@@ -8,7 +7,7 @@ import { properties, propertyAccess, PROPERTY_ROLES } from "@/lib/db/schema/prop
 import type { PropertyId } from "@/lib/db/schema/properties";
 import { services } from "@/lib/db/schema/services";
 import { requireAdmin } from "@/lib/auth/guards";
-import { shouldHideAsNotFound } from "@/lib/errors";
+import { unwrapOrThrow } from "@/lib/unwrap-or-throw";
 import type {
   TAdminPropertiesListParams,
   TAdminPropertiesListResult,
@@ -21,11 +20,7 @@ import type {
 // Layer 3 admin guard — mirrors admin-users/query.ts.
 // Layer 1: (admin) layout guard. Layer 2: page-level requireAdmin(). Layer 3: here.
 const assertAdmin = async (): Promise<void> => {
-  const result = await requireAdmin();
-  if (!result.ok) {
-    if (shouldHideAsNotFound(result.error)) notFound();
-    throw result.error;
-  }
+  await unwrapOrThrow(await requireAdmin());
 };
 
 const buildWhere = (params: TAdminPropertiesListParams) => {

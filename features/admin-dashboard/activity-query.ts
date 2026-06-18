@@ -1,6 +1,5 @@
 import { and, eq, isNull, notInArray, sql } from "drizzle-orm";
 import { unionAll } from "drizzle-orm/pg-core";
-import { notFound } from "next/navigation";
 
 import { db } from "@/lib/db/client";
 import { users } from "@/lib/db/schema/auth";
@@ -12,18 +11,14 @@ import { payments } from "@/lib/db/schema/payments";
 import { readings } from "@/lib/db/schema/readings";
 import { meters } from "@/lib/db/schema/meters";
 import { requireAdmin } from "@/lib/auth/guards";
-import { shouldHideAsNotFound } from "@/lib/errors";
+import { unwrapOrThrow } from "@/lib/unwrap-or-throw";
 import { ACTIVITY_KINDS, type TActivityItem, type TActivityKind } from "./types";
 
 const ACTIVITY_LIMIT = 20;
 
 // Third defense-in-depth layer — same pattern as query.ts.
 const assertAdmin = async (): Promise<void> => {
-  const result = await requireAdmin();
-  if (!result.ok) {
-    if (shouldHideAsNotFound(result.error)) notFound();
-    throw result.error;
-  }
+  await unwrapOrThrow(await requireAdmin());
 };
 
 // --- Raw row shape from the UNION ALL ---

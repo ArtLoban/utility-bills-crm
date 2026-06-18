@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { requireAdmin } from "@/lib/auth/guards";
-import { shouldHideAsNotFound } from "@/lib/errors";
+import { unwrapOrThrow } from "@/lib/unwrap-or-throw";
 import { getAdminUserDetail } from "@/features/admin-users";
 
 import { UserDetail } from "./_components/user-detail";
@@ -26,11 +26,7 @@ export async function generateMetadata({ params }: TProps): Promise<Metadata> {
 export default async function AdminUserDetailPage({ params }: TProps) {
   const { id } = await params;
 
-  const guard = await requireAdmin();
-  if (!guard.ok) {
-    if (shouldHideAsNotFound(guard.error)) notFound();
-    throw guard.error;
-  }
+  await unwrapOrThrow(await requireAdmin());
 
   const user = await getAdminUserDetail(id);
   if (!user) notFound();

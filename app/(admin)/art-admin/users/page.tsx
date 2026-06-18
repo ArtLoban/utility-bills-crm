@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
 
 import { requireAdmin } from "@/lib/auth/guards";
-import { shouldHideAsNotFound } from "@/lib/errors";
+import { unwrapOrThrow } from "@/lib/unwrap-or-throw";
 import { getAdminUsersList, parseAdminUsersParams } from "@/features/admin-users";
 
 import { UsersClient } from "./_components/users-client";
@@ -14,11 +13,7 @@ export default async function AdminUsersPage({
 }: {
   searchParams: Promise<Record<string, string>>;
 }) {
-  const guard = await requireAdmin();
-  if (!guard.ok) {
-    if (shouldHideAsNotFound(guard.error)) notFound();
-    throw guard.error;
-  }
+  await unwrapOrThrow(await requireAdmin());
 
   const raw = await searchParams;
   const params = parseAdminUsersParams(raw);

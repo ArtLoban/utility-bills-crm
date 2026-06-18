@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
 import { Archive, Home, Receipt, Users } from "lucide-react";
 
 import { requireAdmin } from "@/lib/auth/guards";
-import { shouldHideAsNotFound } from "@/lib/errors";
+import { unwrapOrThrow } from "@/lib/unwrap-or-throw";
 import { getAdminActivityFeed, getAdminDashboardStats } from "@/features/admin-dashboard";
 import { PageContainer } from "@/components/page-container";
 import { ActivityFeed } from "./_components/activity-feed";
@@ -15,11 +14,7 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminDashboardPage() {
-  const guard = await requireAdmin();
-  if (!guard.ok) {
-    if (shouldHideAsNotFound(guard.error)) notFound();
-    throw guard.error;
-  }
+  await unwrapOrThrow(await requireAdmin());
 
   const [stats, activityItems] = await Promise.all([
     getAdminDashboardStats(),

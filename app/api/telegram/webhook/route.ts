@@ -4,6 +4,7 @@ import {
   parseStartCommand,
 } from "@/features/notifications";
 import { logger } from "@/lib/logger";
+import { runWithCorrelationId } from "@/lib/logger/correlation-context";
 
 // Node runtime: consumeStartToken uses the `pg` driver, which is not edge-compatible.
 export const runtime = "nodejs";
@@ -16,18 +17,21 @@ export const dynamic = "force-dynamic";
 // It is fail-closed on Telegram's secret-token header. Every other update — a non-/start message,
 // or a /start whose token is unknown / expired / already consumed — is acknowledged with 200 and
 // binds nothing, so Telegram does not retry and create pressure.
-export const POST = async (request: Request): Promise<Response> => {
-  if (!isValidWebhookSecret(request)) {
-    return new Response("Unauthorized", { status: 401 });
-  }
+// Telegram does not forward our correlation header, and this route sits outside the
+// proxy matcher — so the correlation id is generated at entry.
+export const POST = async (request: Request): Promise<Response> =>
+  runWithCorrelationId(crypto.randomUUID(), async () => {
+    if (!isValidWebhookSecret(request)) {
+      return new Response("Unauthorized", { status: 401 });
+    }
 
-  const body: unknown = await request.json().catch(() => null);
-  const start = parseStartCommand(body);
+    const body: unknown = await request.json().catch(() => null);
+    const start = parseStartCommand(body);
 
-  if (start) {
-    const bound = await consumeStartToken(start);
-    logger.info({ chatId: start.chatId, bound }, "telegram /start processed");
-  }
+    if (start) {
+      const bound = await consumeStartToken(start);
+      logger.info({ chatId: start.chatId, bound }, "telegram /start processed");
+    }
 
-  return new Response("OK", { status: 200 });
-};
+    return new Response("OK", { status: 200 });
+  });
