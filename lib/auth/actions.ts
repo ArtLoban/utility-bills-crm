@@ -9,7 +9,7 @@ import { sessions } from "@/lib/db/schema";
 import { getSessionCookieConfig } from "@/lib/auth/cookie";
 import { createDemoSession } from "@/lib/auth/demo-session";
 import { requireMutableUser } from "@/lib/auth/guards";
-import { ok, type Result, type DemoModeError } from "@/lib/errors";
+import { ok, type Result, type TAppError } from "@/lib/errors";
 import { ROUTES } from "@/lib/routes";
 
 // Demo sign-in is a state-changing operation, so it must run on POST only.
@@ -32,7 +32,7 @@ export const signOutToGoogleAction = async () => {
 
 // Delete all first, then signOut: Auth.js re-deletes the current token (no-op), but still clears the cookie and redirects.
 // Demo users are blocked — the demo account is shared; wiping its sessions would kick all concurrent viewers.
-export const signOutAllDevices = async (): Promise<Result<void, DemoModeError>> => {
+export const signOutAllDevices = async (): Promise<Result<void, TAppError>> => {
   const result = await requireMutableUser();
   if (!result.ok) return result;
 

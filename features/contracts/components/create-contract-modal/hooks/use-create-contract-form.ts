@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { createContract } from "@/features/contracts/actions";
 import { createContractSchema } from "@/features/contracts/schema";
 import { useActionErrorHandler } from "@/lib/hooks/use-action-error-handler";
+import { ERROR_CODES } from "@/lib/errors";
 import type { TCreateContractFormState } from "@/features/contracts/types";
 import type { TServiceId } from "@/lib/db/schema/services";
 
@@ -59,7 +60,7 @@ export const useCreateContractForm = ({ serviceId }: TParams) => {
       const response = await createContract(result.data);
 
       if (!response.ok) {
-        if (response.error.name === "ValidationError") {
+        if (response.error.code === ERROR_CODES.VALIDATION) {
           const key = response.error.message as Parameters<typeof t>[0];
           setFormError(t(key));
         } else {

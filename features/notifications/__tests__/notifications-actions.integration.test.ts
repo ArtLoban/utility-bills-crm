@@ -11,7 +11,7 @@ import type { TServiceId } from "@/lib/db/schema/services";
 import { serviceTypes } from "@/lib/db/schema/service-types";
 import { reminders, REMINDER_ANCHOR_TYPES } from "@/lib/db/schema/notifications";
 import type { ReminderId } from "@/lib/db/schema/notifications";
-import { DemoModeError, ForbiddenError, NotFoundError, ValidationError } from "@/lib/errors";
+import { ERROR_CODES } from "@/lib/errors";
 import { auth } from "@/lib/auth";
 import { createReminder, editReminder, deleteReminder } from "../actions";
 
@@ -169,7 +169,7 @@ describe("createReminder", () => {
     });
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.error).toBeInstanceOf(ForbiddenError);
+    expect(result.error.code).toBe(ERROR_CODES.FORBIDDEN);
   });
 
   it("outsider with no access — NotFoundError (404-masked)", async () => {
@@ -182,7 +182,7 @@ describe("createReminder", () => {
     });
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.error).toBeInstanceOf(NotFoundError);
+    expect(result.error.code).toBe(ERROR_CODES.NOT_FOUND);
   });
 
   it("nonexistent service — NotFoundError", async () => {
@@ -195,7 +195,7 @@ describe("createReminder", () => {
     });
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.error).toBeInstanceOf(NotFoundError);
+    expect(result.error.code).toBe(ERROR_CODES.NOT_FOUND);
   });
 
   it("demo user — DemoModeError, nothing inserted", async () => {
@@ -208,7 +208,7 @@ describe("createReminder", () => {
     });
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.error).toBeInstanceOf(DemoModeError);
+    expect(result.error.code).toBe(ERROR_CODES.DEMO_MODE);
 
     const rows = await db.select().from(reminders).where(eq(reminders.serviceId, testServiceId));
     expect(rows).toHaveLength(0);
@@ -224,7 +224,7 @@ describe("createReminder", () => {
     });
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.error).toBeInstanceOf(ValidationError);
+    expect(result.error.code).toBe(ERROR_CODES.VALIDATION);
   });
 
   it("days_before_end anchorValue out of range (28) — ValidationError", async () => {
@@ -237,7 +237,7 @@ describe("createReminder", () => {
     });
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.error).toBeInstanceOf(ValidationError);
+    expect(result.error.code).toBe(ERROR_CODES.VALIDATION);
   });
 
   it("blank text (whitespace only) — ValidationError", async () => {
@@ -250,7 +250,7 @@ describe("createReminder", () => {
     });
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.error).toBeInstanceOf(ValidationError);
+    expect(result.error.code).toBe(ERROR_CODES.VALIDATION);
   });
 
   it("text over 280 characters — ValidationError", async () => {
@@ -263,7 +263,7 @@ describe("createReminder", () => {
     });
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.error).toBeInstanceOf(ValidationError);
+    expect(result.error.code).toBe(ERROR_CODES.VALIDATION);
   });
 });
 
@@ -298,7 +298,7 @@ describe("editReminder", () => {
     });
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.error).toBeInstanceOf(NotFoundError);
+    expect(result.error.code).toBe(ERROR_CODES.NOT_FOUND);
 
     const [row] = await db.select().from(reminders).where(eq(reminders.id, reminderId)).limit(1);
     expect(row!.text).toBe("original");
@@ -313,7 +313,7 @@ describe("editReminder", () => {
     });
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.error).toBeInstanceOf(NotFoundError);
+    expect(result.error.code).toBe(ERROR_CODES.NOT_FOUND);
   });
 
   it("demo user — DemoModeError", async () => {
@@ -326,7 +326,7 @@ describe("editReminder", () => {
     });
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.error).toBeInstanceOf(DemoModeError);
+    expect(result.error.code).toBe(ERROR_CODES.DEMO_MODE);
   });
 
   it("invalid anchorValue — ValidationError", async () => {
@@ -339,7 +339,7 @@ describe("editReminder", () => {
     });
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.error).toBeInstanceOf(ValidationError);
+    expect(result.error.code).toBe(ERROR_CODES.VALIDATION);
   });
 });
 
@@ -364,7 +364,7 @@ describe("deleteReminder", () => {
     const result = await deleteReminder(reminderId);
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.error).toBeInstanceOf(NotFoundError);
+    expect(result.error.code).toBe(ERROR_CODES.NOT_FOUND);
 
     const rows = await db.select().from(reminders).where(eq(reminders.id, reminderId));
     expect(rows).toHaveLength(1);
@@ -375,7 +375,7 @@ describe("deleteReminder", () => {
     const result = await deleteReminder(MISSING_REMINDER_ID);
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.error).toBeInstanceOf(NotFoundError);
+    expect(result.error.code).toBe(ERROR_CODES.NOT_FOUND);
   });
 
   it("demo user — DemoModeError, row preserved", async () => {
@@ -385,7 +385,7 @@ describe("deleteReminder", () => {
     const result = await deleteReminder(reminderId);
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.error).toBeInstanceOf(DemoModeError);
+    expect(result.error.code).toBe(ERROR_CODES.DEMO_MODE);
 
     const rows = await db.select().from(reminders).where(eq(reminders.id, reminderId));
     expect(rows).toHaveLength(1);

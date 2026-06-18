@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db/client";
-import { DemoModeError } from "@/lib/errors";
+import { ERROR_CODES } from "@/lib/errors";
 
 import { softDeleteAccountNumber } from "@/features/account-numbers/actions";
 import { softDeleteBill } from "@/features/bills/actions";
@@ -52,25 +52,25 @@ describe("demo mode enforcement — guarded actions", () => {
       FAKE_UUID as Parameters<typeof softDeleteAccountNumber>[0],
     );
     expect(result.ok).toBe(false);
-    if (!result.ok) expect(result.error).toBeInstanceOf(DemoModeError);
+    if (!result.ok) expect(result.error.code).toBe(ERROR_CODES.DEMO_MODE);
   });
 
   it("bills: softDeleteBill", async () => {
     const result = await softDeleteBill(FAKE_UUID as Parameters<typeof softDeleteBill>[0]);
     expect(result.ok).toBe(false);
-    if (!result.ok) expect(result.error).toBeInstanceOf(DemoModeError);
+    if (!result.ok) expect(result.error.code).toBe(ERROR_CODES.DEMO_MODE);
   });
 
   it("contracts: softDeleteContract", async () => {
     const result = await softDeleteContract(FAKE_UUID as Parameters<typeof softDeleteContract>[0]);
     expect(result.ok).toBe(false);
-    if (!result.ok) expect(result.error).toBeInstanceOf(DemoModeError);
+    if (!result.ok) expect(result.error.code).toBe(ERROR_CODES.DEMO_MODE);
   });
 
   it("meters: softDeleteMeter", async () => {
     const result = await softDeleteMeter(FAKE_UUID as Parameters<typeof softDeleteMeter>[0]);
     expect(result.ok).toBe(false);
-    if (!result.ok) expect(result.error).toBeInstanceOf(DemoModeError);
+    if (!result.ok) expect(result.error.code).toBe(ERROR_CODES.DEMO_MODE);
   });
 
   it("payment-details: softDeletePaymentDetails", async () => {
@@ -78,37 +78,37 @@ describe("demo mode enforcement — guarded actions", () => {
       FAKE_UUID as Parameters<typeof softDeletePaymentDetails>[0],
     );
     expect(result.ok).toBe(false);
-    if (!result.ok) expect(result.error).toBeInstanceOf(DemoModeError);
+    if (!result.ok) expect(result.error.code).toBe(ERROR_CODES.DEMO_MODE);
   });
 
   it("payments: softDeletePayment", async () => {
     const result = await softDeletePayment(FAKE_UUID as Parameters<typeof softDeletePayment>[0]);
     expect(result.ok).toBe(false);
-    if (!result.ok) expect(result.error).toBeInstanceOf(DemoModeError);
+    if (!result.ok) expect(result.error.code).toBe(ERROR_CODES.DEMO_MODE);
   });
 
   it("properties: softDeleteProperty", async () => {
     const result = await softDeleteProperty(FAKE_UUID as Parameters<typeof softDeleteProperty>[0]);
     expect(result.ok).toBe(false);
-    if (!result.ok) expect(result.error).toBeInstanceOf(DemoModeError);
+    if (!result.ok) expect(result.error.code).toBe(ERROR_CODES.DEMO_MODE);
   });
 
   it("providers: softDeleteProvider", async () => {
     const result = await softDeleteProvider(FAKE_UUID as Parameters<typeof softDeleteProvider>[0]);
     expect(result.ok).toBe(false);
-    if (!result.ok) expect(result.error).toBeInstanceOf(DemoModeError);
+    if (!result.ok) expect(result.error.code).toBe(ERROR_CODES.DEMO_MODE);
   });
 
   it("readings: softDeleteReading", async () => {
     const result = await softDeleteReading(FAKE_UUID as Parameters<typeof softDeleteReading>[0]);
     expect(result.ok).toBe(false);
-    if (!result.ok) expect(result.error).toBeInstanceOf(DemoModeError);
+    if (!result.ok) expect(result.error.code).toBe(ERROR_CODES.DEMO_MODE);
   });
 
   it("services: softDeleteService", async () => {
     const result = await softDeleteService(FAKE_UUID as Parameters<typeof softDeleteService>[0]);
     expect(result.ok).toBe(false);
-    if (!result.ok) expect(result.error).toBeInstanceOf(DemoModeError);
+    if (!result.ok) expect(result.error.code).toBe(ERROR_CODES.DEMO_MODE);
   });
 
   it("services/composite: createServiceWithSetup (Zod-valid input, guard fires after Zod)", async () => {
@@ -121,25 +121,25 @@ describe("demo mode enforcement — guarded actions", () => {
       rateT1: "1.00",
     });
     expect(result.ok).toBe(false);
-    if (!result.ok) expect(result.error).toBeInstanceOf(DemoModeError);
+    if (!result.ok) expect(result.error.code).toBe(ERROR_CODES.DEMO_MODE);
   });
 
   it("sharing: leaveProperty", async () => {
     const result = await leaveProperty(FAKE_UUID as Parameters<typeof leaveProperty>[0]);
     expect(result.ok).toBe(false);
-    if (!result.ok) expect(result.error).toBeInstanceOf(DemoModeError);
+    if (!result.ok) expect(result.error.code).toBe(ERROR_CODES.DEMO_MODE);
   });
 
   it("tariffs: softDeleteTariff", async () => {
     const result = await softDeleteTariff(FAKE_UUID as Parameters<typeof softDeleteTariff>[0]);
     expect(result.ok).toBe(false);
-    if (!result.ok) expect(result.error).toBeInstanceOf(DemoModeError);
+    if (!result.ok) expect(result.error.code).toBe(ERROR_CODES.DEMO_MODE);
   });
 
   it("profile: updateProfileName (Zod-valid input, guard fires after Zod)", async () => {
     const result = await updateProfileName({ name: "Test User" });
     expect(result.ok).toBe(false);
-    if (!result.ok) expect(result.error).toBeInstanceOf(DemoModeError);
+    if (!result.ok) expect(result.error.code).toBe(ERROR_CODES.DEMO_MODE);
   });
 });
 
@@ -173,7 +173,7 @@ describe("demo mode carve-outs — theme and locale", () => {
   it("setRuLocaleEnabled: returns DemoModeError (no carve-out — full block)", async () => {
     const result = await setRuLocaleEnabled(true);
     expect(result.ok).toBe(false);
-    if (!result.ok) expect(result.error).toBeInstanceOf(DemoModeError);
+    if (!result.ok) expect(result.error.code).toBe(ERROR_CODES.DEMO_MODE);
     expect(dbUpdateSpy).not.toHaveBeenCalled();
   });
 });

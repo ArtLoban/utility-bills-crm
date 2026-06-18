@@ -9,17 +9,17 @@ import { contracts } from "@/lib/db/schema/contracts";
 import { providers } from "@/lib/db/schema/providers";
 import type { ProviderId, TProvider } from "@/lib/db/schema/providers";
 import { providerByIdForUser } from "@/lib/db/access/providers";
-import { DemoModeError, NotFoundError, ValidationError, err, ok } from "@/lib/errors";
-import type { Result } from "@/lib/errors";
+import { appError, err, ok } from "@/lib/errors";
+import type { Result, TAppError } from "@/lib/errors";
 import { providerSchema } from "./schema";
 import type { TProviderInput } from "./schema";
 
 export const createProvider = async (
   input: TProviderInput,
-): Promise<Result<TProvider, ValidationError | DemoModeError>> => {
+): Promise<Result<TProvider, TAppError>> => {
   const parsed = providerSchema.safeParse(input);
   if (!parsed.success) {
-    return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
+    return err(appError.validation(parsed.error.issues[0]?.message ?? "Invalid input"));
   }
 
   const authGuard = await requireMutableUser();
@@ -45,10 +45,10 @@ export const createProvider = async (
 export const editProvider = async (
   providerId: ProviderId,
   input: TProviderInput,
-): Promise<Result<void, ValidationError | NotFoundError | DemoModeError>> => {
+): Promise<Result<void, TAppError>> => {
   const parsed = providerSchema.safeParse(input);
   if (!parsed.success) {
-    return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
+    return err(appError.validation(parsed.error.issues[0]?.message ?? "Invalid input"));
   }
 
   const authGuard = await requireMutableUser();
@@ -71,7 +71,7 @@ export const editProvider = async (
 
 export const softDeleteProvider = async (
   providerId: ProviderId,
-): Promise<Result<void, NotFoundError | ValidationError | DemoModeError>> => {
+): Promise<Result<void, TAppError>> => {
   const authGuard = await requireMutableUser();
   if (!authGuard.ok) return authGuard;
   const userId = authGuard.value;
@@ -88,7 +88,7 @@ export const softDeleteProvider = async (
     .limit(1);
 
   if (activeContracts.length > 0) {
-    return err(new ValidationError("validation.hasActiveContracts"));
+    return err(appError.validation("validation.hasActiveContracts"));
   }
 
   await db

@@ -13,8 +13,8 @@ import type { TServiceTypeId } from "@/lib/db/schema/service-types";
 import { serviceTypes } from "@/lib/db/schema/service-types";
 import { meterByIdForUser } from "@/lib/db/access/meters";
 import { requirePropertyRole } from "@/lib/db/access/properties";
-import { DemoModeError, NotFoundError, ValidationError, err, ok } from "@/lib/errors";
-import type { Result } from "@/lib/errors";
+import { appError, err, ok } from "@/lib/errors";
+import type { Result, TAppError } from "@/lib/errors";
 import { insertMeterInternal } from "./lib";
 import { createMeterSchema, replaceMeterSchema, updateMeterSchema } from "./schema";
 import type { TCreateMeterInput, TReplaceMeterInput, TUpdateMeterInput } from "./schema";
@@ -30,26 +30,24 @@ const isExclusionViolation = (error: unknown): boolean =>
 const checkZoneCompatibility = async (
   serviceTypeId: TServiceTypeId,
   zoneCount: 1 | 2 | 3,
-): Promise<ValidationError | null> => {
+): Promise<TAppError | null> => {
   const rows = await db
     .select({ supportsZones: serviceTypes.supportsZones })
     .from(serviceTypes)
     .where(eq(serviceTypes.id, serviceTypeId))
     .limit(1);
 
-  if (rows.length === 0) return new ValidationError("Service type not found");
+  if (rows.length === 0) return appError.validation("Service type not found");
   if (!rows[0]!.supportsZones && zoneCount > 1) {
-    return new ValidationError("This service type does not support multiple zones");
+    return appError.validation("This service type does not support multiple zones");
   }
   return null;
 };
 
-export const createMeter = async (
-  input: TCreateMeterInput,
-): Promise<Result<TMeter, ValidationError | NotFoundError | DemoModeError>> => {
+export const createMeter = async (input: TCreateMeterInput): Promise<Result<TMeter, TAppError>> => {
   const parsed = createMeterSchema.safeParse(input);
   if (!parsed.success) {
-    return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
+    return err(appError.validation(parsed.error.issues[0]?.message ?? "Invalid input"));
   }
 
   const authGuard = await requireMutableUser();
@@ -86,7 +84,7 @@ export const createMeter = async (
   } catch (error) {
     if (isExclusionViolation(error)) {
       return err(
-        new ValidationError(
+        appError.validation(
           "An active meter for this service already exists in the selected period",
         ),
       );
@@ -98,10 +96,10 @@ export const createMeter = async (
 export const updateMeter = async (
   meterId: MeterId,
   input: TUpdateMeterInput,
-): Promise<Result<void, ValidationError | NotFoundError | DemoModeError>> => {
+): Promise<Result<void, TAppError>> => {
   const parsed = updateMeterSchema.safeParse(input);
   if (!parsed.success) {
-    return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
+    return err(appError.validation(parsed.error.issues[0]?.message ?? "Invalid input"));
   }
 
   const authGuard = await requireMutableUser();
@@ -135,10 +133,10 @@ export const updateMeter = async (
 
 export const replaceMeter = async (
   input: TReplaceMeterInput,
-): Promise<Result<TMeter, ValidationError | NotFoundError | DemoModeError>> => {
+): Promise<Result<TMeter, TAppError>> => {
   const parsed = replaceMeterSchema.safeParse(input);
   if (!parsed.success) {
-    return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
+    return err(appError.validation(parsed.error.issues[0]?.message ?? "Invalid input"));
   }
 
   const authGuard = await requireMutableUser();
@@ -152,7 +150,7 @@ export const replaceMeter = async (
   const currentMeter = meterAccess.value;
 
   if (currentMeter.validTo !== null) {
-    return err(new ValidationError("This meter has already been replaced or closed"));
+    return err(appError.validation("This meter has already been replaced or closed"));
   }
 
   const roleGuard = await requirePropertyRole(userId, currentMeter.propertyId, "editor");
@@ -161,7 +159,7 @@ export const replaceMeter = async (
   const replacementDate = new Date(parsed.data.replacementDate);
 
   if (replacementDate <= currentMeter.validFrom) {
-    return err(new ValidationError("Replacement date must be after the meter's start date"));
+    return err(appError.validation("Replacement date must be after the meter's start date"));
   }
 
   const zoneError = await checkZoneCompatibility(currentMeter.serviceTypeId, parsed.data.zoneCount);
@@ -196,7 +194,7 @@ export const replaceMeter = async (
   } catch (error) {
     if (isExclusionViolation(error)) {
       return err(
-        new ValidationError(
+        appError.validation(
           "An active meter for this service already exists in the selected period",
         ),
       );
@@ -205,9 +203,7 @@ export const replaceMeter = async (
   }
 };
 
-export const softDeleteMeter = async (
-  meterId: MeterId,
-): Promise<Result<void, NotFoundError | DemoModeError>> => {
+export const softDeleteMeter = async (meterId: MeterId): Promise<Result<void, TAppError>> => {
   const authGuard = await requireMutableUser();
   if (!authGuard.ok) return authGuard;
   const userId = authGuard.value;

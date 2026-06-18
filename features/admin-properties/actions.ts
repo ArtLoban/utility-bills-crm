@@ -17,8 +17,8 @@ import type { PropertyId } from "@/lib/db/schema/properties";
 import { services } from "@/lib/db/schema/services";
 import { tariffs } from "@/lib/db/schema/tariffs";
 import { requireAdmin } from "@/lib/auth/guards";
-import { DomainError, err, ok } from "@/lib/errors";
-import type { Result } from "@/lib/errors";
+import { appError, err, ok } from "@/lib/errors";
+import type { Result, TAppError } from "@/lib/errors";
 import { unwrapOrThrow } from "@/lib/unwrap-or-throw";
 
 const guardAdmin = async (): Promise<void> => {
@@ -28,7 +28,7 @@ const guardAdmin = async (): Promise<void> => {
 // Restores a soft-deleted property and all children that share its deletedAt timestamp.
 // Decision #128: scoped by the soft-delete event timestamp so independently-deleted children
 // (earlier deletedAt) are not resurrected.
-export const restoreProperty = async (propertyId: string): Promise<Result<void, DomainError>> => {
+export const restoreProperty = async (propertyId: string): Promise<Result<void, TAppError>> => {
   await guardAdmin();
 
   const propertyRows = await db
@@ -40,7 +40,7 @@ export const restoreProperty = async (propertyId: string): Promise<Result<void, 
   if (propertyRows.length === 0) notFound();
   const property = propertyRows[0]!;
 
-  if (!property.deletedAt) return err(new DomainError("NOT_DELETED"));
+  if (!property.deletedAt) return err(appError.validation("NOT_DELETED"));
 
   const stamp = property.deletedAt;
 
@@ -128,9 +128,7 @@ export const restoreProperty = async (propertyId: string): Promise<Result<void, 
 
 // Physically removes a soft-deleted property. Enforces Decision #42:
 // hard delete requires prior soft delete. FK ON DELETE CASCADE clears all descendants.
-export const hardDeleteProperty = async (
-  propertyId: string,
-): Promise<Result<void, DomainError>> => {
+export const hardDeleteProperty = async (propertyId: string): Promise<Result<void, TAppError>> => {
   await guardAdmin();
 
   const propertyRows = await db
@@ -142,7 +140,7 @@ export const hardDeleteProperty = async (
   if (propertyRows.length === 0) notFound();
   const property = propertyRows[0]!;
 
-  if (!property.deletedAt) return err(new DomainError("NOT_SOFT_DELETED"));
+  if (!property.deletedAt) return err(appError.validation("NOT_SOFT_DELETED"));
 
   await db.delete(properties).where(eq(properties.id, propertyId as PropertyId));
 

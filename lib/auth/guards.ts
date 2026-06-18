@@ -3,8 +3,8 @@ import type { Session } from "next-auth";
 import { auth } from "@/lib/auth";
 import { LOGIN_REASONS, SYSTEM_ROLES } from "@/lib/auth/constants";
 import { ROUTES } from "@/lib/routes";
-import { DemoModeError, ForbiddenError, err, ok } from "@/lib/errors";
-import type { Result } from "@/lib/errors";
+import { appError, err, ok } from "@/lib/errors";
+import type { Result, TAppError } from "@/lib/errors";
 import type { UserId } from "@/lib/db/schema/auth";
 
 // The login URL a guard redirects to when the session expired (or never existed)
@@ -40,11 +40,11 @@ export const requireSession = async (): Promise<TSessionUser> => {
 // Returns the caller's UserId if they are an admin.
 // Anonymous callers and authenticated non-admins both get ForbiddenError,
 // which maps to 404 at the HTTP boundary via shouldHideAsNotFound (#108).
-export const requireAdmin = async (): Promise<Result<UserId, ForbiddenError>> => {
+export const requireAdmin = async (): Promise<Result<UserId, TAppError>> => {
   const session = await auth();
 
   if (!session?.user?.id || session.user.systemRole !== SYSTEM_ROLES.ADMIN) {
-    return err(new ForbiddenError());
+    return err(appError.forbidden());
   }
 
   return ok(session.user.id as UserId);
@@ -54,11 +54,11 @@ export const requireAdmin = async (): Promise<Result<UserId, ForbiddenError>> =>
 // Unauthenticated (e.g. the session expired mid-session): redirect to login —
 // redirect() throws NEXT_REDIRECT, which propagates as a client navigation.
 // Demo user: returns err(DemoModeError) so the frontend can show a friendly interception (D3b).
-export const requireMutableUser = async (): Promise<Result<UserId, DemoModeError>> => {
+export const requireMutableUser = async (): Promise<Result<UserId, TAppError>> => {
   const session: Session | null = await auth();
 
   if (!session?.user?.id) redirect(loginUrl());
-  if (session.user.isDemo) return err(new DemoModeError());
+  if (session.user.isDemo) return err(appError.demo());
 
   return ok(session.user.id as UserId);
 };

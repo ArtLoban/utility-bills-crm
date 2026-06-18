@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
 import { changePropertyRole } from "@/features/sharing/actions";
+import { errorMessage } from "@/lib/errors";
 import type { PropertyId, TPropertyRole } from "@/lib/db/schema/properties";
 import type { TUserRole } from "../types";
 
@@ -30,7 +31,8 @@ export const RoleDropdown = ({ value, userId, propertyId }: TProps) => {
 
       if (!result.ok) {
         setOptimisticValue(prev);
-        const msg = result.error.message;
+        const msg = errorMessage(result.error);
+
         if (msg === "OWNER_PROTECTED") toast.error(t("errors.OWNER_PROTECTED"));
         else if (msg === "LAST_OWNER") toast.error(t("errors.LAST_OWNER"));
         else toast.error(t("toast.roleChangeError"));

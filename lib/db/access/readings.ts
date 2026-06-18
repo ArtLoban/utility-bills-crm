@@ -9,8 +9,8 @@ import type { PropertyId } from "@/lib/db/schema/properties";
 import type { TServiceTypeId } from "@/lib/db/schema/service-types";
 import type { UserId } from "@/lib/db/schema/auth";
 import { meterByIdForUser } from "./meters";
-import { NotFoundError, err, ok } from "@/lib/errors";
-import type { Result } from "@/lib/errors";
+import { appError, err, ok } from "@/lib/errors";
+import type { Result, TAppError } from "@/lib/errors";
 
 // --- Access helpers ---
 // Pure functions: userId is always a parameter. Never read the auth session internally.
@@ -18,7 +18,7 @@ import type { Result } from "@/lib/errors";
 export const readingsByMeterId = async (
   userId: UserId,
   meterId: MeterId,
-): Promise<Result<TReading[], NotFoundError>> => {
+): Promise<Result<TReading[], TAppError>> => {
   const access = await meterByIdForUser(userId, meterId);
   if (!access.ok) return access;
 
@@ -34,7 +34,7 @@ export const readingsByMeterId = async (
 export const mostRecentReadingForMeter = async (
   userId: UserId,
   meterId: MeterId,
-): Promise<Result<TReading | null, NotFoundError>> => {
+): Promise<Result<TReading | null, TAppError>> => {
   const access = await meterByIdForUser(userId, meterId);
   if (!access.ok) return access;
 
@@ -51,20 +51,20 @@ export const mostRecentReadingForMeter = async (
 export const readingByIdForUser = async (
   userId: UserId,
   readingId: ReadingId,
-): Promise<Result<TReading, NotFoundError>> => {
+): Promise<Result<TReading, TAppError>> => {
   const rows = await db
     .select()
     .from(readings)
     .where(and(eq(readings.id, readingId), isNull(readings.deletedAt)))
     .limit(1);
 
-  if (rows.length === 0) return err(new NotFoundError("reading", readingId));
+  if (rows.length === 0) return err(appError.notFound("reading", readingId));
 
   const reading = rows[0]!;
 
   // Decision #108: inaccessible reading is indistinguishable from a nonexistent one.
   const access = await meterByIdForUser(userId, reading.meterId);
-  if (!access.ok) return err(new NotFoundError("reading", readingId));
+  if (!access.ok) return err(appError.notFound("reading", readingId));
 
   return ok(reading);
 };

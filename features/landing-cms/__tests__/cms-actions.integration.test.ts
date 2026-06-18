@@ -10,7 +10,7 @@ import type {
   TProjectHero,
 } from "@/lib/db/schema/cms";
 import { auth } from "@/lib/auth";
-import { ValidationError } from "@/lib/errors";
+import { ERROR_CODES, errorMessage } from "@/lib/errors";
 
 import { saveAboutCms, saveGlobalCms, saveHomeCms, saveProjectCms } from "../actions";
 import { getAboutCms, getGlobalCms, getHomeCms, getProjectCms } from "../query";
@@ -159,29 +159,29 @@ describe("saveHomeCms — validation", () => {
     const result = await saveHomeCms({ ...VALID_HOME, heroTitle: "" });
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.error).toBeInstanceOf(ValidationError);
-    expect(result.error.message).toBe("Hero title is required.");
+    expect(result.error.code).toBe(ERROR_CODES.VALIDATION);
+    expect(errorMessage(result.error)).toBe("Hero title is required.");
   });
 
   it("rejects empty heroDesc", async () => {
     const result = await saveHomeCms({ ...VALID_HOME, heroDesc: "" });
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.error.message).toBe("Hero description is required.");
+    expect(errorMessage(result.error)).toBe("Hero description is required.");
   });
 
   it("rejects empty dashboardCaption", async () => {
     const result = await saveHomeCms({ ...VALID_HOME, dashboardCaption: "" });
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.error.message).toBe("Dashboard caption is required.");
+    expect(errorMessage(result.error)).toBe("Dashboard caption is required.");
   });
 
   it("rejects empty techHighlights", async () => {
     const result = await saveHomeCms({ ...VALID_HOME, techHighlights: "" });
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.error.message).toBe("Tech highlights line is required.");
+    expect(errorMessage(result.error)).toBe("Tech highlights line is required.");
   });
 
   it("rejects empty featureCard title", async () => {
@@ -191,7 +191,7 @@ describe("saveHomeCms — validation", () => {
     });
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.error.message).toBe("Feature card title is required.");
+    expect(errorMessage(result.error)).toBe("Feature card title is required.");
   });
 
   it("rejects empty featureCard body", async () => {
@@ -201,7 +201,7 @@ describe("saveHomeCms — validation", () => {
     });
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.error.message).toBe("Feature card body is required.");
+    expect(errorMessage(result.error)).toBe("Feature card body is required.");
   });
 });
 
@@ -214,22 +214,22 @@ describe("saveAboutCms — validation", () => {
     const result = await saveAboutCms({ ...VALID_ABOUT, heroGreeting: "" });
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.error).toBeInstanceOf(ValidationError);
-    expect(result.error.message).toBe("Greeting is required.");
+    expect(result.error.code).toBe(ERROR_CODES.VALIDATION);
+    expect(errorMessage(result.error)).toBe("Greeting is required.");
   });
 
   it("rejects empty heroDesc", async () => {
     const result = await saveAboutCms({ ...VALID_ABOUT, heroDesc: "" });
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.error.message).toBe("Description is required.");
+    expect(errorMessage(result.error)).toBe("Description is required.");
   });
 
   it("rejects empty worksWith", async () => {
     const result = await saveAboutCms({ ...VALID_ABOUT, worksWith: "" });
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.error.message).toBe('"What I work with" section is required.');
+    expect(errorMessage(result.error)).toBe('"What I work with" section is required.');
   });
 });
 
@@ -242,8 +242,8 @@ describe("saveProjectCms — validation", () => {
     const result = await saveProjectCms({ ...VALID_PROJECT, heroTitle: "" });
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.error).toBeInstanceOf(ValidationError);
-    expect(result.error.message).toBe("Hero title is required.");
+    expect(result.error.code).toBe(ERROR_CODES.VALIDATION);
+    expect(errorMessage(result.error)).toBe("Hero title is required.");
   });
 
   it("rejects empty archCard title", async () => {
@@ -253,14 +253,14 @@ describe("saveProjectCms — validation", () => {
     });
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.error.message).toBe("Architecture card title is required.");
+    expect(errorMessage(result.error)).toBe("Architecture card title is required.");
   });
 
   it("rejects empty status", async () => {
     const result = await saveProjectCms({ ...VALID_PROJECT, status: "" });
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.error.message).toBe("Status section is required.");
+    expect(errorMessage(result.error)).toBe("Status section is required.");
   });
 });
 
@@ -273,22 +273,22 @@ describe("saveGlobalCms — validation", () => {
     const result = await saveGlobalCms({ ...VALID_GLOBAL, linkedinUrl: "not-a-url" });
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.error).toBeInstanceOf(ValidationError);
-    expect(result.error.message).toBe("Enter a valid LinkedIn URL.");
+    expect(result.error.code).toBe(ERROR_CODES.VALIDATION);
+    expect(errorMessage(result.error)).toBe("Enter a valid LinkedIn URL.");
   });
 
   it("rejects malformed githubUrl", async () => {
     const result = await saveGlobalCms({ ...VALID_GLOBAL, githubUrl: "github.com/test" });
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.error.message).toBe("Enter a valid GitHub URL.");
+    expect(errorMessage(result.error)).toBe("Enter a valid GitHub URL.");
   });
 
   it("rejects malformed projectRepoUrl", async () => {
     const result = await saveGlobalCms({ ...VALID_GLOBAL, projectRepoUrl: "" });
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.error.message).toBe("Enter a valid project repository URL.");
+    expect(errorMessage(result.error)).toBe("Enter a valid project repository URL.");
   });
 
   it("accepts all valid URLs", async () => {

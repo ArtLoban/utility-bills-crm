@@ -7,6 +7,7 @@ import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
 import { Dialog, DialogClose, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { errorMessage } from "@/lib/errors";
 import { inviteToProperty } from "@/features/sharing/actions";
 import type { PropertyId, TPropertyRole } from "@/lib/db/schema/properties";
 import type { TUserRole } from "../../types";
@@ -33,7 +34,8 @@ export const InviteModal = ({ propertyId }: TProps) => {
       });
 
       if (!result.ok) {
-        const msg = result.error.message;
+        const msg = errorMessage(result.error);
+
         if (msg === "USER_NOT_FOUND") {
           setError(t("inviteModal.errors.userNotFound"));
         } else if (msg === "ALREADY_HAS_ACCESS") {

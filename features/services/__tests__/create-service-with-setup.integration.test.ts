@@ -14,7 +14,7 @@ import { services } from "@/lib/db/schema/services";
 import { contracts } from "@/lib/db/schema/contracts";
 import { tariffs } from "@/lib/db/schema/tariffs";
 import { meters } from "@/lib/db/schema/meters";
-import { NotFoundError } from "@/lib/errors";
+import { ERROR_CODES } from "@/lib/errors";
 import { auth } from "@/lib/auth";
 import { createServiceWithSetup } from "../actions.composite";
 import type { TCreateServiceWithSetupInput } from "../schema";
@@ -292,7 +292,7 @@ describe("createServiceWithSetup", () => {
 
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.error).toBeInstanceOf(NotFoundError);
+    expect(result.error.code).toBe(ERROR_CODES.NOT_FOUND);
 
     // No service was created
     const created = await db.select().from(services).where(eq(services.propertyId, testPropertyId));

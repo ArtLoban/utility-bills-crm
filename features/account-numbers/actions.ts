@@ -15,8 +15,8 @@ import {
 } from "@/lib/db/access/account-numbers";
 import { requirePropertyRole } from "@/lib/db/access/properties";
 import { serviceByIdForUser } from "@/lib/db/access/services";
-import { DemoModeError, NotFoundError, ValidationError, err, ok } from "@/lib/errors";
-import type { Result } from "@/lib/errors";
+import { appError, err, ok } from "@/lib/errors";
+import type { Result, TAppError } from "@/lib/errors";
 import { insertAccountNumberInternal } from "./lib";
 import {
   changeAccountNumberSchema,
@@ -51,10 +51,10 @@ const validateTemporalNesting = (
 
 export const createAccountNumber = async (
   input: TCreateAccountNumberInput,
-): Promise<Result<TAccountNumber, ValidationError | NotFoundError | DemoModeError>> => {
+): Promise<Result<TAccountNumber, TAppError>> => {
   const parsed = createAccountNumberSchema.safeParse(input);
   if (!parsed.success) {
-    return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
+    return err(appError.validation(parsed.error.issues[0]?.message ?? "Invalid input"));
   }
   const authGuard = await requireMutableUser();
   if (!authGuard.ok) return authGuard;
@@ -84,7 +84,7 @@ export const createAccountNumber = async (
     contract.validFrom,
     contract.validTo,
   );
-  if (nestingError) return err(new ValidationError(nestingError));
+  if (nestingError) return err(appError.validation(nestingError));
 
   try {
     const record = await db.transaction(async (tx) =>
@@ -102,17 +102,17 @@ export const createAccountNumber = async (
     );
     return ok(record);
   } catch (error) {
-    if (isExclusionViolation(error)) return err(new ValidationError("validation.overlap"));
+    if (isExclusionViolation(error)) return err(appError.validation("validation.overlap"));
     throw error;
   }
 };
 
 export const changeAccountNumber = async (
   input: TChangeAccountNumberInput,
-): Promise<Result<TAccountNumber, ValidationError | NotFoundError | DemoModeError>> => {
+): Promise<Result<TAccountNumber, TAppError>> => {
   const parsed = changeAccountNumberSchema.safeParse(input);
   if (!parsed.success) {
-    return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
+    return err(appError.validation(parsed.error.issues[0]?.message ?? "Invalid input"));
   }
 
   const authGuard = await requireMutableUser();
@@ -137,7 +137,7 @@ export const changeAccountNumber = async (
   const currentResult = await currentAccountNumberForContract(userId, contractId);
   if (!currentResult.ok) return currentResult;
   if (!currentResult.value) {
-    return err(new ValidationError("validation.accountNumber.noCurrent"));
+    return err(appError.validation("validation.accountNumber.noCurrent"));
   }
   const current = currentResult.value;
 
@@ -149,7 +149,7 @@ export const changeAccountNumber = async (
     contract.validFrom,
     contract.validTo,
   );
-  if (nestingError) return err(new ValidationError(nestingError));
+  if (nestingError) return err(appError.validation(nestingError));
 
   try {
     const newRecord = await db.transaction(async (tx) => {
@@ -172,7 +172,7 @@ export const changeAccountNumber = async (
     );
     return ok(newRecord);
   } catch (error) {
-    if (isExclusionViolation(error)) return err(new ValidationError("validation.overlap"));
+    if (isExclusionViolation(error)) return err(appError.validation("validation.overlap"));
     throw error;
   }
 };
@@ -180,10 +180,10 @@ export const changeAccountNumber = async (
 export const updateAccountNumberNotes = async (
   accountNumberId: TAccountNumberId,
   input: TUpdateAccountNumberNotesInput,
-): Promise<Result<void, ValidationError | NotFoundError | DemoModeError>> => {
+): Promise<Result<void, TAppError>> => {
   const parsed = updateAccountNumberNotesSchema.safeParse(input);
   if (!parsed.success) {
-    return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
+    return err(appError.validation(parsed.error.issues[0]?.message ?? "Invalid input"));
   }
 
   const authGuard = await requireMutableUser();
@@ -219,7 +219,7 @@ export const updateAccountNumberNotes = async (
 
 export const softDeleteAccountNumber = async (
   accountNumberId: TAccountNumberId,
-): Promise<Result<void, NotFoundError | DemoModeError>> => {
+): Promise<Result<void, TAppError>> => {
   const authGuard = await requireMutableUser();
   if (!authGuard.ok) return authGuard;
   const userId = authGuard.value;

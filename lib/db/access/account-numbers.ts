@@ -6,8 +6,8 @@ import type { TContractId } from "@/lib/db/schema/contracts";
 import { accountNumbers } from "@/lib/db/schema/account-numbers";
 import type { TAccountNumber, TAccountNumberId } from "@/lib/db/schema/account-numbers";
 import type { UserId } from "@/lib/db/schema/auth";
-import { NotFoundError, err, ok } from "@/lib/errors";
-import type { Result } from "@/lib/errors";
+import { appError, err, ok } from "@/lib/errors";
+import type { Result, TAppError } from "@/lib/errors";
 
 // Pure functions: userId is always a parameter. Never read the auth session internally.
 // Access is derived through the parent contract → service → property chain.
@@ -15,7 +15,7 @@ import type { Result } from "@/lib/errors";
 export const accountNumbersByContractId = async (
   userId: UserId,
   contractId: TContractId,
-): Promise<Result<TAccountNumber[], NotFoundError>> => {
+): Promise<Result<TAccountNumber[], TAppError>> => {
   const contractAccess = await contractByIdForUser(userId, contractId);
   if (!contractAccess.ok) return contractAccess;
 
@@ -31,7 +31,7 @@ export const accountNumbersByContractId = async (
 export const currentAccountNumberForContract = async (
   userId: UserId,
   contractId: TContractId,
-): Promise<Result<TAccountNumber | null, NotFoundError>> => {
+): Promise<Result<TAccountNumber | null, TAppError>> => {
   const contractAccess = await contractByIdForUser(userId, contractId);
   if (!contractAccess.ok) return contractAccess;
 
@@ -53,20 +53,20 @@ export const currentAccountNumberForContract = async (
 export const accountNumberByIdForUser = async (
   userId: UserId,
   accountNumberId: TAccountNumberId,
-): Promise<Result<TAccountNumber, NotFoundError>> => {
+): Promise<Result<TAccountNumber, TAppError>> => {
   const rows = await db
     .select()
     .from(accountNumbers)
     .where(and(eq(accountNumbers.id, accountNumberId), isNull(accountNumbers.deletedAt)))
     .limit(1);
 
-  if (rows.length === 0) return err(new NotFoundError("accountNumber", accountNumberId));
+  if (rows.length === 0) return err(appError.notFound("accountNumber", accountNumberId));
 
   const accountNumber = rows[0]!;
 
   // Decision #108: inaccessible record must be indistinguishable from a nonexistent one.
   const contractAccess = await contractByIdForUser(userId, accountNumber.contractId);
-  if (!contractAccess.ok) return err(new NotFoundError("accountNumber", accountNumberId));
+  if (!contractAccess.ok) return err(appError.notFound("accountNumber", accountNumberId));
 
   return ok(accountNumber);
 };

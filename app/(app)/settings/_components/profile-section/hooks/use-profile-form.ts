@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
 import { updateProfileName, profileNameSchema } from "@/features/profile";
+import { errorMessage } from "@/lib/errors";
 
 export const useProfileForm = (initialName: string) => {
   const t = useTranslations("settings.profile");
@@ -35,7 +36,8 @@ export const useProfileForm = (initialName: string) => {
       const response = await updateProfileName({ name: currentName });
 
       if (!response.ok) {
-        setNameError(t(response.error.message as Parameters<typeof t>[0]));
+        const key = errorMessage(response.error);
+        setNameError(key ? t(key as Parameters<typeof t>[0]) : null);
         return;
       }
 

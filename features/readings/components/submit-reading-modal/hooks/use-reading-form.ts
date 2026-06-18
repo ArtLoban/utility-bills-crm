@@ -7,6 +7,7 @@ import type { ReadingId, TReading } from "@/lib/db/schema/readings";
 import type { TMeter } from "@/lib/db/schema/meters";
 import { createReading, updateReading } from "@/features/readings/actions";
 import { useActionErrorHandler } from "@/lib/hooks/use-action-error-handler";
+import { ERROR_CODES } from "@/lib/errors";
 
 type TFormState = {
   readAt: string;
@@ -115,7 +116,7 @@ export const useReadingForm = ({ meter, reading, lastReading, onClose }: TParams
         });
 
         if (!result.ok) {
-          if (result.error.name === "ValidationError") {
+          if (result.error.code === ERROR_CODES.VALIDATION) {
             setFormError(result.error.message);
           } else {
             handleActionError(result.error);
@@ -135,7 +136,7 @@ export const useReadingForm = ({ meter, reading, lastReading, onClose }: TParams
         });
 
         if (!result.ok) {
-          if (result.error.name === "ValidationError") {
+          if (result.error.code === ERROR_CODES.VALIDATION) {
             setFormError(result.error.message);
           } else {
             handleActionError(result.error);

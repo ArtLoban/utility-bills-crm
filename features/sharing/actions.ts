@@ -10,25 +10,18 @@ import type { PropertyId } from "@/lib/db/schema/properties";
 import { users } from "@/lib/db/schema/auth";
 import type { UserId } from "@/lib/db/schema/auth";
 import { requirePropertyRole } from "@/lib/db/access/properties";
-import {
-  DemoModeError,
-  ForbiddenError,
-  NotFoundError,
-  ValidationError,
-  err,
-  ok,
-} from "@/lib/errors";
-import type { Result } from "@/lib/errors";
+import { appError, err, ok } from "@/lib/errors";
+import type { Result, TAppError } from "@/lib/errors";
 import { inviteSchema, changeRoleSchema, removeAccessSchema } from "./schema";
 import type { TInviteInput, TChangeRoleInput, TRemoveAccessInput } from "./schema";
 
 export const inviteToProperty = async (
   propertyId: PropertyId,
   input: TInviteInput,
-): Promise<Result<void, ValidationError | NotFoundError | DemoModeError>> => {
+): Promise<Result<void, TAppError>> => {
   const parsed = inviteSchema.safeParse(input);
   if (!parsed.success) {
-    return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
+    return err(appError.validation(parsed.error.issues[0]?.message ?? "Invalid input"));
   }
 
   const authGuard = await requireMutableUser();
@@ -47,7 +40,7 @@ export const inviteToProperty = async (
     .limit(1);
 
   if (!targetUser) {
-    return err(new ValidationError("USER_NOT_FOUND"));
+    return err(appError.validation("USER_NOT_FOUND"));
   }
 
   const [existingAccess] = await db
@@ -63,7 +56,7 @@ export const inviteToProperty = async (
     .limit(1);
 
   if (existingAccess) {
-    return err(new ValidationError("ALREADY_HAS_ACCESS"));
+    return err(appError.validation("ALREADY_HAS_ACCESS"));
   }
 
   // grantedAt defaults to NOW() via the DB column default — not set explicitly.
@@ -81,10 +74,10 @@ export const inviteToProperty = async (
 export const changePropertyRole = async (
   propertyId: PropertyId,
   input: TChangeRoleInput,
-): Promise<Result<void, ValidationError | NotFoundError | ForbiddenError | DemoModeError>> => {
+): Promise<Result<void, TAppError>> => {
   const parsed = changeRoleSchema.safeParse(input);
   if (!parsed.success) {
-    return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
+    return err(appError.validation(parsed.error.issues[0]?.message ?? "Invalid input"));
   }
 
   const authGuard = await requireMutableUser();
@@ -109,7 +102,7 @@ export const changePropertyRole = async (
     .limit(1);
 
   if (!targetAccess) {
-    return err(new NotFoundError("member", targetUserId));
+    return err(appError.notFound("member", targetUserId));
   }
 
   if (targetAccess.role === newRole) {
@@ -118,7 +111,7 @@ export const changePropertyRole = async (
 
   // Another owner's role is immutable — only that owner can act on their own ownership.
   if (targetUserId !== userId && targetAccess.role === "owner") {
-    return err(new ForbiddenError("OWNER_PROTECTED"));
+    return err(appError.forbidden("OWNER_PROTECTED"));
   }
 
   const result = await db.transaction(async (tx) => {
@@ -136,7 +129,7 @@ export const changePropertyRole = async (
       .for("update");
 
     if (ownerRows.length === 1 && ownerRows[0]!.userId === targetUserId && newRole !== "owner") {
-      return err(new ForbiddenError("LAST_OWNER"));
+      return err(appError.forbidden("LAST_OWNER"));
     }
 
     // Update role only — grantedBy and grantedAt are never overwritten after creation.
@@ -157,10 +150,10 @@ export const changePropertyRole = async (
 export const removePropertyAccess = async (
   propertyId: PropertyId,
   input: TRemoveAccessInput,
-): Promise<Result<void, NotFoundError | ForbiddenError | DemoModeError>> => {
+): Promise<Result<void, TAppError>> => {
   const parsed = removeAccessSchema.safeParse(input);
   if (!parsed.success) {
-    return err(new ForbiddenError("Invalid input"));
+    return err(appError.forbidden("Invalid input"));
   }
 
   const authGuard = await requireMutableUser();
@@ -174,7 +167,7 @@ export const removePropertyAccess = async (
 
   // Self-removal uses leaveProperty — this action is for removing others.
   if (targetUserId === userId) {
-    return err(new ForbiddenError("SELF_REMOVAL_NOT_ALLOWED"));
+    return err(appError.forbidden("SELF_REMOVAL_NOT_ALLOWED"));
   }
 
   const [targetAccess] = await db
@@ -190,12 +183,12 @@ export const removePropertyAccess = async (
     .limit(1);
 
   if (!targetAccess) {
-    return err(new NotFoundError("member", targetUserId));
+    return err(appError.notFound("member", targetUserId));
   }
 
   // Owners are protected — another owner must leave themselves via leaveProperty.
   if (targetAccess.role === "owner") {
-    return err(new ForbiddenError("OWNER_PROTECTED"));
+    return err(appError.forbidden("OWNER_PROTECTED"));
   }
 
   await db
@@ -207,9 +200,7 @@ export const removePropertyAccess = async (
   return ok(undefined);
 };
 
-export const leaveProperty = async (
-  propertyId: PropertyId,
-): Promise<Result<void, NotFoundError | ForbiddenError | DemoModeError>> => {
+export const leaveProperty = async (propertyId: PropertyId): Promise<Result<void, TAppError>> => {
   const authGuard = await requireMutableUser();
   if (!authGuard.ok) return authGuard;
   const userId = authGuard.value;
@@ -227,7 +218,7 @@ export const leaveProperty = async (
     .limit(1);
 
   if (!ownAccess) {
-    return err(new NotFoundError("property", propertyId));
+    return err(appError.notFound("property", propertyId));
   }
 
   if (ownAccess.role === "owner") {
@@ -247,7 +238,7 @@ export const leaveProperty = async (
         .for("update");
 
       if (ownerRows.length === 1) {
-        return err(new ForbiddenError("LAST_OWNER"));
+        return err(appError.forbidden("LAST_OWNER"));
       }
 
       await tx

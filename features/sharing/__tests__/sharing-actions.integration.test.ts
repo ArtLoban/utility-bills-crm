@@ -6,7 +6,7 @@ import { users } from "@/lib/db/schema/auth";
 import type { UserId } from "@/lib/db/schema/auth";
 import { properties, propertyAccess } from "@/lib/db/schema/properties";
 import type { PropertyId } from "@/lib/db/schema/properties";
-import { ForbiddenError, NotFoundError, ValidationError } from "@/lib/errors";
+import { ERROR_CODES, errorMessage } from "@/lib/errors";
 import { auth } from "@/lib/auth";
 import {
   inviteToProperty,
@@ -113,8 +113,8 @@ describe("inviteToProperty", () => {
     });
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.error).toBeInstanceOf(ValidationError);
-    expect(result.error.message).toBe("USER_NOT_FOUND");
+    expect(result.error.code).toBe(ERROR_CODES.VALIDATION);
+    expect(errorMessage(result.error)).toBe("USER_NOT_FOUND");
   });
 
   it("returns ALREADY_HAS_ACCESS when target already has an active access row", async () => {
@@ -125,8 +125,8 @@ describe("inviteToProperty", () => {
     });
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.error).toBeInstanceOf(ValidationError);
-    expect(result.error.message).toBe("ALREADY_HAS_ACCESS");
+    expect(result.error.code).toBe(ERROR_CODES.VALIDATION);
+    expect(errorMessage(result.error)).toBe("ALREADY_HAS_ACCESS");
   });
 
   it("happy path — inserts access row with correct role, grantedBy, and recent grantedAt", async () => {
@@ -206,7 +206,7 @@ describe("inviteToProperty", () => {
     });
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.error).toBeInstanceOf(NotFoundError);
+    expect(result.error.code).toBe(ERROR_CODES.NOT_FOUND);
   });
 
   it("viewer caller — gate returns NotFoundError", async () => {
@@ -217,7 +217,7 @@ describe("inviteToProperty", () => {
     });
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.error).toBeInstanceOf(NotFoundError);
+    expect(result.error.code).toBe(ERROR_CODES.NOT_FOUND);
   });
 });
 
@@ -276,8 +276,8 @@ describe("changePropertyRole", () => {
     });
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.error).toBeInstanceOf(ForbiddenError);
-    expect(result.error.message).toBe("OWNER_PROTECTED");
+    expect(result.error.code).toBe(ERROR_CODES.FORBIDDEN);
+    expect(errorMessage(result.error)).toBe("OWNER_PROTECTED");
   });
 
   it("LAST_OWNER — sole owner cannot downgrade themselves", async () => {
@@ -288,8 +288,8 @@ describe("changePropertyRole", () => {
     });
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.error).toBeInstanceOf(ForbiddenError);
-    expect(result.error.message).toBe("LAST_OWNER");
+    expect(result.error.code).toBe(ERROR_CODES.FORBIDDEN);
+    expect(errorMessage(result.error)).toBe("LAST_OWNER");
   });
 
   it("succeeds when a second owner is present — downgrade goes through", async () => {
@@ -372,7 +372,7 @@ describe("changePropertyRole", () => {
     });
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.error).toBeInstanceOf(NotFoundError);
+    expect(result.error.code).toBe(ERROR_CODES.NOT_FOUND);
   });
 
   it("viewer caller — gate returns NotFoundError", async () => {
@@ -383,7 +383,7 @@ describe("changePropertyRole", () => {
     });
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.error).toBeInstanceOf(NotFoundError);
+    expect(result.error.code).toBe(ERROR_CODES.NOT_FOUND);
   });
 });
 
@@ -395,8 +395,8 @@ describe("removePropertyAccess", () => {
     const result = await removePropertyAccess(testPropertyId, { targetUserId: ownerUserId });
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.error).toBeInstanceOf(ForbiddenError);
-    expect(result.error.message).toBe("SELF_REMOVAL_NOT_ALLOWED");
+    expect(result.error.code).toBe(ERROR_CODES.FORBIDDEN);
+    expect(errorMessage(result.error)).toBe("SELF_REMOVAL_NOT_ALLOWED");
   });
 
   it("OWNER_PROTECTED — cannot remove another owner", async () => {
@@ -414,8 +414,8 @@ describe("removePropertyAccess", () => {
     });
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.error).toBeInstanceOf(ForbiddenError);
-    expect(result.error.message).toBe("OWNER_PROTECTED");
+    expect(result.error.code).toBe(ERROR_CODES.FORBIDDEN);
+    expect(errorMessage(result.error)).toBe("OWNER_PROTECTED");
   });
 
   it("happy path — soft-deletes the target's access row", async () => {
@@ -441,7 +441,7 @@ describe("removePropertyAccess", () => {
     });
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.error).toBeInstanceOf(NotFoundError);
+    expect(result.error.code).toBe(ERROR_CODES.NOT_FOUND);
   });
 
   it("editor caller — gate returns NotFoundError", async () => {
@@ -449,7 +449,7 @@ describe("removePropertyAccess", () => {
     const result = await removePropertyAccess(testPropertyId, { targetUserId: viewerUserId });
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.error).toBeInstanceOf(NotFoundError);
+    expect(result.error.code).toBe(ERROR_CODES.NOT_FOUND);
   });
 
   it("viewer caller — gate returns NotFoundError", async () => {
@@ -457,7 +457,7 @@ describe("removePropertyAccess", () => {
     const result = await removePropertyAccess(testPropertyId, { targetUserId: editorUserId });
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.error).toBeInstanceOf(NotFoundError);
+    expect(result.error.code).toBe(ERROR_CODES.NOT_FOUND);
   });
 });
 
@@ -499,8 +499,8 @@ describe("leaveProperty", () => {
     const result = await leaveProperty(testPropertyId);
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.error).toBeInstanceOf(ForbiddenError);
-    expect(result.error.message).toBe("LAST_OWNER");
+    expect(result.error.code).toBe(ERROR_CODES.FORBIDDEN);
+    expect(errorMessage(result.error)).toBe("LAST_OWNER");
   });
 
   it("owner can leave when a second owner is present — own row soft-deleted", async () => {
@@ -531,6 +531,6 @@ describe("leaveProperty", () => {
     const result = await leaveProperty(testPropertyId);
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.error).toBeInstanceOf(NotFoundError);
+    expect(result.error.code).toBe(ERROR_CODES.NOT_FOUND);
   });
 });

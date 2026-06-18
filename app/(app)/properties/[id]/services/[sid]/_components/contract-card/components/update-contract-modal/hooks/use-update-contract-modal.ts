@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
 import type { TContractId } from "@/lib/db/schema/contracts";
+import { errorMessage } from "@/lib/errors";
 import type { TServiceId } from "@/lib/db/schema/services";
 import type { TServiceType } from "@/lib/db/schema/service-types";
 import { changeTariff } from "@/features/tariffs/actions";
@@ -94,7 +95,7 @@ const useUpdateContractModal = ({
       }
 
       if (!result.ok) {
-        setError(result.error.message);
+        setError(errorMessage(result.error));
         return;
       }
 

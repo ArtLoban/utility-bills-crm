@@ -11,17 +11,17 @@ import { services } from "@/lib/db/schema/services";
 import type { TServiceId } from "@/lib/db/schema/services";
 import { paymentByIdForUser } from "@/lib/db/access/payments";
 import { requirePropertyRole } from "@/lib/db/access/properties";
-import { DemoModeError, NotFoundError, ValidationError, err, ok } from "@/lib/errors";
-import type { Result } from "@/lib/errors";
+import { appError, err, ok } from "@/lib/errors";
+import type { Result, TAppError } from "@/lib/errors";
 import { createPaymentSchema, updatePaymentSchema } from "./schema";
 import type { TCreatePaymentInput, TUpdatePaymentInput } from "./schema";
 
 export const recordPayment = async (
   input: TCreatePaymentInput,
-): Promise<Result<TPayment, ValidationError | NotFoundError | DemoModeError>> => {
+): Promise<Result<TPayment, TAppError>> => {
   const parsed = createPaymentSchema.safeParse(input);
   if (!parsed.success) {
-    return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
+    return err(appError.validation(parsed.error.issues[0]?.message ?? "Invalid input"));
   }
 
   const authGuard = await requireMutableUser();
@@ -35,7 +35,7 @@ export const recordPayment = async (
     .where(and(eq(services.id, serviceId), isNull(services.deletedAt)))
     .limit(1);
 
-  if (!service) return err(new NotFoundError("service", serviceId));
+  if (!service) return err(appError.notFound("service", serviceId));
 
   const guard = await requirePropertyRole(userId, service.propertyId, "editor");
   if (!guard.ok) return guard;
@@ -58,10 +58,10 @@ export const recordPayment = async (
 export const editPayment = async (
   paymentId: PaymentId,
   input: TUpdatePaymentInput,
-): Promise<Result<void, ValidationError | NotFoundError | DemoModeError>> => {
+): Promise<Result<void, TAppError>> => {
   const parsed = updatePaymentSchema.safeParse(input);
   if (!parsed.success) {
-    return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
+    return err(appError.validation(parsed.error.issues[0]?.message ?? "Invalid input"));
   }
 
   const authGuard = await requireMutableUser();
@@ -91,9 +91,7 @@ export const editPayment = async (
   return ok(undefined);
 };
 
-export const softDeletePayment = async (
-  paymentId: PaymentId,
-): Promise<Result<void, NotFoundError | DemoModeError>> => {
+export const softDeletePayment = async (paymentId: PaymentId): Promise<Result<void, TAppError>> => {
   const authGuard = await requireMutableUser();
   if (!authGuard.ok) return authGuard;
   const userId = authGuard.value;

@@ -10,8 +10,8 @@ import type { TServiceTypeUnit } from "@/lib/db/schema/service-types";
 import { properties, propertyAccess } from "@/lib/db/schema/properties";
 import type { PropertyId, TPropertyRole, TPropertyType } from "@/lib/db/schema/properties";
 import type { UserId } from "@/lib/db/schema/auth";
-import { NotFoundError, err, ok } from "@/lib/errors";
-import type { Result } from "@/lib/errors";
+import { appError, err, ok } from "@/lib/errors";
+import type { Result, TAppError } from "@/lib/errors";
 import type { TServiceTypeCode } from "@/features/services/service-type";
 import type { TBillsListParams } from "@/features/bills/types";
 import { TServerPagination } from "@/lib/types/data-table";
@@ -199,7 +199,7 @@ export const getBillsList = async (
 export const billByIdForUser = async (
   userId: UserId,
   billId: BillId,
-): Promise<Result<TBillGlobalRow, NotFoundError>> => {
+): Promise<Result<TBillGlobalRow, TAppError>> => {
   const rows = await db
     .select(BILL_SELECT)
     .from(bills)
@@ -218,7 +218,7 @@ export const billByIdForUser = async (
     .limit(1);
 
   // Decision #108: inaccessible bill is indistinguishable from a nonexistent one.
-  if (rows.length === 0) return err(new NotFoundError("bill", billId));
+  if (rows.length === 0) return err(appError.notFound("bill", billId));
 
   return ok(toRow(rows[0]!));
 };

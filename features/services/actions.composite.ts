@@ -12,8 +12,8 @@ import type { ProviderId } from "@/lib/db/schema/providers";
 import type { TServiceTypeId } from "@/lib/db/schema/service-types";
 import { requirePropertyRole } from "@/lib/db/access/properties";
 import { providerByIdForUser } from "@/lib/db/access/providers";
-import { DemoModeError, NotFoundError, ValidationError, err, ok } from "@/lib/errors";
-import type { Result } from "@/lib/errors";
+import { appError, err, ok } from "@/lib/errors";
+import type { Result, TAppError } from "@/lib/errors";
 import { insertServiceInternal } from "./lib";
 import { insertContractInternal } from "@/features/contracts/lib";
 import { insertTariffInternal } from "@/features/tariffs/lib";
@@ -71,10 +71,10 @@ const validateTemporalNesting = (
 
 export const createServiceWithSetup = async (
   input: TCreateServiceWithSetupInput,
-): Promise<Result<TService, ValidationError | NotFoundError | DemoModeError>> => {
+): Promise<Result<TService, TAppError>> => {
   const parsed = createServiceWithSetupSchema.safeParse(input);
   if (!parsed.success) {
-    return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
+    return err(appError.validation(parsed.error.issues[0]?.message ?? "Invalid input"));
   }
 
   const authGuard = await requireMutableUser();
@@ -103,7 +103,7 @@ export const createServiceWithSetup = async (
     .where(eq(serviceTypes.id, serviceTypeId))
     .limit(1);
 
-  if (stRows.length === 0) return err(new NotFoundError("serviceType", serviceTypeId));
+  if (stRows.length === 0) return err(appError.notFound("serviceType", serviceTypeId));
   const serviceType = stRows[0]!;
 
   const rateT1 = parsed.data.rateT1 || null;
@@ -112,17 +112,17 @@ export const createServiceWithSetup = async (
   const fixedAmount = parsed.data.fixedAmount || null;
 
   const shapeError = validateTariffShape(serviceType.measurementType, rateT1, fixedAmount);
-  if (shapeError) return err(new ValidationError(shapeError));
+  if (shapeError) return err(appError.validation(shapeError));
 
   const contractValidFrom = new Date(parsed.data.contractValidFrom);
   const tariffValidFrom = new Date(parsed.data.tariffValidFrom);
 
   const nestingError = validateTemporalNesting(tariffValidFrom, null, contractValidFrom, null);
-  if (nestingError) return err(new ValidationError(nestingError));
+  if (nestingError) return err(appError.validation(nestingError));
 
   if (parsed.data.meter) {
     if (!serviceType.supportsZones && parsed.data.meter.zoneCount > 1) {
-      return err(new ValidationError("This service type does not support multiple zones"));
+      return err(appError.validation("This service type does not support multiple zones"));
     }
   }
 
@@ -172,10 +172,10 @@ export const createServiceWithSetup = async (
     return ok(service);
   } catch (error) {
     if (isExclusionViolation(error)) {
-      return err(new ValidationError("validation.overlap"));
+      return err(appError.validation("validation.overlap"));
     }
     if (isUniqueViolation(error)) {
-      return err(new ValidationError("A service of this type is already active for this property"));
+      return err(appError.validation("A service of this type is already active for this property"));
     }
     throw error;
   }

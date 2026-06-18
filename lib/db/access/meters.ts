@@ -11,8 +11,8 @@ import type { TReading } from "@/lib/db/schema/readings";
 import type { UserId } from "@/lib/db/schema/auth";
 import { propertyByIdForUser } from "./properties";
 import { lastReadingsByMeterIds } from "./readings";
-import { NotFoundError, err, ok } from "@/lib/errors";
-import type { Result } from "@/lib/errors";
+import { appError, err, ok } from "@/lib/errors";
+import type { Result, TAppError } from "@/lib/errors";
 
 // --- Result types ---
 
@@ -30,7 +30,7 @@ export type TMeterGlobalRow = {
 export const metersByPropertyId = async (
   userId: UserId,
   propertyId: PropertyId,
-): Promise<Result<TMeter[], NotFoundError>> => {
+): Promise<Result<TMeter[], TAppError>> => {
   const access = await propertyByIdForUser(userId, propertyId);
   if (!access.ok) return access;
 
@@ -47,7 +47,7 @@ export const currentMeterForServiceType = async (
   userId: UserId,
   propertyId: PropertyId,
   serviceTypeId: TServiceTypeId,
-): Promise<Result<TMeter | null, NotFoundError>> => {
+): Promise<Result<TMeter | null, TAppError>> => {
   const access = await propertyByIdForUser(userId, propertyId);
   if (!access.ok) return access;
 
@@ -70,20 +70,20 @@ export const currentMeterForServiceType = async (
 export const meterByIdForUser = async (
   userId: UserId,
   meterId: MeterId,
-): Promise<Result<TMeter, NotFoundError>> => {
+): Promise<Result<TMeter, TAppError>> => {
   const rows = await db
     .select()
     .from(meters)
     .where(and(eq(meters.id, meterId), isNull(meters.deletedAt)))
     .limit(1);
 
-  if (rows.length === 0) return err(new NotFoundError("meter", meterId));
+  if (rows.length === 0) return err(appError.notFound("meter", meterId));
 
   const meter = rows[0]!;
 
   // Decision #108: inaccessible meter is indistinguishable from a nonexistent one.
   const access = await propertyByIdForUser(userId, meter.propertyId);
-  if (!access.ok) return err(new NotFoundError("meter", meterId));
+  if (!access.ok) return err(appError.notFound("meter", meterId));
 
   return ok(meter);
 };

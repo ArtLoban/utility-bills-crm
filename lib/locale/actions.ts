@@ -7,7 +7,7 @@ import { requireMutableUser } from "@/lib/auth/guards";
 import { db } from "@/lib/db/client";
 import { users, type UserId } from "@/lib/db/schema";
 import { DemoModeError, ok } from "@/lib/errors";
-import type { Result } from "@/lib/errors";
+import type { Result, TAppError } from "@/lib/errors";
 import {
   LOCALE_LIST,
   LOCALE_COOKIE_NAME,
@@ -34,9 +34,7 @@ export const setLocale = async (locale: TLocale) => {
     .where(eq(users.id, session.user.id as UserId));
 };
 
-export const setRuLocaleEnabled = async (
-  enabled: boolean,
-): Promise<Result<void, DemoModeError>> => {
+export const setRuLocaleEnabled = async (enabled: boolean): Promise<Result<void, TAppError>> => {
   const authGuard = await requireMutableUser();
   if (!authGuard.ok) return authGuard;
   const userId = authGuard.value;

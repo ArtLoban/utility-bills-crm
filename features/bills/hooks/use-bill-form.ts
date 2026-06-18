@@ -10,6 +10,7 @@ import { BillFormField } from "@/features/bills/types";
 import { createBill, editBill } from "@/features/bills/actions";
 import { getExpectedAmountHintAction } from "@/features/ledger/actions";
 import { useActionErrorHandler } from "@/lib/hooks/use-action-error-handler";
+import { ERROR_CODES } from "@/lib/errors";
 import { buildDefaultValues } from "@/features/bills/utils/build-default-values";
 import type { TExpectedAmount } from "@/features/ledger/types";
 import type { PropertyId } from "@/lib/db/schema/properties";
@@ -78,7 +79,7 @@ export const useBillForm = ({ bill, serviceOptions = {}, onClose }: TParams) => 
     if (!response.ok) {
       // ValidationError → inline root error (form validation is never a toast, decision #105).
       // DemoModeError / NotFoundError → handled by the shared error handler.
-      if (response.error.name === "ValidationError") {
+      if (response.error.code === ERROR_CODES.VALIDATION) {
         form.setError("root", { message: t("modal.formError") });
         return;
       }

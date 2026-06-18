@@ -8,8 +8,8 @@ import type { MeterId, TMeter } from "@/lib/db/schema/meters";
 import type { TReading } from "@/lib/db/schema/readings";
 import { serviceTypes as serviceTypesTable } from "@/lib/db/schema/service-types";
 import type { TServiceType } from "@/lib/db/schema/service-types";
-import { NotFoundError, err, ok } from "@/lib/errors";
-import type { Result } from "@/lib/errors";
+import { appError, err, ok } from "@/lib/errors";
+import type { Result, TAppError } from "@/lib/errors";
 
 export type TMeterDetailData = {
   meter: TMeter;
@@ -18,7 +18,7 @@ export type TMeterDetailData = {
 
 export const getMeterDetail = async (
   meterId: MeterId,
-): Promise<Result<TMeterDetailData, NotFoundError>> => {
+): Promise<Result<TMeterDetailData, TAppError>> => {
   const userId = await requireUser();
   const meterResult = await meterByIdForUser(userId, meterId);
   if (!meterResult.ok) return meterResult;
@@ -31,14 +31,14 @@ export const getMeterDetail = async (
     .where(eq(serviceTypesTable.id, meter.serviceTypeId))
     .limit(1);
 
-  if (!serviceType) return err(new NotFoundError("serviceType", meter.serviceTypeId));
+  if (!serviceType) return err(appError.notFound("serviceType", meter.serviceTypeId));
 
   return ok({ meter, serviceType });
 };
 
 export const getMeterReadings = async (
   meterId: MeterId,
-): Promise<Result<TReading[], NotFoundError>> => {
+): Promise<Result<TReading[], TAppError>> => {
   const userId = await requireUser();
 
   return readingsByMeterId(userId, meterId);
@@ -46,7 +46,7 @@ export const getMeterReadings = async (
 
 export const getMostRecentReading = async (
   meterId: MeterId,
-): Promise<Result<TReading | null, NotFoundError>> => {
+): Promise<Result<TReading | null, TAppError>> => {
   const userId = await requireUser();
 
   return mostRecentReadingForMeter(userId, meterId);

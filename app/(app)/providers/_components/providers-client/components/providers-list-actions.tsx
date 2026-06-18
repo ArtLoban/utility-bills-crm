@@ -5,6 +5,7 @@ import { Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { softDeleteProvider } from "@/features/providers";
+import { ERROR_CODES } from "@/lib/errors";
 import { toast } from "sonner";
 import { IconBadge } from "@/components/icon-badge";
 import { Modal } from "@/components/modal";
@@ -33,7 +34,7 @@ export const ProvidersListActions = ({ children }: { children: ReactNode }) => {
       const result = await softDeleteProvider(itemToDelete.id);
 
       if (!result.ok) {
-        if (result.error.name === "ValidationError") {
+        if (result.error.code === ERROR_CODES.VALIDATION) {
           const key = result.error.message as Parameters<typeof t>[0];
           toast.error(t(key));
         } else {

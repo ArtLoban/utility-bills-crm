@@ -5,8 +5,8 @@ import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db/client";
 import { aboutHero, cmsFeatures, cmsLinks, homeHero, projectHero } from "@/lib/db/schema/cms";
 import { requireAdmin } from "@/lib/auth/guards";
-import { ValidationError, err, ok } from "@/lib/errors";
-import type { Result } from "@/lib/errors";
+import { appError, err, ok } from "@/lib/errors";
+import type { Result, TAppError } from "@/lib/errors";
 import { unwrapOrThrow } from "@/lib/unwrap-or-throw";
 
 import { aboutSchema, globalSchema, homeSchema, projectSchema } from "./schema";
@@ -27,12 +27,12 @@ const assertAdmin = async (): Promise<void> => {
 
 // Home tab writes to home_hero AND features — both in one transaction so a
 // partial Home save can never happen.
-export const saveHomeCms = async (data: THomePayload): Promise<Result<void, ValidationError>> => {
+export const saveHomeCms = async (data: THomePayload): Promise<Result<void, TAppError>> => {
   await assertAdmin();
 
   const parsed = homeSchema.safeParse(data);
   if (!parsed.success) {
-    return err(new ValidationError(parsed.error.issues[0]?.message ?? "landingCms.errors.generic"));
+    return err(appError.validation(parsed.error.issues[0]?.message ?? "landingCms.errors.generic"));
   }
 
   const { heroTitle, heroDesc, dashboardCaption, propertyCaption, techHighlights, featureCards } =
@@ -66,12 +66,12 @@ export const saveHomeCms = async (data: THomePayload): Promise<Result<void, Vali
   return ok(undefined);
 };
 
-export const saveAboutCms = async (data: TAboutPayload): Promise<Result<void, ValidationError>> => {
+export const saveAboutCms = async (data: TAboutPayload): Promise<Result<void, TAppError>> => {
   await assertAdmin();
 
   const parsed = aboutSchema.safeParse(data);
   if (!parsed.success) {
-    return err(new ValidationError(parsed.error.issues[0]?.message ?? "landingCms.errors.generic"));
+    return err(appError.validation(parsed.error.issues[0]?.message ?? "landingCms.errors.generic"));
   }
 
   const values = parsed.data;
@@ -85,14 +85,12 @@ export const saveAboutCms = async (data: TAboutPayload): Promise<Result<void, Va
   return ok(undefined);
 };
 
-export const saveProjectCms = async (
-  data: TProjectPayload,
-): Promise<Result<void, ValidationError>> => {
+export const saveProjectCms = async (data: TProjectPayload): Promise<Result<void, TAppError>> => {
   await assertAdmin();
 
   const parsed = projectSchema.safeParse(data);
   if (!parsed.success) {
-    return err(new ValidationError(parsed.error.issues[0]?.message ?? "landingCms.errors.generic"));
+    return err(appError.validation(parsed.error.issues[0]?.message ?? "landingCms.errors.generic"));
   }
 
   const { heroTitle, heroDesc, archCards, status } = parsed.data;
@@ -125,14 +123,12 @@ export const saveProjectCms = async (
 };
 
 // Global tab: links affect navigation and URLs on all public pages.
-export const saveGlobalCms = async (
-  data: TGlobalPayload,
-): Promise<Result<void, ValidationError>> => {
+export const saveGlobalCms = async (data: TGlobalPayload): Promise<Result<void, TAppError>> => {
   await assertAdmin();
 
   const parsed = globalSchema.safeParse(data);
   if (!parsed.success) {
-    return err(new ValidationError(parsed.error.issues[0]?.message ?? "landingCms.errors.generic"));
+    return err(appError.validation(parsed.error.issues[0]?.message ?? "landingCms.errors.generic"));
   }
 
   const values = parsed.data;

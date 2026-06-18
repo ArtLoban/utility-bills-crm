@@ -24,7 +24,7 @@ import { paymentDetails } from "@/lib/db/schema/payment-details";
 import type { TPaymentDetails } from "@/lib/db/schema/payment-details";
 import type { TServiceId } from "@/lib/db/schema/services";
 import { NotFoundError, ok } from "@/lib/errors";
-import type { Result } from "@/lib/errors";
+import type { Result, TAppError } from "@/lib/errors";
 
 export type { TServiceDetail };
 
@@ -38,7 +38,7 @@ export type TAttributeHistory = {
 
 export const getServiceDetail = async (
   serviceId: TServiceId,
-): Promise<Result<TServiceDetail, NotFoundError>> => {
+): Promise<Result<TServiceDetail, TAppError>> => {
   const userId = await requireUser();
 
   return serviceByIdForUser(userId, serviceId);
@@ -46,7 +46,7 @@ export const getServiceDetail = async (
 
 export const getContractHistory = async (
   serviceId: TServiceId,
-): Promise<Result<TContractWithProvider[], NotFoundError>> => {
+): Promise<Result<TContractWithProvider[], TAppError>> => {
   const userId = await requireUser();
 
   return contractsByServiceId(userId, serviceId);
@@ -54,7 +54,7 @@ export const getContractHistory = async (
 
 export const getAttributeHistory = async (
   serviceId: TServiceId,
-): Promise<Result<TAttributeHistory, NotFoundError>> => {
+): Promise<Result<TAttributeHistory, TAppError>> => {
   const userId = await requireUser();
 
   // Access check: routes through serviceByIdForUser → propertyByIdForUser.

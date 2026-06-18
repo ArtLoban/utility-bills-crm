@@ -17,17 +17,17 @@ import { services } from "@/lib/db/schema/services";
 import { tariffs } from "@/lib/db/schema/tariffs";
 import type { PropertyId, TProperty } from "@/lib/db/schema/properties";
 import { requirePropertyRole } from "@/lib/db/access/properties";
-import { DemoModeError, ValidationError, err, ok } from "@/lib/errors";
-import type { NotFoundError, Result } from "@/lib/errors";
+import { appError, err, ok } from "@/lib/errors";
+import type { Result, TAppError } from "@/lib/errors";
 import { propertySchema } from "./schema";
 import type { TPropertyInput } from "./schema";
 
 export const createProperty = async (
   input: TPropertyInput,
-): Promise<Result<TProperty, ValidationError | DemoModeError>> => {
+): Promise<Result<TProperty, TAppError>> => {
   const parsed = propertySchema.safeParse(input);
   if (!parsed.success) {
-    return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
+    return err(appError.validation(parsed.error.issues[0]?.message ?? "Invalid input"));
   }
 
   const authGuard = await requireMutableUser();
@@ -58,10 +58,10 @@ export const createProperty = async (
 export const editProperty = async (
   propertyId: PropertyId,
   input: TPropertyInput,
-): Promise<Result<void, ValidationError | NotFoundError | DemoModeError>> => {
+): Promise<Result<void, TAppError>> => {
   const parsed = propertySchema.safeParse(input);
   if (!parsed.success) {
-    return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
+    return err(appError.validation(parsed.error.issues[0]?.message ?? "Invalid input"));
   }
 
   const authGuard = await requireMutableUser();
@@ -85,7 +85,7 @@ export const editProperty = async (
 
 export const softDeleteProperty = async (
   propertyId: PropertyId,
-): Promise<Result<void, NotFoundError | DemoModeError>> => {
+): Promise<Result<void, TAppError>> => {
   const authGuard = await requireMutableUser();
   if (!authGuard.ok) return authGuard;
   const userId = authGuard.value;

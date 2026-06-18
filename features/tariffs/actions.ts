@@ -12,8 +12,8 @@ import { contractByIdForUser } from "@/lib/db/access/contracts";
 import { tariffByIdForUser, currentTariffForContract } from "@/lib/db/access/tariffs";
 import { requirePropertyRole } from "@/lib/db/access/properties";
 import { serviceByIdForUser } from "@/lib/db/access/services";
-import { DemoModeError, NotFoundError, ValidationError, err, ok } from "@/lib/errors";
-import type { Result } from "@/lib/errors";
+import { appError, err, ok } from "@/lib/errors";
+import type { Result, TAppError } from "@/lib/errors";
 import { insertTariffInternal } from "./lib";
 import { changeTariffSchema, createTariffSchema, updateTariffNotesSchema } from "./schema";
 import type { TChangeTariffInput, TCreateTariffInput, TUpdateTariffNotesInput } from "./schema";
@@ -66,10 +66,10 @@ const validateTemporalNesting = (
 
 export const createTariff = async (
   input: TCreateTariffInput,
-): Promise<Result<TTariff, ValidationError | NotFoundError | DemoModeError>> => {
+): Promise<Result<TTariff, TAppError>> => {
   const parsed = createTariffSchema.safeParse(input);
   if (!parsed.success) {
-    return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
+    return err(appError.validation(parsed.error.issues[0]?.message ?? "Invalid input"));
   }
 
   const authGuard = await requireMutableUser();
@@ -104,7 +104,7 @@ export const createTariff = async (
     rateT1,
     fixedAmount,
   );
-  if (shapeError) return err(new ValidationError(shapeError));
+  if (shapeError) return err(appError.validation(shapeError));
 
   // Temporal nesting: tariff validity must fall within the contract's validity range.
   const nestingError = validateTemporalNesting(
@@ -113,7 +113,7 @@ export const createTariff = async (
     contract.validFrom,
     contract.validTo,
   );
-  if (nestingError) return err(new ValidationError(nestingError));
+  if (nestingError) return err(appError.validation(nestingError));
 
   try {
     const tariff = await db.transaction(async (tx) =>
@@ -135,7 +135,7 @@ export const createTariff = async (
     return ok(tariff);
   } catch (error) {
     if (isExclusionViolation(error)) {
-      return err(new ValidationError("validation.overlap"));
+      return err(appError.validation("validation.overlap"));
     }
     throw error;
   }
@@ -143,10 +143,10 @@ export const createTariff = async (
 
 export const changeTariff = async (
   input: TChangeTariffInput,
-): Promise<Result<TTariff, ValidationError | NotFoundError | DemoModeError>> => {
+): Promise<Result<TTariff, TAppError>> => {
   const parsed = changeTariffSchema.safeParse(input);
   if (!parsed.success) {
-    return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
+    return err(appError.validation(parsed.error.issues[0]?.message ?? "Invalid input"));
   }
 
   const authGuard = await requireMutableUser();
@@ -172,7 +172,7 @@ export const changeTariff = async (
   const currentResult = await currentTariffForContract(userId, contractId);
   if (!currentResult.ok) return currentResult;
   if (!currentResult.value) {
-    return err(new ValidationError("validation.tariff.noCurrentTariff"));
+    return err(appError.validation("validation.tariff.noCurrentTariff"));
   }
   const currentTariff = currentResult.value;
 
@@ -187,7 +187,7 @@ export const changeTariff = async (
     rateT1,
     fixedAmount,
   );
-  if (shapeError) return err(new ValidationError(shapeError));
+  if (shapeError) return err(appError.validation(shapeError));
 
   // New tariff record must also fall within contract bounds.
   const nestingError = validateTemporalNesting(
@@ -196,7 +196,7 @@ export const changeTariff = async (
     contract.validFrom,
     contract.validTo,
   );
-  if (nestingError) return err(new ValidationError(nestingError));
+  if (nestingError) return err(appError.validation(nestingError));
 
   try {
     const newTariff = await db.transaction(async (tx) => {
@@ -225,7 +225,7 @@ export const changeTariff = async (
     return ok(newTariff);
   } catch (error) {
     if (isExclusionViolation(error)) {
-      return err(new ValidationError("validation.overlap"));
+      return err(appError.validation("validation.overlap"));
     }
     throw error;
   }
@@ -234,10 +234,10 @@ export const changeTariff = async (
 export const updateTariffNotes = async (
   tariffId: TTariffId,
   input: TUpdateTariffNotesInput,
-): Promise<Result<void, ValidationError | NotFoundError | DemoModeError>> => {
+): Promise<Result<void, TAppError>> => {
   const parsed = updateTariffNotesSchema.safeParse(input);
   if (!parsed.success) {
-    return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
+    return err(appError.validation(parsed.error.issues[0]?.message ?? "Invalid input"));
   }
 
   const authGuard = await requireMutableUser();
@@ -271,9 +271,7 @@ export const updateTariffNotes = async (
   return ok(undefined);
 };
 
-export const softDeleteTariff = async (
-  tariffId: TTariffId,
-): Promise<Result<void, NotFoundError | DemoModeError>> => {
+export const softDeleteTariff = async (tariffId: TTariffId): Promise<Result<void, TAppError>> => {
   const authGuard = await requireMutableUser();
   if (!authGuard.ok) return authGuard;
   const userId = authGuard.value;

@@ -4,7 +4,7 @@ import { requireUser } from "@/lib/auth/guards";
 import { propertyByIdForUser } from "@/lib/db/access/properties";
 import type { PropertyId, TProperty, TPropertyRole } from "@/lib/db/schema/properties";
 import { NotFoundError, ok } from "@/lib/errors";
-import type { Result } from "@/lib/errors";
+import type { Result, TAppError } from "@/lib/errors";
 import { serviceCountsForProperties } from "@/features/services/query";
 
 export type TPropertyDetail = TProperty & {
@@ -13,7 +13,7 @@ export type TPropertyDetail = TProperty & {
 };
 
 export const getPropertyDetail = cache(
-  async (propertyId: PropertyId): Promise<Result<TPropertyDetail, NotFoundError>> => {
+  async (propertyId: PropertyId): Promise<Result<TPropertyDetail, TAppError>> => {
     const userId = await requireUser();
     const result = await propertyByIdForUser(userId, propertyId);
     if (!result.ok) return result;

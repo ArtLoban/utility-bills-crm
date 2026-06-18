@@ -6,8 +6,8 @@ import type { TContractId } from "@/lib/db/schema/contracts";
 import { paymentDetails } from "@/lib/db/schema/payment-details";
 import type { TPaymentDetails, TPaymentDetailsId } from "@/lib/db/schema/payment-details";
 import type { UserId } from "@/lib/db/schema/auth";
-import { NotFoundError, err, ok } from "@/lib/errors";
-import type { Result } from "@/lib/errors";
+import { appError, err, ok } from "@/lib/errors";
+import type { Result, TAppError } from "@/lib/errors";
 
 // Pure functions: userId is always a parameter. Never read the auth session internally.
 // Access is derived through the parent contract → service → property chain.
@@ -15,7 +15,7 @@ import type { Result } from "@/lib/errors";
 export const paymentDetailsByContractId = async (
   userId: UserId,
   contractId: TContractId,
-): Promise<Result<TPaymentDetails[], NotFoundError>> => {
+): Promise<Result<TPaymentDetails[], TAppError>> => {
   const contractAccess = await contractByIdForUser(userId, contractId);
   if (!contractAccess.ok) return contractAccess;
 
@@ -31,7 +31,7 @@ export const paymentDetailsByContractId = async (
 export const currentPaymentDetailsForContract = async (
   userId: UserId,
   contractId: TContractId,
-): Promise<Result<TPaymentDetails | null, NotFoundError>> => {
+): Promise<Result<TPaymentDetails | null, TAppError>> => {
   const contractAccess = await contractByIdForUser(userId, contractId);
   if (!contractAccess.ok) return contractAccess;
 
@@ -53,20 +53,20 @@ export const currentPaymentDetailsForContract = async (
 export const paymentDetailsByIdForUser = async (
   userId: UserId,
   paymentDetailsId: TPaymentDetailsId,
-): Promise<Result<TPaymentDetails, NotFoundError>> => {
+): Promise<Result<TPaymentDetails, TAppError>> => {
   const rows = await db
     .select()
     .from(paymentDetails)
     .where(and(eq(paymentDetails.id, paymentDetailsId), isNull(paymentDetails.deletedAt)))
     .limit(1);
 
-  if (rows.length === 0) return err(new NotFoundError("paymentDetails", paymentDetailsId));
+  if (rows.length === 0) return err(appError.notFound("paymentDetails", paymentDetailsId));
 
   const record = rows[0]!;
 
   // Decision #108: inaccessible record must be indistinguishable from a nonexistent one.
   const contractAccess = await contractByIdForUser(userId, record.contractId);
-  if (!contractAccess.ok) return err(new NotFoundError("paymentDetails", paymentDetailsId));
+  if (!contractAccess.ok) return err(appError.notFound("paymentDetails", paymentDetailsId));
 
   return ok(record);
 };

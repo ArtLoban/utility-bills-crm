@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { createServiceWithSetup } from "@/features/services/actions.composite";
 import { createServiceWithSetupSchema } from "@/features/services/schema";
 import { useActionErrorHandler } from "@/lib/hooks/use-action-error-handler";
+import { ERROR_CODES } from "@/lib/errors";
 import type { TCreateServiceWithSetupInput } from "@/features/services/schema";
 import type { PropertyId } from "@/lib/db/schema/properties";
 import type { TServiceType } from "@/lib/db/schema/service-types";
@@ -124,7 +125,7 @@ export const useAddServiceSetup = ({ propertyId, serviceTypes }: TParams) => {
       const result = await createServiceWithSetup(parsed.data);
 
       if (!result.ok) {
-        if (result.error.name === "ValidationError") {
+        if (result.error.code === ERROR_CODES.VALIDATION) {
           setFormError(resolveFormError(result.error.message));
         } else {
           handleActionError(result.error);

@@ -10,7 +10,7 @@ import { services } from "@/lib/db/schema/services";
 import type { TServiceType } from "@/lib/db/schema/service-types";
 import { propertyByIdForUser } from "@/lib/db/access/properties";
 import { NotFoundError, ok } from "@/lib/errors";
-import type { Result } from "@/lib/errors";
+import type { Result, TAppError } from "@/lib/errors";
 
 export type TPropertyMeterRow = {
   meter: TMeter;
@@ -19,7 +19,7 @@ export type TPropertyMeterRow = {
 
 export const getPropertyMeters = async (
   propertyId: PropertyId,
-): Promise<Result<TPropertyMeterRow[], NotFoundError>> => {
+): Promise<Result<TPropertyMeterRow[], TAppError>> => {
   const userId = await requireUser();
 
   const access = await propertyByIdForUser(userId, propertyId);

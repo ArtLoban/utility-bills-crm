@@ -7,6 +7,7 @@ import { useZodForm } from "@/lib/forms/use-zod-form";
 import { propertySchema } from "@/features/properties/schema";
 import { createProperty, editProperty } from "@/features/properties/actions";
 import { useActionErrorHandler } from "@/lib/hooks/use-action-error-handler";
+import { ERROR_CODES } from "@/lib/errors";
 import type { TPropertyDetail } from "@/app/(app)/properties/[id]/_data/queries";
 import { buildDefaultValues } from "../utils/build-default-values";
 
@@ -35,7 +36,7 @@ export const usePropertyForm = ({ property, onClose }: TParams) => {
     if (!response.ok) {
       // ValidationError → inline root error (form validation is never a toast, decision #105).
       // DemoModeError / NotFoundError → handled by the shared error handler.
-      if (response.error.name === "ValidationError") {
+      if (response.error.code === ERROR_CODES.VALIDATION) {
         form.setError("root", { message: t("modal.formError") });
         return;
       }

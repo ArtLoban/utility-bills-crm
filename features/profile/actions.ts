@@ -6,18 +6,18 @@ import { revalidatePath } from "next/cache";
 import { requireMutableUser } from "@/lib/auth/guards";
 import { db } from "@/lib/db/client";
 import { users } from "@/lib/db/schema";
-import { DemoModeError, ValidationError, err, ok } from "@/lib/errors";
-import type { Result } from "@/lib/errors";
+import { appError, err, ok } from "@/lib/errors";
+import type { Result, TAppError } from "@/lib/errors";
 
 import { profileNameSchema } from "./schema";
 import type { TProfileNameInput } from "./schema";
 
 export const updateProfileName = async (
   input: TProfileNameInput,
-): Promise<Result<void, ValidationError | DemoModeError>> => {
+): Promise<Result<void, TAppError>> => {
   const parsed = profileNameSchema.safeParse(input);
   if (!parsed.success) {
-    return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
+    return err(appError.validation(parsed.error.issues[0]?.message ?? "Invalid input"));
   }
 
   const authGuard = await requireMutableUser();

@@ -7,6 +7,7 @@ import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
 import { Dialog, DialogClose, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { errorMessage } from "@/lib/errors";
 import { removePropertyAccess } from "@/features/sharing/actions";
 import type { TPropertyMember } from "@/features/sharing/query";
 import type { PropertyId } from "@/lib/db/schema/properties";
@@ -35,7 +36,7 @@ export const RemoveUserModal = ({ member, propertyId, propertyName }: TProps) =>
       });
 
       if (!result.ok) {
-        const msg = result.error.message;
+        const msg = errorMessage(result.error);
         if (msg === "OWNER_PROTECTED") toast.error(t("errors.OWNER_PROTECTED"));
         else toast.error(t("removeModal.errors.generic"));
         return;

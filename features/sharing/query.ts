@@ -7,7 +7,7 @@ import type { PropertyId, TPropertyRole } from "@/lib/db/schema/properties";
 import { users } from "@/lib/db/schema/auth";
 import type { UserId } from "@/lib/db/schema/auth";
 import { NotFoundError, ok } from "@/lib/errors";
-import type { Result } from "@/lib/errors";
+import type { Result, TAppError } from "@/lib/errors";
 import { propertyByIdForUser } from "@/lib/db/access/properties";
 
 export type TPropertyMember = {
@@ -27,7 +27,7 @@ export type TPropertyMember = {
 export const propertyMembers = async (
   userId: UserId,
   propertyId: PropertyId,
-): Promise<Result<TPropertyMember[], NotFoundError>> => {
+): Promise<Result<TPropertyMember[], TAppError>> => {
   const access = await propertyByIdForUser(userId, propertyId);
   if (!access.ok) return access;
 

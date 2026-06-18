@@ -6,6 +6,7 @@ import { toast } from "sonner";
 
 import { editService } from "@/features/services/actions";
 import { useActionErrorHandler } from "@/lib/hooks/use-action-error-handler";
+import { ERROR_CODES } from "@/lib/errors";
 import type { TServiceId } from "@/lib/db/schema/services";
 
 type TParams = {
@@ -26,7 +27,7 @@ export const useEditService = ({ serviceId, initialNotes }: TParams) => {
       const result = await editService(serviceId, { notes: notes.trim() || undefined });
 
       if (!result.ok) {
-        if (result.error.name === "ValidationError") {
+        if (result.error.code === ERROR_CODES.VALIDATION) {
           setFormError(result.error.message);
         } else {
           handleActionError(result.error);

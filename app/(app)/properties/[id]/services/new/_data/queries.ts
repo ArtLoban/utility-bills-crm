@@ -9,7 +9,7 @@ import type { TProvider } from "@/lib/db/schema/providers";
 import { serviceTypes } from "@/lib/db/schema/service-types";
 import type { TServiceType, TServiceTypeId } from "@/lib/db/schema/service-types";
 import { NotFoundError, ok } from "@/lib/errors";
-import type { Result } from "@/lib/errors";
+import type { Result, TAppError } from "@/lib/errors";
 
 export type TAddServicePageData = {
   allServiceTypes: TServiceType[];
@@ -19,7 +19,7 @@ export type TAddServicePageData = {
 
 export const getAddServicePageData = async (
   propertyId: PropertyId,
-): Promise<Result<TAddServicePageData, NotFoundError>> => {
+): Promise<Result<TAddServicePageData, TAppError>> => {
   const userId = await requireUser();
 
   const [allServiceTypes, existingResult, providers] = await Promise.all([

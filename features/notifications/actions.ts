@@ -11,15 +11,8 @@ import { reminders } from "@/lib/db/schema/notifications";
 import type { ReminderId } from "@/lib/db/schema/notifications";
 import { PROPERTY_ROLES } from "@/lib/db/schema/properties";
 import type { TServiceId } from "@/lib/db/schema/services";
-import {
-  DemoModeError,
-  ForbiddenError,
-  NotFoundError,
-  ValidationError,
-  err,
-  ok,
-} from "@/lib/errors";
-import type { Result } from "@/lib/errors";
+import { appError, err, ok } from "@/lib/errors";
+import type { Result, TAppError } from "@/lib/errors";
 import { createReminderSchema, editReminderSchema } from "./schema";
 import type { TCreateReminderInput, TEditReminderInput } from "./schema";
 
@@ -32,24 +25,22 @@ import type { TCreateReminderInput, TEditReminderInput } from "./schema";
 const requireServiceEditor = async (
   userId: UserId,
   serviceId: TServiceId,
-): Promise<Result<void, NotFoundError | ForbiddenError>> => {
+): Promise<Result<void, TAppError>> => {
   const access = await serviceByIdForUser(userId, serviceId);
   if (!access.ok) return access;
 
   if (!roleAtLeast(access.value.role, PROPERTY_ROLES.EDITOR)) {
-    return err(new ForbiddenError());
+    return err(appError.forbidden());
   }
   return ok(undefined);
 };
 
 export const createReminder = async (
   input: TCreateReminderInput,
-): Promise<
-  Result<ReminderId, ValidationError | NotFoundError | ForbiddenError | DemoModeError>
-> => {
+): Promise<Result<ReminderId, TAppError>> => {
   const parsed = createReminderSchema.safeParse(input);
   if (!parsed.success) {
-    return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
+    return err(appError.validation(parsed.error.issues[0]?.message ?? "Invalid input"));
   }
 
   const authGuard = await requireMutableUser();
@@ -72,10 +63,10 @@ export const createReminder = async (
 export const editReminder = async (
   reminderId: ReminderId,
   input: TEditReminderInput,
-): Promise<Result<void, ValidationError | NotFoundError | DemoModeError>> => {
+): Promise<Result<void, TAppError>> => {
   const parsed = editReminderSchema.safeParse(input);
   if (!parsed.success) {
-    return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
+    return err(appError.validation(parsed.error.issues[0]?.message ?? "Invalid input"));
   }
 
   const authGuard = await requireMutableUser();
@@ -91,7 +82,7 @@ export const editReminder = async (
     .limit(1);
 
   if (!existing) {
-    return err(new NotFoundError("reminder", reminderId));
+    return err(appError.notFound("reminder", reminderId));
   }
 
   const { anchorType, anchorValue, text } = parsed.data;
@@ -104,9 +95,7 @@ export const editReminder = async (
   return ok(undefined);
 };
 
-export const deleteReminder = async (
-  reminderId: ReminderId,
-): Promise<Result<void, NotFoundError | DemoModeError>> => {
+export const deleteReminder = async (reminderId: ReminderId): Promise<Result<void, TAppError>> => {
   const authGuard = await requireMutableUser();
   if (!authGuard.ok) return authGuard;
   const userId = authGuard.value;
@@ -119,7 +108,7 @@ export const deleteReminder = async (
     .limit(1);
 
   if (!existing) {
-    return err(new NotFoundError("reminder", reminderId));
+    return err(appError.notFound("reminder", reminderId));
   }
 
   // Hard-delete — reminders carry no audit value and have no incoming foreign keys.

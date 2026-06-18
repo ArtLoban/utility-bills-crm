@@ -4,8 +4,8 @@ import { db } from "@/lib/db/client";
 import { properties, propertyAccess } from "@/lib/db/schema/properties";
 import type { PropertyId, TProperty, TPropertyRole } from "@/lib/db/schema/properties";
 import type { UserId } from "@/lib/db/schema/auth";
-import { NotFoundError, err, ok } from "@/lib/errors";
-import type { Result } from "@/lib/errors";
+import { appError, err, ok } from "@/lib/errors";
+import type { Result, TAppError } from "@/lib/errors";
 
 // --- Role ordering ---
 // owner > editor > viewer. Used by requirePropertyRole to check "at least X" conditions.
@@ -45,7 +45,7 @@ export const accessibleProperties = (userId: UserId): Promise<TPropertyWithRole[
 export const propertyByIdForUser = async (
   userId: UserId,
   propertyId: PropertyId,
-): Promise<Result<TPropertyWithRole, NotFoundError>> => {
+): Promise<Result<TPropertyWithRole, TAppError>> => {
   const rows = await db
     .select({ property: properties, role: propertyAccess.propertyRole })
     .from(propertyAccess)
@@ -62,7 +62,7 @@ export const propertyByIdForUser = async (
 
   // Decision #108: missing property and inaccessible property are indistinguishable.
   // Never return ForbiddenError — always NotFoundError so probing foreign UUIDs reveals nothing.
-  if (rows.length === 0) return err(new NotFoundError("property", propertyId));
+  if (rows.length === 0) return err(appError.notFound("property", propertyId));
   return ok(rows[0]!);
 };
 
@@ -73,12 +73,12 @@ export const requirePropertyRole = async (
   userId: UserId,
   propertyId: PropertyId,
   minRole: TPropertyRole,
-): Promise<Result<TPropertyRole, NotFoundError>> => {
+): Promise<Result<TPropertyRole, TAppError>> => {
   const result = await propertyByIdForUser(userId, propertyId);
   if (!result.ok) return result;
 
   if (!roleAtLeast(result.value.role, minRole)) {
-    return err(new NotFoundError("property", propertyId));
+    return err(appError.notFound("property", propertyId));
   }
 
   return ok(result.value.role);

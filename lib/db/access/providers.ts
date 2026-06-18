@@ -5,8 +5,8 @@ import { contracts } from "@/lib/db/schema/contracts";
 import { providers } from "@/lib/db/schema/providers";
 import type { ProviderId, TProvider } from "@/lib/db/schema/providers";
 import type { UserId } from "@/lib/db/schema/auth";
-import { NotFoundError, err, ok } from "@/lib/errors";
-import type { Result } from "@/lib/errors";
+import { appError, err, ok } from "@/lib/errors";
+import type { Result, TAppError } from "@/lib/errors";
 
 // Pure functions: userId is always a parameter. Never read the auth session internally.
 // All helpers filter deletedAt IS NULL — soft-deleted providers are invisible.
@@ -34,7 +34,7 @@ export const providersByUserId = (userId: UserId): Promise<TProvider[]> =>
 export const providerByIdForUser = async (
   userId: UserId,
   providerId: ProviderId,
-): Promise<Result<TProvider, NotFoundError>> => {
+): Promise<Result<TProvider, TAppError>> => {
   const rows = await db
     .select()
     .from(providers)
@@ -45,6 +45,6 @@ export const providerByIdForUser = async (
 
   // Decision #108: wrong owner and missing row are indistinguishable.
   // Never reveal resource existence to non-owners.
-  if (rows.length === 0) return err(new NotFoundError("provider", providerId));
+  if (rows.length === 0) return err(appError.notFound("provider", providerId));
   return ok(rows[0]!);
 };

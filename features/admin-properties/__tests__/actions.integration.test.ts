@@ -9,7 +9,7 @@ import type { TServiceId } from "@/lib/db/schema/services";
 import { serviceTypes } from "@/lib/db/schema/service-types";
 import type { TServiceTypeId } from "@/lib/db/schema/service-types";
 import { auth } from "@/lib/auth";
-import { ForbiddenError } from "@/lib/errors";
+import { ForbiddenError, errorMessage } from "@/lib/errors";
 
 import { restoreProperty, hardDeleteProperty } from "../actions";
 
@@ -162,7 +162,7 @@ describe("restoreProperty", () => {
     try {
       const result = await restoreProperty(propId);
       expect(result.ok).toBe(false);
-      if (!result.ok) expect(result.error.message).toBe("NOT_DELETED");
+      if (!result.ok) expect(errorMessage(result.error)).toBe("NOT_DELETED");
 
       // No write: property remains active
       const row = await db
@@ -195,7 +195,7 @@ describe("hardDeleteProperty", () => {
     try {
       const result = await hardDeleteProperty(propId);
       expect(result.ok).toBe(false);
-      if (!result.ok) expect(result.error.message).toBe("NOT_SOFT_DELETED");
+      if (!result.ok) expect(errorMessage(result.error)).toBe("NOT_SOFT_DELETED");
 
       // Property still in DB
       const rows = await db

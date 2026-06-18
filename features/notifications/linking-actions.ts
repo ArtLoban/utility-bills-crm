@@ -7,7 +7,7 @@ import { requireMutableUser, requireUser } from "@/lib/auth/guards";
 import { db } from "@/lib/db/client";
 import { telegramChannels } from "@/lib/db/schema/notifications";
 import { DemoModeError, ok } from "@/lib/errors";
-import type { Result } from "@/lib/errors";
+import type { Result, TAppError } from "@/lib/errors";
 import { ROUTES } from "@/lib/routes";
 
 import { issueLinkToken } from "./linking";
@@ -27,7 +27,7 @@ export type TStartLinkResult = {
 // demo user must never bind a real Telegram. A missing TELEGRAM_BOT_USERNAME is a server
 // misconfiguration, not a user condition, so it throws (surfaces as 500) rather than handing back
 // a dead link.
-export const startTelegramLink = async (): Promise<Result<TStartLinkResult, DemoModeError>> => {
+export const startTelegramLink = async (): Promise<Result<TStartLinkResult, TAppError>> => {
   const authGuard = await requireMutableUser();
   if (!authGuard.ok) return authGuard;
   const userId = authGuard.value;
@@ -51,7 +51,7 @@ export const getTelegramLinkStatus = async (): Promise<TTelegramLinkStatus> => {
 
 // Disconnects the authenticated, non-demo user's channel (hard-delete). Reminders survive; with
 // no channel they are silently skipped at delivery — the gate is a precondition, not a guarantee.
-export const disconnectTelegram = async (): Promise<Result<void, DemoModeError>> => {
+export const disconnectTelegram = async (): Promise<Result<void, TAppError>> => {
   const authGuard = await requireMutableUser();
   if (!authGuard.ok) return authGuard;
   const userId = authGuard.value;

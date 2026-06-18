@@ -19,8 +19,8 @@ import type { TAccountNumber } from "@/lib/db/schema/account-numbers";
 import { paymentDetails } from "@/lib/db/schema/payment-details";
 import type { TPaymentDetails } from "@/lib/db/schema/payment-details";
 import type { UserId } from "@/lib/db/schema/auth";
-import { NotFoundError, err, ok } from "@/lib/errors";
-import type { Result } from "@/lib/errors";
+import { appError, err, ok } from "@/lib/errors";
+import type { Result, TAppError } from "@/lib/errors";
 
 // --- Result types ---
 // Purpose-named (screen-named), not entity-named. Distinct from the row type TService.
@@ -77,7 +77,7 @@ export const serviceIdsForUser = async (userId: UserId): Promise<TServiceId[]> =
 export const servicesByPropertyId = async (
   userId: UserId,
   propertyId: PropertyId,
-): Promise<Result<TServiceListItem[], NotFoundError>> => {
+): Promise<Result<TServiceListItem[], TAppError>> => {
   // Stage 2 access helper: returns NotFoundError for missing OR inaccessible property.
   // 404-masking per decision #108 — no access ≡ nonexistent.
   const access = await propertyByIdForUser(userId, propertyId);
@@ -118,7 +118,7 @@ export const servicesByPropertyId = async (
 export const serviceByIdForUser = async (
   userId: UserId,
   serviceId: TServiceId,
-): Promise<Result<TServiceDetail, NotFoundError>> => {
+): Promise<Result<TServiceDetail, TAppError>> => {
   // Fetch first, then check access — avoids duplicating the propertyAccess JOIN logic.
   const rows = await db
     .select({
@@ -165,14 +165,14 @@ export const serviceByIdForUser = async (
     .where(and(eq(services.id, serviceId), isNull(services.deletedAt)))
     .limit(1);
 
-  if (rows.length === 0) return err(new NotFoundError("service", serviceId));
+  if (rows.length === 0) return err(appError.notFound("service", serviceId));
 
   const row = rows[0]!;
 
   // Access check via Stage 2 helper. A service under an inaccessible property must be
   // indistinguishable from a nonexistent one — surface as NotFoundError, not ForbiddenError.
   const access = await propertyByIdForUser(userId, row.service.propertyId);
-  if (!access.ok) return err(new NotFoundError("service", serviceId));
+  if (!access.ok) return err(appError.notFound("service", serviceId));
 
   return ok({
     service: row.service,

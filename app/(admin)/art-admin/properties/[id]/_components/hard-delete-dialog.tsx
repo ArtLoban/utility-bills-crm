@@ -5,6 +5,7 @@ import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { ConfirmDialog } from "@/components/confirm-dialog";
+import { errorMessage } from "@/lib/errors";
 import { hardDeleteProperty } from "@/features/admin-properties/actions";
 
 const ADMIN_PROPERTY_ERRORS: Record<string, string> = {
@@ -38,7 +39,7 @@ export const HardDeleteDialog = ({
         onOpenChange(false);
         onSuccess?.();
       } else {
-        const code = result.error.message as string;
+        const code = errorMessage(result.error) ?? "generic";
         toast.error(ADMIN_PROPERTY_ERRORS[code] ?? ADMIN_PROPERTY_ERRORS.generic);
       }
     });

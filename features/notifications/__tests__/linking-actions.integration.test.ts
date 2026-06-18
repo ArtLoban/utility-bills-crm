@@ -5,7 +5,7 @@ import { db } from "@/lib/db/client";
 import { users } from "@/lib/db/schema/auth";
 import type { UserId } from "@/lib/db/schema/auth";
 import { telegramChannels, telegramLinkTokens } from "@/lib/db/schema/notifications";
-import { DemoModeError } from "@/lib/errors";
+import { ERROR_CODES } from "@/lib/errors";
 import { auth } from "@/lib/auth";
 import { disconnectTelegram, getTelegramLinkStatus, startTelegramLink } from "../linking-actions";
 
@@ -79,7 +79,7 @@ describe("startTelegramLink", () => {
     const result = await startTelegramLink();
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.error).toBeInstanceOf(DemoModeError);
+    expect(result.error.code).toBe(ERROR_CODES.DEMO_MODE);
 
     const tokens = await db
       .select()
@@ -111,7 +111,7 @@ describe("disconnectTelegram", () => {
     const result = await disconnectTelegram();
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.error).toBeInstanceOf(DemoModeError);
+    expect(result.error.code).toBe(ERROR_CODES.DEMO_MODE);
 
     expect(await channelFor(userAId)).not.toBeNull();
   });

@@ -14,17 +14,17 @@ import type { TService, TServiceId } from "@/lib/db/schema/services";
 import type { PropertyId } from "@/lib/db/schema/properties";
 import type { TServiceTypeId } from "@/lib/db/schema/service-types";
 import { requirePropertyRole } from "@/lib/db/access/properties";
-import { DemoModeError, NotFoundError, ValidationError, err, ok } from "@/lib/errors";
-import type { Result } from "@/lib/errors";
+import { appError, err, ok } from "@/lib/errors";
+import type { Result, TAppError } from "@/lib/errors";
 import { createServiceSchema, editServiceSchema } from "./schema";
 import type { TCreateServiceInput, TEditServiceInput } from "./schema";
 
 export const createService = async (
   input: TCreateServiceInput,
-): Promise<Result<TService, ValidationError | NotFoundError | DemoModeError>> => {
+): Promise<Result<TService, TAppError>> => {
   const parsed = createServiceSchema.safeParse(input);
   if (!parsed.success) {
-    return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
+    return err(appError.validation(parsed.error.issues[0]?.message ?? "Invalid input"));
   }
 
   const authGuard = await requireMutableUser();
@@ -56,7 +56,7 @@ export const createService = async (
       "code" in error &&
       (error as { code: unknown }).code === "23505"
     ) {
-      return err(new ValidationError("A service of this type is already active for this property"));
+      return err(appError.validation("A service of this type is already active for this property"));
     }
     throw error;
   }
@@ -65,10 +65,10 @@ export const createService = async (
 export const editService = async (
   serviceId: TServiceId,
   input: TEditServiceInput,
-): Promise<Result<void, ValidationError | NotFoundError | DemoModeError>> => {
+): Promise<Result<void, TAppError>> => {
   const parsed = editServiceSchema.safeParse(input);
   if (!parsed.success) {
-    return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
+    return err(appError.validation(parsed.error.issues[0]?.message ?? "Invalid input"));
   }
 
   const authGuard = await requireMutableUser();
@@ -82,7 +82,7 @@ export const editService = async (
     .where(and(eq(services.id, serviceId), isNull(services.deletedAt)))
     .limit(1);
 
-  if (rows.length === 0) return err(new NotFoundError("service", serviceId));
+  if (rows.length === 0) return err(appError.notFound("service", serviceId));
   const propertyId = rows[0]!.propertyId;
 
   // Role check covers missing property, no access, and insufficient role.
@@ -102,7 +102,7 @@ export const editService = async (
 
 export const softDeleteService = async (
   serviceId: TServiceId,
-): Promise<Result<void, NotFoundError | DemoModeError>> => {
+): Promise<Result<void, TAppError>> => {
   const authGuard = await requireMutableUser();
   if (!authGuard.ok) return authGuard;
   const userId = authGuard.value;
@@ -113,7 +113,7 @@ export const softDeleteService = async (
     .where(and(eq(services.id, serviceId), isNull(services.deletedAt)))
     .limit(1);
 
-  if (rows.length === 0) return err(new NotFoundError("service", serviceId));
+  if (rows.length === 0) return err(appError.notFound("service", serviceId));
   const propertyId = rows[0]!.propertyId;
 
   const guard = await requirePropertyRole(userId, propertyId, "editor");

@@ -16,8 +16,8 @@ import { contractByIdForUser, currentContractForService } from "@/lib/db/access/
 import { providerByIdForUser } from "@/lib/db/access/providers";
 import { requirePropertyRole } from "@/lib/db/access/properties";
 import { serviceByIdForUser } from "@/lib/db/access/services";
-import { DemoModeError, NotFoundError, ValidationError, err, ok } from "@/lib/errors";
-import type { Result } from "@/lib/errors";
+import { appError, err, ok } from "@/lib/errors";
+import type { Result, TAppError } from "@/lib/errors";
 import { insertContractInternal } from "./lib";
 import { changeProviderSchema, createContractSchema, updateContractNotesSchema } from "./schema";
 import type {
@@ -35,10 +35,10 @@ const isExclusionViolation = (error: unknown): boolean =>
 
 export const createContract = async (
   input: TCreateContractInput,
-): Promise<Result<TContract, ValidationError | NotFoundError | DemoModeError>> => {
+): Promise<Result<TContract, TAppError>> => {
   const parsed = createContractSchema.safeParse(input);
   if (!parsed.success) {
-    return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
+    return err(appError.validation(parsed.error.issues[0]?.message ?? "Invalid input"));
   }
 
   const authGuard = await requireMutableUser();
@@ -76,7 +76,7 @@ export const createContract = async (
   } catch (error) {
     if (isExclusionViolation(error)) {
       return err(
-        new ValidationError(
+        appError.validation(
           "An active contract for this service already exists in the selected period",
         ),
       );
@@ -88,7 +88,7 @@ export const createContract = async (
 export const closeContract = async (
   contractId: TContractId,
   validTo: Date,
-): Promise<Result<void, ValidationError | NotFoundError | DemoModeError>> => {
+): Promise<Result<void, TAppError>> => {
   const authGuard = await requireMutableUser();
   if (!authGuard.ok) return authGuard;
   const userId = authGuard.value;
@@ -108,7 +108,7 @@ export const closeContract = async (
   if (!roleGuard.ok) return roleGuard;
 
   if (validTo <= contract.validFrom) {
-    return err(new ValidationError("End date must be after the contract's start date"));
+    return err(appError.validation("End date must be after the contract's start date"));
   }
 
   await db
@@ -124,10 +124,10 @@ export const closeContract = async (
 
 export const changeProvider = async (
   input: TChangeProviderInput,
-): Promise<Result<TContract, ValidationError | NotFoundError | DemoModeError>> => {
+): Promise<Result<TContract, TAppError>> => {
   const parsed = changeProviderSchema.safeParse(input);
   if (!parsed.success) {
-    return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
+    return err(appError.validation(parsed.error.issues[0]?.message ?? "Invalid input"));
   }
 
   const authGuard = await requireMutableUser();
@@ -152,13 +152,13 @@ export const changeProvider = async (
   const currentContractResult = await currentContractForService(userId, serviceId);
   if (!currentContractResult.ok) return currentContractResult;
   if (!currentContractResult.value) {
-    return err(new NotFoundError("contract"));
+    return err(appError.notFound("contract"));
   }
 
   const currentContract = currentContractResult.value.contract;
 
   if (changeDate <= currentContract.validFrom) {
-    return err(new ValidationError("Change date must be after the current contract's start date"));
+    return err(appError.validation("Change date must be after the current contract's start date"));
   }
 
   try {
@@ -183,7 +183,7 @@ export const changeProvider = async (
   } catch (error) {
     if (isExclusionViolation(error)) {
       return err(
-        new ValidationError(
+        appError.validation(
           "An active contract for this service already exists in the selected period",
         ),
       );
@@ -195,10 +195,10 @@ export const changeProvider = async (
 export const updateContractNotes = async (
   contractId: TContractId,
   input: TUpdateContractNotesInput,
-): Promise<Result<void, ValidationError | NotFoundError | DemoModeError>> => {
+): Promise<Result<void, TAppError>> => {
   const parsed = updateContractNotesSchema.safeParse(input);
   if (!parsed.success) {
-    return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
+    return err(appError.validation(parsed.error.issues[0]?.message ?? "Invalid input"));
   }
 
   const authGuard = await requireMutableUser();
@@ -231,7 +231,7 @@ export const updateContractNotes = async (
 
 export const softDeleteContract = async (
   contractId: TContractId,
-): Promise<Result<void, NotFoundError | DemoModeError>> => {
+): Promise<Result<void, TAppError>> => {
   const authGuard = await requireMutableUser();
   if (!authGuard.ok) return authGuard;
   const userId = authGuard.value;

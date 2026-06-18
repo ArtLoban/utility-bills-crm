@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { DemoModeError, ForbiddenError } from "@/lib/errors";
+import { ERROR_CODES } from "@/lib/errors";
 import { requireAdmin, requireMutableUser, requireSession, requireUser } from "../guards";
 
 // Mimic the real next/navigation redirect: it never returns (throws NEXT_REDIRECT
@@ -74,7 +74,7 @@ describe("requireMutableUser", () => {
     const result = await requireMutableUser();
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.error).toBeInstanceOf(DemoModeError);
+    expect(result.error.code).toBe(ERROR_CODES.DEMO_MODE);
   });
 
   it("redirects to login when there is no session", async () => {
@@ -98,7 +98,7 @@ describe("requireAdmin", () => {
     const result = await requireAdmin();
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.error).toBeInstanceOf(ForbiddenError);
+    expect(result.error.code).toBe(ERROR_CODES.FORBIDDEN);
   });
 
   it("returns err(ForbiddenError) for an anonymous caller (null session)", async () => {
@@ -106,6 +106,6 @@ describe("requireAdmin", () => {
     const result = await requireAdmin();
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.error).toBeInstanceOf(ForbiddenError);
+    expect(result.error.code).toBe(ERROR_CODES.FORBIDDEN);
   });
 });

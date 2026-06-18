@@ -15,8 +15,8 @@ import {
 } from "@/lib/db/access/payment-details";
 import { requirePropertyRole } from "@/lib/db/access/properties";
 import { serviceByIdForUser } from "@/lib/db/access/services";
-import { DemoModeError, NotFoundError, ValidationError, err, ok } from "@/lib/errors";
-import type { Result } from "@/lib/errors";
+import { appError, err, ok } from "@/lib/errors";
+import type { Result, TAppError } from "@/lib/errors";
 import { insertPaymentDetailsInternal } from "./lib";
 import {
   changePaymentDetailsSchema,
@@ -51,10 +51,10 @@ const validateTemporalNesting = (
 
 export const createPaymentDetails = async (
   input: TCreatePaymentDetailsInput,
-): Promise<Result<TPaymentDetails, ValidationError | NotFoundError | DemoModeError>> => {
+): Promise<Result<TPaymentDetails, TAppError>> => {
   const parsed = createPaymentDetailsSchema.safeParse(input);
   if (!parsed.success) {
-    return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
+    return err(appError.validation(parsed.error.issues[0]?.message ?? "Invalid input"));
   }
 
   const authGuard = await requireMutableUser();
@@ -85,7 +85,7 @@ export const createPaymentDetails = async (
     contract.validFrom,
     contract.validTo,
   );
-  if (nestingError) return err(new ValidationError(nestingError));
+  if (nestingError) return err(appError.validation(nestingError));
 
   try {
     const record = await db.transaction(async (tx) =>
@@ -103,17 +103,17 @@ export const createPaymentDetails = async (
     );
     return ok(record);
   } catch (error) {
-    if (isExclusionViolation(error)) return err(new ValidationError("validation.overlap"));
+    if (isExclusionViolation(error)) return err(appError.validation("validation.overlap"));
     throw error;
   }
 };
 
 export const changePaymentDetails = async (
   input: TChangePaymentDetailsInput,
-): Promise<Result<TPaymentDetails, ValidationError | NotFoundError | DemoModeError>> => {
+): Promise<Result<TPaymentDetails, TAppError>> => {
   const parsed = changePaymentDetailsSchema.safeParse(input);
   if (!parsed.success) {
-    return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
+    return err(appError.validation(parsed.error.issues[0]?.message ?? "Invalid input"));
   }
 
   const authGuard = await requireMutableUser();
@@ -138,7 +138,7 @@ export const changePaymentDetails = async (
   const currentResult = await currentPaymentDetailsForContract(userId, contractId);
   if (!currentResult.ok) return currentResult;
   if (!currentResult.value) {
-    return err(new ValidationError("validation.paymentDetails.noCurrent"));
+    return err(appError.validation("validation.paymentDetails.noCurrent"));
   }
   const current = currentResult.value;
 
@@ -150,7 +150,7 @@ export const changePaymentDetails = async (
     contract.validFrom,
     contract.validTo,
   );
-  if (nestingError) return err(new ValidationError(nestingError));
+  if (nestingError) return err(appError.validation(nestingError));
 
   try {
     const newRecord = await db.transaction(async (tx) => {
@@ -173,7 +173,7 @@ export const changePaymentDetails = async (
     );
     return ok(newRecord);
   } catch (error) {
-    if (isExclusionViolation(error)) return err(new ValidationError("validation.overlap"));
+    if (isExclusionViolation(error)) return err(appError.validation("validation.overlap"));
     throw error;
   }
 };
@@ -181,10 +181,10 @@ export const changePaymentDetails = async (
 export const updatePaymentDetailsNotes = async (
   paymentDetailsId: TPaymentDetailsId,
   input: TUpdatePaymentDetailsNotesInput,
-): Promise<Result<void, ValidationError | NotFoundError | DemoModeError>> => {
+): Promise<Result<void, TAppError>> => {
   const parsed = updatePaymentDetailsNotesSchema.safeParse(input);
   if (!parsed.success) {
-    return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
+    return err(appError.validation(parsed.error.issues[0]?.message ?? "Invalid input"));
   }
 
   const authGuard = await requireMutableUser();
@@ -220,7 +220,7 @@ export const updatePaymentDetailsNotes = async (
 
 export const softDeletePaymentDetails = async (
   paymentDetailsId: TPaymentDetailsId,
-): Promise<Result<void, NotFoundError | DemoModeError>> => {
+): Promise<Result<void, TAppError>> => {
   const authGuard = await requireMutableUser();
   if (!authGuard.ok) return authGuard;
   const userId = authGuard.value;

@@ -10,8 +10,8 @@ import type { TServiceTypeUnit } from "@/lib/db/schema/service-types";
 import { properties, propertyAccess } from "@/lib/db/schema/properties";
 import type { PropertyId, TPropertyType } from "@/lib/db/schema/properties";
 import type { UserId } from "@/lib/db/schema/auth";
-import { NotFoundError, err, ok } from "@/lib/errors";
-import type { Result } from "@/lib/errors";
+import { appError, err, ok } from "@/lib/errors";
+import type { Result, TAppError } from "@/lib/errors";
 import type { TServiceTypeCode } from "@/features/services/service-type";
 import type {
   TPaymentsListParams,
@@ -177,7 +177,7 @@ export const getPaymentsList = async (
 export const paymentByIdForUser = async (
   userId: UserId,
   paymentId: PaymentId,
-): Promise<Result<TPaymentGlobalRow, NotFoundError>> => {
+): Promise<Result<TPaymentGlobalRow, TAppError>> => {
   const rows = await db
     .select(PAYMENT_SELECT)
     .from(payments)
@@ -198,7 +198,7 @@ export const paymentByIdForUser = async (
     .limit(1);
 
   // Decision #108: inaccessible payment is indistinguishable from a nonexistent one.
-  if (rows.length === 0) return err(new NotFoundError("payment", paymentId));
+  if (rows.length === 0) return err(appError.notFound("payment", paymentId));
 
   return ok(toRow(rows[0]!));
 };

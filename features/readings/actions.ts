@@ -11,20 +11,20 @@ import type { MeterId, TMeter } from "@/lib/db/schema/meters";
 import { meterByIdForUser } from "@/lib/db/access/meters";
 import { readingByIdForUser } from "@/lib/db/access/readings";
 import { requirePropertyRole } from "@/lib/db/access/properties";
-import { DemoModeError, NotFoundError, ValidationError, err, ok } from "@/lib/errors";
-import type { Result } from "@/lib/errors";
+import { appError, err, ok } from "@/lib/errors";
+import type { Result, TAppError } from "@/lib/errors";
 import { createReadingSchema, updateReadingSchema } from "./schema";
 import type { TCreateReadingInput, TUpdateReadingInput } from "./schema";
 
 // Validates that readAt falls within the meter's system temporal window [validFrom, validTo ?? ∞).
-const validateReadingWindow = (readAt: Date, meter: TMeter): ValidationError | null => {
+const validateReadingWindow = (readAt: Date, meter: TMeter): TAppError | null => {
   if (readAt < meter.validFrom) {
-    return new ValidationError(
+    return appError.validation(
       "Reading date is before the meter's active period — check the meter's active-since date",
     );
   }
   if (meter.validTo !== null && readAt >= meter.validTo) {
-    return new ValidationError("Reading date is after the meter was deactivated");
+    return appError.validation("Reading date is after the meter was deactivated");
   }
   return null;
 };
@@ -35,27 +35,27 @@ const validateZoneValues = (
   zoneCount: number,
   valueT2: number | undefined,
   valueT3: number | undefined,
-): ValidationError | null => {
+): TAppError | null => {
   if (zoneCount === 1) {
     if (valueT2 !== undefined) {
-      return new ValidationError("Zone 2 value provided for a single-zone meter");
+      return appError.validation("Zone 2 value provided for a single-zone meter");
     }
     if (valueT3 !== undefined) {
-      return new ValidationError("Zone 3 value provided for a single-zone meter");
+      return appError.validation("Zone 3 value provided for a single-zone meter");
     }
   } else if (zoneCount === 2) {
     if (valueT2 === undefined) {
-      return new ValidationError("Zone 2 value is required for a two-zone meter");
+      return appError.validation("Zone 2 value is required for a two-zone meter");
     }
     if (valueT3 !== undefined) {
-      return new ValidationError("Zone 3 value provided for a two-zone meter");
+      return appError.validation("Zone 3 value provided for a two-zone meter");
     }
   } else if (zoneCount === 3) {
     if (valueT2 === undefined) {
-      return new ValidationError("Zone 2 value is required for a three-zone meter");
+      return appError.validation("Zone 2 value is required for a three-zone meter");
     }
     if (valueT3 === undefined) {
-      return new ValidationError("Zone 3 value is required for a three-zone meter");
+      return appError.validation("Zone 3 value is required for a three-zone meter");
     }
   }
   return null;
@@ -63,10 +63,10 @@ const validateZoneValues = (
 
 export const createReading = async (
   input: TCreateReadingInput,
-): Promise<Result<TReading, ValidationError | NotFoundError | DemoModeError>> => {
+): Promise<Result<TReading, TAppError>> => {
   const parsed = createReadingSchema.safeParse(input);
   if (!parsed.success) {
-    return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
+    return err(appError.validation(parsed.error.issues[0]?.message ?? "Invalid input"));
   }
 
   const authGuard = await requireMutableUser();
@@ -111,10 +111,10 @@ export const createReading = async (
 export const updateReading = async (
   readingId: ReadingId,
   input: TUpdateReadingInput,
-): Promise<Result<void, ValidationError | NotFoundError | DemoModeError>> => {
+): Promise<Result<void, TAppError>> => {
   const parsed = updateReadingSchema.safeParse(input);
   if (!parsed.success) {
-    return err(new ValidationError(parsed.error.issues[0]?.message ?? "Invalid input"));
+    return err(appError.validation(parsed.error.issues[0]?.message ?? "Invalid input"));
   }
 
   const authGuard = await requireMutableUser();
@@ -157,9 +157,7 @@ export const updateReading = async (
   return ok(undefined);
 };
 
-export const softDeleteReading = async (
-  readingId: ReadingId,
-): Promise<Result<void, NotFoundError | DemoModeError>> => {
+export const softDeleteReading = async (readingId: ReadingId): Promise<Result<void, TAppError>> => {
   const authGuard = await requireMutableUser();
   if (!authGuard.ok) return authGuard;
   const userId = authGuard.value;

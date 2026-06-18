@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { changeProvider } from "@/features/contracts/actions";
 import { changeProviderSchema } from "@/features/contracts/schema";
 import { useActionErrorHandler } from "@/lib/hooks/use-action-error-handler";
+import { ERROR_CODES } from "@/lib/errors";
 import type { TChangeProviderFormState } from "@/features/contracts/types";
 import type { TServiceId } from "@/lib/db/schema/services";
 
@@ -71,7 +72,7 @@ export const useChangeProviderForm = ({ serviceId }: TParams) => {
       const response = await changeProvider(result.data);
 
       if (!response.ok) {
-        if (response.error.name === "ValidationError") {
+        if (response.error.code === ERROR_CODES.VALIDATION) {
           const key = response.error.message as Parameters<typeof t>[0];
           setFormError(t(key));
         } else {

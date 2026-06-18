@@ -5,6 +5,7 @@ import { toast } from "sonner";
 
 import { useZodForm } from "@/lib/forms/use-zod-form";
 import { useActionErrorHandler } from "@/lib/hooks/use-action-error-handler";
+import { ERROR_CODES } from "@/lib/errors";
 import type { TReminderAnchorType } from "@/lib/db/schema/notifications";
 import type { TServiceId } from "@/lib/db/schema/services";
 
@@ -46,7 +47,7 @@ export const useReminderForm = ({ serviceId, reminder, onSuccess }: TParams) => 
       : await createReminder(toCreateInput(values, serviceId));
 
     if (!response.ok) {
-      if (response.error.name === "ValidationError") {
+      if (response.error.code === ERROR_CODES.VALIDATION) {
         form.setError("root", { message: t("modal.formError") });
         return;
       }

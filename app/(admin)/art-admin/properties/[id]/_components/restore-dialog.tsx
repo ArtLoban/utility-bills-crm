@@ -5,6 +5,7 @@ import { RotateCcw } from "lucide-react";
 import { toast } from "sonner";
 
 import { restoreProperty } from "@/features/admin-properties/actions";
+import { errorMessage } from "@/lib/errors";
 import { IconBadge } from "@/components/icon-badge";
 import { Modal } from "@/components/modal";
 
@@ -39,7 +40,7 @@ export const RestoreDialog = ({
         onOpenChange(false);
         onSuccess?.();
       } else {
-        const code = result.error.message as string;
+        const code = errorMessage(result.error) ?? "generic";
         toast.error(ADMIN_PROPERTY_ERRORS[code] ?? ADMIN_PROPERTY_ERRORS.generic);
       }
     });
