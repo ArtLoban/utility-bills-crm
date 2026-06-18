@@ -171,4 +171,8 @@ Public landing, authenticated CRM, sharing, admin with CMS, i18n, theming.
 
 ## License
 
-Private. Not for public use.
+This project is licensed under the **GNU Affero General Public License v3.0** — see [LICENSE](./LICENSE).
+
+Copyright (C) 2026 Artem Loban
+
+If you'd like to use this code in a closed-source or commercial product, a separate commercial license is available. Reach out at `tymanrock@gmail.com`.
