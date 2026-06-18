@@ -15,13 +15,18 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+import type { TTelegramLinkStatus } from "@/features/notifications";
+
 import { captureServerException, triggerServerError } from "../../actions";
+import { TelegramTestCard } from "./components/telegram-test-card";
 import { TriggerCard } from "./components/trigger-card";
-import { DEFAULT_DEBUG_MESSAGE, SENTRY_LEVELS } from "./constants";
+import { CODE_CLASS, DEFAULT_DEBUG_MESSAGE, SENTRY_LEVELS } from "./constants";
 
-const CODE_CLASS = "bg-muted rounded px-1 py-0.5 font-mono text-xs";
+type TProps = {
+  telegramStatus: TTelegramLinkStatus;
+};
 
-export const DebugClient = () => {
+export const DebugClient = ({ telegramStatus }: TProps) => {
   const [message, setMessage] = useState(DEFAULT_DEBUG_MESSAGE);
   const [level, setLevel] = useState<SeverityLevel>("error");
   const [tagKey, setTagKey] = useState("");
@@ -65,113 +70,123 @@ export const DebugClient = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Customize</CardTitle>
-        </CardHeader>
-        <CardContent className="grid gap-4 sm:grid-cols-2">
-          <div className="space-y-1.5 sm:col-span-2">
-            <Label htmlFor="debug-message">Error message</Label>
-            <Input
-              id="debug-message"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              placeholder={DEFAULT_DEBUG_MESSAGE}
-            />
-          </div>
+    <div className="space-y-10">
+      <section className="space-y-6">
+        <h2 className="text-muted-foreground text-sm font-medium">Error monitoring</h2>
 
-          <div className="space-y-1.5">
-            <Label htmlFor="debug-level">Level (captured only)</Label>
-            <Select value={level} onValueChange={(value) => setLevel(value as SeverityLevel)}>
-              <SelectTrigger id="debug-level" className="w-full">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {SENTRY_LEVELS.map((option) => (
-                  <SelectItem key={option} value={option}>
-                    {option}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="grid grid-cols-2 gap-2">
-            <div className="space-y-1.5">
-              <Label htmlFor="debug-tag-key">Tag key (captured only)</Label>
+        <Card>
+          <CardHeader>
+            <CardTitle>Customize</CardTitle>
+          </CardHeader>
+          <CardContent className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-1.5 sm:col-span-2">
+              <Label htmlFor="debug-message">Error message</Label>
               <Input
-                id="debug-tag-key"
-                value={tagKey}
-                onChange={(e) => setTagKey(e.target.value)}
-                placeholder="feature"
+                id="debug-message"
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                placeholder={DEFAULT_DEBUG_MESSAGE}
               />
             </div>
+
             <div className="space-y-1.5">
-              <Label htmlFor="debug-tag-value">Tag value</Label>
-              <Input
-                id="debug-tag-value"
-                value={tagValue}
-                onChange={(e) => setTagValue(e.target.value)}
-                placeholder="billing"
-              />
+              <Label htmlFor="debug-level">Level (captured only)</Label>
+              <Select value={level} onValueChange={(value) => setLevel(value as SeverityLevel)}>
+                <SelectTrigger id="debug-level" className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {SENTRY_LEVELS.map((option) => (
+                    <SelectItem key={option} value={option}>
+                      {option}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
-          </div>
-        </CardContent>
-      </Card>
 
-      <div className="grid gap-4 lg:grid-cols-3">
-        <TriggerCard
-          title="Throw client error"
-          variant="destructive"
-          buttonLabel="Throw in browser"
-          pending={isPending}
-          onTrigger={handleClientThrow}
-          description={
-            <>
-              Throws an uncaught error in the browser. Caught by the client Sentry SDK (
-              <code className={CODE_CLASS}>instrumentation-client.ts</code>). Verifies client-side
-              capture. No correlation id (the browser has no request context).
-            </>
-          }
-        />
+            <div className="grid grid-cols-2 gap-2">
+              <div className="space-y-1.5">
+                <Label htmlFor="debug-tag-key">Tag key (captured only)</Label>
+                <Input
+                  id="debug-tag-key"
+                  value={tagKey}
+                  onChange={(e) => setTagKey(e.target.value)}
+                  placeholder="feature"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="debug-tag-value">Tag value</Label>
+                <Input
+                  id="debug-tag-value"
+                  value={tagValue}
+                  onChange={(e) => setTagValue(e.target.value)}
+                  placeholder="billing"
+                />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
-        <TriggerCard
-          title="Throw server error"
-          variant="destructive"
-          buttonLabel="Throw on server"
-          pending={isPending}
-          onTrigger={handleServerThrow}
-          description={
-            <>
-              A Server Action throws an uncaught error. Caught by{" "}
-              <code className={CODE_CLASS}>onRequestError</code> in{" "}
-              <code className={CODE_CLASS}>instrumentation.ts</code>, which tags the event with the{" "}
-              <code className={CODE_CLASS}>correlationId</code> read from the proxy-forwarded{" "}
-              <code className={CODE_CLASS}>x-correlation-id</code> header. Verifies the header-based
-              correlation bridge.
-            </>
-          }
-        />
+        <div className="grid gap-4 lg:grid-cols-3">
+          <TriggerCard
+            title="Throw client error"
+            variant="destructive"
+            buttonLabel="Throw in browser"
+            pending={isPending}
+            onTrigger={handleClientThrow}
+            description={
+              <>
+                Throws an uncaught error in the browser. Caught by the client Sentry SDK (
+                <code className={CODE_CLASS}>instrumentation-client.ts</code>). Verifies client-side
+                capture. No correlation id (the browser has no request context).
+              </>
+            }
+          />
 
-        <TriggerCard
-          title="Capture exception"
-          variant="secondary"
-          buttonLabel="Capture (no throw)"
-          pending={isPending}
-          onTrigger={handleCapture}
-          description={
-            <>
-              A Server Action calls <code className={CODE_CLASS}>Sentry.captureException</code>{" "}
-              inside an ALS scope, so the server <code className={CODE_CLASS}>beforeSend</code> tags
-              it with the <code className={CODE_CLASS}>correlationId</code> and a matching{" "}
-              <code className={CODE_CLASS}>logger.error</code> line is emitted. Uses the level and
-              optional tag above, and attaches fake PII (email/amount/account) that must appear{" "}
-              <code className={CODE_CLASS}>[REDACTED]</code> in Sentry.
-            </>
-          }
-        />
-      </div>
+          <TriggerCard
+            title="Throw server error"
+            variant="destructive"
+            buttonLabel="Throw on server"
+            pending={isPending}
+            onTrigger={handleServerThrow}
+            description={
+              <>
+                A Server Action throws an uncaught error. Caught by{" "}
+                <code className={CODE_CLASS}>onRequestError</code> in{" "}
+                <code className={CODE_CLASS}>instrumentation.ts</code>, which tags the event with
+                the <code className={CODE_CLASS}>correlationId</code> read from the proxy-forwarded{" "}
+                <code className={CODE_CLASS}>x-correlation-id</code> header. Verifies the
+                header-based correlation bridge.
+              </>
+            }
+          />
+
+          <TriggerCard
+            title="Capture exception"
+            variant="secondary"
+            buttonLabel="Capture (no throw)"
+            pending={isPending}
+            onTrigger={handleCapture}
+            description={
+              <>
+                A Server Action calls <code className={CODE_CLASS}>Sentry.captureException</code>{" "}
+                inside an ALS scope, so the server <code className={CODE_CLASS}>beforeSend</code>{" "}
+                tags it with the <code className={CODE_CLASS}>correlationId</code> and a matching{" "}
+                <code className={CODE_CLASS}>logger.error</code> line is emitted. Uses the level and
+                optional tag above, and attaches fake PII (email/amount/account) that must appear{" "}
+                <code className={CODE_CLASS}>[REDACTED]</code> in Sentry.
+              </>
+            }
+          />
+        </div>
+      </section>
+
+      <section className="space-y-6">
+        <h2 className="text-muted-foreground text-sm font-medium">Notifications</h2>
+
+        <TelegramTestCard status={telegramStatus} />
+      </section>
     </div>
   );
 };

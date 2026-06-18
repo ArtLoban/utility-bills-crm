@@ -3,7 +3,8 @@
 import * as Sentry from "@sentry/nextjs";
 import type { SeverityLevel } from "@sentry/nextjs";
 
-import { requireAdmin } from "@/lib/auth/guards";
+import { sendSampleDigest } from "@/features/notifications";
+import { requireAdmin, requireSession } from "@/lib/auth/guards";
 import { ok } from "@/lib/errors";
 import type { Result } from "@/lib/errors";
 import { logger } from "@/lib/logger";
@@ -51,4 +52,15 @@ export const captureServerException = async (input: TCaptureInput): Promise<Resu
 
     return ok(undefined);
   });
+};
+
+// Sends a sample reminder digest to the calling admin's own linked Telegram chat — the on-demand
+// counterpart to the daily cron, so the maintainer can verify the Telegram send path without
+// waiting for the schedule. requireSession supplies the locale so the digest renders exactly as
+// the cron would for this user.
+export const sendTestTelegramDigest = async (): Promise<Result<void, string>> => {
+  const userId = await unwrapOrThrow(await requireAdmin());
+  const { locale } = await requireSession();
+
+  return sendSampleDigest(userId, locale);
 };
