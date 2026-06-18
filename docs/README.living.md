@@ -123,15 +123,15 @@ The public layout reads the auth session to adapt its header (Login for anonymou
 
 ### Quality, testing, observability
 
-| Layer             | Choice                                   |
-| ----------------- | ---------------------------------------- |
-| Testing runner    | Vitest                                   |
-| Component testing | @testing-library/react + user-event      |
-| Linting           | ESLint (Flat Config) + TypeScript ESLint |
-| Formatting        | Prettier + prettier-plugin-tailwindcss   |
-| Git hooks         | Husky + lint-staged                      |
-| Logging           | pino (structured)                        |
-| Error tracking    | Sentry (planned, not yet integrated)     |
+| Layer             | Choice                                      |
+| ----------------- | ------------------------------------------- |
+| Testing runner    | Vitest                                      |
+| Component testing | @testing-library/react + user-event         |
+| Linting           | ESLint (Flat Config) + TypeScript ESLint    |
+| Formatting        | Prettier + prettier-plugin-tailwindcss      |
+| Git hooks         | Husky + lint-staged                         |
+| Logging           | pino (structured)                           |
+| Error tracking    | Sentry (integrated — instrumentation-based) |
 
 ### Infrastructure
 
@@ -258,10 +258,12 @@ Tailwind v4 was picked over v3 to learn the currently-shipping version.
 
 ### Observability strategy
 
-- **Structured logging with `pino`** — correlation-ID-tagged, ready for aggregation.
-- **Correlation ID in middleware** — every request tagged, propagated through logs and Sentry.
-- **Sentry** for unhandled errors — free tier is sufficient.
+- **Structured logging with `pino`** — every log line inside a request carries a correlation ID via AsyncLocalStorage; PII/secrets are redacted by a central key list (`lib/logger/redaction.ts`).
+- **Correlation ID** — generated in the proxy, forwarded on the `x-correlation-id` header; cron/webhook routes generate their own at entry. Propagated into logs and attached to Sentry events as a tag, bridging an error to its matching log lines.
+- **Sentry** for unhandled errors — free tier, instrumentation-based (`instrumentation.ts`); server-side scrubbing aligned to the same redaction key list, `sendDefaultPii: false`.
 - **No metrics, no tracing in MVP** — added only if real need emerges.
+
+> **#154 — Observability hardening (pino redaction + ALS correlation id + Sentry).** Supersedes the deferral in #115. Six locked decisions, built as one piece because Sentry consumes the correlation id and reuses the redaction list: **(1) Correlation id via AsyncLocalStorage** — a request-scoped context; a pino `mixin` auto-attaches `correlationId` to every line in scope, with no threading through signatures. Node route handlers (cron, webhook) seed it with an id generated at entry (they sit outside the proxy matcher); RSC/Server-Action code is not ALS-wrapped, so it reads the proxy-forwarded `x-correlation-id` header via `resolveCorrelationId`. The Edge proxy and the Node runtime share only the header, never an ALS context. **(2) Redaction policy** — one `SENSITIVE_KEYS` list (`lib/logger/redaction.ts`) is the single source of truth feeding both pino `redact` and Sentry scrubbing; it redacts PII/secrets (email, amounts, account numbers, readings, names, tokens) and intentionally allows low-sensitivity operational ids (`userId`, `correlationId`, `chatId`). **(3) Sentry is instrumentation-based** (Next 16): `instrumentation.ts` (`register` + `onRequestError`), `instrumentation-client.ts`, `sentry.server/edge.config.ts`, and `withSentryConfig` — not the legacy `sentry.client.config.ts` auto-init. **(4) Privacy** — `sendDefaultPii: false`, `tracesSampleRate: 0` (error tracking only); `beforeSend` scrubs the same key list as the logs. **(5) Correlation id as a Sentry tag** — the server `beforeSend` tags from ALS; `onRequestError` tags RSC/server-component errors from the forwarded header — so a Sentry event pivots to its matching pino log lines. **(6) Throw-site logging centralized in `unwrapOrThrow`** (`lib/unwrap-or-throw.ts`) — replaces the duplicated `shouldHideAsNotFound(...) ? notFound() : throw` guard pattern; every unexpected error reaching `error.tsx` is now also a structured `logger.error` carrying the correlation id, while hideable (expected) errors stay unlogged.
 
 ### Testing strategy: B (strategic)
 
@@ -455,7 +457,7 @@ Rationale: the "product-first" framing had begun to systematically under-scope f
 | 112 | Date utilities: date-fns                                                                                                                                               | dayjs, Intl API only                                                                                                        | date-fns                                                    |
 | 113 | Co-located page components: `_components/` convention per route                                                                                                        | top-level `components/` for everything                                                                                      | `_components/` per route                                    |
 | 114 | @base-ui/react → Radix UI (tech debt correction)                                                                                                                       | keep @base-ui despite known issues                                                                                          | Radix (aligns with decision #7)                             |
-| 115 | Sentry integration: deferred within Phase 7                                                                                                                            | integrate from scaffold                                                                                                     | deferred                                                    |
+| 115 | Sentry integration: deferred within Phase 7                                                                                                                            | integrate from scaffold                                                                                                     | deferred (superseded by #154 — now integrated)              |
 | 116 | Admin auth: `ADMIN_EMAILS` env var, seeded on first sign-in                                                                                                            | DB flag set manually; separate admin setup flow                                                                             | env-based seed                                              |
 | 117 | Modal implementation: hybrid — intercepting routes for entity modals, local `<ConfirmDialog>` for confirmations                                                        | All via intercepting routes; all via Zustand store; all via local `useState`                                                | Hybrid                                                      |
 | 118 | `service_types` catalog delivered via migration `INSERT`; no separate production-seed mechanism                                                                        | Dedicated `seed:prod` script; one idempotent seed with env-gated dev part                                                   | Catalog in migration                                        |
@@ -648,7 +650,7 @@ Carried forward to Phase 7 (implementation) and beyond.
 - ~~Demo account seed: one-time deployment pipeline, idempotent re-seed procedure.~~ Resolved: `seed:demo` script, wipe-then-rebuild inside a transaction, scoped to `isDemo` users (Decision #139).
 - Exclusion constraint specifics with `btree_gist` extension — concrete SQL for all temporal entities.
 - Indexing strategy for common dashboard queries (balance computation, monthly aggregation).
-- Sentry integration: deferred within Phase 7 — timing and error policy TBD when integration begins.
+- ~~Sentry integration: deferred within Phase 7 — timing and error policy TBD when integration begins.~~ Resolved: instrumentation-based Sentry with PII scrubbing and a correlation-id tag (Decision #154).
 
 **For future versions (v2+):**
 
@@ -722,7 +724,8 @@ cp .env.example .env.local
 #   AUTH_GOOGLE_ID=...
 #   AUTH_GOOGLE_SECRET=...
 #   ADMIN_EMAILS=...             comma-separated, gets systemRole='admin' on first sign-in
-#   SENTRY_DSN=...               optional, not yet integrated
+#   SENTRY_DSN / NEXT_PUBLIC_SENTRY_DSN   optional locally (no DSN → SDK no-ops); set in prod
+#   SENTRY_ORG / SENTRY_PROJECT / SENTRY_AUTH_TOKEN   prod source-map upload only (CI/Vercel secret)
 
 # 3. Apply the database schema (migrations — same path in dev and prod)
 #   npm run db:migrate           apply pending migrations
@@ -799,7 +802,8 @@ lib/
   format/               currency and date formatters
   hooks/                shared hooks
   locale/               next-intl helpers
-  logger/               pino setup with correlation IDs
+  logger/               pino setup: redaction + correlation-id context (ALS)
+  observability/        Sentry shared init options + event scrubbing
   routes.ts             centralized route configuration
   types/                shared TypeScript types
   utils/                shared utilities
@@ -857,6 +861,8 @@ Set in the Vercel dashboard (names only):
 - `NEXT_PUBLIC_SITE_URL` — public site URL for `metadataBase`, sitemap, and robots
 - `ADMIN_EMAILS` — comma-separated emails promoted to `systemRole = 'admin'` on sign-in
 - `AUTH_GOOGLE_ID` / `AUTH_GOOGLE_SECRET` — Google OAuth credentials
+- `SENTRY_DSN` / `NEXT_PUBLIC_SENTRY_DSN` — Sentry error-tracking DSN (server + browser); without them the SDK no-ops
+- `SENTRY_ORG` / `SENTRY_PROJECT` / `SENTRY_AUTH_TOKEN` — production source-map upload; the auth token is a build-time secret (#154)
 
 ### Schema and data in production
 

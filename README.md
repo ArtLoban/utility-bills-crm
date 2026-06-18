@@ -19,7 +19,7 @@ Built primarily as a senior/architect-level growth playground in frontend engine
 - Phases 4–6 complete — architecture, data model, and UI design. See `db/DATA_MODEL.md`, `db/SCHEMA_REFERENCE.md`, `docs/UI_ARCHITECTURE.md`.
 - Phase 7 (build MVP) complete — deployed and live.
 - The only remaining MVP criterion is **real users in active use** — onboarding the first real user (my wife, replacing the paper notebook).
-- Sentry error tracking is intentionally deferred (optional, planned) — see Tech Stack below.
+- Sentry error tracking is integrated (instrumentation-based, PII-scrubbed) — see Tech Stack below.
 
 ## MVP Scope
 
@@ -50,7 +50,7 @@ MVP is defined as a **minimum viable portfolio piece** — a project that demons
 - **i18n:** next-intl (en/uk/ru)
 - **Theming:** next-themes (light/dark)
 - **Logging:** pino
-- **Error tracking:** Sentry (planned, not yet integrated)
+- **Error tracking:** Sentry (integrated, instrumentation-based)
 - **Testing:** Vitest + @testing-library/react
 - **Tooling:** ESLint (Flat Config), Prettier, Husky + lint-staged
 - **CI/CD:** GitHub Actions + Vercel auto-deploy
@@ -97,7 +97,7 @@ Required environment variables:
 - `AUTH_GOOGLE_ID` — Google OAuth client ID
 - `AUTH_GOOGLE_SECRET` — Google OAuth client secret
 - `ADMIN_EMAILS` — comma-separated list of emails that receive `systemRole = 'admin'` on first sign-in
-- `SENTRY_DSN` — Sentry project DSN (optional; not yet integrated)
+- `SENTRY_DSN` / `NEXT_PUBLIC_SENTRY_DSN` — Sentry error-tracking DSN (server + browser); optional locally, the SDK no-ops without it
 
 ## Project Structure
 
@@ -134,7 +134,7 @@ lib/
   format/               currency and date formatters
   hooks/                shared hooks
   locale/               next-intl helpers
-  logger/               pino setup with correlation IDs
+  logger/               pino setup: redaction + correlation-id context (ALS)
   types/                shared TypeScript types
   utils/                shared utilities
   routes.ts             centralized route configuration

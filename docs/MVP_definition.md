@@ -325,7 +325,7 @@ A `notes` field is available on all key entities: Property, Service, Contract, M
 - **HTTPS everywhere.**
 - **Rate limiting** on the API (~100 req/min per IP, baseline).
 - **CORS** — restricted to frontend domains.
-- **Logs** — no personal data (emails, amounts, account numbers are not logged).
+- **Logs** — no personal data: PII and secrets (emails, amounts, account numbers, meter readings, names, tokens) are redacted from log output by a central key list (`lib/logger/redaction.ts`).
 - **Database** — standard access control and password protection on backups. No per-field encryption.
 - **Forbidden responses use 404** — admin routes accessed by non-admins return 404 (not 403), hiding the existence of the admin section.
 
@@ -340,9 +340,9 @@ Baseline level:
 
 ### 3.26. Observability
 
-- **Structured logging with pino** — correlation-ID tagged, ready for aggregation.
-- **Correlation ID middleware** — every request is tagged; the ID propagates through logs and Sentry.
-- **Sentry** for unhandled errors (free tier). No metrics, no tracing in v1.
+- **Structured logging with pino** — every log line emitted inside a request carries a correlation ID via AsyncLocalStorage; PII/secrets are redacted by a central key list.
+- **Correlation ID** — generated in the proxy and forwarded on the `x-correlation-id` header (cron/webhook routes generate their own at entry). It propagates into logs and is attached to Sentry events as a tag, so an error pivots to its matching log lines.
+- **Sentry** for unhandled errors (free tier), wired the Next 16 way via `instrumentation.ts`. No metrics, no tracing in v1.
 
 ### 3.27. Quality baseline
 
