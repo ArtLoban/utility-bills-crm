@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import {
+  Bug,
   Building2,
   Layout,
   LayoutDashboard,
@@ -28,6 +29,7 @@ const NAV_ICONS: Record<string, LucideIcon> = {
   [ROUTES.admin.properties]: Building2,
   [ROUTES.admin.users]: Users,
   [ROUTES.admin.landing]: Layout,
+  [ROUTES.admin.debug]: Bug,
 };
 
 type TProps = {

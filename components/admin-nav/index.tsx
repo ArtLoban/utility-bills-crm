@@ -19,6 +19,7 @@ const NAV_LINKS = [
   { label: "Properties", href: ROUTES.admin.properties },
   { label: "Users", href: ROUTES.admin.users },
   { label: "Landing", href: ROUTES.admin.landing },
+  { label: "Debug", href: ROUTES.admin.debug },
 ] as const;
 
 type TProps = {

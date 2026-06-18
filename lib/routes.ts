@@ -17,5 +17,6 @@ export const ROUTES = {
     properties: "/art-admin/properties",
     users: "/art-admin/users",
     landing: "/art-admin/landing",
+    debug: "/art-admin/debug",
   },
 } as const;
