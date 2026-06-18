@@ -1,8 +1,10 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 import { TriangleAlert } from "lucide-react";
 import { useTranslations } from "next-intl";
+import * as Sentry from "@sentry/nextjs";
 import { Button } from "@/components/ui/button";
 import { IconBadge } from "@/components/icon-badge";
 
@@ -11,8 +13,14 @@ type TProps = {
   reset: () => void;
 };
 
-export default function RootError({ reset }: TProps) {
+export default function RootError({ error, reset }: TProps) {
   const t = useTranslations("fatalError");
+
+  // Report the boundary-caught error to Sentry. The server already captured it
+  // via onRequestError; this covers client-side render errors too.
+  useEffect(() => {
+    Sentry.captureException(error);
+  }, [error]);
 
   return (
     <main className="flex flex-1 flex-col items-center justify-center px-6 pb-20 text-center md:pb-[80px]">

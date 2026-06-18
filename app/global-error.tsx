@@ -2,9 +2,11 @@
 
 // CSS must be imported here directly — root layout is bypassed when this renders
 import "./globals.css";
+import { useEffect } from "react";
 import { Inter } from "next/font/google";
 import Link from "next/link";
 import { TriangleAlert } from "lucide-react";
+import * as Sentry from "@sentry/nextjs";
 import { Button } from "@/components/ui/button";
 import { IconBadge } from "@/components/icon-badge";
 
@@ -18,7 +20,11 @@ type TProps = {
   reset: () => void;
 };
 
-export default function GlobalError({ reset }: TProps) {
+export default function GlobalError({ error, reset }: TProps) {
+  useEffect(() => {
+    Sentry.captureException(error);
+  }, [error]);
+
   return (
     <html lang="en" suppressHydrationWarning className={`${inter.variable} h-full antialiased`}>
       <head>
