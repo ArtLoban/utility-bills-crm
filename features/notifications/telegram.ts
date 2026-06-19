@@ -1,8 +1,10 @@
 import { z } from "zod";
 
-import { err, ok } from "@/lib/errors";
-import type { Result } from "@/lib/errors";
+import { ok } from "@/lib/errors";
 import { logger } from "@/lib/logger";
+
+import { infraFail } from "./result";
+import type { TInfraResult } from "./result";
 
 const TELEGRAM_API_BASE = "https://api.telegram.org";
 
@@ -18,12 +20,9 @@ const WEBHOOK_SECRET_HEADER = "x-telegram-bot-api-secret-token";
 // `error` column — Telegram/network failures are infrastructure, not domain errors, so they
 // stay out of the DomainError hierarchy. A missing bot token is reported the same way: the job
 // records the failure and moves on rather than throwing and aborting the whole run.
-export const sendTelegramMessage = async (
-  chatId: string,
-  text: string,
-): Promise<Result<void, string>> => {
+export const sendTelegramMessage = async (chatId: string, text: string): Promise<TInfraResult> => {
   const token = process.env.TELEGRAM_BOT_TOKEN;
-  if (!token) return err("TELEGRAM_BOT_TOKEN is not set");
+  if (!token) return infraFail("TELEGRAM_BOT_TOKEN is not set");
 
   try {
     const response = await fetch(`${TELEGRAM_API_BASE}/bot${token}/sendMessage`, {
@@ -34,12 +33,12 @@ export const sendTelegramMessage = async (
 
     if (!response.ok) {
       const detail = await response.text();
-      return err(`Telegram sendMessage failed: ${response.status} ${detail}`);
+      return infraFail(`Telegram sendMessage failed: ${response.status} ${detail}`);
     }
 
     return ok(undefined);
   } catch (cause) {
-    return err(cause instanceof Error ? cause.message : String(cause));
+    return infraFail(cause instanceof Error ? cause.message : String(cause));
   }
 };
 

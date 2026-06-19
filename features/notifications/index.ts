@@ -2,6 +2,7 @@ export { createReminder, editReminder, deleteReminder } from "./actions";
 export { deliverDueReminders } from "./delivery";
 export type { TDeliverySummary } from "./delivery";
 export { sendSampleDigest } from "./sample-digest";
+export type { TInfraResult } from "./result";
 export { reminderFiresOn, kyivCivilDate, toIsoDate } from "./core";
 export type { TReminderAnchor, TCivilDate } from "./core";
 export { remindersForUserService } from "./query";

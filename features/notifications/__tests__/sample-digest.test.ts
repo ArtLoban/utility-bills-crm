@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 import type { UserId } from "@/lib/db/schema/auth";
 import { LOCALES } from "@/lib/locale/constants";
-import { ok, err } from "@/lib/errors";
+import { ok } from "@/lib/errors";
 
 // Mock the two collaborators so the orchestration is tested in isolation — no DB (resolveChannel)
 // and no Bot API (sendTelegramMessage). The translator + buildDigest run for real (both pure).
@@ -10,6 +10,7 @@ vi.mock("../channel", () => ({ resolveChannelForUser: vi.fn() }));
 vi.mock("../telegram", () => ({ sendTelegramMessage: vi.fn() }));
 
 import { resolveChannelForUser } from "../channel";
+import { infraFail } from "../result";
 import { sendTelegramMessage } from "../telegram";
 import { sendSampleDigest } from "../sample-digest";
 
@@ -29,7 +30,7 @@ describe("sendSampleDigest", () => {
 
     const result = await sendSampleDigest(USER_ID, LOCALES.EN);
 
-    expect(result).toEqual(err("No linked Telegram channel"));
+    expect(result).toEqual(infraFail("No linked Telegram channel"));
     expect(sendMessageMock).not.toHaveBeenCalled();
   });
 
@@ -51,10 +52,10 @@ describe("sendSampleDigest", () => {
 
   it("propagates a send failure", async () => {
     resolveChannelMock.mockResolvedValue(CHAT_ID);
-    sendMessageMock.mockResolvedValue(err("Telegram sendMessage failed: 400 bad"));
+    sendMessageMock.mockResolvedValue(infraFail("Telegram sendMessage failed: 400 bad"));
 
     const result = await sendSampleDigest(USER_ID, LOCALES.EN);
 
-    expect(result).toEqual(err("Telegram sendMessage failed: 400 bad"));
+    expect(result).toEqual(infraFail("Telegram sendMessage failed: 400 bad"));
   });
 });

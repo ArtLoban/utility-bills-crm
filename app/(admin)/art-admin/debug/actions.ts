@@ -4,6 +4,7 @@ import * as Sentry from "@sentry/nextjs";
 import type { SeverityLevel } from "@sentry/nextjs";
 
 import { sendSampleDigest } from "@/features/notifications";
+import type { TInfraResult } from "@/features/notifications";
 import { requireAdmin, requireSession } from "@/lib/auth/guards";
 import { ok } from "@/lib/errors";
 import type { Result } from "@/lib/errors";
@@ -58,7 +59,7 @@ export const captureServerException = async (input: TCaptureInput): Promise<Resu
 // counterpart to the daily cron, so the maintainer can verify the Telegram send path without
 // waiting for the schedule. requireSession supplies the locale so the digest renders exactly as
 // the cron would for this user.
-export const sendTestTelegramDigest = async (): Promise<Result<void, string>> => {
+export const sendTestTelegramDigest = async (): Promise<TInfraResult> => {
   const userId = await unwrapOrThrow(await requireAdmin());
   const { locale } = await requireSession();
 

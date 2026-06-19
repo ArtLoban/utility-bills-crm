@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   appError,
   DemoModeError,
+  err,
   ERROR_CODES,
   errorMessage,
   ForbiddenError,
@@ -66,6 +67,20 @@ describe("toThrowable — reconstructs a real Error at the throw boundary", () =
   it("preserves the message", () => {
     expect(toThrowable(appError.validation("bad input")).message).toBe("bad input");
     expect(toThrowable(appError.notFound("bill", "id")).message).toBe('bill "id" not found');
+  });
+});
+
+describe("err — compiler-enforced TAppError constraint (lesson 0015)", () => {
+  // Producer-side guard: err() rejects non-TAppError payloads at the type level, so an
+  // Error instance can never be returned in a Result and cross the Server Action → client
+  // boundary (where Flight strips it to a bare tag in prod). tsc checks this file (test
+  // files are in the `tsc --noEmit` include); removing the `<E extends TAppError>`
+  // constraint makes the guarded line compile, turning the directive below into an unused
+  // one that fails the build.
+  it("rejects Error instances at the type level", () => {
+    // @ts-expect-error — err() only accepts TAppError; an Error instance must not compile.
+    const reject = () => err(new DemoModeError());
+    expect(reject).toBeInstanceOf(Function);
   });
 });
 

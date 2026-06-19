@@ -33,3 +33,15 @@ When adding any new returned-error shape, confirm it is plain data (a quick
 and verify environment-dependent framework behavior in the actual source/docs
 before relying on it, rather than from memory. Full background:
 `.claude/instructions/action-error-serialization.md`.
+
+**Now compiler-enforced:** `err` is constrained to `<E extends TAppError>`
+(`lib/errors.ts`), so passing a non-`TAppError` payload (e.g. an `Error` instance) is
+a compile error at the call site — everywhere, independent of the enclosing
+function's return annotation. The rule no longer rests on annotation discipline or
+the runtime factory test alone. A `@ts-expect-error`-guarded `err(new DemoModeError())`
+in `lib/__tests__/errors.test.ts` locks it (test files are in the `tsc --noEmit`
+include, so the directive is enforced). The domain `err` is for `TAppError` only; a
+subsystem with a deliberately non-domain error channel must define its own
+constructor rather than reuse `err` — e.g. the notifications infra channel
+(`features/notifications/result.ts`, `infraFail`) carries free-form external-service
+diagnostics that never cross as a domain error.

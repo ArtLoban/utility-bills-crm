@@ -118,4 +118,10 @@ export type Result<T, E = TAppError> = { ok: true; value: T } | { ok: false; err
 // ok() returns Result<T, never> so TypeScript widens the error type to whatever
 // the enclosing function declares — no explicit type parameters needed at call-sites.
 export const ok = <T>(value: T): Result<T, never> => ({ ok: true, value });
-export const err = <E>(error: E): Result<never, E> => ({ ok: false, error });
+// err() constrains its payload to TAppError so returning a non-plain or non-domain
+// value (e.g. an Error instance) is a compile error at the call site — independent
+// of the enclosing function's return annotation (lesson 0015 / Decision #155). The
+// appError.* factories already return TAppError, so factory-built calls are
+// unaffected. A subsystem with a deliberately non-domain error channel (e.g. the
+// notifications infra string channel) must not reuse this domain constructor.
+export const err = <E extends TAppError>(error: E): Result<never, E> => ({ ok: false, error });
