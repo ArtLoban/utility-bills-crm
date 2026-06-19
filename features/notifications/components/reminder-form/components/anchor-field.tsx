@@ -6,10 +6,10 @@ import { type Control, useWatch } from "react-hook-form";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { FormSelectField } from "@/components/form/form-select-field";
+import { FormDayOfMonthField } from "@/components/form/form-day-of-month-field";
 
 import { REMINDER_ANCHOR_TYPES } from "@/lib/db/schema/notifications";
 import {
-  REMINDER_DAY_OPTIONS,
   REMINDER_DAYS_BEFORE_END_PRESETS,
   REMINDER_LAST_DAY_FALLBACK_DAYS,
 } from "../../../constants";
@@ -46,7 +46,6 @@ export const AnchorField = ({ control, onAnchorTypeChange }: TProps) => {
 
   const isDayMode = anchorType === REMINDER_ANCHOR_TYPES.DAY_OF_MONTH;
 
-  const dayOptions = REMINDER_DAY_OPTIONS.map((day) => ({ id: String(day), name: String(day) }));
   const presetOptions = REMINDER_DAYS_BEFORE_END_PRESETS.map((days) => ({
     id: String(days),
     name: days === 0 ? tPreset("lastDay") : tPreset("daysBefore", { days }),
@@ -76,12 +75,11 @@ export const AnchorField = ({ control, onAnchorTypeChange }: TProps) => {
       </div>
 
       {isDayMode ? (
-        <FormSelectField
+        <FormDayOfMonthField
           control={control}
           name={ReminderFormField.ANCHOR_VALUE}
           label={t("day.label")}
           description={dayHint}
-          options={dayOptions}
         />
       ) : (
         <FormSelectField
