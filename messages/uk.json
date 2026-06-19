@@ -618,6 +618,56 @@
           "perUnit": "₴/{unit}"
         }
       },
+      "updateContract": {
+        "title": "Оновити договір",
+        "prompt": "Що змінюється?",
+        "cancel": "Скасувати",
+        "apply": "Застосувати",
+        "goToProvider": "Перейти до зміни постачальника",
+        "saving": "Збереження…",
+        "options": {
+          "tariffLabel": "Тариф змінився",
+          "tariffHelper": "Нова ставка або фіксована сума",
+          "accountLabel": "Особовий рахунок змінився",
+          "accountHelper": "Постачальник призначив новий номер",
+          "paymentLabel": "Платіжні реквізити змінилися",
+          "paymentHelper": "Новий рахунок або спосіб оплати",
+          "providerLabel": "Постачальник змінився",
+          "providerHelper": "Перехід до іншого постачальника"
+        },
+        "fields": {
+          "effectiveFrom": "Діє з",
+          "newRates": "Нові ставки",
+          "t1": "T1 (день)",
+          "t2": "T2 (ніч)",
+          "t3": "T3 (пік)",
+          "monthlyAmount": "Щомісячна сума",
+          "newAccount": "Новий особовий рахунок",
+          "accountPlaceholder": "напр. UA21 3006 5000 0002 6007 3300 1",
+          "newPayment": "Нові платіжні реквізити",
+          "paymentHint": "IBAN, банківські реквізити, QR або будь-які платіжні інструкції.",
+          "paymentPlaceholder": "Банк: ...\nIBAN: UA21 3006 5000 ...\nПризначення: ...",
+          "notesOptional": "Нотатки (необов'язково)"
+        },
+        "callout": {
+          "tariff": "Поточний тариф буде закрито <b>{closing}</b>. Новий тариф діє з <b>{opening}</b>.",
+          "account": "Старий особовий рахунок буде закрито <b>{closing}</b>. Новий номер діє з <b>{opening}</b>.",
+          "payment": "Старі реквізити буде закрито <b>{closing}</b>. Нові діють з <b>{opening}</b>."
+        }
+      },
+      "history": {
+        "title": "Історія договорів",
+        "empty": "Історії договорів поки немає.",
+        "close": "Закрити",
+        "current": "Поточний",
+        "present": "дотепер",
+        "provider": "Постачальник",
+        "notes": "Нотатки",
+        "tariffPeriods": "Періоди тарифів",
+        "accountNumbers": "Особові рахунки",
+        "paymentDetails": "Платіжні реквізити",
+        "fixedRate": "Фікс.: {amount} ₴/міс"
+      },
       "header": {
         "home": "Головна",
         "editNotes": "Редагувати нотатки",

@@ -11,75 +11,36 @@ type TProps = {
   children?: React.ReactNode;
 };
 
-const RadioOption = ({ value, selected, onSelect, label, helper, children }: TProps) => {
+export const RadioOption = ({ value, selected, onSelect, label, helper, children }: TProps) => {
   const isActive = value === selected;
 
   return (
     <div
       onClick={() => onSelect(value)}
-      style={{
-        padding: "14px 16px",
-        borderRadius: 8,
-        cursor: "pointer",
-        transition: "border-color 120ms, background 120ms",
-      }}
       className={cn(
-        isActive
-          ? "border-[1.5px] border-[#7c3aed] bg-[#f5f3ff] dark:bg-zinc-900"
-          : "border-[1.5px] border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900",
+        "cursor-pointer rounded-lg border-[1.5px] px-4 py-3.5 transition-colors",
+        isActive ? "border-primary bg-primary/5" : "border-border bg-card",
       )}
     >
       <div className="flex items-center gap-3">
-        {/* Custom radio dot */}
         <div
-          style={{
-            width: 16,
-            height: 16,
-            borderRadius: "50%",
-            border: isActive ? "2px solid #7c3aed" : "2px solid #d4d4d8",
-            background: isActive ? "#7c3aed" : "transparent",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            flexShrink: 0,
-            transition: "border-color 120ms, background 120ms",
-          }}
-        >
-          {isActive && (
-            <div
-              style={{
-                width: 5,
-                height: 5,
-                borderRadius: "50%",
-                background: "#ffffff",
-              }}
-            />
+          className={cn(
+            "flex size-4 shrink-0 items-center justify-center rounded-full border-2 transition-colors",
+            isActive ? "border-primary bg-primary" : "border-muted-foreground/40",
           )}
+        >
+          {isActive && <div className="bg-primary-foreground size-1.5 rounded-full" />}
         </div>
 
         <div className="min-w-0 flex-1">
-          <div
-            className="text-zinc-950 dark:text-zinc-50"
-            style={{ fontSize: 13.5, fontWeight: 600 }}
-          >
-            {label}
-          </div>
-          <div className="text-zinc-500 dark:text-zinc-400" style={{ fontSize: 12.5 }}>
-            {helper}
-          </div>
+          <div className="text-foreground text-sm font-semibold">{label}</div>
+          <div className="text-muted-foreground text-xs">{helper}</div>
         </div>
       </div>
 
       {isActive && children && (
-        <div
-          className="border-t border-[#ede9fe] dark:border-zinc-700"
-          style={{ paddingTop: 16, marginTop: 14 }}
-        >
-          {children}
-        </div>
+        <div className="border-primary/20 mt-3.5 border-t pt-4">{children}</div>
       )}
     </div>
   );
 };
-
-export { RadioOption };

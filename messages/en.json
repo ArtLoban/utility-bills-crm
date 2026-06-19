@@ -781,6 +781,56 @@
           "perUnit": "₴/{unit}"
         }
       },
+      "updateContract": {
+        "title": "Update contract",
+        "prompt": "What's changing?",
+        "cancel": "Cancel",
+        "apply": "Apply change",
+        "goToProvider": "Go to change provider",
+        "saving": "Saving…",
+        "options": {
+          "tariffLabel": "Tariff changed",
+          "tariffHelper": "New rate or fixed amount applied",
+          "accountLabel": "Account number changed",
+          "accountHelper": "Provider assigned a new account ID",
+          "paymentLabel": "Payment details changed",
+          "paymentHelper": "New bank account or payment method",
+          "providerLabel": "Provider changed",
+          "providerHelper": "Switched to a different energy supplier"
+        },
+        "fields": {
+          "effectiveFrom": "Effective from",
+          "newRates": "New rates",
+          "t1": "T1 (day)",
+          "t2": "T2 (night)",
+          "t3": "T3 (peak)",
+          "monthlyAmount": "Monthly amount",
+          "newAccount": "New account number",
+          "accountPlaceholder": "e.g. UA21 3006 5000 0002 6007 3300 1",
+          "newPayment": "New payment details",
+          "paymentHint": "IBAN, bank details, QR payload, or any free-form payment instructions.",
+          "paymentPlaceholder": "Bank: ...\nIBAN: UA21 3006 5000 ...\nPurpose: ...",
+          "notesOptional": "Notes (optional)"
+        },
+        "callout": {
+          "tariff": "The current tariff will be closed on <b>{closing}</b>. New tariff applies from <b>{opening}</b>.",
+          "account": "The old account number will be closed on <b>{closing}</b>. New number applies from <b>{opening}</b>.",
+          "payment": "Old payment details will be closed on <b>{closing}</b>. New details apply from <b>{opening}</b>."
+        }
+      },
+      "history": {
+        "title": "Contract history",
+        "empty": "No contract history yet.",
+        "close": "Close",
+        "current": "Current",
+        "present": "present",
+        "provider": "Provider",
+        "notes": "Notes",
+        "tariffPeriods": "Tariff periods",
+        "accountNumbers": "Account numbers",
+        "paymentDetails": "Payment details",
+        "fixedRate": "Fixed: {amount} ₴/mo"
+      },
       "header": {
         "home": "Home",
         "editNotes": "Edit notes",
