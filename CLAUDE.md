@@ -155,6 +155,7 @@ Read the relevant document(s) when working on a related task. Do not preload.
 
 ## 6. Git
 
+- Commit directly to `main`. Only branch when explicitly asked for a branch or a PR.
 - Do not add `Co-Authored-By: Claude` lines.
 - Do not add `🤖 Generated with Claude Code` footers.
 
