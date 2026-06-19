@@ -852,8 +852,7 @@
         "title": "Recent activity",
         "empty": "No bills or payments recorded yet.",
         "bill": "Bill · {period}",
-        "payment": "Payment · {period}",
-        "seeAll": "See all activity"
+        "payment": "Payment · {period}"
       }
     },
     "serviceForm": {

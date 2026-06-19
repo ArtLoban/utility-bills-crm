@@ -1,4 +1,4 @@
-import { and, asc, eq, isNull } from "drizzle-orm";
+import { and, asc, desc, eq, isNull } from "drizzle-orm";
 
 import { requireUser } from "@/lib/auth/guards";
 import { db } from "@/lib/db/client";
@@ -18,12 +18,14 @@ import { contracts } from "@/lib/db/schema/contracts";
 import type { TContractId } from "@/lib/db/schema/contracts";
 import { tariffs } from "@/lib/db/schema/tariffs";
 import type { TTariff } from "@/lib/db/schema/tariffs";
+import { bills } from "@/lib/db/schema/bills";
+import { payments } from "@/lib/db/schema/payments";
 import { accountNumbers } from "@/lib/db/schema/account-numbers";
 import type { TAccountNumber } from "@/lib/db/schema/account-numbers";
 import { paymentDetails } from "@/lib/db/schema/payment-details";
 import type { TPaymentDetails } from "@/lib/db/schema/payment-details";
 import type { TServiceId } from "@/lib/db/schema/services";
-import { NotFoundError, ok } from "@/lib/errors";
+import { ok } from "@/lib/errors";
 import type { Result, TAppError } from "@/lib/errors";
 
 export type { TServiceDetail };
@@ -171,4 +173,59 @@ export const getTelegramLinked = async (): Promise<boolean> => {
   const status = await telegramLinkStatus(userId);
 
   return status.connected;
+};
+
+export type TServiceActivityItem = {
+  id: string;
+  type: "bill" | "payment";
+  date: Date;
+  amount: number;
+};
+
+// Recent bills + payments for the service, merged into one feed sorted newest-first.
+// Two indexed point queries merged in JS — avoids the Drizzle UNION ordering caveat.
+export const getServiceActivity = async (
+  serviceId: TServiceId,
+  limit = 8,
+): Promise<TServiceActivityItem[]> => {
+  const userId = await requireUser();
+
+  const access = await serviceByIdForUser(userId, serviceId);
+  if (!access.ok) return [];
+
+  const [billRows, paymentRows] = await Promise.all([
+    db
+      .select({ id: bills.id, date: bills.periodMonth, amount: bills.amount })
+      .from(bills)
+      .where(and(eq(bills.serviceId, serviceId), isNull(bills.deletedAt)))
+      .orderBy(desc(bills.periodMonth))
+      .limit(limit),
+    db
+      .select({ id: payments.id, date: payments.paidAt, amount: payments.amount })
+      .from(payments)
+      .where(and(eq(payments.serviceId, serviceId), isNull(payments.deletedAt)))
+      .orderBy(desc(payments.paidAt))
+      .limit(limit),
+  ]);
+
+  const items: TServiceActivityItem[] = [
+    ...billRows.map(
+      (b): TServiceActivityItem => ({
+        id: b.id,
+        type: "bill",
+        date: new Date(b.date),
+        amount: Number(b.amount),
+      }),
+    ),
+    ...paymentRows.map(
+      (p): TServiceActivityItem => ({
+        id: p.id,
+        type: "payment",
+        date: new Date(p.date),
+        amount: Number(p.amount),
+      }),
+    ),
+  ];
+
+  return items.sort((a, b) => b.date.getTime() - a.date.getTime()).slice(0, limit);
 };

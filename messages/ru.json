@@ -716,8 +716,7 @@
         "title": "Недавняя активность",
         "empty": "Счетов и платежей пока нет.",
         "bill": "Счёт · {period}",
-        "payment": "Платёж · {period}",
-        "seeAll": "Вся активность"
+        "payment": "Платёж · {period}"
       }
     },
     "serviceForm": {

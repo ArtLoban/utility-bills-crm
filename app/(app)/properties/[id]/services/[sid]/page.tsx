@@ -11,6 +11,7 @@ import {
   getCurrentMeterForService,
   getLastReadingForMeter,
   getRemindersForService,
+  getServiceActivity,
   getServiceDetail,
   getTelegramLinked,
 } from "./_data/queries";
@@ -43,6 +44,7 @@ export default async function ServicePage({ params }: TProps) {
     serviceBalances,
     reminders,
     isTelegramLinked,
+    serviceActivity,
   ] = await Promise.all([
     getPropertyDetail(id as PropertyId),
     getServiceDetail(sid as TServiceId),
@@ -52,6 +54,7 @@ export default async function ServicePage({ params }: TProps) {
     balancesForServices([sid as TServiceId]),
     getRemindersForService(sid as TServiceId),
     getTelegramLinked(),
+    getServiceActivity(sid as TServiceId),
   ]);
 
   const lastMeterReading = currentMeter ? await getLastReadingForMeter(currentMeter) : null;
@@ -123,7 +126,7 @@ export default async function ServicePage({ params }: TProps) {
             lastReading={lastMeterReading}
           />
         )}
-        <ActivityCard />
+        <ActivityCard items={serviceActivity} />
         <NotesCard notes={service.notes ?? null} editHref={editHref} role={role} />
         {role !== "viewer" && (
           <RemindersSection
