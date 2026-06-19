@@ -74,7 +74,7 @@ export default async function ServicePage({ params }: TProps) {
   const editHref = `/properties/${id}/services/${sid}/edit`;
 
   return (
-    <div style={{ maxWidth: 1360, margin: "0 auto", padding: "28px 32px 56px", width: "100%" }}>
+    <div className="mx-auto w-full max-w-[1360px] px-8 pt-7 pb-14">
       <ServicePageHeader
         service={service}
         serviceType={serviceType}
@@ -87,7 +87,7 @@ export default async function ServicePage({ params }: TProps) {
           ) : undefined
         }
       />
-      <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <div className="flex flex-col gap-4">
         <BalanceCard balance={serviceBalances.get(sid as TServiceId) ?? ZERO_BALANCE} />
         <ContractCard
           serviceId={sid as TServiceId}
@@ -109,7 +109,12 @@ export default async function ServicePage({ params }: TProps) {
           }
           role={role}
         />
-        <MeterCard meter={currentMeter} propertyId={id} />
+        <MeterCard
+          meter={currentMeter}
+          propertyId={id}
+          serviceType={serviceType}
+          lastReading={lastMeterReading}
+        />
         {currentMeter && role !== "viewer" && (
           <QuickActions
             meter={currentMeter}

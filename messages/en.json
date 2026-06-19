@@ -728,6 +728,84 @@
       "intercom": "Intercom",
       "hoa_fees": "HOA fees"
     },
+    "detail": {
+      "balance": {
+        "title": "Balance",
+        "empty": "No bills or payments yet.",
+        "eyebrow": "Current balance",
+        "owe": "You owe {amount} for this service",
+        "credit": "You are {amount} in credit",
+        "settled": "This service is settled",
+        "viewBills": "View all bills",
+        "viewPayments": "View all payments"
+      },
+      "meter": {
+        "title": "Meter",
+        "empty": "No meter linked yet.",
+        "serialNumber": "Serial number",
+        "zones": "Zones",
+        "activeSince": "Active since",
+        "installedAt": "Installed at",
+        "viewDetails": "View meter details",
+        "lastReading": "Last reading",
+        "zoneLabel": "T{zone}",
+        "zoneCount": {
+          "single": "Single zone",
+          "two": "Two zones (T1/T2)",
+          "three": "Three zones (T1/T2/T3)",
+          "other": "{count} zones"
+        }
+      },
+      "notes": {
+        "title": "Notes",
+        "empty": "No notes added yet.",
+        "edit": "Edit notes"
+      },
+      "contract": {
+        "title": "Current contract",
+        "inEffectSince": "In effect since {date}",
+        "tariff": "Tariff",
+        "accountNumber": "Account number",
+        "paymentDetails": "Payment details",
+        "notes": "Notes",
+        "empty": "No contract added yet.",
+        "addContract": "Add contract",
+        "viewHistory": "View history",
+        "updateContract": "Update contract",
+        "rates": {
+          "fixed": "Fixed",
+          "t1": "T1 · Day",
+          "t2": "T2 · Night",
+          "t3": "T3 · Peak",
+          "perMonth": "₴/mo",
+          "perUnit": "₴/{unit}"
+        }
+      },
+      "header": {
+        "home": "Home",
+        "editNotes": "Edit notes",
+        "delete": {
+          "menu": "Delete service",
+          "title": "Delete service",
+          "confirm": "Delete",
+          "question": "Delete <b>{name}</b> from this property?",
+          "warning": "All linked contracts, meters, readings, bills, and payments will also be removed.",
+          "success": "Service deleted.",
+          "error": "Failed to delete service. Please try again."
+        }
+      },
+      "quickActions": {
+        "title": "Quick actions",
+        "submitReading": "Submit reading"
+      },
+      "activity": {
+        "title": "Recent activity",
+        "empty": "No bills or payments recorded yet.",
+        "bill": "Bill · {period}",
+        "payment": "Payment · {period}",
+        "seeAll": "See all activity"
+      }
+    },
     "serviceForm": {
       "title": "Add service",
       "breadcrumb": "Add service",

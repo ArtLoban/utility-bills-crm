@@ -1,37 +1,15 @@
 type TKVPair = [string, React.ReactNode];
 type TProps = { pairs: TKVPair[]; cols?: number };
 
-const KVGrid = ({ pairs, cols = 2 }: TProps) => (
-  <div
-    style={{
-      display: "grid",
-      gridTemplateColumns: `repeat(${cols}, 1fr)`,
-      gap: "14px 32px",
-    }}
-  >
+export const KVGrid = ({ pairs, cols = 2 }: TProps) => (
+  <dl className="grid gap-x-8 gap-y-3.5" style={{ gridTemplateColumns: `repeat(${cols}, 1fr)` }}>
     {pairs.map(([key, value]) => (
       <div key={key}>
-        <div
-          className="text-zinc-500 dark:text-zinc-400"
-          style={{
-            fontSize: 11.5,
-            fontWeight: 500,
-            textTransform: "uppercase",
-            letterSpacing: 0.3,
-            marginBottom: 4,
-          }}
-        >
+        <dt className="text-muted-foreground mb-1 text-xs font-medium tracking-wide uppercase">
           {key}
-        </div>
-        <div
-          className="text-zinc-950 dark:text-zinc-50"
-          style={{ fontSize: 13.5, lineHeight: 1.4 }}
-        >
-          {value}
-        </div>
+        </dt>
+        <dd className="text-foreground text-sm leading-snug">{value}</dd>
       </div>
     ))}
-  </div>
+  </dl>
 );
-
-export { KVGrid };

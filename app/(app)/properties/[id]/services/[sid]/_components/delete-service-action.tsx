@@ -4,7 +4,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { MoreHorizontal, Trash2 } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,6 +17,7 @@ import { softDeleteService } from "@/features/services";
 import type { TServiceId } from "@/lib/db/schema/services";
 import { IconBadge } from "@/components/icon-badge";
 import { Modal } from "@/components/modal";
+import { ROUTES } from "@/lib/routes";
 
 type TProps = {
   serviceId: TServiceId;
@@ -22,8 +25,9 @@ type TProps = {
   serviceName: string;
 };
 
-const DeleteServiceAction = ({ serviceId, propertyId, serviceName }: TProps) => {
+export const DeleteServiceAction = ({ serviceId, propertyId, serviceName }: TProps) => {
   const router = useRouter();
+  const t = useTranslations("services.detail.header");
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -32,12 +36,12 @@ const DeleteServiceAction = ({ serviceId, propertyId, serviceName }: TProps) => 
     try {
       const result = await softDeleteService(serviceId);
       if (!result.ok) {
-        toast.error("Failed to delete service. Please try again.");
+        toast.error(t("delete.error"));
         setConfirmOpen(false);
         return;
       }
-      toast.success("Service deleted.");
-      router.push(`/properties/${propertyId}`);
+      toast.success(t("delete.success"));
+      router.push(`${ROUTES.properties}/${propertyId}`);
     } finally {
       setIsDeleting(false);
     }
@@ -47,12 +51,9 @@ const DeleteServiceAction = ({ serviceId, propertyId, serviceName }: TProps) => 
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <button
-            className="flex cursor-pointer items-center justify-center rounded-md border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900"
-            style={{ width: 30, height: 30 }}
-          >
-            <MoreHorizontal size={15} className="text-zinc-500 dark:text-zinc-400" />
-          </button>
+          <Button variant="outline" size="icon" aria-label={t("delete.menu")}>
+            <MoreHorizontal className="size-4" />
+          </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuItem
@@ -60,32 +61,33 @@ const DeleteServiceAction = ({ serviceId, propertyId, serviceName }: TProps) => 
             onSelect={() => setConfirmOpen(true)}
           >
             <Trash2 size={14} />
-            Delete service
+            {t("delete.menu")}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
       <Modal
-        title="Delete service"
+        title={t("delete.title")}
         open={confirmOpen}
         onOpenChange={setConfirmOpen}
         onConfirm={handleDelete}
         variant="destructiveStrong"
         confirmIcon={Trash2}
-        confirmLabel="Delete"
+        confirmLabel={t("delete.confirm")}
         isSaving={isDeleting}
       >
         <div className="my-3 flex flex-col items-center gap-4">
           <IconBadge icon={Trash2} color="var(--destructive)" size="lg" border={true} />
           <p className="text-center text-sm">
-            Delete <strong>{serviceName}</strong> from this property?
+            {t.rich("delete.question", {
+              name: serviceName,
+              b: (chunks) => <strong>{chunks}</strong>,
+            })}
           </p>
           <p className="text-destructive text-center text-sm leading-snug font-semibold">
-            All linked contracts, meters, readings, bills, and payments will also be removed.
+            {t("delete.warning")}
           </p>
         </div>
       </Modal>
     </>
   );
 };
-
-export { DeleteServiceAction };

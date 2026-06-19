@@ -1,6 +1,13 @@
-import { Wallet } from "lucide-react";
-import { useLocale } from "next-intl";
+"use client";
 
+import Link from "next/link";
+import { Receipt, Wallet } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
+
+import { Button } from "@/components/ui/button";
+import { SectionCard } from "@/components/section-card";
+import { SectionCardEmpty } from "@/components/section-card-empty";
+import { ROUTES } from "@/lib/routes";
 import { formatMoney } from "@/lib/format/money";
 import type { TBalance } from "@/features/ledger";
 
@@ -8,71 +15,52 @@ type TProps = {
   balance: TBalance;
 };
 
-const BalanceCard = ({ balance }: TProps) => {
+export const BalanceCard = ({ balance }: TProps) => {
   const locale = useLocale();
-  const isEmpty = balance.billsTotal === 0 && balance.paymentsTotal === 0;
+  const t = useTranslations("services.detail.balance");
+
+  if (balance.billsTotal === 0 && balance.paymentsTotal === 0) {
+    return (
+      <SectionCard>
+        <SectionCardEmpty icon={Wallet} caption={t("empty")} />
+      </SectionCard>
+    );
+  }
+
+  const { balance: owed } = balance;
+  const amount = formatMoney(Math.abs(owed), locale);
+  const amountColor = owed > 0 ? "text-destructive" : owed < 0 ? "text-success" : "text-foreground";
+  const subline =
+    owed > 0 ? t("owe", { amount }) : owed < 0 ? t("credit", { amount }) : t("settled");
 
   return (
-    <div
-      className="rounded-[8px] border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900"
-      style={{ boxShadow: "0 1px 2px rgba(24,24,27,0.05)" }}
-    >
-      <div className="flex items-center border-b border-zinc-200 px-5 py-4 dark:border-zinc-800">
-        <span
-          className="text-zinc-950 dark:text-zinc-50"
-          style={{ fontSize: 13.5, fontWeight: 600, letterSpacing: -0.1 }}
+    <SectionCard>
+      <div className="px-6 pt-6 pb-5">
+        <p className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
+          {t("eyebrow")}
+        </p>
+        <p
+          className={`mt-3 font-bold tracking-tight tabular-nums ${amountColor}`}
+          style={{ fontSize: "var(--font-size-display)" }}
         >
-          Balance
-        </span>
+          {amount}
+        </p>
+        <p className="text-muted-foreground mt-2 text-sm">{subline}</p>
+        <div className="mt-5 flex gap-2">
+          <Button variant="outline" asChild>
+            <Link href={ROUTES.bills}>
+              <Receipt className="size-3.5" />
+              {t("viewBills")}
+            </Link>
+          </Button>
+          <Button variant="outline" asChild>
+            <Link href={ROUTES.payments}>
+              <Wallet className="size-3.5" />
+              {t("viewPayments")}
+            </Link>
+          </Button>
+        </div>
       </div>
-
-      {isEmpty ? (
-        <div className="flex flex-col items-center justify-center gap-3 px-6 py-10">
-          <Wallet size={28} className="text-zinc-300 dark:text-zinc-600" />
-          <p className="text-zinc-500 dark:text-zinc-400" style={{ fontSize: 13.5 }}>
-            No bills or payments yet.
-          </p>
-        </div>
-      ) : (
-        <div className="px-5 py-5">
-          <p
-            className={`mb-5 font-bold tracking-[-0.5px] tabular-nums ${
-              balance.balance > 0
-                ? "text-destructive"
-                : balance.balance < 0
-                  ? "text-success"
-                  : "text-zinc-950 dark:text-zinc-50"
-            }`}
-            style={{ fontSize: 28 }}
-          >
-            {formatMoney(Math.abs(balance.balance), locale)}
-          </p>
-
-          <div className="flex flex-col gap-2">
-            <div className="flex items-center justify-between">
-              <span className="text-zinc-500 dark:text-zinc-400" style={{ fontSize: 13 }}>
-                Billed
-              </span>
-              <span
-                className="text-zinc-950 tabular-nums dark:text-zinc-50"
-                style={{ fontSize: 13, fontWeight: 500 }}
-              >
-                {formatMoney(balance.billsTotal, locale)}
-              </span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-zinc-500 dark:text-zinc-400" style={{ fontSize: 13 }}>
-                Paid
-              </span>
-              <span className="text-success tabular-nums" style={{ fontSize: 13, fontWeight: 500 }}>
-                {formatMoney(balance.paymentsTotal, locale)}
-              </span>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+    </SectionCard>
   );
 };
-
-export { BalanceCard };

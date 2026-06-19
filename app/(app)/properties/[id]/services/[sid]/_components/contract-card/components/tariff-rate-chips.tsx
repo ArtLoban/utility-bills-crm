@@ -1,84 +1,67 @@
-import type { TTariff } from "@/lib/db/schema/tariffs";
+import { getTranslations } from "next-intl/server";
 
-const UNIT_LABELS: Record<string, string> = { kwh: "kWh", m3: "m³", gcal: "Gcal" };
+import { FIXED_RATE_COLOR_VAR, UNIT_LABELS, ZONE_COLOR_VARS } from "@/lib/constants/zones";
+import type { TTariff } from "@/lib/db/schema/tariffs";
+import type { TServiceTypeUnit } from "@/lib/db/schema/service-types";
 
 type TRateChip = { label: string; value: string; unit: string; color: string };
+type TProps = { tariff: TTariff; serviceUnit: TServiceTypeUnit | null };
 
-const buildChips = (tariff: TTariff, serviceUnit: string | null): TRateChip[] => {
-  const unitLabel = serviceUnit ? (UNIT_LABELS[serviceUnit] ?? serviceUnit) : "";
+export const TariffRateChips = async ({ tariff, serviceUnit }: TProps) => {
+  const t = await getTranslations("services.detail.contract.rates");
+  const perUnit = t("perUnit", { unit: serviceUnit ? UNIT_LABELS[serviceUnit] : "" });
 
-  if (tariff.fixedAmount !== null) {
-    return [{ label: "Fixed", value: tariff.fixedAmount, unit: "₴/mo", color: "#10b981" }];
-  }
-
-  const chips: TRateChip[] = [];
-  if (tariff.rateT1)
-    chips.push({
-      label: "T1 · Day",
-      value: tariff.rateT1,
-      unit: `₴/${unitLabel}`,
-      color: "#f59e0b",
-    });
-  if (tariff.rateT2)
-    chips.push({
-      label: "T2 · Night",
-      value: tariff.rateT2,
-      unit: `₴/${unitLabel}`,
-      color: "#6366f1",
-    });
-  if (tariff.rateT3)
-    chips.push({
-      label: "T3 · Peak",
-      value: tariff.rateT3,
-      unit: `₴/${unitLabel}`,
-      color: "#7c3aed",
-    });
-  return chips;
-};
-
-type TProps = { tariff: TTariff; serviceUnit: string | null };
-
-const TariffRateChips = ({ tariff, serviceUnit }: TProps) => {
-  const chips = buildChips(tariff, serviceUnit);
+  const chips: TRateChip[] =
+    tariff.fixedAmount !== null
+      ? [
+          {
+            label: t("fixed"),
+            value: tariff.fixedAmount,
+            unit: t("perMonth"),
+            color: FIXED_RATE_COLOR_VAR,
+          },
+        ]
+      : [
+          tariff.rateT1 && {
+            label: t("t1"),
+            value: tariff.rateT1,
+            unit: perUnit,
+            color: ZONE_COLOR_VARS[0],
+          },
+          tariff.rateT2 && {
+            label: t("t2"),
+            value: tariff.rateT2,
+            unit: perUnit,
+            color: ZONE_COLOR_VARS[1],
+          },
+          tariff.rateT3 && {
+            label: t("t3"),
+            value: tariff.rateT3,
+            unit: perUnit,
+            color: ZONE_COLOR_VARS[2],
+          },
+        ].filter((chip): chip is TRateChip => Boolean(chip));
 
   return (
     <div className="flex gap-2.5">
       {chips.map((chip) => (
         <div
           key={chip.label}
-          className="flex flex-1 flex-col"
+          className="flex flex-1 flex-col rounded-lg px-3 py-2.5"
           style={{
-            padding: "10px 12px",
-            borderRadius: 8,
-            background: chip.color + "0F",
-            border: `1px solid ${chip.color}25`,
+            background: `color-mix(in srgb, ${chip.color} 6%, transparent)`,
+            border: `1px solid color-mix(in srgb, ${chip.color} 25%, transparent)`,
           }}
         >
-          <span
-            className="text-zinc-500 dark:text-zinc-400"
-            style={{ fontSize: 11, marginBottom: 3 }}
-          >
-            {chip.label}
-          </span>
+          <span className="text-muted-foreground text-xs">{chip.label}</span>
           <div className="flex items-baseline gap-1">
-            <span
-              style={{
-                fontSize: 17,
-                fontWeight: 700,
-                fontFeatureSettings: '"tnum" 1',
-                color: chip.color,
-              }}
-            >
+            <span className="text-lg font-bold tabular-nums" style={{ color: chip.color }}>
               {chip.value}
             </span>
-            <span className="text-zinc-500 dark:text-zinc-400" style={{ fontSize: 11.5 }}>
-              {chip.unit}
-            </span>
+            <span className="text-muted-foreground text-xs">{chip.unit}</span>
           </div>
         </div>
       ))}
     </div>
   );
 };
-
-export { TariffRateChips };

@@ -111,6 +111,12 @@
     --service-intercom: var(--sky-500);
     --service-hoa-fees: var(--lime-500);
 
+    /* Domain: meter/tariff zone accents (T1/T2/T3) + fixed-rate tariff */
+    --zone-t1: var(--amber-500);
+    --zone-t2: var(--blue-500);
+    --zone-t3: var(--violet-500);
+    --rate-fixed: var(--teal-500);
+
     /* Brand: DevNote. Custom TODO: reuse this where needed! */
     --brand: var(--purple-600);
     --brand-bg: var(--purple-50);

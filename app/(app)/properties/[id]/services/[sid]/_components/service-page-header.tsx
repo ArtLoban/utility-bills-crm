@@ -4,6 +4,7 @@ import { Pencil } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 
 import { Breadcrumbs } from "@/components/breadcrumbs";
+import { Button } from "@/components/ui/button";
 import { ROUTES } from "@/lib/routes";
 import type { TPropertyRole } from "@/lib/db/schema/properties";
 import type { TService } from "@/lib/db/schema/services";
@@ -16,12 +17,10 @@ type TProps = {
   role: TPropertyRole;
   propertyId: string;
   propertyName: string;
-  // Slot for client-side action controls (e.g. DeleteServiceAction).
-  // Rendered to the right of "Edit notes" when role >= editor.
   extraActions?: ReactNode;
 };
 
-const ServicePageHeader = async ({
+export const ServicePageHeader = async ({
   service,
   serviceType,
   role,
@@ -29,17 +28,19 @@ const ServicePageHeader = async ({
   propertyName,
   extraActions,
 }: TProps) => {
-  const t = await getTranslations("services.types");
-  const name = t(serviceType.code as Parameters<typeof t>[0]);
+  const [tTypes, t] = await Promise.all([
+    getTranslations("services.types"),
+    getTranslations("services.detail.header"),
+  ]);
+  const name = tTypes(serviceType.code as Parameters<typeof tTypes>[0]);
   const { color, Icon } = getServiceTypeVisuals(serviceType.code as TServiceTypeCode);
-  const canEdit = role !== "viewer";
-  const editHref = `/properties/${propertyId}/services/${service.id}/edit`;
+  const editHref = `${ROUTES.properties}/${propertyId}/services/${service.id}/edit`;
 
   return (
-    <div style={{ marginBottom: 28 }}>
+    <div className="mb-7">
       <Breadcrumbs
         items={[
-          { label: "Home", href: ROUTES.home },
+          { label: t("home"), href: ROUTES.home },
           { label: propertyName, href: `${ROUTES.properties}/${propertyId}` },
           { label: name },
         ]}
@@ -47,40 +48,30 @@ const ServicePageHeader = async ({
 
       <div className="flex items-center gap-4">
         <div
-          className="flex shrink-0 items-center justify-center"
+          className="flex size-11 shrink-0 items-center justify-center rounded-[10px]"
           style={{
-            width: 44,
-            height: 44,
-            borderRadius: 10,
-            background: color + "18",
-            border: `1.5px solid ${color}30`,
+            background: `color-mix(in srgb, ${color} 9%, transparent)`,
+            border: `1.5px solid color-mix(in srgb, ${color} 30%, transparent)`,
           }}
         >
           <Icon size={22} style={{ color }} />
         </div>
 
         <div className="min-w-0 flex-1">
-          <h1
-            className="text-zinc-950 dark:text-zinc-50"
-            style={{ fontSize: 28, fontWeight: 700, letterSpacing: -0.6, margin: 0 }}
-          >
+          <h1 className="text-foreground text-2xl font-semibold tracking-[-0.6px] md:text-[28px]">
             {name}
           </h1>
-          <p className="text-zinc-500 dark:text-zinc-400" style={{ fontSize: 13.5, margin: 0 }}>
-            {propertyName}
-          </p>
+          <p className="text-muted-foreground text-sm">{propertyName}</p>
         </div>
 
-        {canEdit && (
+        {role !== "viewer" && (
           <div className="flex items-center gap-2">
-            <Link
-              href={editHref}
-              className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-zinc-200 bg-white text-sm font-medium text-zinc-950 no-underline dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50"
-              style={{ height: 32, padding: "0 12px" }}
-            >
-              <Pencil size={13} />
-              Edit notes
-            </Link>
+            <Button variant="outline" asChild>
+              <Link href={editHref}>
+                <Pencil className="size-3.5" />
+                {t("editNotes")}
+              </Link>
+            </Button>
             {extraActions}
           </div>
         )}
@@ -88,5 +79,3 @@ const ServicePageHeader = async ({
     </div>
   );
 };
-
-export { ServicePageHeader };

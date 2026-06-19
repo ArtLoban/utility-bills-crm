@@ -1,25 +1,15 @@
 import { List } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 
-const ActivityCard = () => (
-  <div
-    className="rounded-[8px] border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900"
-    style={{ boxShadow: "0 1px 2px rgba(24,24,27,0.05)" }}
-  >
-    <div className="flex items-center border-b border-zinc-200 px-5 py-4 dark:border-zinc-800">
-      <span
-        className="text-zinc-950 dark:text-zinc-50"
-        style={{ fontSize: 13.5, fontWeight: 600, letterSpacing: -0.1 }}
-      >
-        Recent activity
-      </span>
-    </div>
-    <div className="flex flex-col items-center justify-center gap-3 px-6 py-10">
-      <List size={28} className="text-zinc-300 dark:text-zinc-600" />
-      <p className="text-zinc-500 dark:text-zinc-400" style={{ fontSize: 13.5 }}>
-        No bills or payments recorded yet.
-      </p>
-    </div>
-  </div>
-);
+import { SectionCard } from "@/components/section-card";
+import { SectionCardEmpty } from "@/components/section-card-empty";
 
-export { ActivityCard };
+export const ActivityCard = async () => {
+  const t = await getTranslations("services.detail.activity");
+
+  return (
+    <SectionCard title={t("title")}>
+      <SectionCardEmpty icon={List} caption={t("empty")} />
+    </SectionCard>
+  );
+};

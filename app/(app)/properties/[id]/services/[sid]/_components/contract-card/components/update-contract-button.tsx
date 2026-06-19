@@ -2,11 +2,12 @@
 
 import { useState } from "react";
 import { Settings2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 
+import { Button } from "@/components/ui/button";
 import type { TContractId } from "@/lib/db/schema/contracts";
 import type { TServiceId } from "@/lib/db/schema/services";
 import type { TServiceType } from "@/lib/db/schema/service-types";
-import { ACCENT } from "@/lib/constants/ui-tokens";
 import { UpdateContractModal } from "./update-contract-modal";
 
 type TProps = {
@@ -16,19 +17,21 @@ type TProps = {
   propertyId: string;
 };
 
-const UpdateContractButton = ({ contractId, serviceId, serviceType, propertyId }: TProps) => {
+export const UpdateContractButton = ({
+  contractId,
+  serviceId,
+  serviceType,
+  propertyId,
+}: TProps) => {
   const [open, setOpen] = useState(false);
+  const t = useTranslations("services.detail.contract");
 
   return (
     <>
-      <button
-        onClick={() => setOpen(true)}
-        className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border-0 text-sm font-medium text-white transition-opacity hover:opacity-90"
-        style={{ height: 32, padding: "0 14px", background: ACCENT }}
-      >
-        <Settings2 size={13} />
-        Update contract
-      </button>
+      <Button onClick={() => setOpen(true)}>
+        <Settings2 className="size-3.5" />
+        {t("updateContract")}
+      </Button>
 
       <UpdateContractModal
         open={open}
@@ -41,5 +44,3 @@ const UpdateContractButton = ({ contractId, serviceId, serviceType, propertyId }
     </>
   );
 };
-
-export { UpdateContractButton };

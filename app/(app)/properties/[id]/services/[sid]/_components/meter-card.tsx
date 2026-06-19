@@ -1,139 +1,115 @@
 import Link from "next/link";
 import { Gauge } from "lucide-react";
+import { getLocale, getTranslations } from "next-intl/server";
 
+import { Button } from "@/components/ui/button";
+import { SectionCard } from "@/components/section-card";
+import { SectionCardEmpty } from "@/components/section-card-empty";
+import { KVGrid } from "./kv-grid";
+import { formatDisplayDate } from "@/lib/format/date";
+import { ROUTES } from "@/lib/routes";
+import { UNIT_LABELS, ZONE_COLOR_VARS } from "@/lib/constants/zones";
 import type { TMeter } from "@/lib/db/schema/meters";
+import type { TReading } from "@/lib/db/schema/readings";
+import type { TServiceType } from "@/lib/db/schema/service-types";
 
 type TProps = {
   meter: TMeter | null;
   propertyId: string;
+  serviceType: TServiceType;
+  lastReading: TReading | null;
 };
 
-const formatDate = (date: Date | null): string => {
-  if (!date) return "—";
-  return new Date(date).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
-};
+export const MeterCard = async ({ meter, propertyId, serviceType, lastReading }: TProps) => {
+  const t = await getTranslations("services.detail.meter");
 
-const ZONE_LABELS: Record<number, string> = {
-  1: "Single zone",
-  2: "Two zones (T1/T2)",
-  3: "Three zones (T1/T2/T3)",
-};
+  if (meter === null) {
+    return (
+      <SectionCard title={t("title")}>
+        <SectionCardEmpty icon={Gauge} caption={t("empty")} />
+      </SectionCard>
+    );
+  }
 
-const MeterCard = ({ meter, propertyId }: TProps) => (
-  <div
-    className="rounded-[8px] border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900"
-    style={{ boxShadow: "0 1px 2px rgba(24,24,27,0.05)" }}
-  >
-    <div className="flex items-center border-b border-zinc-200 px-5 py-4 dark:border-zinc-800">
-      <span
-        className="text-zinc-950 dark:text-zinc-50"
-        style={{ fontSize: 13.5, fontWeight: 600, letterSpacing: -0.1 }}
-      >
-        Meter
-      </span>
-    </div>
+  const locale = await getLocale();
+  const formatValue = (value: string) => new Intl.NumberFormat(locale).format(Number(value));
+  const zonesLabel = ((): string => {
+    switch (meter.zoneCount) {
+      case 1:
+        return t("zoneCount.single");
+      case 2:
+        return t("zoneCount.two");
+      case 3:
+        return t("zoneCount.three");
+      default:
+        return t("zoneCount.other", { count: meter.zoneCount });
+    }
+  })();
 
-    {meter === null ? (
-      <div className="flex flex-col items-center justify-center gap-3 px-6 py-10">
-        <Gauge size={28} className="text-zinc-300 dark:text-zinc-600" />
-        <p className="text-zinc-500 dark:text-zinc-400" style={{ fontSize: 13.5 }}>
-          No meter linked yet.
-        </p>
-      </div>
-    ) : (
-      <div className="px-5 py-4">
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px 32px" }}>
-          <div>
-            <p
-              className="text-zinc-500 dark:text-zinc-400"
-              style={{
-                fontSize: 11.5,
-                fontWeight: 500,
-                textTransform: "uppercase",
-                letterSpacing: 0.3,
-                marginBottom: 3,
-              }}
-            >
-              Serial number
-            </p>
-            <p
-              className="text-zinc-950 dark:text-zinc-50"
-              style={{ fontSize: 13.5, fontFamily: "ui-monospace, monospace" }}
-            >
-              {meter.serialNumber ?? "—"}
-            </p>
-          </div>
+  const unitLabel = serviceType.unit ? UNIT_LABELS[serviceType.unit] : "";
+  const readingValues = lastReading
+    ? [lastReading.valueT1, lastReading.valueT2, lastReading.valueT3]
+    : [];
 
-          <div>
-            <p
-              className="text-zinc-500 dark:text-zinc-400"
-              style={{
-                fontSize: 11.5,
-                fontWeight: 500,
-                textTransform: "uppercase",
-                letterSpacing: 0.3,
-                marginBottom: 3,
-              }}
-            >
-              Zones
-            </p>
-            <p className="text-zinc-950 dark:text-zinc-50" style={{ fontSize: 13.5 }}>
-              {ZONE_LABELS[meter.zoneCount] ?? `${meter.zoneCount} zones`}
-            </p>
-          </div>
-
-          <div>
-            <p
-              className="text-zinc-500 dark:text-zinc-400"
-              style={{
-                fontSize: 11.5,
-                fontWeight: 500,
-                textTransform: "uppercase",
-                letterSpacing: 0.3,
-                marginBottom: 3,
-              }}
-            >
-              Active since
-            </p>
-            <p className="text-zinc-950 dark:text-zinc-50" style={{ fontSize: 13.5 }}>
-              {formatDate(meter.validFrom)}
-            </p>
-          </div>
-
-          <div>
-            <p
-              className="text-zinc-500 dark:text-zinc-400"
-              style={{
-                fontSize: 11.5,
-                fontWeight: 500,
-                textTransform: "uppercase",
-                letterSpacing: 0.3,
-                marginBottom: 3,
-              }}
-            >
-              Installed at
-            </p>
-            <p className="text-zinc-950 dark:text-zinc-50" style={{ fontSize: 13.5 }}>
-              {formatDate(meter.installedAt)}
-            </p>
-          </div>
-        </div>
-
-        <div style={{ marginTop: 14 }}>
-          <Link
-            href={`/properties/${propertyId}/meters/${meter.id}`}
-            className="text-sm font-medium text-violet-600 hover:underline dark:text-violet-400"
-          >
-            View meter details →
+  return (
+    <SectionCard
+      title={t("title")}
+      actions={
+        <Button variant="ghost" size="sm" asChild>
+          <Link href={`${ROUTES.properties}/${propertyId}/meters/${meter.id}`}>
+            {t("viewDetails")}
           </Link>
-        </div>
-      </div>
-    )}
-  </div>
-);
+        </Button>
+      }
+    >
+      <div className="px-5 py-4">
+        <KVGrid
+          pairs={[
+            [
+              t("serialNumber"),
+              <span key="serial" className="font-mono">
+                {meter.serialNumber ?? "—"}
+              </span>,
+            ],
+            [t("zones"), zonesLabel],
+            [t("activeSince"), formatDisplayDate(meter.validFrom)],
+            [t("installedAt"), formatDisplayDate(meter.installedAt)],
+          ]}
+        />
 
-export { MeterCard };
+        {lastReading && (
+          <div className="mt-4 flex gap-2.5">
+            {Array.from({ length: meter.zoneCount }, (_, i) => {
+              const value = readingValues[i];
+              if (value == null) return null;
+              const color = ZONE_COLOR_VARS[i];
+
+              return (
+                <div
+                  key={i}
+                  className="flex flex-1 items-center justify-between rounded-lg px-3.5 py-2.5"
+                  style={{
+                    background: `color-mix(in srgb, ${color} 8%, transparent)`,
+                    border: `1px solid color-mix(in srgb, ${color} 25%, transparent)`,
+                  }}
+                >
+                  <span className="text-muted-foreground text-xs font-medium">
+                    {t("zoneLabel", { zone: i + 1 })}
+                  </span>
+                  <span className="text-sm font-bold tabular-nums" style={{ color }}>
+                    {formatValue(value)}
+                    {unitLabel && (
+                      <span className="text-muted-foreground ml-1 text-xs font-normal">
+                        {unitLabel}
+                      </span>
+                    )}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </SectionCard>
+  );
+};
