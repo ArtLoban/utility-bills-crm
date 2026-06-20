@@ -45,7 +45,7 @@ export const DeleteReminderAction = ({ reminderId }: TProps) => {
         type="button"
         onClick={() => setOpen(true)}
         aria-label={t("row.delete")}
-        className="text-muted-foreground hover:text-destructive flex h-7 w-7 cursor-pointer items-center justify-center rounded-md transition-colors"
+        className="border-border text-muted-foreground hover:border-destructive/30 hover:bg-destructive/10 hover:text-destructive flex size-8 cursor-pointer items-center justify-center rounded-md border transition-colors"
       >
         <Trash2 size={14} />
       </button>

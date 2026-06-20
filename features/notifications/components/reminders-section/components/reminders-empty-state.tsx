@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
-import { Bell, Plus } from "lucide-react";
+import { Bell, Plus, Send } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { ROUTES } from "@/lib/routes";
@@ -12,12 +12,16 @@ type TProps = {
 
 export const RemindersEmptyState = async ({ isLinked, newHref }: TProps) => {
   const t = await getTranslations("reminders");
+  const Icon = isLinked ? Bell : Send;
 
   return (
     <div className="flex flex-col items-center justify-center gap-3 px-6 py-10 text-center">
-      <Bell size={28} className="text-muted-foreground/50" />
+      <div className="bg-muted border-border flex size-12 items-center justify-center rounded-xl border">
+        <Icon size={20} className="text-muted-foreground" />
+      </div>
+
       <div className="flex flex-col gap-1">
-        <p className="text-foreground text-sm font-medium">
+        <p className="text-foreground text-sm font-semibold">
           {isLinked ? t("empty.linked.title") : t("empty.unlinked.title")}
         </p>
         <p className="text-muted-foreground max-w-xs text-sm">
@@ -33,8 +37,11 @@ export const RemindersEmptyState = async ({ isLinked, newHref }: TProps) => {
           </Link>
         </Button>
       ) : (
-        <Button asChild size="sm" variant="outline">
-          <Link href={ROUTES.settings}>{t("empty.unlinked.cta")}</Link>
+        <Button asChild size="sm">
+          <Link href={ROUTES.settings}>
+            <Send size={14} />
+            {t("empty.unlinked.cta")}
+          </Link>
         </Button>
       )}
     </div>

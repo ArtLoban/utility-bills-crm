@@ -1,5 +1,6 @@
 import { getTranslations } from "next-intl/server";
 
+import { SectionCard } from "@/components/section-card";
 import { ROUTES } from "@/lib/routes";
 import type { TServiceId } from "@/lib/db/schema/services";
 
@@ -27,15 +28,15 @@ export const RemindersSection = async ({
   const newHref = `${ROUTES.properties}/${propertyId}/services/${serviceId}/reminders/new`;
 
   return (
-    <div className="border-border bg-card rounded-[8px] border shadow-[0_1px_2px_rgba(24,24,27,0.05)]">
-      <div className="border-border flex items-start justify-between gap-3 border-b px-5 py-4">
-        <div className="flex flex-col gap-0.5">
-          <span className="text-foreground text-sm font-semibold tracking-tight">{t("title")}</span>
-          <span className="text-muted-foreground text-xs">{t("monthlyNote")}</span>
-        </div>
-        {hasReminders ? <AddReminderButton isLinked={isTelegramLinked} newHref={newHref} /> : null}
-      </div>
-
+    <SectionCard
+      title={t("title")}
+      description={t("monthlyNote")}
+      actions={
+        hasReminders ? (
+          <AddReminderButton isLinked={isTelegramLinked} newHref={newHref} />
+        ) : undefined
+      }
+    >
       {hasReminders ? (
         <>
           {isTelegramLinked ? null : <DisconnectedBanner />}
@@ -53,6 +54,6 @@ export const RemindersSection = async ({
       ) : (
         <RemindersEmptyState isLinked={isTelegramLinked} newHref={newHref} />
       )}
-    </div>
+    </SectionCard>
   );
 };
