@@ -397,7 +397,7 @@ function QuickActions({ onSubmit }) {
 }
 
 // ── Main page ─────────────────────────────────────────────────
-function ServiceDetail({ onUpdateContract, onViewHistory, dark }) {
+function ServiceDetail({ onUpdateContract, onViewHistory, dark, reminders }) {
   const bg   = dark ? '#09090b' : Z.background;
   const fg   = dark ? '#fafafa' : Z.foreground;
   return (
@@ -450,6 +450,7 @@ function ServiceDetail({ onUpdateContract, onViewHistory, dark }) {
           <ContractCard onUpdate={onUpdateContract} onHistory={onViewHistory}/>
           <MeterCard onSubmit={() => {}}/>
           <ActivityCard/>
+          {reminders && window.RemindersCard && <window.RemindersCard variant="list"/>}
           <NotesCard/>
           <QuickActions/>
         </div>

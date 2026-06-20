@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Service detail — Electricity (tabs)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; padding: 0; height: 100%; background: #18181b; }
+  body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+  * { box-sizing: border-box; }
+  button, input, textarea, select { font-family: inherit; }
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script type="text/babel" src="dashboard.jsx"></script>
+<script type="text/babel" src="service-detail.jsx"></script>
+<script type="text/babel" src="reminders.jsx"></script>
+<script type="text/babel" src="service-detail-tabs.jsx"></script>
+
+<script type="text/babel" data-presets="react">
+  const W = 1440;
+
+  function Frame({ children }) {
+    return (
+      <div style={{ width: '100%', height: '100%', overflow: 'hidden', background: '#fff' }}>
+        {children}
+      </div>
+    );
+  }
+
+  function App() {
+    return (
+      <window.DesignCanvas
+        title="Service detail — Electricity"
+        subtitle="Tabbed alternative to Iteration 3 · sections split into tabs (Overview · Contract · Meter · Reminders · Notes) · light desktop"
+      >
+        <window.DCSection
+          id="sd-tabs"
+          title="Service detail — Electricity (tabs)"
+          subtitle="One section per tab; each tab carries its own action buttons. Notes sit beside the balance on Overview; Edit notes lives in the page header. Tabs are live — click to switch."
+        >
+          <window.DCArtboard id="sd-tab-overview" label="Default · Overview tab" width={W} height={1040}>
+            <Frame><window.ServiceDetailTabs initialTab="overview"/></Frame>
+          </window.DCArtboard>
+
+          <window.DCArtboard id="sd-tab-contract" label="Contract tab" width={W} height={800}>
+            <Frame><window.ServiceDetailTabs initialTab="contract"/></Frame>
+          </window.DCArtboard>
+
+          <window.DCArtboard id="sd-tab-meter" label="Meter tab" width={W} height={740}>
+            <Frame><window.ServiceDetailTabs initialTab="meter"/></Frame>
+          </window.DCArtboard>
+
+          <window.DCArtboard id="sd-tab-reminders" label="Reminders tab" width={W} height={800}>
+            <Frame><window.ServiceDetailTabs initialTab="reminders"/></Frame>
+          </window.DCArtboard>
+        </window.DCSection>
+      </window.DesignCanvas>
+    );
+  }
+
+  ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

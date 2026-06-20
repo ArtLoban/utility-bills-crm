@@ -24,6 +24,7 @@
 <script type="text/babel" src="dashboard.jsx"></script>
 <script type="text/babel" src="service-detail.jsx"></script>
 <script type="text/babel" src="modal-contract.jsx"></script>
+<script type="text/babel" src="reminders.jsx"></script>
 
 <script type="text/babel" data-presets="react">
   const W = 1440;
@@ -49,6 +50,68 @@
         >
           <window.DCArtboard id="sd-light" label="Service detail · Light mode" width={W} height={1960}>
             <Frame><ServiceDetail/></Frame>
+          </window.DCArtboard>
+
+          <window.DCArtboard id="sd-light-reminders" label="Service detail · Light · with Reminders section" width={W} height={2320}>
+            <Frame><ServiceDetail reminders/></Frame>
+          </window.DCArtboard>
+        </window.DCSection>
+
+        <window.DCSection
+          id="reminders-states"
+          title="Reminders — section states"
+          subtitle="Surface A · the service-detail card · light mode · list / empty (linked + not linked) / disconnected / add disabled"
+        >
+          <window.DCArtboard id="rem-list" label="List — reminders present" width={760} height={400}>
+            <window.RemindersStateStage label="State · list">
+              <window.RemindersCard variant="list"/>
+            </window.RemindersStateStage>
+          </window.DCArtboard>
+
+          <window.DCArtboard id="rem-empty-linked" label="Empty — Telegram linked" width={760} height={320}>
+            <window.RemindersStateStage label="State · empty (linked)">
+              <window.RemindersCard variant="empty-linked"/>
+            </window.RemindersStateStage>
+          </window.DCArtboard>
+
+          <window.DCArtboard id="rem-empty-unlinked" label="Empty — Telegram not linked" width={760} height={320}>
+            <window.RemindersStateStage label="State · empty (not linked)">
+              <window.RemindersCard variant="empty-unlinked"/>
+            </window.RemindersStateStage>
+          </window.DCArtboard>
+
+          <window.DCArtboard id="rem-disconnected" label="Disconnected banner + list" width={760} height={460}>
+            <window.RemindersStateStage label="State · disconnected">
+              <window.RemindersCard variant="disconnected"/>
+            </window.RemindersStateStage>
+          </window.DCArtboard>
+
+          <window.DCArtboard id="rem-add-disabled" label="Add disabled · tooltip" width={760} height={430}>
+            <window.RemindersStateStage label="State · add disabled (not linked)">
+              <window.RemindersCard variant="add-disabled"/>
+            </window.RemindersStateStage>
+          </window.DCArtboard>
+        </window.DCSection>
+
+        <window.DCSection
+          id="reminders-modal"
+          title="Reminders — Add / Edit modal"
+          subtitle="Surface B · 480px · the redesigned day-of-month picker (replaces the 1–31 dropdown)"
+        >
+          <window.DCArtboard id="rem-modal-default" label="Add reminder · default" width={620} height={640}>
+            <window.ReminderModalStage label="Day mode · picker closed">
+              <window.ReminderModal title="Add reminder" cta="Add reminder" day={5}/>
+            </window.ReminderModalStage>
+          </window.DCArtboard>
+
+          <window.DCArtboard id="rem-modal-picker" label="Add reminder · day picker OPEN (key shot)" width={620} height={780}>
+            <window.ReminderModalStage label="Day mode · picker open">
+              <window.ReminderModal title="Add reminder" cta="Add reminder" day={29} pickerOpen/>
+            </window.ReminderModalStage>
+          </window.DCArtboard>
+
+          <window.DCArtboard id="rem-picker-variants" label="Day picker — two directions" width={900} height={520}>
+            <window.DayPickerVariants/>
           </window.DCArtboard>
         </window.DCSection>
 
