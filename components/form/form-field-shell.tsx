@@ -7,6 +7,7 @@ import { FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/
 import { type TFormFieldBaseProps } from "./types";
 
 type TProps<T extends FieldValues> = TFormFieldBaseProps<T> & {
+  labelAccessory?: ReactNode;
   children: (field: ControllerRenderProps<T, FieldPath<T>>) => ReactNode;
 };
 
@@ -16,6 +17,7 @@ export const FormFieldShell = <T extends FieldValues>({
   label,
   description,
   className,
+  labelAccessory,
   children,
 }: TProps<T>) => (
   <FormField
@@ -23,7 +25,14 @@ export const FormFieldShell = <T extends FieldValues>({
     name={name}
     render={({ field }) => (
       <FormItem className={className}>
-        {label ? <FormLabel>{label}</FormLabel> : null}
+        {labelAccessory ? (
+          <div className="flex items-baseline justify-between gap-2">
+            {label ? <FormLabel>{label}</FormLabel> : <span />}
+            {labelAccessory}
+          </div>
+        ) : label ? (
+          <FormLabel>{label}</FormLabel>
+        ) : null}
         {children(field)}
         {description ? <FormDescription>{description}</FormDescription> : null}
         <FormMessage />

@@ -47,7 +47,9 @@
       },
       "day": {
         "label": "Day of month",
-        "hint": "Months without this day will fire on the last day instead."
+        "hint": "Months without this day will fire on the last day instead.",
+        "pickerHeading": "Pick a day",
+        "clampNote": "29–31 clamp to the last day in shorter months"
       },
       "preset": {
         "label": "When to remind",
@@ -56,7 +58,8 @@
       },
       "text": {
         "label": "Reminder text",
-        "placeholder": "e.g. Submit the meter reading and pay the bill"
+        "placeholder": "e.g. Submit the meter reading and pay the bill",
+        "deliveryHint": "Delivered to Telegram on each matching day."
       }
     },
     "validation": {

@@ -7,21 +7,22 @@ import { CalendarDays } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
-// A day of month recurs every month and is not tied to a weekday, so the grid is a plain
-// 1–31 number grid — no weekday headers, no month/year navigation. 31 covers the longest
-// month; the firing logic clamps oversized days to the actual month length.
 const DAYS_IN_MONTH = 31;
 const DAY_NUMBERS: readonly number[] = Array.from({ length: DAYS_IN_MONTH }, (_, i) => i + 1);
+
+const CLAMP_FROM = 29;
 
 type TProps = {
   value: number | null;
   onChange: (day: number) => void;
   disabled?: boolean;
   placeholder?: string;
+  heading?: string;
+  clampNote?: string;
 };
 
 export const DayOfMonthPicker = React.forwardRef<HTMLButtonElement, TProps>(
-  ({ value, onChange, disabled, placeholder, ...triggerProps }, ref) => {
+  ({ value, onChange, disabled, placeholder, heading, clampNote, ...triggerProps }, ref) => {
     const [open, setOpen] = useState(false);
 
     const handleSelect = (day: number) => {
@@ -46,10 +47,17 @@ export const DayOfMonthPicker = React.forwardRef<HTMLButtonElement, TProps>(
             <CalendarDays className="text-muted-foreground pointer-events-none size-4 shrink-0" />
           </button>
         </PopoverTrigger>
-        <PopoverContent>
-          <div className="grid grid-cols-7 gap-1.5">
+        <PopoverContent className="w-[278px] p-3">
+          {heading ? (
+            <div className="text-muted-foreground mb-2 pl-0.5 text-xs font-semibold tracking-wide uppercase">
+              {heading}
+            </div>
+          ) : null}
+
+          <div className="grid grid-cols-7 gap-1">
             {DAY_NUMBERS.map((day) => {
               const isSelected = value === day;
+              const clamps = day >= CLAMP_FROM;
 
               return (
                 <button
@@ -57,17 +65,32 @@ export const DayOfMonthPicker = React.forwardRef<HTMLButtonElement, TProps>(
                   type="button"
                   onClick={() => handleSelect(day)}
                   className={cn(
-                    "rounded-md py-1.5 text-sm tabular-nums transition-colors",
+                    "relative flex h-9 items-center justify-center rounded-md text-sm tabular-nums transition-colors",
                     isSelected
-                      ? "bg-primary text-primary-foreground"
-                      : "hover:bg-accent hover:text-accent-foreground",
+                      ? "bg-primary text-primary-foreground font-medium"
+                      : "hover:bg-muted",
                   )}
                 >
                   {day}
+                  {clamps ? (
+                    <span
+                      className={cn(
+                        "absolute bottom-1 left-1/2 size-[3px] -translate-x-1/2 rounded-full",
+                        isSelected ? "bg-primary-foreground/80" : "bg-primary",
+                      )}
+                    />
+                  ) : null}
                 </button>
               );
             })}
           </div>
+
+          {clampNote ? (
+            <div className="text-muted-foreground mt-2.5 flex items-center gap-1.5 border-t pt-2.5 text-xs">
+              <span className="bg-primary size-1 shrink-0 rounded-full" />
+              {clampNote}
+            </div>
+          ) : null}
         </PopoverContent>
       </Popover>
     );

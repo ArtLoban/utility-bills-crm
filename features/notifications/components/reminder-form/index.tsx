@@ -1,7 +1,8 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { type Control, useWatch } from "react-hook-form";
+import { type Control } from "react-hook-form";
+import { Send } from "lucide-react";
 
 import { FormFields } from "@/components/form/form-fields";
 import { FormTextareaField } from "@/components/form/form-textarea-field";
@@ -18,25 +19,26 @@ type TProps = {
 
 export const ReminderForm = ({ control, onAnchorTypeChange }: TProps) => {
   const t = useTranslations("reminders.fields");
-  const text = useWatch({ control, name: ReminderFormField.TEXT });
 
   return (
     <FormFields>
       <AnchorField control={control} onAnchorTypeChange={onAnchorTypeChange} />
 
-      <div>
-        <FormTextareaField
-          control={control}
-          name={ReminderFormField.TEXT}
-          label={t("text.label")}
-          placeholder={t("text.placeholder")}
-          maxLength={REMINDER_LIMITS.text}
-          rows={3}
-        />
-        <div className="text-muted-foreground mt-1 text-right text-xs tabular-nums">
-          {String(text ?? "").length}/{REMINDER_LIMITS.text}
-        </div>
-      </div>
+      <FormTextareaField
+        control={control}
+        name={ReminderFormField.TEXT}
+        label={t("text.label")}
+        placeholder={t("text.placeholder")}
+        maxLength={REMINDER_LIMITS.text}
+        rows={3}
+        showCounter
+        description={
+          <span className="flex items-center gap-1.5">
+            <Send size={12} className="shrink-0" />
+            {t("text.deliveryHint")}
+          </span>
+        }
+      />
     </FormFields>
   );
 };

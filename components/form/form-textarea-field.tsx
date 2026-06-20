@@ -1,7 +1,7 @@
 "use client";
 
 import { type ComponentProps } from "react";
-import { type FieldValues } from "react-hook-form";
+import { type FieldValues, useWatch } from "react-hook-form";
 
 import { FormControl } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
@@ -13,7 +13,10 @@ type TTextareaProps = Pick<
   "rows" | "placeholder" | "maxLength" | "disabled"
 >;
 
-type TProps<T extends FieldValues> = TFormFieldBaseProps<T> & TTextareaProps;
+type TProps<T extends FieldValues> = TFormFieldBaseProps<T> &
+  TTextareaProps & {
+    showCounter?: boolean;
+  };
 
 export const FormTextareaField = <T extends FieldValues>({
   control,
@@ -21,19 +24,33 @@ export const FormTextareaField = <T extends FieldValues>({
   label,
   description,
   className,
+  showCounter,
   ...textareaProps
-}: TProps<T>) => (
-  <FormFieldShell
-    control={control}
-    name={name}
-    label={label}
-    description={description}
-    className={className}
-  >
-    {(field) => (
-      <FormControl>
-        <Textarea {...field} value={field.value ?? ""} {...textareaProps} />
-      </FormControl>
-    )}
-  </FormFieldShell>
-);
+}: TProps<T>) => {
+  const value = useWatch({ control, name });
+  const { maxLength } = textareaProps;
+
+  const counter =
+    showCounter && maxLength != null ? (
+      <span className="text-muted-foreground text-xs tabular-nums">
+        {String(value ?? "").length}/{maxLength}
+      </span>
+    ) : undefined;
+
+  return (
+    <FormFieldShell
+      control={control}
+      name={name}
+      label={label}
+      description={description}
+      className={className}
+      labelAccessory={counter}
+    >
+      {(field) => (
+        <FormControl>
+          <Textarea {...field} value={field.value ?? ""} {...textareaProps} />
+        </FormControl>
+      )}
+    </FormFieldShell>
+  );
+};

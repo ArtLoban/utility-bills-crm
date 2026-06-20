@@ -10,10 +10,10 @@ import { type TFormFieldBaseProps } from "./types";
 type TProps<T extends FieldValues> = TFormFieldBaseProps<T> & {
   disabled?: boolean;
   placeholder?: string;
+  pickerHeading?: string;
+  clampNote?: string;
 };
 
-// The form keeps the day as a string (the shared anchorValue is string-typed and parsed to a
-// number at the action boundary), so this wrapper bridges string ↔ number for the picker.
 export const FormDayOfMonthField = <T extends FieldValues>({
   control,
   name,
@@ -22,6 +22,8 @@ export const FormDayOfMonthField = <T extends FieldValues>({
   className,
   disabled,
   placeholder,
+  pickerHeading,
+  clampNote,
 }: TProps<T>) => (
   <FormFieldShell
     control={control}
@@ -37,6 +39,8 @@ export const FormDayOfMonthField = <T extends FieldValues>({
           onChange={(day) => field.onChange(String(day))}
           disabled={disabled}
           placeholder={placeholder}
+          heading={pickerHeading}
+          clampNote={clampNote}
         />
       </FormControl>
     )}
