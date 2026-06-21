@@ -62,6 +62,7 @@ export const MeterCard = async ({
   return (
     <SectionCard
       title={t("title")}
+      description={t("subtitle")}
       actions={
         <div className="flex items-center gap-2">
           {action}
@@ -89,7 +90,7 @@ export const MeterCard = async ({
         />
 
         {lastReading && (
-          <div className="mt-4 flex gap-2.5">
+          <div className="mt-4 flex flex-col gap-2.5 md:flex-row">
             {Array.from({ length: meter.zoneCount }, (_, i) => {
               const value = readingValues[i];
               if (value == null) return null;

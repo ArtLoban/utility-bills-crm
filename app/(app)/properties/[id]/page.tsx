@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 
 import { requireUser } from "@/lib/auth/guards";
 import { servicesByPropertyId } from "@/lib/db/access/services";
@@ -50,6 +51,7 @@ export default async function PropertyPage({ params, searchParams }: TProps) {
   if (!result.ok) notFound();
 
   const property = result.value;
+  const tNav = await getTranslations("nav");
 
   let tabContent: ReactNode;
 
@@ -96,7 +98,10 @@ export default async function PropertyPage({ params, searchParams }: TProps) {
     <PageContainer
       title={property.name}
       meta={<PropertyMeta property={property} />}
-      breadcrumbs={[{ label: "Properties", href: ROUTES.properties }, { label: property.name }]}
+      breadcrumbs={[
+        { label: tNav("properties"), href: ROUTES.properties },
+        { label: property.name },
+      ]}
       actions={<PropertyActions property={property} />}
     >
       <PropertyTabsNav propertyId={id} activeTab={activeTab} />

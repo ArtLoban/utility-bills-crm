@@ -114,6 +114,9 @@
     "more": "Ще"
   },
   "meters": {
+    "detail": {
+      "title": "Лічильник: {type}"
+    },
     "list": {
       "title": "Лічильники",
       "subtitle": "{count, plural, one {# лічильник} few {# лічильники} other {# лічильників}} по {propertyCount, plural, one {# об'єкту} few {# об'єктах} other {# об'єктах}}",
@@ -586,6 +589,7 @@
       },
       "meter": {
         "title": "Лічильник",
+        "subtitle": "Поточний лічильник та його останнє показання.",
         "empty": "Лічильник ще не прив’язано.",
         "serialNumber": "Серійний номер",
         "zones": "Зони",
@@ -609,6 +613,7 @@
       },
       "contract": {
         "title": "Поточний договір",
+        "subtitle": "Чинний договір постачання та тариф за цією послугою.",
         "inEffectSince": "Діє з {date}",
         "tariff": "Тариф",
         "accountNumber": "Особовий рахунок",
@@ -678,7 +683,6 @@
         "fixedRate": "Фікс.: {amount} ₴/міс"
       },
       "header": {
-        "home": "Головна",
         "editNotes": "Редагувати нотатки",
         "delete": {
           "menu": "Видалити послугу",

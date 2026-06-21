@@ -1,3 +1,5 @@
+import { getTranslations } from "next-intl/server";
+
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { ROUTES } from "@/lib/routes";
 import type { TMeter } from "@/lib/db/schema/meters";
@@ -14,11 +16,24 @@ type TProps = {
   canMutate: boolean;
 };
 
-const MeterPageHeader = ({ meter, serviceType, propertyId, propertyName, canMutate }: TProps) => {
+const MeterPageHeader = async ({
+  meter,
+  serviceType,
+  propertyId,
+  propertyName,
+  canMutate,
+}: TProps) => {
   const { color } = getServiceTypeVisuals(serviceType.code as TServiceTypeCode);
   const isHistorical = meter.validTo !== null;
 
-  const serviceLabel = serviceType.code.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+  const [tNav, tMeter, tTypes] = await Promise.all([
+    getTranslations("nav"),
+    getTranslations("meters.detail"),
+    getTranslations("services.types"),
+  ]);
+  const meterTitle = tMeter("title", {
+    type: tTypes(serviceType.code as Parameters<typeof tTypes>[0]),
+  });
 
   const formatDate = (date: Date | null): string => {
     if (!date) return "";
@@ -33,10 +48,10 @@ const MeterPageHeader = ({ meter, serviceType, propertyId, propertyName, canMuta
     <div style={{ marginBottom: 28 }}>
       <Breadcrumbs
         items={[
-          { label: "Properties", href: ROUTES.properties },
+          { label: tNav("properties"), href: ROUTES.properties },
           { label: propertyName, href: `${ROUTES.properties}/${propertyId}` },
-          { label: "Meters", href: `${ROUTES.properties}/${propertyId}/meters` },
-          { label: `${serviceLabel} meter` },
+          { label: tNav("meters"), href: `${ROUTES.properties}/${propertyId}/meters` },
+          { label: meterTitle },
         ]}
       />
 
@@ -52,7 +67,7 @@ const MeterPageHeader = ({ meter, serviceType, propertyId, propertyName, canMuta
               lineHeight: 1.1,
             }}
           >
-            {serviceLabel} meter
+            {meterTitle}
             {isHistorical && (
               <span
                 className="ml-3 rounded bg-zinc-100 text-zinc-400 dark:bg-zinc-800 dark:text-zinc-500"

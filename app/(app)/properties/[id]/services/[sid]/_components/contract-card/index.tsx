@@ -76,6 +76,7 @@ export const ContractCard = async ({
   return (
     <SectionCard
       title={t("title")}
+      description={t("subtitle")}
       actions={
         (canEdit || contractHistory.length > 1) && (
           <div className="flex items-center gap-2">

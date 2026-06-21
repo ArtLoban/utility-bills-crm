@@ -8,5 +8,12 @@ type TProps = {
 };
 
 export const TabNav = ({ children, className }: TProps) => (
-  <nav className={cn("border-border flex items-center border-b", className)}>{children}</nav>
+  <nav
+    className={cn(
+      "border-border flex items-center overflow-x-auto border-b [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+      className,
+    )}
+  >
+    {children}
+  </nav>
 );

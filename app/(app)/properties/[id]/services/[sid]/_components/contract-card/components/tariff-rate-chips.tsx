@@ -43,7 +43,7 @@ export const TariffRateChips = async ({ tariff, serviceUnit }: TProps) => {
         ].filter((chip): chip is TRateChip => Boolean(chip));
 
   return (
-    <div className="flex gap-2.5">
+    <div className="flex flex-wrap gap-2.5">
       {chips.map((chip) => (
         <div
           key={chip.label}

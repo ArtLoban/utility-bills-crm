@@ -30,46 +30,49 @@ export const ServicePageHeader = async ({
   providerName,
   extraActions,
 }: TProps) => {
-  const [tTypes, t] = await Promise.all([
+  const [tTypes, t, tNav] = await Promise.all([
     getTranslations("services.types"),
     getTranslations("services.detail.header"),
+    getTranslations("nav"),
   ]);
   const name = tTypes(serviceType.code as Parameters<typeof tTypes>[0]);
   const { color, Icon } = getServiceTypeVisuals(serviceType.code as TServiceTypeCode);
   const editHref = `${ROUTES.properties}/${propertyId}/services/${service.id}/edit`;
 
   return (
-    <div className="mb-7">
+    <div className="mb-5 md:mb-7">
       <Breadcrumbs
         items={[
-          { label: t("home"), href: ROUTES.home },
+          { label: tNav("properties"), href: ROUTES.properties },
           { label: propertyName, href: `${ROUTES.properties}/${propertyId}` },
           { label: name },
         ]}
       />
 
-      <div className="flex items-center gap-4">
-        <div
-          className="flex size-11 shrink-0 items-center justify-center rounded-[10px]"
-          style={{
-            background: `color-mix(in srgb, ${color} 9%, transparent)`,
-            border: `1.5px solid color-mix(in srgb, ${color} 30%, transparent)`,
-          }}
-        >
-          <Icon size={22} style={{ color }} />
-        </div>
+      <div className="flex flex-col gap-3 md:flex-row md:items-center md:gap-4">
+        <div className="flex min-w-0 flex-1 items-center gap-3 md:gap-4">
+          <div
+            className="flex size-11 shrink-0 items-center justify-center rounded-[10px]"
+            style={{
+              background: `color-mix(in srgb, ${color} 9%, transparent)`,
+              border: `1.5px solid color-mix(in srgb, ${color} 30%, transparent)`,
+            }}
+          >
+            <Icon size={22} style={{ color }} />
+          </div>
 
-        <div className="min-w-0 flex-1">
-          <h1 className="text-foreground text-2xl font-semibold tracking-[-0.6px] md:text-[28px]">
-            {name}
-          </h1>
-          <p className="text-muted-foreground text-sm">
-            {providerName ? `${providerName} · ${propertyName}` : propertyName}
-          </p>
+          <div className="min-w-0 flex-1">
+            <h1 className="text-foreground text-2xl font-semibold tracking-[-0.6px] md:text-[28px]">
+              {name}
+            </h1>
+            <p className="text-muted-foreground text-sm">
+              {providerName ? `${providerName} · ${propertyName}` : propertyName}
+            </p>
+          </div>
         </div>
 
         {role !== "viewer" && (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center justify-end gap-2">
             <Button variant="outline" asChild>
               <Link href={editHref}>
                 <Pencil className="size-3.5" />

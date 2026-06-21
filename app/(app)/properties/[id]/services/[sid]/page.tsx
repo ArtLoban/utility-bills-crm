@@ -88,7 +88,7 @@ export default async function ServicePage({ params, searchParams }: TProps) {
   };
 
   return (
-    <div className="mx-auto w-full max-w-[1360px] px-8 pt-7 pb-14">
+    <div className="mx-auto w-full max-w-[1360px] px-3.5 pt-5 pb-9 md:px-8 md:pt-7 md:pb-14">
       <ServicePageHeader
         service={service}
         serviceType={serviceType}

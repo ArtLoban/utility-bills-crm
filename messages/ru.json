@@ -114,6 +114,9 @@
     "more": "Ещё"
   },
   "meters": {
+    "detail": {
+      "title": "Счётчик: {type}"
+    },
     "list": {
       "title": "Счётчики",
       "subtitle": "{count, plural, one {# счётчик} few {# счётчика} other {# счётчиков}} по {propertyCount, plural, one {# объекту} few {# объектам} other {# объектам}}",
@@ -613,6 +616,7 @@
       },
       "meter": {
         "title": "Счётчик",
+        "subtitle": "Текущий счётчик и его последнее показание.",
         "empty": "Счётчик ещё не привязан.",
         "serialNumber": "Серийный номер",
         "zones": "Зоны",
@@ -636,6 +640,7 @@
       },
       "contract": {
         "title": "Текущий договор",
+        "subtitle": "Действующий договор поставки и тариф по этой услуге.",
         "inEffectSince": "Действует с {date}",
         "tariff": "Тариф",
         "accountNumber": "Лицевой счёт",
@@ -705,7 +710,6 @@
         "fixedRate": "Фикс.: {amount} ₴/мес"
       },
       "header": {
-        "home": "Главная",
         "editNotes": "Изменить заметки",
         "delete": {
           "menu": "Удалить услугу",

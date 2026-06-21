@@ -114,6 +114,9 @@
     "more": "More"
   },
   "meters": {
+    "detail": {
+      "title": "{type} meter"
+    },
     "list": {
       "title": "Meters",
       "subtitle": "{count, plural, one {# meter} other {# meters}} across {propertyCount, plural, one {# property} other {# properties}}",
@@ -749,6 +752,7 @@
       },
       "meter": {
         "title": "Meter",
+        "subtitle": "Device on record and its most recent reading.",
         "empty": "No meter linked yet.",
         "serialNumber": "Serial number",
         "zones": "Zones",
@@ -772,6 +776,7 @@
       },
       "contract": {
         "title": "Current contract",
+        "subtitle": "The active supply agreement and tariff for this service.",
         "inEffectSince": "In effect since {date}",
         "tariff": "Tariff",
         "accountNumber": "Account number",
@@ -841,7 +846,6 @@
         "fixedRate": "Fixed: {amount} ₴/mo"
       },
       "header": {
-        "home": "Home",
         "editNotes": "Edit notes",
         "delete": {
           "menu": "Delete service",
