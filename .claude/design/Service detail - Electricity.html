@@ -25,13 +25,24 @@
 <script type="text/babel" src="service-detail.jsx"></script>
 <script type="text/babel" src="reminders.jsx"></script>
 <script type="text/babel" src="service-detail-tabs.jsx"></script>
+<script type="text/babel" src="service-detail-mobile.jsx"></script>
 
 <script type="text/babel" data-presets="react">
   const W = 1440;
+  const MW = 390;
 
   function Frame({ children }) {
     return (
       <div style={{ width: '100%', height: '100%', overflow: 'hidden', background: '#fff' }}>
+        {children}
+      </div>
+    );
+  }
+
+  // Flat mobile frame — matches Bills Mobile States.html (no device bezel)
+  function MobileFrame({ height, children }) {
+    return (
+      <div style={{ width: MW, height, background: '#f4f4f5', overflow: 'auto', position: 'relative' }}>
         {children}
       </div>
     );
@@ -62,6 +73,28 @@
 
           <window.DCArtboard id="sd-tab-reminders" label="Reminders tab" width={W} height={800}>
             <Frame><window.ServiceDetailTabs initialTab="reminders"/></Frame>
+          </window.DCArtboard>
+        </window.DCSection>
+
+        <window.DCSection
+          id="sd-mobile"
+          title="Service detail — Electricity (mobile)"
+          subtitle="390px · same tabbed structure, single-column · compact app top bar + DS cards. Tabs are live — tap to switch."
+        >
+          <window.DCArtboard id="sd-m-overview" label="Overview tab" width={MW} height={970}>
+            <MobileFrame height={970}><window.ServiceDetailMobile initialTab="overview"/></MobileFrame>
+          </window.DCArtboard>
+
+          <window.DCArtboard id="sd-m-contract" label="Contract tab" width={MW} height={905}>
+            <MobileFrame height={905}><window.ServiceDetailMobile initialTab="contract"/></MobileFrame>
+          </window.DCArtboard>
+
+          <window.DCArtboard id="sd-m-meter" label="Meter tab" width={MW} height={785}>
+            <MobileFrame height={785}><window.ServiceDetailMobile initialTab="meter"/></MobileFrame>
+          </window.DCArtboard>
+
+          <window.DCArtboard id="sd-m-reminders" label="Reminders tab" width={MW} height={730}>
+            <MobileFrame height={730}><window.ServiceDetailMobile initialTab="reminders"/></MobileFrame>
           </window.DCArtboard>
         </window.DCSection>
       </window.DesignCanvas>

@@ -17,3 +17,8 @@ places (see `.claude/rules/ui-patterns.md` §4).
 Pick the nearest step. Only if nothing is within ~1–2px and the value repeats, add a
 semantic `--font-size-*` token in `globals.css` and use it via inline `style` — never a
 one-off arbitrary class. The same instinct applies to other size scales (spacing, radius).
+
+**Also counts as arbitrary:** wrapping a token in an arbitrary-value class
+(`text-[var(--font-size-md)]`) does **not** escape this rule — it is still a one-off
+arbitrary utility. When converting an inline `style={{ fontSize: "var(--font-size-md)" }}`
+to a class, map to the nearest standard step (15px → `text-sm`), not `text-[var(--…)]`.

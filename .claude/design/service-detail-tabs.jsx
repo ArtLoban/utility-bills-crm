@@ -139,7 +139,7 @@ function ContractTab({ onUpdate, onHistory }) {
         sub="The active supply agreement and tariff for this service."
         action={
           <div style={{ display: 'flex', gap: 6 }}>
-            <PrimaryBtn onClick={onUpdate}>Update contract</PrimaryBtn>
+            <PrimaryBtn onClick={onUpdate}><SDI.Pencil s={13} c="#fff"/> Update contract</PrimaryBtn>
             <GhostBtn onClick={onHistory}>View history</GhostBtn>
           </div>
         }

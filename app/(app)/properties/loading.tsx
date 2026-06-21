@@ -1,5 +1,5 @@
-import { ListPageSkeleton } from "@/components/list-page-skeleton";
+import { PropertiesSkeleton } from "./_components/properties-skeleton";
 
 export default function PropertiesLoading() {
-  return <ListPageSkeleton />;
+  return <PropertiesSkeleton />;
 }
