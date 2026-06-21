@@ -317,6 +317,11 @@
       "open": "Відкрити"
     },
     "detail": {
+      "tabs": {
+        "overview": "Огляд",
+        "meters": "Лічильники",
+        "sharing": "Доступ"
+      },
       "services": "{count, plural, one {# послуга} few {# послуги} many {# послуг} other {# послуг}}",
       "createdOn": "Створено {date}",
       "row": {

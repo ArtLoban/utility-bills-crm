@@ -1,7 +1,6 @@
 import { ExternalLink } from "lucide-react";
 
-import { TAB_PAGE_META } from "../constants";
-import type { TCmsTab } from "../types";
+import { TAB_PAGE_META, type TCmsTab } from "../constants";
 
 type TProps = {
   activeTab: TCmsTab;
@@ -9,6 +8,7 @@ type TProps = {
 
 export const EditingBanner = ({ activeTab }: TProps) => {
   const meta = TAB_PAGE_META[activeTab];
+
   return (
     <div className="border-border text-muted-foreground mb-5 flex items-center gap-2.5 rounded-lg border bg-zinc-50 px-3.5 py-2.5 text-[12.5px] dark:bg-zinc-900">
       <span

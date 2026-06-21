@@ -1,3 +1,5 @@
+import { Gauge, LayoutGrid, Users, type LucideIcon } from "lucide-react";
+
 export const TABS = {
   OVERVIEW: "overview",
   METERS: "meters",
@@ -6,10 +8,10 @@ export const TABS = {
 
 export type TTab = (typeof TABS)[keyof typeof TABS];
 
-export const TAB_CONFIG = [
-  { key: TABS.OVERVIEW, label: "Overview" },
-  { key: TABS.METERS, label: "Meters" },
-  { key: TABS.SHARING, label: "Sharing" },
-] as const;
+export type TTabConfig = { key: TTab; Icon: LucideIcon };
 
-export const TAB_PARAM = "tab";
+export const TAB_CONFIG: TTabConfig[] = [
+  { key: TABS.OVERVIEW, Icon: LayoutGrid },
+  { key: TABS.METERS, Icon: Gauge },
+  { key: TABS.SHARING, Icon: Users },
+];

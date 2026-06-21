@@ -1,11 +1,12 @@
+import { FolderKanban, Globe, House, Info, type LucideIcon } from "lucide-react";
+
+import { ROUTES } from "@/lib/routes";
 import type {
   TAboutPayload,
   TGlobalPayload,
   THomePayload,
   TProjectPayload,
 } from "@/features/landing-cms";
-
-import type { TCmsTab } from "./types";
 
 export const INITIAL_HOME: THomePayload = {
   heroTitle: "Utility Bills CRM",
@@ -97,18 +98,34 @@ export const INITIAL_GLOBAL: TGlobalPayload = {
   projectUrlAccessible: true,
 };
 
-export const CMS_TABS = ["home", "about", "project", "global"] as const;
+export const CMS_TABS = {
+  HOME: "home",
+  ABOUT: "about",
+  PROJECT: "project",
+  GLOBAL: "global",
+} as const;
 
-export const TAB_LABELS: Record<string, string> = {
-  home: "Home",
-  about: "About",
-  project: "Project",
-  global: "Global",
+export type TCmsTab = (typeof CMS_TABS)[keyof typeof CMS_TABS];
+
+export const CMS_TAB_VALUES = Object.values(CMS_TABS);
+
+export const TAB_LABELS: Record<TCmsTab, string> = {
+  [CMS_TABS.HOME]: "Home",
+  [CMS_TABS.ABOUT]: "About",
+  [CMS_TABS.PROJECT]: "Project",
+  [CMS_TABS.GLOBAL]: "Global",
+};
+
+export const TAB_ICONS: Record<TCmsTab, LucideIcon> = {
+  [CMS_TABS.HOME]: House,
+  [CMS_TABS.ABOUT]: Info,
+  [CMS_TABS.PROJECT]: FolderKanban,
+  [CMS_TABS.GLOBAL]: Globe,
 };
 
 export const TAB_PAGE_META: Record<TCmsTab, { label: string; url: string | null }> = {
-  home: { label: "home page", url: "/" },
-  about: { label: "about page", url: "/about" },
-  project: { label: "project page", url: "/project" },
-  global: { label: "shared across landing", url: null },
+  [CMS_TABS.HOME]: { label: "home page", url: ROUTES.home },
+  [CMS_TABS.ABOUT]: { label: "about page", url: ROUTES.about },
+  [CMS_TABS.PROJECT]: { label: "project page", url: ROUTES.project },
+  [CMS_TABS.GLOBAL]: { label: "shared across landing", url: null },
 };

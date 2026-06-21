@@ -9,8 +9,9 @@ import { useAboutForm } from "./hooks/use-about-form";
 import { useGlobalForm } from "./hooks/use-global-form";
 import { useHomeForm } from "./hooks/use-home-form";
 import { useProjectForm } from "./hooks/use-project-form";
-import { CMS_TABS } from "./constants";
-import type { TCmsInitialData, TCmsTab } from "./types";
+import { TAB_PARAM } from "@/components/tab-nav/constants";
+import { CMS_TABS, CMS_TAB_VALUES, type TCmsTab } from "./constants";
+import type { TCmsInitialData } from "./types";
 import { AboutTab } from "./components/about-tab";
 import { CmsTabBar } from "./components/cms-tab-bar";
 import { EditingBanner } from "./components/editing-banner";
@@ -24,8 +25,8 @@ type TProps = {
 
 export const LandingCmsClient = ({ initialData }: TProps) => {
   const [activeTab, setActiveTab] = useQueryState(
-    "tab",
-    parseAsStringLiteral(CMS_TABS).withDefault("home"),
+    TAB_PARAM,
+    parseAsStringLiteral(CMS_TAB_VALUES).withDefault(CMS_TABS.HOME),
   );
 
   const home = useHomeForm(initialData.home);

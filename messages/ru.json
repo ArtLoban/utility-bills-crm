@@ -344,6 +344,11 @@
       "open": "Открыть"
     },
     "detail": {
+      "tabs": {
+        "overview": "Обзор",
+        "meters": "Счётчики",
+        "sharing": "Доступ"
+      },
       "services": "{count, plural, one {# услуга} few {# услуги} many {# услуг} other {# услуг}}",
       "createdOn": "Создан {date}",
       "row": {

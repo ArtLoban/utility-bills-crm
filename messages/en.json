@@ -480,6 +480,11 @@
       "open": "Open"
     },
     "detail": {
+      "tabs": {
+        "overview": "Overview",
+        "meters": "Meters",
+        "sharing": "Sharing"
+      },
       "services": "{count, plural, one {# service} other {# services}}",
       "createdOn": "Created {date}",
       "row": {

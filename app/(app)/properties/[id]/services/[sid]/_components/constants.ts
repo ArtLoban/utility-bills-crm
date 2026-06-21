@@ -9,8 +9,6 @@ export const SERVICE_TABS = {
 
 export type TServiceTab = (typeof SERVICE_TABS)[keyof typeof SERVICE_TABS];
 
-export const SERVICE_TAB_PARAM = "tab";
-
 export type TServiceTabConfig = {
   key: TServiceTab;
   Icon: LucideIcon;

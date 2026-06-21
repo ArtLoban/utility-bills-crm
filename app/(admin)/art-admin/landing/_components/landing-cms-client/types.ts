@@ -5,8 +5,6 @@ import type {
   TProjectPayload,
 } from "@/features/landing-cms";
 
-export type TCmsTab = "home" | "about" | "project" | "global";
-
 export type TCmsInitialData = {
   home: THomePayload;
   about: TAboutPayload;

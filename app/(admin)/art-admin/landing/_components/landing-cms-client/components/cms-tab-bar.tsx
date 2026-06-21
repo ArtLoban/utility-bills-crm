@@ -1,9 +1,11 @@
 "use client";
 
+import { TabNav } from "@/components/tab-nav";
+import { TabNavItem } from "@/components/tab-nav/tab-nav-item";
+import { tabNavItemClass } from "@/components/tab-nav/utils";
 import { cn } from "@/lib/utils";
 
-import { TAB_LABELS } from "../constants";
-import type { TCmsTab } from "../types";
+import { CMS_TAB_VALUES, TAB_ICONS, TAB_LABELS, type TCmsTab } from "../constants";
 
 type TProps = {
   active: TCmsTab;
@@ -11,37 +13,31 @@ type TProps = {
   dirtyTabs: TCmsTab[];
 };
 
-const TABS: TCmsTab[] = ["home", "about", "project", "global"];
-
 export const CmsTabBar = ({ active, onChange, dirtyTabs }: TProps) => (
-  <div className="border-border bg-muted inline-flex rounded-lg border p-[3px]">
-    {TABS.map((tab) => {
+  <TabNav>
+    {CMS_TAB_VALUES.map((tab) => {
       const isActive = tab === active;
       const isDirty = dirtyTabs.includes(tab);
+
       return (
         <button
           key={tab}
           type="button"
           onClick={() => onChange(tab)}
-          className={cn(
-            "inline-flex cursor-pointer items-center gap-[7px] rounded-[6px] px-3.5 py-1.5 text-[13.5px] transition-colors duration-[120ms]",
-            isActive
-              ? "bg-background text-foreground font-semibold"
-              : "text-muted-foreground hover:text-foreground bg-transparent font-medium",
-          )}
-          style={isActive ? { boxShadow: "0 1px 2px rgba(9,9,11,0.06)" } : undefined}
+          className={cn(tabNavItemClass(isActive), "cursor-pointer")}
         >
-          {TAB_LABELS[tab]}
-          {isDirty && (
-            <span
-              className={cn(
-                "h-1.5 w-1.5 rounded-full",
-                isActive ? "bg-primary" : "bg-muted-foreground",
-              )}
-            />
-          )}
+          <TabNavItem icon={TAB_ICONS[tab]} label={TAB_LABELS[tab]} isActive={isActive}>
+            {isDirty && (
+              <span
+                className={cn(
+                  "size-1.5 rounded-full",
+                  isActive ? "bg-primary" : "bg-muted-foreground",
+                )}
+              />
+            )}
+          </TabNavItem>
         </button>
       );
     })}
-  </div>
+  </TabNav>
 );

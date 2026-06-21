@@ -1,33 +1,37 @@
 import Link from "next/link";
-import { cn } from "@/lib/utils";
-import { TAB_CONFIG, TAB_PARAM, type TTab } from "./constants";
+import { getTranslations } from "next-intl/server";
+
 import { ROUTES } from "@/lib/routes";
+import { TabNav } from "@/components/tab-nav";
+import { TabNavItem } from "@/components/tab-nav/tab-nav-item";
+import { tabNavItemClass } from "@/components/tab-nav/utils";
+import { TAB_PARAM } from "@/components/tab-nav/constants";
+import { TAB_CONFIG, type TTab } from "./constants";
 
 type TProps = {
   propertyId: string;
   activeTab: TTab;
 };
 
-export const PropertyTabsNav = ({ propertyId, activeTab }: TProps) => {
+export const PropertyTabsNav = async ({ propertyId, activeTab }: TProps) => {
+  const t = await getTranslations("properties.detail.tabs");
+
   return (
-    <div className="mb-5 inline-flex items-center rounded-lg border border-zinc-200 bg-zinc-100 p-1 dark:border-zinc-700 dark:bg-zinc-800">
-      {TAB_CONFIG.map(({ key, label }) => {
+    <TabNav className="mb-5">
+      {TAB_CONFIG.map(({ key, Icon }) => {
         const isActive = key === activeTab;
+
         return (
           <Link
             key={key}
             href={`${ROUTES.properties}/${propertyId}?${TAB_PARAM}=${key}`}
-            className={cn(
-              "rounded-md px-3.5 py-1.5 text-sm no-underline transition-colors duration-[120ms]",
-              isActive
-                ? "bg-white font-medium text-zinc-950 shadow-[0_1px_2px_rgba(0,0,0,0.06)] dark:bg-zinc-900 dark:text-zinc-50"
-                : "font-normal text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300",
-            )}
+            aria-current={isActive ? "page" : undefined}
+            className={tabNavItemClass(isActive)}
           >
-            {label}
+            <TabNavItem icon={Icon} label={t(key)} isActive={isActive} />
           </Link>
         );
       })}
-    </div>
+    </TabNav>
   );
 };
