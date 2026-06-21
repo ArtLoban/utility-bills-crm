@@ -1,63 +1,38 @@
+import type { ReactNode } from "react";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 
 import { getPropertyDetail } from "@/app/(app)/properties/[id]/_data/queries";
-import { balancesForServices } from "@/features/ledger";
-import type { TBalance } from "@/features/ledger";
-import { RemindersSection } from "@/features/notifications";
-import {
-  getAttributeHistory,
-  getContractHistory,
-  getCurrentMeterForService,
-  getLastReadingForMeter,
-  getRemindersForService,
-  getServiceActivity,
-  getServiceDetail,
-  getTelegramLinked,
-} from "./_data/queries";
-import { ActivityCard } from "./_components/activity-card";
-import { BalanceCard } from "./_components/balance-card";
-import { ContractCard } from "./_components/contract-card";
-import { MeterCard } from "./_components/meter-card";
-import { NotesCard } from "./_components/notes-card";
-import { QuickActions } from "./_components/quick-actions";
+import { getServiceDetail } from "./_data/queries";
 import { ServicePageHeader } from "./_components/service-page-header";
+import { ServiceTabsNav } from "./_components/service-tabs-nav";
 import { DeleteServiceAction } from "./_components/delete-service-action";
+import { OverviewTab } from "./_components/tabs/overview-tab";
+import { ContractTab } from "./_components/tabs/contract-tab";
+import { MeterTab } from "./_components/tabs/meter-tab";
+import { RemindersTab } from "./_components/tabs/reminders-tab";
+import { SERVICE_TABS } from "./_components/constants";
+import { resolveServiceTab } from "./_utils/resolve-tab";
+import { assertNever } from "@/lib/assert-never";
+import { PROPERTY_ROLES } from "@/lib/db/schema/properties";
 import type { PropertyId } from "@/lib/db/schema/properties";
 import type { TServiceId } from "@/lib/db/schema/services";
 
-const ZERO_BALANCE: TBalance = { billsTotal: 0, paymentsTotal: 0, balance: 0 };
-
 type TProps = {
   params: Promise<{ id: string; sid: string }>;
+  searchParams: Promise<{ tab?: string }>;
 };
 
-export default async function ServicePage({ params }: TProps) {
+export default async function ServicePage({ params, searchParams }: TProps) {
   const { id, sid } = await params;
+  const { tab } = await searchParams;
+  const propertyId = id as PropertyId;
+  const serviceId = sid as TServiceId;
 
-  const [
-    propertyResult,
-    serviceResult,
-    historyResult,
-    attributeHistoryResult,
-    currentMeter,
-    serviceBalances,
-    reminders,
-    isTelegramLinked,
-    serviceActivity,
-  ] = await Promise.all([
-    getPropertyDetail(id as PropertyId),
-    getServiceDetail(sid as TServiceId),
-    getContractHistory(sid as TServiceId),
-    getAttributeHistory(sid as TServiceId),
-    getCurrentMeterForService(sid as TServiceId),
-    balancesForServices([sid as TServiceId]),
-    getRemindersForService(sid as TServiceId),
-    getTelegramLinked(),
-    getServiceActivity(sid as TServiceId),
+  const [propertyResult, serviceResult] = await Promise.all([
+    getPropertyDetail(propertyId),
+    getServiceDetail(serviceId),
   ]);
-
-  const lastMeterReading = currentMeter ? await getLastReadingForMeter(currentMeter) : null;
 
   if (!propertyResult.ok || !serviceResult.ok) notFound();
 
@@ -72,9 +47,45 @@ export default async function ServicePage({ params }: TProps) {
     currentPaymentDetails,
   } = serviceResult.value;
 
-  const t = await getTranslations("services.types");
-  const serviceName = t(serviceType.code as Parameters<typeof t>[0]);
-  const editHref = `/properties/${id}/services/${sid}/edit`;
+  const activeTab = resolveServiceTab(tab, role);
+  const canEdit = role !== PROPERTY_ROLES.VIEWER;
+
+  const tTypes = await getTranslations("services.types");
+  const serviceName = tTypes(serviceType.code as Parameters<typeof tTypes>[0]);
+
+  const renderActiveTab = (): ReactNode => {
+    switch (activeTab) {
+      case SERVICE_TABS.OVERVIEW:
+        return <OverviewTab serviceId={serviceId} notes={service.notes ?? null} />;
+      case SERVICE_TABS.CONTRACT:
+        return (
+          <ContractTab
+            serviceId={serviceId}
+            propertyId={id}
+            serviceType={serviceType}
+            currentContract={currentContract}
+            currentTariff={currentTariff}
+            currentAccountNumber={currentAccountNumber}
+            currentPaymentDetails={currentPaymentDetails}
+            role={role}
+          />
+        );
+      case SERVICE_TABS.METER:
+        return (
+          <MeterTab
+            serviceId={serviceId}
+            propertyId={id}
+            serviceType={serviceType}
+            propertyName={property.name}
+            canEdit={canEdit}
+          />
+        );
+      case SERVICE_TABS.REMINDERS:
+        return <RemindersTab serviceId={serviceId} propertyId={id} />;
+      default:
+        return assertNever(activeTab);
+    }
+  };
 
   return (
     <div className="mx-auto w-full max-w-[1360px] px-8 pt-7 pb-14">
@@ -84,59 +95,15 @@ export default async function ServicePage({ params }: TProps) {
         role={role}
         propertyId={id}
         propertyName={property.name}
+        providerName={currentContract?.provider.name ?? null}
         extraActions={
-          role !== "viewer" ? (
+          canEdit ? (
             <DeleteServiceAction serviceId={service.id} propertyId={id} serviceName={serviceName} />
           ) : undefined
         }
       />
-      <div className="flex flex-col gap-4">
-        <BalanceCard balance={serviceBalances.get(sid as TServiceId) ?? ZERO_BALANCE} />
-        <ContractCard
-          serviceId={sid as TServiceId}
-          propertyId={id}
-          serviceType={serviceType}
-          currentContract={currentContract}
-          currentTariff={currentTariff}
-          currentAccountNumber={currentAccountNumber}
-          currentPaymentDetails={currentPaymentDetails}
-          contractHistory={historyResult.ok ? historyResult.value : []}
-          attributeHistory={
-            attributeHistoryResult.ok
-              ? attributeHistoryResult.value
-              : {
-                  tariffsByContract: {},
-                  accountNumbersByContract: {},
-                  paymentDetailsByContract: {},
-                }
-          }
-          role={role}
-        />
-        <MeterCard
-          meter={currentMeter}
-          propertyId={id}
-          serviceType={serviceType}
-          lastReading={lastMeterReading}
-        />
-        {currentMeter && role !== "viewer" && (
-          <QuickActions
-            meter={currentMeter}
-            serviceType={serviceType}
-            propertyName={property.name}
-            lastReading={lastMeterReading}
-          />
-        )}
-        <ActivityCard items={serviceActivity} />
-        <NotesCard notes={service.notes ?? null} editHref={editHref} role={role} />
-        {role !== "viewer" && (
-          <RemindersSection
-            reminders={reminders}
-            isTelegramLinked={isTelegramLinked}
-            propertyId={id}
-            serviceId={sid as TServiceId}
-          />
-        )}
-      </div>
+      <ServiceTabsNav propertyId={id} serviceId={serviceId} activeTab={activeTab} role={role} />
+      {renderActiveTab()}
     </div>
   );
 }

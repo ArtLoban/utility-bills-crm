@@ -614,6 +614,7 @@
         "activeSince": "Активен с",
         "installedAt": "Установлен",
         "viewDetails": "Подробнее о счётчике",
+        "submitReading": "Передать показания",
         "lastReading": "Последнее показание",
         "zoneLabel": "T{zone}",
         "zoneCount": {
@@ -711,9 +712,11 @@
           "error": "Не удалось удалить услугу. Попробуйте ещё раз."
         }
       },
-      "quickActions": {
-        "title": "Быстрые действия",
-        "submitReading": "Передать показания"
+      "tabs": {
+        "overview": "Обзор",
+        "contract": "Договор",
+        "meter": "Счётчик",
+        "reminders": "Напоминания"
       },
       "activity": {
         "title": "Недавняя активность",

@@ -77,11 +77,23 @@ export const ContractCard = async ({
     <SectionCard
       title={t("title")}
       actions={
-        contractHistory.length > 1 && (
-          <ContractCardClient
-            contractHistory={contractHistory}
-            attributeHistory={attributeHistory}
-          />
+        (canEdit || contractHistory.length > 1) && (
+          <div className="flex items-center gap-2">
+            {canEdit && (
+              <UpdateContractButton
+                contractId={currentContract.contract.id}
+                serviceId={serviceId}
+                serviceType={serviceType}
+                propertyId={propertyId}
+              />
+            )}
+            {contractHistory.length > 1 && (
+              <ContractCardClient
+                contractHistory={contractHistory}
+                attributeHistory={attributeHistory}
+              />
+            )}
+          </div>
         )
       }
     >
@@ -136,18 +148,9 @@ export const ContractCard = async ({
         )}
 
         {currentContract.contract.notes && (
-          <p className="bg-muted border-border text-muted-foreground mb-4 rounded-lg border px-3 py-2.5 text-sm whitespace-pre-wrap">
+          <p className="bg-muted border-border text-muted-foreground rounded-lg border px-3 py-2.5 text-sm whitespace-pre-wrap">
             {currentContract.contract.notes}
           </p>
-        )}
-
-        {canEdit && (
-          <UpdateContractButton
-            contractId={currentContract.contract.id}
-            serviceId={serviceId}
-            serviceType={serviceType}
-            propertyId={propertyId}
-          />
         )}
       </div>
     </SectionCard>

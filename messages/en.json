@@ -750,6 +750,7 @@
         "activeSince": "Active since",
         "installedAt": "Installed at",
         "viewDetails": "View meter details",
+        "submitReading": "Submit reading",
         "lastReading": "Last reading",
         "zoneLabel": "T{zone}",
         "zoneCount": {
@@ -847,9 +848,11 @@
           "error": "Failed to delete service. Please try again."
         }
       },
-      "quickActions": {
-        "title": "Quick actions",
-        "submitReading": "Submit reading"
+      "tabs": {
+        "overview": "Overview",
+        "contract": "Contract",
+        "meter": "Meter",
+        "reminders": "Reminders"
       },
       "activity": {
         "title": "Recent activity",

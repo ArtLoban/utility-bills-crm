@@ -587,6 +587,7 @@
         "activeSince": "Активний з",
         "installedAt": "Встановлено",
         "viewDetails": "Докладніше про лічильник",
+        "submitReading": "Передати показання",
         "lastReading": "Останнє показання",
         "zoneLabel": "T{zone}",
         "zoneCount": {
@@ -684,9 +685,11 @@
           "error": "Не вдалося видалити послугу. Спробуйте ще раз."
         }
       },
-      "quickActions": {
-        "title": "Швидкі дії",
-        "submitReading": "Передати показання"
+      "tabs": {
+        "overview": "Огляд",
+        "contract": "Договір",
+        "meter": "Лічильник",
+        "reminders": "Нагадування"
       },
       "activity": {
         "title": "Нещодавня активність",

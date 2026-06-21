@@ -17,6 +17,7 @@ type TProps = {
   role: TPropertyRole;
   propertyId: string;
   propertyName: string;
+  providerName?: string | null;
   extraActions?: ReactNode;
 };
 
@@ -26,6 +27,7 @@ export const ServicePageHeader = async ({
   role,
   propertyId,
   propertyName,
+  providerName,
   extraActions,
 }: TProps) => {
   const [tTypes, t] = await Promise.all([
@@ -61,7 +63,9 @@ export const ServicePageHeader = async ({
           <h1 className="text-foreground text-2xl font-semibold tracking-[-0.6px] md:text-[28px]">
             {name}
           </h1>
-          <p className="text-muted-foreground text-sm">{propertyName}</p>
+          <p className="text-muted-foreground text-sm">
+            {providerName ? `${providerName} · ${propertyName}` : propertyName}
+          </p>
         </div>
 
         {role !== "viewer" && (

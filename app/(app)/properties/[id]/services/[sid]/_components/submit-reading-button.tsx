@@ -5,7 +5,6 @@ import { Gauge } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
-import { SectionCard } from "@/components/section-card";
 import { SubmitReadingModal } from "@/features/readings/components/submit-reading-modal";
 import type { TMeter } from "@/lib/db/schema/meters";
 import type { TServiceType } from "@/lib/db/schema/service-types";
@@ -18,21 +17,16 @@ type TProps = {
   lastReading: TReading | null;
 };
 
-export const QuickActions = ({ meter, serviceType, propertyName, lastReading }: TProps) => {
+export const SubmitReadingButton = ({ meter, serviceType, propertyName, lastReading }: TProps) => {
   const [readingOpen, setReadingOpen] = useState(false);
-  const t = useTranslations("services.detail.quickActions");
+  const t = useTranslations("services.detail.meter");
 
   return (
     <>
-      <SectionCard>
-        <div className="flex flex-wrap items-center gap-2 px-5 py-3.5">
-          <span className="text-muted-foreground mr-2 text-sm">{t("title")}</span>
-          <Button onClick={() => setReadingOpen(true)}>
-            <Gauge className="size-3.5" />
-            {t("submitReading")}
-          </Button>
-        </div>
-      </SectionCard>
+      <Button size="sm" onClick={() => setReadingOpen(true)}>
+        <Gauge className="size-3.5" />
+        {t("submitReading")}
+      </Button>
 
       <SubmitReadingModal
         open={readingOpen}

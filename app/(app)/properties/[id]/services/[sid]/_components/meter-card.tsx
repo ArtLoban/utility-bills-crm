@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import Link from "next/link";
 import { Gauge } from "lucide-react";
 import { getLocale, getTranslations } from "next-intl/server";
@@ -18,9 +19,16 @@ type TProps = {
   propertyId: string;
   serviceType: TServiceType;
   lastReading: TReading | null;
+  action?: ReactNode;
 };
 
-export const MeterCard = async ({ meter, propertyId, serviceType, lastReading }: TProps) => {
+export const MeterCard = async ({
+  meter,
+  propertyId,
+  serviceType,
+  lastReading,
+  action,
+}: TProps) => {
   const t = await getTranslations("services.detail.meter");
 
   if (meter === null) {
@@ -55,11 +63,14 @@ export const MeterCard = async ({ meter, propertyId, serviceType, lastReading }:
     <SectionCard
       title={t("title")}
       actions={
-        <Button variant="ghost" size="sm" asChild>
-          <Link href={`${ROUTES.properties}/${propertyId}/meters/${meter.id}`}>
-            {t("viewDetails")}
-          </Link>
-        </Button>
+        <div className="flex items-center gap-2">
+          {action}
+          <Button variant="ghost" size="sm" asChild>
+            <Link href={`${ROUTES.properties}/${propertyId}/meters/${meter.id}`}>
+              {t("viewDetails")}
+            </Link>
+          </Button>
+        </div>
       }
     >
       <div className="px-5 py-4">
