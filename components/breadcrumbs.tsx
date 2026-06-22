@@ -1,5 +1,6 @@
 import { Fragment } from "react";
 import Link from "next/link";
+import { ChevronRight } from "lucide-react";
 
 import {
   Breadcrumb,
@@ -24,7 +25,11 @@ export const Breadcrumbs = ({ items }: TProps) => (
     <BreadcrumbList>
       {items.map((item, i) => (
         <Fragment key={item.label}>
-          {i > 0 && <BreadcrumbSeparator />}
+          {i > 0 && (
+            <BreadcrumbSeparator>
+              <ChevronRight />
+            </BreadcrumbSeparator>
+          )}
           <BreadcrumbItem>
             {item.href ? (
               <BreadcrumbLink asChild>
