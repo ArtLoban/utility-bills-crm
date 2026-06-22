@@ -1,0 +1,51 @@
+"use client";
+
+import { useTranslations } from "next-intl";
+
+import { IconBadge } from "@/components/icon-badge";
+import { Badge } from "@/components/ui/badge";
+import type { TMeterGlobalRow } from "@/lib/db/access/meters";
+import { useServiceTypeMeta } from "@/features/services/hooks/use-service-type";
+
+import { MeterRowActions } from "../../meter-row-actions";
+import { LastReadingCell } from "../../last-reading-cell";
+
+type TProps = {
+  row: TMeterGlobalRow;
+  showHistoricalBadge: boolean;
+};
+
+export const MeterCard = ({ row, showHistoricalBadge }: TProps) => {
+  const t = useTranslations("meters.list");
+  const { color, Icon, label } = useServiceTypeMeta(row.serviceType.code);
+  const isHistorical = row.meter.validTo !== null;
+
+  return (
+    <div className="border-border bg-card flex items-center gap-2 rounded-lg border py-3 pr-2.5 pl-3.5 shadow-sm">
+      <div className="min-w-0 flex-1 text-sm">
+        <div className="flex items-center gap-2">
+          <IconBadge icon={Icon} color={color} size="sm" />
+          <span className="min-w-0 flex-1 truncate font-semibold tracking-tight">
+            {row.property.name}
+          </span>
+          {showHistoricalBadge && isHistorical && <Badge>{t("badge.historical")}</Badge>}
+          <span className="text-muted-foreground shrink-0 font-mono text-xs">
+            {row.meter.serialNumber ?? "—"}
+          </span>
+        </div>
+
+        <div className="text-muted-foreground mt-1.5 truncate">
+          {label}
+          <span className="px-1">·</span>
+          {t("zones.count", { count: row.meter.zoneCount })}
+        </div>
+
+        <div className="mt-1">
+          <LastReadingCell lastReading={row.lastReading} zoneCount={row.meter.zoneCount} />
+        </div>
+      </div>
+
+      <MeterRowActions row={row} />
+    </div>
+  );
+};

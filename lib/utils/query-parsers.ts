@@ -30,6 +30,9 @@ export const baseListSearchParams = {
   [DATA_TABLE_PARAMS.SORT_ORDER]: parseAsStringLiteral(Object.values(SORT_ORDER)).withDefault(
     SORT_ORDER.DESC,
   ),
+};
+
+export const dateRangeSearchParams = {
   [DATE_PARAMS.DATE_FROM]: parseAsYYYYMMDD,
   [DATE_PARAMS.DATE_TO]: parseAsYYYYMMDD,
 };

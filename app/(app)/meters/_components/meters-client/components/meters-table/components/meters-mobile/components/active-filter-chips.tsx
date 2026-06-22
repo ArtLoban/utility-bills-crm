@@ -1,50 +1,42 @@
-import { format, parseISO } from "date-fns";
-import { Calendar } from "lucide-react";
+"use client";
+
+import { Gauge } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { DISPLAY_DATE_FORMAT } from "@/lib/format/date";
-import { useBillsTable } from "@/app/(app)/bills/_components/bills-client/context";
-import {
-  FiltersFormField,
-  type TQueryFilters,
-} from "@/app/(app)/bills/_components/bills-client/components/bills-table/types";
-import { DATE_PARAMS } from "@/lib/types/common";
+
+import { FilterChip } from "@/components/filter-chip";
+import { PROPERTY_TYPE_ICONS } from "@/features/properties/property-type";
 import { useServiceTypeMetaFactory } from "@/features/services/hooks/use-service-type";
 import type { TServiceTypeCode } from "@/features/services/service-type";
-import { PROPERTY_TYPE_ICONS } from "@/features/properties/property-type";
-import { FilterChip } from "@/components/filter-chip";
+import { METER_STATUSES } from "@/features/meters/types";
+import type { TPropertyOption } from "@/features/properties";
+
+import { FiltersFormField, type TQueryFilters } from "../../../types";
 
 type TProps = {
   queryFilters: TQueryFilters;
+  properties: TPropertyOption[];
 };
 
-const fmtDate = (date: string) => format(parseISO(date), DISPLAY_DATE_FORMAT);
-
-export const ActiveFilterChips = ({ queryFilters }: TProps) => {
+export const ActiveFilterChips = ({ queryFilters, properties }: TProps) => {
   const { hasActiveFilters, values, form } = queryFilters;
-  const t = useTranslations("bills.list.filters");
-  const { properties } = useBillsTable();
+  const t = useTranslations("meters.list.filters");
   const getServiceTypeMeta = useServiceTypeMetaFactory();
 
   if (!hasActiveFilters) return null;
 
   const propertyId = values[FiltersFormField.PROPERTY_ID];
   const services = values[FiltersFormField.SERVICES];
-  const dateFrom = values[DATE_PARAMS.DATE_FROM];
-  const dateTo = values[DATE_PARAMS.DATE_TO];
+  const status = values[FiltersFormField.STATUS];
 
   const property = propertyId ? properties.find(({ id }) => id === propertyId) : undefined;
   const propertyIcon = property ? PROPERTY_TYPE_ICONS[property.type] : PROPERTY_TYPE_ICONS.other;
-
   const service = services ? getServiceTypeMeta(services as TServiceTypeCode) : undefined;
-
-  const dateRangeLabel =
-    dateFrom && dateTo
-      ? `${fmtDate(dateFrom)} – ${fmtDate(dateTo)}`
-      : dateFrom
-        ? t("from", { date: fmtDate(dateFrom) })
-        : dateTo
-          ? t("to", { date: fmtDate(dateTo) })
-          : null;
+  const statusLabel =
+    status && status !== METER_STATUSES.ACTIVE
+      ? status === METER_STATUSES.HISTORICAL
+        ? t("statusHistorical")
+        : t("statusAll")
+      : null;
 
   return (
     <div className="mb-3.5 flex flex-wrap gap-1.5">
@@ -64,14 +56,11 @@ export const ActiveFilterChips = ({ queryFilters }: TProps) => {
           onRemove={() => form.setValue(FiltersFormField.SERVICES, null)}
         />
       )}
-      {dateRangeLabel && (
+      {statusLabel && (
         <FilterChip
-          icon={Calendar}
-          label={dateRangeLabel}
-          onRemove={() => {
-            form.setValue(DATE_PARAMS.DATE_FROM, null);
-            form.setValue(DATE_PARAMS.DATE_TO, null);
-          }}
+          icon={Gauge}
+          label={statusLabel}
+          onRemove={() => form.setValue(FiltersFormField.STATUS, METER_STATUSES.ACTIVE)}
         />
       )}
     </div>

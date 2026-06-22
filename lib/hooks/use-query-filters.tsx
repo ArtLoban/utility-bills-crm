@@ -46,7 +46,9 @@ export const useQueryFilters = <T extends Record<string, unknown>>(
   }, [values, setQuery, syncPage]);
 
   const handleClear = () => form.reset(initialValues);
-  const hasActiveFilters = Object.values(values).some(Boolean);
+  const hasActiveFilters = (Object.keys(initialValues) as (keyof T)[]).some(
+    (key) => values[key as keyof typeof values] !== initialValues[key],
+  );
 
   return {
     form,

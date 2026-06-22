@@ -128,7 +128,8 @@
         "statusActive": "Активные",
         "statusHistorical": "Исторические",
         "statusAll": "Все",
-        "clear": "Сбросить фильтры"
+        "clear": "Сбросить фильтры",
+        "label": "Фильтры"
       },
       "columns": {
         "property": "Объект",
@@ -136,7 +137,8 @@
         "serial": "Серийный номер",
         "zones": "Зоны",
         "installed": "Установлен",
-        "lastReading": "Последнее показание"
+        "lastReading": "Последнее показание",
+        "actions": "Действия"
       },
       "zones": {
         "count": "{count, plural, one {# зона} few {# зоны} other {# зон}}"
@@ -160,6 +162,30 @@
         "filtered": {
           "title": "Счётчики не найдены",
           "cta": "Сбросить фильтры"
+        }
+      },
+      "sort": {
+        "title": "Сортировка",
+        "property": {
+          "label": "Объект",
+          "asc": "А → Я",
+          "desc": "Я → А",
+          "triggerAsc": "Объект А–Я",
+          "triggerDesc": "Объект Я–А"
+        },
+        "service": {
+          "label": "Услуга",
+          "asc": "А → Я",
+          "desc": "Я → А",
+          "triggerAsc": "Услуга А–Я",
+          "triggerDesc": "Услуга Я–А"
+        },
+        "installed": {
+          "label": "Установлен",
+          "asc": "Сначала старые",
+          "desc": "Сначала новые",
+          "triggerAsc": "Установлен (старые)",
+          "triggerDesc": "Установлен (новые)"
         }
       }
     }

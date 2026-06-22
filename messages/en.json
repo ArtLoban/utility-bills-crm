@@ -128,7 +128,8 @@
         "statusActive": "Active",
         "statusHistorical": "Historical",
         "statusAll": "All",
-        "clear": "Clear filters"
+        "clear": "Clear filters",
+        "label": "Filters"
       },
       "columns": {
         "property": "Property",
@@ -136,7 +137,8 @@
         "serial": "Serial",
         "zones": "Zones",
         "installed": "Installed",
-        "lastReading": "Last reading"
+        "lastReading": "Last reading",
+        "actions": "Actions"
       },
       "zones": {
         "count": "{count, plural, one {# zone} other {# zones}}"
@@ -160,6 +162,30 @@
         "filtered": {
           "title": "No meters match your filters",
           "cta": "Clear filters"
+        }
+      },
+      "sort": {
+        "title": "Sort by",
+        "property": {
+          "label": "Property",
+          "asc": "A → Z",
+          "desc": "Z → A",
+          "triggerAsc": "Property A–Z",
+          "triggerDesc": "Property Z–A"
+        },
+        "service": {
+          "label": "Service",
+          "asc": "A → Z",
+          "desc": "Z → A",
+          "triggerAsc": "Service A–Z",
+          "triggerDesc": "Service Z–A"
+        },
+        "installed": {
+          "label": "Installed",
+          "asc": "Oldest first",
+          "desc": "Newest first",
+          "triggerAsc": "Installed (oldest)",
+          "triggerDesc": "Installed (newest)"
         }
       }
     }

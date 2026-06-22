@@ -128,7 +128,8 @@
         "statusActive": "Активні",
         "statusHistorical": "Історичні",
         "statusAll": "Всі",
-        "clear": "Скинути фільтри"
+        "clear": "Скинути фільтри",
+        "label": "Фільтри"
       },
       "columns": {
         "property": "Об'єкт",
@@ -136,7 +137,8 @@
         "serial": "Серійний номер",
         "zones": "Зони",
         "installed": "Встановлено",
-        "lastReading": "Останнє показання"
+        "lastReading": "Останнє показання",
+        "actions": "Дії"
       },
       "zones": {
         "count": "{count, plural, one {# зона} few {# зони} other {# зон}}"
@@ -160,6 +162,30 @@
         "filtered": {
           "title": "Лічильники не знайдено",
           "cta": "Скинути фільтри"
+        }
+      },
+      "sort": {
+        "title": "Сортування",
+        "property": {
+          "label": "Об'єкт",
+          "asc": "А → Я",
+          "desc": "Я → А",
+          "triggerAsc": "Об'єкт А–Я",
+          "triggerDesc": "Об'єкт Я–А"
+        },
+        "service": {
+          "label": "Послуга",
+          "asc": "А → Я",
+          "desc": "Я → А",
+          "triggerAsc": "Послуга А–Я",
+          "triggerDesc": "Послуга Я–А"
+        },
+        "installed": {
+          "label": "Встановлено",
+          "asc": "Спершу старі",
+          "desc": "Спершу нові",
+          "triggerAsc": "Встановлено (старі)",
+          "triggerDesc": "Встановлено (нові)"
         }
       }
     }

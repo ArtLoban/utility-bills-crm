@@ -69,7 +69,7 @@ export const readingByIdForUser = async (
   return ok(reading);
 };
 
-// No access check — only called after already-access-controlled metersForGlobalList.
+// No access check — only called after an already-access-controlled meters query (getMetersList).
 // Returns a Map so callers can do O(1) lookups per meter.
 // Uses a subquery to get the max readAt per meter, then joins to fetch the full row.
 // If two readings share the same max readAt, only one is returned (deterministic per DB ordering).
