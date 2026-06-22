@@ -10,6 +10,7 @@ import type { TPropertyRole } from "@/lib/db/schema/properties";
 import type { TService } from "@/lib/db/schema/services";
 import type { TServiceType } from "@/lib/db/schema/service-types";
 import { getServiceTypeVisuals, TServiceTypeCode } from "@/features/services/service-type";
+import { IconBadge } from "@/components/icon-badge";
 
 type TProps = {
   service: TService;
@@ -51,15 +52,7 @@ export const ServicePageHeader = async ({
 
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:gap-4">
         <div className="flex min-w-0 flex-1 items-center gap-3 md:gap-4">
-          <div
-            className="flex size-11 shrink-0 items-center justify-center rounded-[10px]"
-            style={{
-              background: `color-mix(in srgb, ${color} 9%, transparent)`,
-              border: `1.5px solid color-mix(in srgb, ${color} 30%, transparent)`,
-            }}
-          >
-            <Icon size={22} style={{ color }} />
-          </div>
+          <IconBadge icon={Icon} color={color} size="lg" border />
 
           <div className="min-w-0 flex-1">
             <h1 className="text-foreground text-2xl font-semibold tracking-[-0.6px] md:text-[28px]">

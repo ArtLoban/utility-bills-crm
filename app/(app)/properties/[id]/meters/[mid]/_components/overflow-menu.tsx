@@ -77,7 +77,7 @@ export const OverflowMenu = ({ propertyId, meterId, meterTitle }: TProps) => {
         isSaving={isDeleting}
       >
         <div className="my-3 flex flex-col items-center gap-4">
-          <IconBadge icon={Trash2} color="var(--destructive)" size="lg" border />
+          <IconBadge icon={Trash2} color="var(--destructive)" size="xl" border />
           <p className="text-center text-sm">
             {t.rich("remove.question", {
               name: meterTitle,

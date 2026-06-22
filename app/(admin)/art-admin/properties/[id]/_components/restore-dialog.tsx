@@ -58,7 +58,7 @@ export const RestoreDialog = ({
       isSaving={isPending}
     >
       <div className="my-3 flex flex-col items-center gap-4">
-        <IconBadge icon={RotateCcw} color="var(--warning)" size="lg" border={true} />
+        <IconBadge icon={RotateCcw} color="var(--warning)" size="xl" border={true} />
         <p className="text-center text-sm">
           <strong>{propertyName}</strong> will become active again. Users who had access will see it
           restored.

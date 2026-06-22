@@ -33,7 +33,7 @@ export default function GlobalError({ error, reset }: TProps) {
       </head>
       <body className="bg-background text-foreground flex min-h-full flex-col">
         <main className="flex flex-1 flex-col items-center justify-center px-6 pb-20 text-center md:pb-[80px]">
-          <IconBadge icon={TriangleAlert} color="var(--destructive)" size="lg" />
+          <IconBadge icon={TriangleAlert} color="var(--destructive)" size="xl" />
 
           <h2 className="mt-6 text-xl font-semibold tracking-tight md:text-2xl">
             Something went wrong

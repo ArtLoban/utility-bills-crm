@@ -76,7 +76,7 @@ export const DeleteServiceAction = ({ serviceId, propertyId, serviceName }: TPro
         isSaving={isDeleting}
       >
         <div className="my-3 flex flex-col items-center gap-4">
-          <IconBadge icon={Trash2} color="var(--destructive)" size="lg" border={true} />
+          <IconBadge icon={Trash2} color="var(--destructive)" size="xl" border={true} />
           <p className="text-center text-sm">
             {t.rich("delete.question", {
               name: serviceName,

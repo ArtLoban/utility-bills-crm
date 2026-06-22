@@ -17,7 +17,7 @@ export default async function NotFound() {
     <div className="flex flex-1 flex-col">
       <PublicHeader />
       <main className="flex flex-1 flex-col items-center justify-center px-6 pb-20 text-center md:pb-20">
-        <IconBadge icon={SearchX} color="var(--muted-foreground)" size="lg" />
+        <IconBadge icon={SearchX} color="var(--muted-foreground)" size="xl" />
 
         <h2 className="mt-6 text-xl font-semibold md:text-2xl">{t("title")}</h2>
 

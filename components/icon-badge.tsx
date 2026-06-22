@@ -4,7 +4,8 @@ const SIZE_MAP = {
   xs: { container: "h-5 w-5", icon: 12, rounded: "rounded" },
   sm: { container: "h-8 w-8", icon: 16, rounded: "rounded-md" },
   md: { container: "h-9 w-9", icon: 18, rounded: "rounded-lg" },
-  lg: { container: "h-14 w-14", icon: 28, rounded: "rounded-lg" },
+  lg: { container: "h-11 w-11", icon: 22, rounded: "rounded-lg" },
+  xl: { container: "h-14 w-14", icon: 28, rounded: "rounded-lg" },
 } as const;
 
 type TProps = {

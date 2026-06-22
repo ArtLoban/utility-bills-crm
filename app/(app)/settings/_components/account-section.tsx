@@ -111,7 +111,7 @@ const AccountSection = ({ email }: TProps) => {
         isSaving={isPending}
       >
         <div className="my-3 flex flex-col items-center gap-4">
-          <IconBadge icon={LogOut} color="var(--warning)" size="lg" border={true} />
+          <IconBadge icon={LogOut} color="var(--warning)" size="xl" border={true} />
           <p className="text-center text-sm">{t("signOutEverywhere.dialog.description")}</p>
           <p className="text-muted-foreground text-sm">
             {t("signOutEverywhere.dialog.secondaryText")}

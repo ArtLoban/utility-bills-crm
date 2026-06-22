@@ -65,7 +65,7 @@ export const ProvidersListActions = ({ children }: { children: ReactNode }) => {
         isSaving={isDeleting}
       >
         <div className="my-3 flex flex-col items-center gap-4">
-          <IconBadge icon={Trash2} color="var(--destructive)" size="lg" border={true} />
+          <IconBadge icon={Trash2} color="var(--destructive)" size="xl" border={true} />
           <p className="text-center text-sm">
             {t("delete.descriptionPrefix")} <strong>{itemToDelete?.name}</strong>?
           </p>
