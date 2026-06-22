@@ -80,6 +80,10 @@
     "sessionExpired": "Your session has expired. Please sign in again.",
     "demoBlocked": "This action isn't available in demo mode.",
     "saveError": "Failed to save. Please try again.",
+    "notes": {
+      "title": "Notes",
+      "empty": "No notes added yet."
+    },
     "demoBanner": {
       "message": "Demo mode",
       "cta": "Sign in with Google for full access"
@@ -116,6 +120,10 @@
   "meters": {
     "detail": {
       "title": "{type} meter",
+      "tabs": {
+        "overview": "Overview",
+        "readings": "Readings"
+      },
       "badge": {
         "historical": "Historical"
       },
@@ -136,7 +144,6 @@
         "zones": "Zones",
         "installedAt": "Installed at",
         "activeSince": "Active since",
-        "notes": "Notes",
         "zoneCount": {
           "single": "Single zone",
           "two": "Two zones (T1 day, T2 night)",
@@ -853,11 +860,6 @@
           "three": "Three zones (T1/T2/T3)",
           "other": "{count} zones"
         }
-      },
-      "notes": {
-        "title": "Notes",
-        "empty": "No notes added yet.",
-        "edit": "Edit notes"
       },
       "contract": {
         "title": "Current contract",

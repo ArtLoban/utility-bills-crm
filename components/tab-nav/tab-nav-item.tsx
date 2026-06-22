@@ -15,6 +15,6 @@ export const TabNavItem = ({ icon: Icon, label, isActive, children }: TProps) =>
     <Icon className={cn("size-4", isActive && "text-primary")} />
     {label}
     {children}
-    {isActive && <span className="bg-primary absolute inset-x-0 -bottom-px h-0.5 rounded-full" />}
+    {isActive && <span className="bg-primary absolute inset-x-0 bottom-0 h-0.5 rounded-full" />}
   </>
 );

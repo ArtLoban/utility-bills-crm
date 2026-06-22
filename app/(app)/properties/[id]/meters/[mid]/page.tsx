@@ -1,38 +1,33 @@
+import type { ReactNode } from "react";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
 
 import { getPropertyDetail } from "@/app/(app)/properties/[id]/_data/queries";
 import { PROPERTY_ROLES } from "@/lib/db/schema/properties";
 import type { PropertyId } from "@/lib/db/schema/properties";
 import type { MeterId } from "@/lib/db/schema/meters";
 import { PageShell } from "@/components/page-shell";
-import { getMeterDetail, getMeterReadings, getMostRecentReading } from "./_data/queries";
-import { ConsumptionChart } from "./_components/consumption-chart";
-import { DetailsCard } from "./_components/details-card";
+import { assertNever } from "@/lib/assert-never";
+import { getMeterDetail } from "./_data/queries";
 import { MeterPageHeader } from "./_components/meter-page-header";
-import { ReadingsSection } from "./_components/readings-section";
+import { MeterTabsNav } from "./_components/meter-tabs-nav";
+import { METER_TABS } from "./_components/constants";
+import { OverviewTab } from "./_components/tabs/overview-tab";
+import { ReadingsTab } from "./_components/tabs/readings-tab";
+import { resolveMeterTab } from "./_utils/resolve-tab";
 
 type TProps = {
   params: Promise<{ id: string; mid: string }>;
+  searchParams: Promise<{ tab?: string }>;
 };
 
-export async function generateMetadata({ params }: TProps): Promise<Metadata> {
-  const { mid } = await params;
-  const result = await getMeterDetail(mid as MeterId);
-  if (!result.ok) return {};
+export const metadata: Metadata = {
+  title: "Meter",
+};
 
-  const [tTypes, t] = await Promise.all([
-    getTranslations("services.types"),
-    getTranslations("meters.detail"),
-  ]);
-  const type = tTypes(result.value.serviceType.code as Parameters<typeof tTypes>[0]);
-
-  return { title: t("title", { type }) };
-}
-
-export default async function MeterPage({ params }: TProps) {
+export default async function MeterPage({ params, searchParams }: TProps) {
   const { id, mid } = await params;
+  const { tab } = await searchParams;
   const propertyId = id as PropertyId;
   const meterId = mid as MeterId;
 
@@ -49,15 +44,26 @@ export default async function MeterPage({ params }: TProps) {
   // Verify the meter belongs to the requested property.
   if (meter.propertyId !== id) notFound();
 
-  const [readingsResult, lastReadingResult] = await Promise.all([
-    getMeterReadings(meterId),
-    getMostRecentReading(meterId),
-  ]);
-
-  const readings = readingsResult.ok ? readingsResult.value : [];
-  const lastReading = lastReadingResult.ok ? lastReadingResult.value : null;
-
+  const activeTab = resolveMeterTab(tab);
   const canMutate = property.role !== PROPERTY_ROLES.VIEWER;
+
+  const renderActiveTab = (): ReactNode => {
+    switch (activeTab) {
+      case METER_TABS.OVERVIEW:
+        return <OverviewTab meter={meter} serviceType={serviceType} propertyName={property.name} />;
+      case METER_TABS.READINGS:
+        return (
+          <ReadingsTab
+            meter={meter}
+            serviceType={serviceType}
+            propertyName={property.name}
+            role={property.role}
+          />
+        );
+      default:
+        return assertNever(activeTab);
+    }
+  };
 
   return (
     <PageShell>
@@ -68,21 +74,8 @@ export default async function MeterPage({ params }: TProps) {
         propertyName={property.name}
         canMutate={canMutate}
       />
-
-      <div className="flex flex-col gap-6">
-        <DetailsCard meter={meter} serviceType={serviceType} propertyName={property.name} />
-
-        <ReadingsSection
-          meter={meter}
-          serviceType={serviceType}
-          propertyName={property.name}
-          readings={readings}
-          lastReading={lastReading}
-          role={property.role}
-        />
-
-        <ConsumptionChart readings={readings} meter={meter} serviceType={serviceType} />
-      </div>
+      <MeterTabsNav propertyId={id} meterId={meterId} activeTab={activeTab} />
+      {renderActiveTab()}
     </PageShell>
   );
 }

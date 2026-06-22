@@ -1,10 +1,10 @@
 import { balancesForServices } from "@/features/ledger";
 import type { TBalance } from "@/features/ledger";
+import { NotesCard } from "@/components/notes-card";
 import type { TServiceId } from "@/lib/db/schema/services";
 import { getServiceActivity } from "../../_data/queries";
 import { ActivityCard } from "../activity-card";
 import { BalanceCard } from "../balance-card";
-import { NotesCard } from "../notes-card";
 
 const ZERO_BALANCE: TBalance = { billsTotal: 0, paymentsTotal: 0, balance: 0 };
 

@@ -59,17 +59,6 @@ export const DetailsCard = async ({ meter, serviceType, propertyName }: TProps) 
             [t("activeSince"), formatDisplayDate(meter.validFrom)],
           ]}
         />
-
-        {meter.notes && (
-          <div className="border-border mt-4 border-t pt-4">
-            <p className="text-muted-foreground mb-1 text-xs font-medium tracking-wide uppercase">
-              {t("notes")}
-            </p>
-            <p className="text-foreground text-sm leading-snug whitespace-pre-wrap">
-              {meter.notes}
-            </p>
-          </div>
-        )}
       </div>
     </SectionCard>
   );

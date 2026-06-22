@@ -7,7 +7,7 @@ type TProps = {
 };
 
 export const NotesCard = async ({ notes }: TProps) => {
-  const t = await getTranslations("services.detail.notes");
+  const t = await getTranslations("common.notes");
 
   return (
     <SectionCard title={t("title")} className="h-full">
