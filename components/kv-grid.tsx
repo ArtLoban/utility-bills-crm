@@ -1,4 +1,6 @@
-type TKVPair = [string, React.ReactNode];
+import type { ReactNode } from "react";
+
+type TKVPair = [string, ReactNode];
 type TProps = { pairs: TKVPair[] };
 
 export const KVGrid = ({ pairs }: TProps) => (

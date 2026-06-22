@@ -6,7 +6,7 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { Button } from "@/components/ui/button";
 import { SectionCard } from "@/components/section-card";
 import { SectionCardEmpty } from "@/components/section-card-empty";
-import { KVGrid } from "./kv-grid";
+import { KVGrid } from "@/components/kv-grid";
 import { formatDisplayDate } from "@/lib/format/date";
 import { ROUTES } from "@/lib/routes";
 import { UNIT_LABELS, ZONE_COLOR_VARS } from "@/lib/constants/zones";

@@ -1,3 +1,9 @@
+"use client";
+
+import { useTranslations } from "next-intl";
+
+import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { UNIT_LABELS } from "@/lib/constants/zones";
 import type { TReading } from "@/lib/db/schema/readings";
 import type { TMeter } from "@/lib/db/schema/meters";
 import type { TServiceType } from "@/lib/db/schema/service-types";
@@ -11,62 +17,54 @@ type TProps = {
   canMutate: boolean;
 };
 
-const columnLabel = (text: string) => (
-  <th
-    className="text-left text-zinc-500 dark:text-zinc-400"
-    style={{
-      padding: "10px 16px",
-      fontSize: 11.5,
-      fontWeight: 500,
-      textTransform: "uppercase",
-      letterSpacing: 0.3,
-      borderBottom: "1px solid",
-    }}
-  >
-    {text}
-  </th>
-);
+const HEAD_CLASS = "text-muted-foreground px-4 text-xs font-medium tracking-wide uppercase";
 
-const ReadingsTable = ({ readings, meter, serviceType, propertyName, canMutate }: TProps) => {
-  const zoneHeader = meter.zoneCount === 1 ? `Value (${serviceType.unit ?? "units"})` : null;
+export const ReadingsTable = ({
+  readings,
+  meter,
+  serviceType,
+  propertyName,
+  canMutate,
+}: TProps) => {
+  const t = useTranslations("meters.detail");
+  const unitLabel = serviceType.unit ? UNIT_LABELS[serviceType.unit] : "";
+  const withUnit = (label: string) =>
+    unitLabel ? t("series.withUnit", { label, unit: unitLabel }) : label;
 
   return (
-    <div className="overflow-hidden rounded-[8px] border border-zinc-200 dark:border-zinc-800">
-      <table className="w-full border-collapse">
-        <thead>
-          <tr className="bg-zinc-50 dark:bg-zinc-800/50">
-            {columnLabel("Date")}
-            {meter.zoneCount === 1 ? (
-              columnLabel(zoneHeader!)
-            ) : (
-              <>
-                {columnLabel(`T1 day (${serviceType.unit ?? "units"})`)}
-                {columnLabel(`T2 night (${serviceType.unit ?? "units"})`)}
-                {meter.zoneCount === 3 && columnLabel(`T3 peak (${serviceType.unit ?? "units"})`)}
-              </>
-            )}
-            {columnLabel("Notes")}
-            <th style={{ width: 40 }} />
-          </tr>
-        </thead>
-        <tbody>
-          {readings.map((reading, i) => (
-            <ReadingRow
-              key={reading.id}
-              reading={reading}
-              meter={meter}
-              serviceType={serviceType}
-              propertyName={propertyName}
-              // Pass the reading immediately before this one (next in the array, since sorted DESC)
-              lastReadingBeforeThis={readings[i + 1] ?? null}
-              isLast={i === readings.length - 1}
-              canMutate={canMutate}
-            />
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead className={HEAD_CLASS}>{t("readings.columns.date")}</TableHead>
+          {meter.zoneCount === 1 ? (
+            <TableHead className={HEAD_CLASS}>{withUnit(t("series.value"))}</TableHead>
+          ) : (
+            <>
+              <TableHead className={HEAD_CLASS}>{withUnit(t("series.t1"))}</TableHead>
+              <TableHead className={HEAD_CLASS}>{withUnit(t("series.t2"))}</TableHead>
+              {meter.zoneCount === 3 && (
+                <TableHead className={HEAD_CLASS}>{withUnit(t("series.t3"))}</TableHead>
+              )}
+            </>
+          )}
+          <TableHead className={HEAD_CLASS}>{t("readings.columns.notes")}</TableHead>
+          <TableHead className="w-10" />
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {readings.map((reading, i) => (
+          <ReadingRow
+            key={reading.id}
+            reading={reading}
+            meter={meter}
+            serviceType={serviceType}
+            propertyName={propertyName}
+            // Sorted DESC — the previous reading is the next item in the array.
+            lastReadingBeforeThis={readings[i + 1] ?? null}
+            canMutate={canMutate}
+          />
+        ))}
+      </TableBody>
+    </Table>
   );
 };
-
-export { ReadingsTable };

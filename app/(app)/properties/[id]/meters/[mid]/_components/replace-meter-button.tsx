@@ -1,23 +1,23 @@
-"use client";
+import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
-import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { ROUTES } from "@/lib/routes";
+import type { MeterId } from "@/lib/db/schema/meters";
 
-import type { TMeter } from "@/lib/db/schema/meters";
-
-type TProps = { meter: TMeter };
-
-const ReplaceMeterButton = ({ meter }: TProps) => {
-  const router = useRouter();
-
-  return (
-    <button
-      onClick={() => router.push(`/properties/${meter.propertyId}/meters/${meter.id}/replace`)}
-      className="inline-flex cursor-pointer items-center rounded-md border border-violet-100 bg-violet-50 text-sm font-medium text-violet-600 dark:border-violet-800/40 dark:bg-violet-950/40 dark:text-violet-400"
-      style={{ height: 32, padding: "0 14px" }}
-    >
-      Replace meter
-    </button>
-  );
+type TProps = {
+  propertyId: string;
+  meterId: MeterId;
 };
 
-export { ReplaceMeterButton };
+export const ReplaceMeterButton = async ({ propertyId, meterId }: TProps) => {
+  const t = await getTranslations("meters.detail.actions");
+
+  return (
+    <Button variant="outline" size="sm" asChild>
+      <Link href={`${ROUTES.properties}/${propertyId}/meters/${meterId}/replace`}>
+        {t("replace")}
+      </Link>
+    </Button>
+  );
+};

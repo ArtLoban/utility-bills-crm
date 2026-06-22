@@ -115,7 +115,66 @@
   },
   "meters": {
     "detail": {
-      "title": "{type} meter"
+      "title": "{type} meter",
+      "badge": {
+        "historical": "Historical"
+      },
+      "meta": {
+        "zones": "{count, plural, one {# zone} other {# zones}}",
+        "serial": "Serial {value}",
+        "installed": "Installed {date}"
+      },
+      "actions": {
+        "replace": "Replace meter",
+        "menu": "More options"
+      },
+      "details": {
+        "title": "Details",
+        "serviceType": "Service type",
+        "property": "Property",
+        "serialNumber": "Serial number",
+        "zones": "Zones",
+        "installedAt": "Installed at",
+        "activeSince": "Active since",
+        "notes": "Notes",
+        "zoneCount": {
+          "single": "Single zone",
+          "two": "Two zones (T1 day, T2 night)",
+          "three": "Three zones (T1 peak, T2 shoulder, T3 off-peak)",
+          "other": "{count} zones"
+        }
+      },
+      "readings": {
+        "title": "Readings",
+        "submit": "Submit reading",
+        "submitFirst": "Submit first reading",
+        "empty": "No readings yet.",
+        "edit": "Edit reading",
+        "columns": {
+          "date": "Date",
+          "notes": "Notes"
+        }
+      },
+      "series": {
+        "value": "Value",
+        "t1": "T1 day",
+        "t2": "T2 night",
+        "t3": "T3 peak",
+        "withUnit": "{label} ({unit})"
+      },
+      "consumption": {
+        "title": "Consumption",
+        "empty": "Submit readings to see the chart."
+      },
+      "remove": {
+        "menu": "Remove meter",
+        "title": "Remove meter",
+        "confirm": "Remove",
+        "question": "Remove <b>{name}</b>?",
+        "warning": "All readings for this meter will also be removed.",
+        "success": "Meter removed.",
+        "error": "Failed to remove meter. Please try again."
+      }
     },
     "list": {
       "title": "Meters",

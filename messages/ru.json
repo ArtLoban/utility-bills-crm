@@ -115,7 +115,66 @@
   },
   "meters": {
     "detail": {
-      "title": "Счётчик: {type}"
+      "title": "Счётчик: {type}",
+      "badge": {
+        "historical": "Архивный"
+      },
+      "meta": {
+        "zones": "{count, plural, one {# зона} few {# зоны} many {# зон} other {# зоны}}",
+        "serial": "Серийный № {value}",
+        "installed": "Установлен {date}"
+      },
+      "actions": {
+        "replace": "Заменить счётчик",
+        "menu": "Ещё"
+      },
+      "details": {
+        "title": "Детали",
+        "serviceType": "Тип услуги",
+        "property": "Объект",
+        "serialNumber": "Серийный номер",
+        "zones": "Зоны",
+        "installedAt": "Дата установки",
+        "activeSince": "Активен с",
+        "notes": "Заметки",
+        "zoneCount": {
+          "single": "Одна зона",
+          "two": "Две зоны (T1 день, T2 ночь)",
+          "three": "Три зоны (T1 пик, T2 полупик, T3 ночь)",
+          "other": "{count} зон"
+        }
+      },
+      "readings": {
+        "title": "Показания",
+        "submit": "Внести показание",
+        "submitFirst": "Внести первое показание",
+        "empty": "Показаний пока нет.",
+        "edit": "Редактировать показание",
+        "columns": {
+          "date": "Дата",
+          "notes": "Заметки"
+        }
+      },
+      "series": {
+        "value": "Значение",
+        "t1": "T1 день",
+        "t2": "T2 ночь",
+        "t3": "T3 пик",
+        "withUnit": "{label} ({unit})"
+      },
+      "consumption": {
+        "title": "Потребление",
+        "empty": "Внесите показания, чтобы увидеть график."
+      },
+      "remove": {
+        "menu": "Удалить счётчик",
+        "title": "Удалить счётчик",
+        "confirm": "Удалить",
+        "question": "Удалить <b>{name}</b>?",
+        "warning": "Все показания этого счётчика также будут удалены.",
+        "success": "Счётчик удалён.",
+        "error": "Не удалось удалить счётчик. Попробуйте ещё раз."
+      }
     },
     "list": {
       "title": "Счётчики",

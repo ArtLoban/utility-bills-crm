@@ -1,12 +1,16 @@
 import { getTranslations } from "next-intl/server";
 
 import { Breadcrumbs } from "@/components/breadcrumbs";
+import { Badge } from "@/components/ui/badge";
+import { IconBadge } from "@/components/icon-badge";
+import { PageMeta } from "@/components/page-meta";
 import { ROUTES } from "@/lib/routes";
+import { formatDisplayDate } from "@/lib/format/date";
 import type { TMeter } from "@/lib/db/schema/meters";
 import type { TServiceType } from "@/lib/db/schema/service-types";
+import { getServiceTypeVisuals, TServiceTypeCode } from "@/features/services/service-type";
 import { ReplaceMeterButton } from "./replace-meter-button";
 import { OverflowMenu } from "./overflow-menu";
-import { getServiceTypeVisuals, TServiceTypeCode } from "@/features/services/service-type";
 
 type TProps = {
   meter: TMeter;
@@ -16,103 +20,69 @@ type TProps = {
   canMutate: boolean;
 };
 
-const MeterPageHeader = async ({
+export const MeterPageHeader = async ({
   meter,
   serviceType,
   propertyId,
   propertyName,
   canMutate,
 }: TProps) => {
-  const { color } = getServiceTypeVisuals(serviceType.code as TServiceTypeCode);
-  const isHistorical = meter.validTo !== null;
-
-  const [tNav, tMeter, tTypes] = await Promise.all([
+  const [tNav, t, tTypes] = await Promise.all([
     getTranslations("nav"),
     getTranslations("meters.detail"),
     getTranslations("services.types"),
   ]);
-  const meterTitle = tMeter("title", {
+
+  const { color, Icon } = getServiceTypeVisuals(serviceType.code as TServiceTypeCode);
+  const meterTitle = t("title", {
     type: tTypes(serviceType.code as Parameters<typeof tTypes>[0]),
   });
-
-  const formatDate = (date: Date | null): string => {
-    if (!date) return "";
-    return new Date(date).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
+  const isHistorical = meter.validTo !== null;
 
   return (
-    <div style={{ marginBottom: 28 }}>
+    <div className="mb-5 md:mb-7">
       <Breadcrumbs
         items={[
           { label: tNav("properties"), href: ROUTES.properties },
           { label: propertyName, href: `${ROUTES.properties}/${propertyId}` },
-          { label: tNav("meters"), href: `${ROUTES.properties}/${propertyId}/meters` },
           { label: meterTitle },
         ]}
       />
 
-      <div className="flex flex-wrap items-start justify-between" style={{ gap: 16 }}>
-        <div>
-          <h1
-            className="text-zinc-950 dark:text-zinc-50"
-            style={{
-              margin: 0,
-              fontSize: 26,
-              fontWeight: 600,
-              letterSpacing: -0.5,
-              lineHeight: 1.1,
-            }}
-          >
-            {meterTitle}
-            {isHistorical && (
-              <span
-                className="ml-3 rounded bg-zinc-100 text-zinc-400 dark:bg-zinc-800 dark:text-zinc-500"
-                style={{
-                  fontSize: 13,
-                  fontWeight: 500,
-                  padding: "3px 8px",
-                  verticalAlign: "middle",
-                }}
-              >
-                Historical
-              </span>
-            )}
-          </h1>
-          <p
-            className="text-zinc-500 dark:text-zinc-400"
-            style={{ margin: "7px 0 0", fontSize: 13.5 }}
-          >
-            <span style={{ color }}>{meter.zoneCount}-zone</span>
-            {meter.serialNumber && (
-              <>
-                <span className="mx-1.5 text-zinc-300 dark:text-zinc-700">·</span>
-                <span style={{ fontFamily: "ui-monospace, monospace", fontSize: 12.5 }}>
-                  Serial {meter.serialNumber}
-                </span>
-              </>
-            )}
-            {meter.installedAt && (
-              <>
-                <span className="mx-1.5 text-zinc-300 dark:text-zinc-700">·</span>
-                <span>Installed {formatDate(meter.installedAt)}</span>
-              </>
-            )}
-          </p>
+      <div className="flex flex-col gap-3 md:flex-row md:items-center md:gap-4">
+        <div className="flex min-w-0 flex-1 items-center gap-3 md:gap-4">
+          <IconBadge icon={Icon} color={color} size="lg" border />
+
+          <div className="min-w-0 flex-1">
+            <h1 className="text-foreground flex items-center gap-3 text-2xl font-semibold tracking-[-0.6px] md:text-[28px]">
+              {meterTitle}
+              {isHistorical && <Badge>{t("badge.historical")}</Badge>}
+            </h1>
+            <PageMeta
+              items={[
+                <span key="zones" style={{ color }}>
+                  {t("meta.zones", { count: meter.zoneCount })}
+                </span>,
+                meter.serialNumber ? (
+                  <span key="serial" className="font-mono">
+                    {t("meta.serial", { value: meter.serialNumber })}
+                  </span>
+                ) : null,
+                meter.installedAt
+                  ? t("meta.installed", { date: formatDisplayDate(meter.installedAt) })
+                  : null,
+              ]}
+            />
+          </div>
         </div>
 
         {canMutate && !isHistorical && (
-          <div className="flex shrink-0 items-center" style={{ gap: 8 }}>
-            <ReplaceMeterButton meter={meter} />
-            <OverflowMenu />
+          <div className="flex items-center justify-end gap-2">
+            <ReplaceMeterButton propertyId={propertyId} meterId={meter.id} />
+            <OverflowMenu propertyId={propertyId} meterId={meter.id} meterTitle={meterTitle} />
           </div>
         )}
       </div>
     </div>
   );
 };
-
-export { MeterPageHeader };
