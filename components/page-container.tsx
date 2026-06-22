@@ -1,5 +1,6 @@
 import { type ReactNode } from "react";
 import { Breadcrumbs, TBreadcrumb } from "@/components/breadcrumbs";
+import { PageShell } from "@/components/page-shell";
 
 export type TProps = {
   title: ReactNode;
@@ -12,7 +13,7 @@ export type TProps = {
 
 export const PageContainer = ({ title, children, actions, meta, breadcrumbs, banner }: TProps) => {
   return (
-    <div className="mx-auto w-full max-w-[1360px] px-3.5 pt-5 pb-9 md:px-8 md:pt-6 md:pb-12">
+    <PageShell>
       {breadcrumbs && <Breadcrumbs items={breadcrumbs} />}
       {banner && <div className="mb-6">{banner}</div>}
       <div className="mb-5 md:mb-7">
@@ -23,6 +24,6 @@ export const PageContainer = ({ title, children, actions, meta, breadcrumbs, ban
         {meta}
       </div>
       {children}
-    </div>
+    </PageShell>
   );
 };

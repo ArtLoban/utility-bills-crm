@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
+import { PageShell } from "@/components/page-shell";
 import { requireSession } from "@/lib/auth/guards";
 import type { UserId } from "@/lib/db/schema/auth";
 import { accessibleProperties } from "@/lib/db/access/properties";
@@ -58,9 +59,9 @@ export default async function DashboardPage({
 
   if (accessible.length === 0) {
     return (
-      <div className="mx-auto w-full max-w-[1360px] px-3.5 pt-5 pb-9 md:px-8 md:pt-8 md:pb-12">
+      <PageShell>
         <DashboardEmptyState firstName={firstName} />
-      </div>
+      </PageShell>
     );
   }
 
@@ -139,7 +140,7 @@ export default async function DashboardPage({
     ) : null;
 
   return (
-    <div className="mx-auto w-full max-w-[1360px] px-3.5 pt-5 pb-9 md:px-8 md:pt-8 md:pb-12">
+    <PageShell>
       <div className="mb-5 md:mb-7">
         <h2 className="m-0 text-2xl font-semibold tracking-[-0.6px] text-zinc-950 md:text-[28px] dark:text-zinc-50">
           {firstName ? t("greeting.withName", { name: firstName }) : t("greeting.fallback")}
@@ -159,6 +160,6 @@ export default async function DashboardPage({
           consumptionLineChartSlot={consumptionLineChartSlot}
         />
       </div>
-    </div>
+    </PageShell>
   );
 }

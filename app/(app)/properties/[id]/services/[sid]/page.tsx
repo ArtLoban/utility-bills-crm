@@ -13,6 +13,7 @@ import { MeterTab } from "./_components/tabs/meter-tab";
 import { RemindersTab } from "./_components/tabs/reminders-tab";
 import { SERVICE_TABS } from "./_components/constants";
 import { resolveServiceTab } from "./_utils/resolve-tab";
+import { PageShell } from "@/components/page-shell";
 import { assertNever } from "@/lib/assert-never";
 import { PROPERTY_ROLES } from "@/lib/db/schema/properties";
 import type { PropertyId } from "@/lib/db/schema/properties";
@@ -88,7 +89,7 @@ export default async function ServicePage({ params, searchParams }: TProps) {
   };
 
   return (
-    <div className="mx-auto w-full max-w-[1360px] px-3.5 pt-5 pb-9 md:px-8 md:pt-7 md:pb-14">
+    <PageShell>
       <ServicePageHeader
         service={service}
         serviceType={serviceType}
@@ -104,6 +105,6 @@ export default async function ServicePage({ params, searchParams }: TProps) {
       />
       <ServiceTabsNav propertyId={id} serviceId={serviceId} activeTab={activeTab} role={role} />
       {renderActiveTab()}
-    </div>
+    </PageShell>
   );
 }
