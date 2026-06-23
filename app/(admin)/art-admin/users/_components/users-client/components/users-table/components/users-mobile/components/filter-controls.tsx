@@ -1,0 +1,44 @@
+"use client";
+
+import { useState } from "react";
+
+import { Button } from "@/components/ui/button";
+import { ADMIN_USER_STATUS_FILTERS } from "@/features/admin-users/types";
+
+import { FiltersFormField, type TQueryFilters } from "../../../types";
+import { FilterSheet } from "./filter-sheet";
+
+type TProps = {
+  queryFilters: TQueryFilters;
+  onClear: () => void;
+};
+
+export const FilterControls = ({ queryFilters, onClear }: TProps) => {
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const { values } = queryFilters;
+
+  const activeCount = [
+    values[FiltersFormField.STATUS] != null &&
+      values[FiltersFormField.STATUS] !== ADMIN_USER_STATUS_FILTERS.ACTIVE,
+    values[FiltersFormField.ROLE] != null,
+  ].filter(Boolean).length;
+
+  return (
+    <>
+      <Button variant={activeCount > 0 ? "active" : "outline"} onClick={() => setSheetOpen(true)}>
+        Filters
+        {activeCount > 0 && (
+          <span className="bg-brand inline-flex min-w-4 items-center justify-center rounded-full px-1 text-[10.5px] font-bold text-white">
+            {activeCount}
+          </span>
+        )}
+      </Button>
+      <FilterSheet
+        open={sheetOpen}
+        onOpenChange={setSheetOpen}
+        queryFilters={queryFilters}
+        onClear={onClear}
+      />
+    </>
+  );
+};

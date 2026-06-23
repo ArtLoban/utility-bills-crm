@@ -1,4 +1,4 @@
-import { format } from "date-fns";
+import { format, formatDistanceToNow } from "date-fns";
 
 // Shared date-fns format tokens — one source so machine value and display stay consistent.
 export const ISO_DATE_FORMAT = "yyyy-MM-dd"; // machine value: URLs, DB, form state
@@ -7,6 +7,9 @@ export const DISPLAY_DATE_PLACEHOLDER = "dd/mm/yyyy"; // empty-state hint matchi
 
 export const formatDisplayDate = (date: Date | null | undefined): string =>
   date ? format(new Date(date), DISPLAY_DATE_FORMAT) : "—";
+
+export const formatRelativeTime = (date: Date): string =>
+  formatDistanceToNow(new Date(date), { addSuffix: true });
 
 export const formatDateShort = (sortTs: number): string => {
   const s = sortTs.toString();

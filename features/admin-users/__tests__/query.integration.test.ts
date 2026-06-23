@@ -9,7 +9,7 @@ import type { PropertyId } from "@/lib/db/schema/properties";
 import { auth } from "@/lib/auth";
 
 import { getAdminUsersList } from "../query";
-import { parseAdminUsersParams } from "../query-params";
+import { loadAdminUsersParams } from "../query-params";
 
 // next/navigation notFound() is not available outside Next.js request context.
 vi.mock("next/navigation", () => ({ notFound: vi.fn() }));
@@ -90,7 +90,7 @@ const TEST_EMAILS = new Set([
 
 // Helper: query with raw URL params (as page.tsx would receive), filter to test fixtures only.
 const listFixtures = async (rawOverrides: Record<string, string> = {}) => {
-  const params = parseAdminUsersParams({ status: "all", pageSize: "100", ...rawOverrides });
+  const params = await loadAdminUsersParams({ status: "all", pageSize: "100", ...rawOverrides });
   const result = await getAdminUsersList(params);
   return result.data.filter((u) => TEST_EMAILS.has(u.email));
 };
@@ -114,7 +114,7 @@ describe("role filter", () => {
 
 describe("status filter", () => {
   it("active excludes soft-deleted users (default)", async () => {
-    const params = parseAdminUsersParams({ pageSize: "100" }); // status defaults to "active"
+    const params = await loadAdminUsersParams({ pageSize: "100" }); // status defaults to "active"
     const result = await getAdminUsersList(params);
     const emails = result.data.map((u) => u.email);
     expect(emails).not.toContain("admin-query-test-deleted@test.invalid");
@@ -137,12 +137,12 @@ describe("status filter", () => {
 
 describe("pagination", () => {
   it("clamps pageSize at 100", async () => {
-    const params = parseAdminUsersParams({ pageSize: "500", status: "all" });
+    const params = await loadAdminUsersParams({ pageSize: "500", status: "all" });
     expect(params.pageSize).toBe(100);
   });
 
   it("returns empty data with accurate pagination for a page beyond the data", async () => {
-    const params = parseAdminUsersParams({ page: "9999", pageSize: "25", status: "all" });
+    const params = await loadAdminUsersParams({ page: "9999", pageSize: "25", status: "all" });
     const result = await getAdminUsersList(params);
     expect(result.data).toHaveLength(0);
     expect(result.pagination.page).toBe(9999);
@@ -152,8 +152,8 @@ describe("pagination", () => {
 });
 
 describe("sorting", () => {
-  it("invalid sortBy falls back to createdAt desc", () => {
-    const params = parseAdminUsersParams({ sortBy: "nonexistent_column" });
+  it("invalid sortBy falls back to createdAt desc", async () => {
+    const params = await loadAdminUsersParams({ sortBy: "nonexistent_column" });
     expect(params.sortBy).toBe("createdAt");
     expect(params.sortOrder).toBe("desc");
   });

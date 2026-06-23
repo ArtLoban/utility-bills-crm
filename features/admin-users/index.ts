@@ -1,5 +1,5 @@
 export { getAdminUsersList, getAdminUserDetail } from "./query";
-export { parseAdminUsersParams } from "./query-params";
+export { loadAdminUsersParams } from "./query-params";
 export type {
   TAdminUserRow,
   TAdminUsersListParams,

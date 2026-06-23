@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 import { requireAdmin } from "@/lib/auth/guards";
 import { unwrapOrThrow } from "@/lib/unwrap-or-throw";
-import { getAdminUsersList, parseAdminUsersParams } from "@/features/admin-users";
+import { getAdminUsersList, loadAdminUsersParams } from "@/features/admin-users";
 
 import { UsersClient } from "./_components/users-client";
 
@@ -15,8 +15,7 @@ export default async function AdminUsersPage({
 }) {
   await unwrapOrThrow(await requireAdmin());
 
-  const raw = await searchParams;
-  const params = parseAdminUsersParams(raw);
+  const params = await loadAdminUsersParams(searchParams);
   const result = await getAdminUsersList(params);
 
   return <UsersClient data={result.data} pagination={result.pagination} />;

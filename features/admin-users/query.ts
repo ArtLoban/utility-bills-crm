@@ -6,12 +6,14 @@ import type { UserId } from "@/lib/db/schema/auth";
 import { properties, propertyAccess } from "@/lib/db/schema/properties";
 import { requireAdmin } from "@/lib/auth/guards";
 import { unwrapOrThrow } from "@/lib/unwrap-or-throw";
-import type {
-  TAdminUserDetailResult,
-  TAdminUserPropertyAccess,
-  TAdminUserRow,
-  TAdminUsersListParams,
-  TAdminUsersListResult,
+import {
+  ADMIN_USER_SORT_COLUMNS,
+  ADMIN_USER_STATUS_FILTERS,
+  type TAdminUserDetailResult,
+  type TAdminUserPropertyAccess,
+  type TAdminUserRow,
+  type TAdminUsersListParams,
+  type TAdminUsersListResult,
 } from "./types";
 
 // Verifies admin session as a third defense-in-depth layer.
@@ -22,22 +24,24 @@ const assertAdmin = async (): Promise<void> => {
 
 const buildWhere = (params: TAdminUsersListParams) => {
   const conds = [];
-  if (params.status === "active") conds.push(isNull(users.deletedAt));
-  else if (params.status === "deleted") conds.push(isNotNull(users.deletedAt));
-  if (params.role) conds.push(eq(users.systemRole, params.role));
+  if (params.status === ADMIN_USER_STATUS_FILTERS.ACTIVE) conds.push(isNull(users.deletedAt));
+  else if (params.status === ADMIN_USER_STATUS_FILTERS.DELETED) {
+    conds.push(isNotNull(users.deletedAt));
+  }
+  if (params.systemRole) conds.push(eq(users.systemRole, params.systemRole));
   return conds.length > 0 ? and(...conds) : undefined;
 };
 
 const buildOrderBy = (params: TAdminUsersListParams) => {
   const dir = params.sortOrder === "asc" ? asc : desc;
   switch (params.sortBy) {
-    case "email":
+    case ADMIN_USER_SORT_COLUMNS.EMAIL:
       return [dir(users.email), asc(users.id)] as const;
-    case "name":
+    case ADMIN_USER_SORT_COLUMNS.NAME:
       return [dir(users.name), asc(users.id)] as const;
-    case "lastLoginAt":
+    case ADMIN_USER_SORT_COLUMNS.LAST_LOGIN_AT:
       return [dir(users.lastLoginAt), desc(users.createdAt)] as const;
-    case "createdAt":
+    case ADMIN_USER_SORT_COLUMNS.CREATED_AT:
     default:
       return [dir(users.createdAt), asc(users.id)] as const;
   }
