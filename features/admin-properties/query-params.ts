@@ -1,8 +1,16 @@
 import { PROPERTY_TYPE_LIST } from "@/lib/db/schema/properties";
 import type { TPropertyType } from "@/lib/db/schema/properties";
 
-import { ADMIN_PROPERTIES_SORT_COLUMNS } from "./types";
-import type { TAdminPropertiesListParams, TAdminPropertiesSortColumn } from "./types";
+import {
+  ADMIN_PROPERTIES_FILTERS,
+  ADMIN_PROPERTIES_SORT_COLUMNS,
+  ADMIN_PROPERTY_STATUS_FILTERS,
+} from "./types";
+import type {
+  TAdminPropertiesListParams,
+  TAdminPropertiesSortColumn,
+  TAdminPropertyStatusFilter,
+} from "./types";
 
 const PAGE_SIZE_MAX = 100;
 const PAGE_SIZE_DEFAULT = 25;
@@ -20,9 +28,11 @@ const parseSortBy = (raw: string | undefined): TAdminPropertiesSortColumn => {
 const parseSortOrder = (raw: string | undefined): "asc" | "desc" =>
   raw === "asc" ? "asc" : "desc";
 
-const parseStatus = (raw: string | undefined): "active" | "deleted" | "all" => {
-  if (raw === "deleted" || raw === "all") return raw;
-  return "active";
+const parseStatus = (raw: string | undefined): TAdminPropertyStatusFilter => {
+  if (raw === ADMIN_PROPERTY_STATUS_FILTERS.DELETED || raw === ADMIN_PROPERTY_STATUS_FILTERS.ALL) {
+    return raw;
+  }
+  return ADMIN_PROPERTY_STATUS_FILTERS.ACTIVE;
 };
 
 const parseType = (raw: string | undefined): TPropertyType | undefined => {
@@ -52,13 +62,13 @@ export const parseAdminPropertiesParams = (
     pageSize,
     sortBy: parseSortBy(str("sortBy")),
     sortOrder: parseSortOrder(str("sortOrder")),
-    status: parseStatus(str("status")),
+    status: parseStatus(str(ADMIN_PROPERTIES_FILTERS.STATUS)),
   };
 
-  const ownerRaw = str("owner");
+  const ownerRaw = str(ADMIN_PROPERTIES_FILTERS.OWNER);
   if (ownerRaw && ownerRaw.length > 0) params.owner = ownerRaw;
 
-  const type = parseType(str("type"));
+  const type = parseType(str(ADMIN_PROPERTIES_FILTERS.TYPE));
   if (type !== undefined) params.type = type;
 
   return params;

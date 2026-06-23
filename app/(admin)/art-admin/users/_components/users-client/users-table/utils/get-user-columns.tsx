@@ -1,8 +1,9 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import { formatDistanceToNow } from "date-fns";
 
-import { Badge } from "@/components/ui/badge";
 import type { TAdminUserRow } from "@/features/admin-users/types";
+import { DemoBadge } from "../../../../../_components/demo-badge";
+import { DeletedBadge } from "../../../../../_components/deleted-badge";
 import { RoleBadge } from "../../../../_components/role-badge";
 import { UserRowActions } from "../components/user-row-actions";
 
@@ -57,22 +58,8 @@ export const getUserColumns = (): ColumnDef<TAdminUserRow>[] => [
     header: "Status",
     cell: ({ row }) => (
       <span className="flex flex-wrap gap-1">
-        {row.original.isDemo && (
-          <Badge
-            variant="outline"
-            className="border-blue-200 text-blue-600 dark:border-blue-900 dark:text-blue-400"
-          >
-            Demo
-          </Badge>
-        )}
-        {row.original.deletedAt && (
-          <Badge
-            variant="outline"
-            className="border-red-200 text-red-600 dark:border-red-900 dark:text-red-400"
-          >
-            Deleted
-          </Badge>
-        )}
+        {row.original.isDemo && <DemoBadge />}
+        {row.original.deletedAt && <DeletedBadge />}
       </span>
     ),
     enableSorting: false,

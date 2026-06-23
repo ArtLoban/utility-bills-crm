@@ -8,6 +8,13 @@ export const PROPERTY_TYPE_ICONS: Record<TPropertyType, LucideIcon> = {
   [PROPERTY_TYPES.OTHER]: MapPin,
 };
 
+export const PROPERTY_TYPE_LABELS: Record<TPropertyType, string> = {
+  [PROPERTY_TYPES.APARTMENT]: "Apartment",
+  [PROPERTY_TYPES.HOUSE]: "House",
+  [PROPERTY_TYPES.COTTAGE]: "Cottage",
+  [PROPERTY_TYPES.OTHER]: "Other",
+};
+
 export const PROPERTY_TYPE_OPTIONS = [
   { value: PROPERTY_TYPES.APARTMENT, Icon: PROPERTY_TYPE_ICONS.apartment },
   { value: PROPERTY_TYPES.HOUSE, Icon: PROPERTY_TYPE_ICONS.house },
