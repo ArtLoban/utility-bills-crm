@@ -12,7 +12,7 @@ import type { TServiceTypeId } from "@/lib/db/schema/service-types";
 import { auth } from "@/lib/auth";
 
 import { getAdminPropertiesList } from "../query";
-import { parseAdminPropertiesParams } from "../query-params";
+import { loadAdminPropertiesParams } from "../query-params";
 
 vi.mock("next/navigation", () => ({ notFound: vi.fn() }));
 
@@ -120,7 +120,11 @@ beforeEach(() => {
 
 // Helper: run list query and filter to test fixtures only.
 const listFixtures = async (rawOverrides: Record<string, string> = {}) => {
-  const params = parseAdminPropertiesParams({ status: "all", pageSize: "100", ...rawOverrides });
+  const params = await loadAdminPropertiesParams({
+    status: "all",
+    pageSize: "100",
+    ...rawOverrides,
+  });
   const result = await getAdminPropertiesList(params);
   return result.data.filter((r) => TEST_PROPERTY_IDS.has(r.id));
 };
@@ -129,7 +133,7 @@ const listFixtures = async (rawOverrides: Record<string, string> = {}) => {
 
 describe("status filter", () => {
   it("active (default) excludes soft-deleted properties", async () => {
-    const params = parseAdminPropertiesParams({ pageSize: "100" }); // default status=active
+    const params = await loadAdminPropertiesParams({ pageSize: "100" }); // default status=active
     const result = await getAdminPropertiesList(params);
     const fixtures = result.data.filter((r) => TEST_PROPERTY_IDS.has(r.id));
     const ids = fixtures.map((r) => r.id);
@@ -206,7 +210,7 @@ describe("owners aggregation", () => {
       .returning({ id: properties.id });
     const noOwnerId = prop!.id;
     try {
-      const params = parseAdminPropertiesParams({ status: "all", pageSize: "100" });
+      const params = await loadAdminPropertiesParams({ status: "all", pageSize: "100" });
       const result = await getAdminPropertiesList(params);
       const row = result.data.find((r) => r.id === noOwnerId);
       expect(row).toBeDefined();
@@ -228,13 +232,13 @@ describe("services count", () => {
 });
 
 describe("pagination", () => {
-  it("clamps pageSize at 100", () => {
-    const params = parseAdminPropertiesParams({ pageSize: "999", status: "all" });
+  it("clamps pageSize at 100", async () => {
+    const params = await loadAdminPropertiesParams({ pageSize: "999", status: "all" });
     expect(params.pageSize).toBe(100);
   });
 
   it("returns empty data with accurate pagination for a page beyond the data", async () => {
-    const params = parseAdminPropertiesParams({ page: "9999", pageSize: "25", status: "all" });
+    const params = await loadAdminPropertiesParams({ page: "9999", pageSize: "25", status: "all" });
     const result = await getAdminPropertiesList(params);
     expect(result.data).toHaveLength(0);
     expect(result.pagination.page).toBe(9999);
@@ -244,8 +248,8 @@ describe("pagination", () => {
 });
 
 describe("sorting", () => {
-  it("invalid sortBy falls back to createdAt desc", () => {
-    const params = parseAdminPropertiesParams({ sortBy: "nonexistent_column" });
+  it("invalid sortBy falls back to createdAt desc", async () => {
+    const params = await loadAdminPropertiesParams({ sortBy: "nonexistent_column" });
     expect(params.sortBy).toBe("createdAt");
     expect(params.sortOrder).toBe("desc");
   });

@@ -9,9 +9,6 @@ export const ADMIN_PROPERTY_SORT_COLUMNS = {
 } as const;
 export type TAdminPropertiesSortColumn =
   (typeof ADMIN_PROPERTY_SORT_COLUMNS)[keyof typeof ADMIN_PROPERTY_SORT_COLUMNS];
-export const ADMIN_PROPERTIES_SORT_COLUMNS: readonly TAdminPropertiesSortColumn[] = Object.values(
-  ADMIN_PROPERTY_SORT_COLUMNS,
-);
 
 export const ADMIN_PROPERTIES_FILTERS = {
   STATUS: "status",
@@ -50,8 +47,8 @@ export type TAdminPropertiesListParams = {
   sortBy: TAdminPropertiesSortColumn;
   sortOrder: "asc" | "desc";
   status: TAdminPropertyStatusFilter;
-  owner?: string;
-  type?: TPropertyType;
+  owner: string | null;
+  type: TPropertyType | null;
 };
 
 export type TAdminPropertiesListResult = {

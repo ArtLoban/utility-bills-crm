@@ -6,7 +6,7 @@ import { unwrapOrThrow } from "@/lib/unwrap-or-throw";
 import { db } from "@/lib/db/client";
 import { users } from "@/lib/db/schema/auth";
 import type { UserId } from "@/lib/db/schema/auth";
-import { getAdminPropertiesList, parseAdminPropertiesParams } from "@/features/admin-properties";
+import { getAdminPropertiesList, loadAdminPropertiesParams } from "@/features/admin-properties";
 
 import { PropertiesClient } from "./_components/properties-client";
 
@@ -19,8 +19,7 @@ export default async function AdminPropertiesPage({
 }) {
   await unwrapOrThrow(await requireAdmin());
 
-  const raw = await searchParams;
-  const params = parseAdminPropertiesParams(raw);
+  const params = await loadAdminPropertiesParams(searchParams);
   const result = await getAdminPropertiesList(params);
 
   // Resolve owner display name for the filter chip — only when ?owner= is present.

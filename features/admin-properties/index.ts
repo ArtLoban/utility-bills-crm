@@ -1,5 +1,5 @@
 export { getAdminPropertiesList, getAdminPropertyDetail } from "./query";
-export { parseAdminPropertiesParams } from "./query-params";
+export { loadAdminPropertiesParams } from "./query-params";
 export { restoreProperty, hardDeleteProperty } from "./actions";
 export {
   ADMIN_PROPERTIES_FILTERS,
