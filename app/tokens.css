@@ -123,6 +123,8 @@
     --brand-bg: var(--purple-50);
     --brand-border: var(--purple-100);
 
+    --admin-accent: var(--amber-500);
+
     /* Domain: type card (unselected state — property type selector) */
     --type-card-bg: var(--neutral-0);
     --type-card-border: var(--neutral-200);

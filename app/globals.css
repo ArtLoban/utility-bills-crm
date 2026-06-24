@@ -72,6 +72,8 @@
   --color-brand: var(--brand);
   --color-brand-bg: var(--brand-bg);
   --color-brand-border: var(--brand-border);
+
+  --color-admin-accent: var(--admin-accent);
 }
 
 @layer base {

@@ -29,7 +29,7 @@ export const OverflowNav = ({
 
   return (
     <div ref={containerRef} className="relative min-w-0 flex-1 overflow-hidden">
-      <div className={cn("hidden items-center gap-6 md:flex", className)}>
+      <div className={cn("ml-10 hidden items-center gap-6 md:flex", className)}>
         {visibleItems.map((item) => (
           <span key={item.href} className="shrink-0">
             {renderInline(item)}

@@ -41,7 +41,7 @@ export const AdminNav = ({ user }: TProps) => {
 
   return (
     <>
-      <div className="h-[2px] w-full bg-amber-500" />
+      <div className="bg-admin-accent h-[2px] w-full" />
       <header className="bg-background/80 sticky top-0 z-50 h-16 border-b backdrop-blur-sm">
         <div className="mx-auto flex h-full max-w-screen-2xl items-center gap-6 px-4 sm:px-6 lg:px-8">
           <Link href={ROUTES.home} className="flex items-center gap-2">
@@ -54,13 +54,13 @@ export const AdminNav = ({ user }: TProps) => {
           <OverflowNav
             items={links}
             moreLabel="More"
-            triggerAccentClassName="text-amber-600 dark:text-amber-400"
+            triggerAccentClassName="text-admin-accent"
             renderInline={(item) => <NavLink {...item} />}
             renderMenuItem={(item) => (
               <DropdownMenuItem key={item.href} asChild>
                 <Link
                   href={item.href}
-                  className={cn(item.active && "font-medium text-amber-600 dark:text-amber-400")}
+                  className={cn(item.active && "text-admin-accent font-medium")}
                 >
                   {item.label}
                 </Link>

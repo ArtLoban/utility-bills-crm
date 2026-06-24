@@ -67,7 +67,7 @@ export const AdminNavMobileMenu = ({ links, user }: TProps) => {
                     className={cn(
                       "flex h-11 items-center gap-3 rounded-lg px-3 text-[15px] font-medium transition-colors",
                       link.active
-                        ? "bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-400 [&_svg]:text-amber-700 dark:[&_svg]:text-amber-400"
+                        ? "bg-admin-accent/15 text-admin-accent [&_svg]:text-admin-accent"
                         : "text-foreground hover:bg-accent [&_svg]:text-muted-foreground",
                     )}
                   >
