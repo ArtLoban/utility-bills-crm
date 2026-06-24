@@ -6,13 +6,9 @@ import { toast } from "sonner";
 
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { errorMessage } from "@/lib/errors";
-import { hardDeleteProperty } from "@/features/admin-properties/actions";
 
-const ADMIN_PROPERTY_ERRORS: Record<string, string> = {
-  NOT_DELETED: "This property is not deleted — nothing to restore.",
-  NOT_SOFT_DELETED: "Hard delete requires the property to be soft-deleted first.",
-  generic: "Something went wrong. Please try again.",
-};
+import { hardDeleteProperty } from "../actions";
+import { ADMIN_PROPERTY_ERROR_MESSAGES } from "../constants";
 
 type TProps = {
   open: boolean;
@@ -40,7 +36,7 @@ export const HardDeleteDialog = ({
         onSuccess?.();
       } else {
         const code = errorMessage(result.error) ?? "generic";
-        toast.error(ADMIN_PROPERTY_ERRORS[code] ?? ADMIN_PROPERTY_ERRORS.generic);
+        toast.error(ADMIN_PROPERTY_ERROR_MESSAGES[code] ?? ADMIN_PROPERTY_ERROR_MESSAGES.generic);
       }
     });
   };

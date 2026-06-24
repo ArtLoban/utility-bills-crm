@@ -1,21 +1,23 @@
-import type React from "react";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import { Badge } from "@/components/ui/badge";
+import { capitalize } from "@/lib/utils/capitalize";
+import { ROUTES } from "@/lib/routes";
 import { Button } from "@/components/ui/button";
 import { PageContainer } from "@/components/page-container";
 import { PageMeta } from "@/components/page-meta";
+import { DemoBadge } from "@/app/(admin)/art-admin/_components/demo-badge";
 import type { TAdminPropertyDetail } from "@/features/admin-properties";
 
 import { SoftDeleteBanner } from "./components/soft-delete-banner";
 import { PropertyInfoCard } from "./components/property-info-card";
 import { SharingCard } from "./components/sharing-card";
+import { formatServiceCount } from "./utils/format-service-count";
 
-type TProps = { property: TAdminPropertyDetail };
-
-const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+type TProps = {
+  property: TAdminPropertyDetail;
+};
 
 export const PropertyDetail = ({ property }: TProps) => {
   const isDeleted = property.deletedAt !== null;
@@ -24,18 +26,10 @@ export const PropertyDetail = ({ property }: TProps) => {
   const metaItems = [
     capitalize(property.type),
     property.address ?? null,
-    `${property.servicesCount} ${property.servicesCount === 1 ? "service" : "services"}`,
-    isDemo ? (
-      <Badge
-        key="demo"
-        variant="outline"
-        className="border-blue-200 text-blue-600 dark:border-blue-900 dark:text-blue-400"
-      >
-        Demo
-      </Badge>
-    ) : null,
+    formatServiceCount(property.servicesCount),
+    isDemo ? <DemoBadge key="demo" /> : null,
     isDeleted ? "Deleted" : "Active",
-  ].filter(Boolean) as (string | React.ReactElement)[];
+  ].filter(Boolean);
 
   return (
     <PageContainer
@@ -46,8 +40,8 @@ export const PropertyDetail = ({ property }: TProps) => {
       }
       meta={<PageMeta items={metaItems} />}
       breadcrumbs={[
-        { label: "art-admin", href: "/art-admin" },
-        { label: "properties", href: "/art-admin/properties" },
+        { label: "art-admin", href: ROUTES.admin.root },
+        { label: "properties", href: ROUTES.admin.properties },
         { label: property.name },
       ]}
       banner={
@@ -63,7 +57,7 @@ export const PropertyDetail = ({ property }: TProps) => {
       {!isDeleted && (
         <div className="mb-4 flex justify-end">
           <Button asChild variant="outline" size="sm">
-            <Link href={`/properties/${property.id}`}>
+            <Link href={`${ROUTES.properties}/${property.id}`}>
               <ArrowUpRight size={14} strokeWidth={1.75} />
               Go to property
             </Link>

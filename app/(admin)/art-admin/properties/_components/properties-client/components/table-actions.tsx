@@ -3,8 +3,8 @@
 import { useState, type ReactNode } from "react";
 
 import type { TAdminPropertyRow } from "@/features/admin-properties/types";
-import { RestoreDialog } from "@/app/(admin)/art-admin/properties/[id]/_components/restore-dialog";
-import { HardDeleteDialog } from "@/app/(admin)/art-admin/properties/[id]/_components/hard-delete-dialog";
+import { RestoreDialog } from "@/features/admin-properties/components/restore-dialog";
+import { HardDeleteDialog } from "@/features/admin-properties/components/hard-delete-dialog";
 
 import { PropertiesTableProvider } from "../context";
 

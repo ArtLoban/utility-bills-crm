@@ -1,18 +1,18 @@
 import { format } from "date-fns";
 
+import { capitalize } from "@/lib/utils/capitalize";
 import { DataCard } from "@/components/data-card";
 import { InfoGrid } from "@/components/info-grid";
+import { PROPERTY_ROLES } from "@/lib/db/schema/properties";
 import type { TAdminPropertyDetail } from "@/features/admin-properties";
 
 type TProps = { property: TAdminPropertyDetail };
-
-const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
 const formatOwners = (owners: TAdminPropertyDetail["owners"]): string => {
   if (owners.length === 0) return "—";
   return (
     owners
-      .filter((o) => o.propertyRole === "owner")
+      .filter((o) => o.propertyRole === PROPERTY_ROLES.OWNER)
       .map((o) => o.name ?? o.email)
       .join(", ") || "—"
   );

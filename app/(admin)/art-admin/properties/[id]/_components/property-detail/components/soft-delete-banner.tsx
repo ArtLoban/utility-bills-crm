@@ -6,8 +6,8 @@ import { format } from "date-fns";
 
 import { Button } from "@/components/ui/button";
 
-import { RestoreDialog } from "../../restore-dialog";
-import { HardDeleteDialog } from "../../hard-delete-dialog";
+import { RestoreDialog } from "@/features/admin-properties/components/restore-dialog";
+import { HardDeleteDialog } from "@/features/admin-properties/components/hard-delete-dialog";
 
 type TProps = {
   propertyId: string;
