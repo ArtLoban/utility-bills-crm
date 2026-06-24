@@ -8,12 +8,7 @@ type TProps = {
   params: Promise<{ id: string }>;
 };
 
-export async function generateMetadata({ params }: TProps): Promise<Metadata> {
-  const { id } = await params;
-  const property = await getAdminPropertyDetail(id);
-  if (!property) return { title: "Not Found — Admin" };
-  return { title: `${property.name} — Admin` };
-}
+export const metadata: Metadata = { title: "Property — Admin" };
 
 export default async function AdminPropertyDetailPage({ params }: TProps) {
   const { id } = await params;

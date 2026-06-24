@@ -53,18 +53,17 @@ export const PropertyDetail = ({ property }: TProps) => {
           />
         ) : undefined
       }
-    >
-      {!isDeleted && (
-        <div className="mb-4 flex justify-end">
+      actions={
+        !isDeleted ? (
           <Button asChild variant="outline" size="sm">
             <Link href={`${ROUTES.properties}/${property.id}`}>
               <ArrowUpRight size={14} strokeWidth={1.75} />
               Go to property
             </Link>
           </Button>
-        </div>
-      )}
-
+        ) : undefined
+      }
+    >
       <div className="flex flex-col gap-4">
         <PropertyInfoCard property={property} />
         <SharingCard owners={property.owners} isDeleted={isDeleted} />
