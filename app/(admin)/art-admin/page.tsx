@@ -30,25 +30,25 @@ export default async function AdminDashboardPage() {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <StatCard
             icon={Users}
-            iconColor="#7c3aed"
+            iconColor="var(--primary)"
             value={String(stats.users)}
             label="Total users"
           />
           <StatCard
             icon={Home}
-            iconColor="#71717a"
+            iconColor="var(--muted-foreground)"
             value={String(stats.properties)}
             label="Active properties"
           />
           <StatCard
             icon={Receipt}
-            iconColor="#0284c7"
+            iconColor="var(--info)"
             value={String(stats.bills)}
             label="Bills recorded"
           />
           <StatCard
             icon={Archive}
-            iconColor="#d97706"
+            iconColor="var(--warning)"
             value={String(stats.softDeleted)}
             label="Deleted properties"
           />

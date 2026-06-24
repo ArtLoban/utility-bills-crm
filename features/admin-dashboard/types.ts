@@ -5,16 +5,16 @@ export type TAdminDashboardStats = {
   softDeleted: number;
 };
 
-export const ACTIVITY_KINDS = [
-  "property",
-  "user",
-  "service",
-  "bill",
-  "payment",
-  "reading",
-] as const;
+export const ACTIVITY_KINDS = {
+  PROPERTY: "property",
+  USER: "user",
+  SERVICE: "service",
+  BILL: "bill",
+  PAYMENT: "payment",
+  READING: "reading",
+} as const;
 
-export type TActivityKind = (typeof ACTIVITY_KINDS)[number];
+export type TActivityKind = (typeof ACTIVITY_KINDS)[keyof typeof ACTIVITY_KINDS];
 
 export type TActivityItem = {
   kind: TActivityKind;

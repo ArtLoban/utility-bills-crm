@@ -37,7 +37,7 @@ type TActivityRawRow = {
 export const normalizeActivityRows = (rows: TActivityRawRow[]): TActivityItem[] =>
   rows
     .filter((row): row is TActivityRawRow & { kind: TActivityKind } =>
-      (ACTIVITY_KINDS as readonly string[]).includes(row.kind),
+      (Object.values(ACTIVITY_KINDS) as readonly string[]).includes(row.kind),
     )
     .map((row) => ({
       kind: row.kind as TActivityKind,
