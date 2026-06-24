@@ -28,5 +28,9 @@ export default withSentryConfig(withNextIntl(nextConfig), {
   // authToken is read from SENTRY_AUTH_TOKEN automatically.
   silent: !process.env.CI,
   widenClientFileUpload: true,
-  disableLogger: true,
+  webpack: {
+    treeshake: {
+      removeDebugLogging: true,
+    },
+  },
 });
