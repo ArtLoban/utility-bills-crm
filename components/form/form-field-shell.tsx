@@ -17,26 +17,40 @@ export const FormFieldShell = <T extends FieldValues>({
   label,
   description,
   className,
+  required,
   labelAccessory,
   children,
-}: TProps<T>) => (
-  <FormField
-    control={control}
-    name={name}
-    render={({ field }) => (
-      <FormItem className={className}>
-        {labelAccessory ? (
-          <div className="flex items-baseline justify-between gap-2">
-            {label ? <FormLabel>{label}</FormLabel> : <span />}
-            {labelAccessory}
-          </div>
-        ) : label ? (
-          <FormLabel>{label}</FormLabel>
-        ) : null}
-        {children(field)}
-        {description ? <FormDescription>{description}</FormDescription> : null}
-        <FormMessage />
-      </FormItem>
-    )}
-  />
-);
+}: TProps<T>) => {
+  const labelNode = label ? (
+    <FormLabel>
+      {label}
+      {required ? (
+        <span aria-hidden="true" className="text-destructive -ml-1">
+          *
+        </span>
+      ) : null}
+    </FormLabel>
+  ) : null;
+
+  return (
+    <FormField
+      control={control}
+      name={name}
+      render={({ field }) => (
+        <FormItem className={className}>
+          {labelAccessory ? (
+            <div className="flex items-baseline justify-between gap-2">
+              {labelNode ?? <span />}
+              {labelAccessory}
+            </div>
+          ) : (
+            labelNode
+          )}
+          {children(field)}
+          {description ? <FormDescription>{description}</FormDescription> : null}
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  );
+};

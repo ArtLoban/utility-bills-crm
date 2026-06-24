@@ -1029,6 +1029,9 @@
       }
     },
     "validation": {
+      "property": {
+        "required": "Объект обязателен"
+      },
       "service": {
         "required": "Услуга обязательна"
       },

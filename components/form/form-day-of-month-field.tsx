@@ -20,6 +20,7 @@ export const FormDayOfMonthField = <T extends FieldValues>({
   label,
   description,
   className,
+  required,
   disabled,
   placeholder,
   pickerHeading,
@@ -31,9 +32,10 @@ export const FormDayOfMonthField = <T extends FieldValues>({
     label={label}
     description={description}
     className={className}
+    required={required}
   >
     {(field) => (
-      <FormControl>
+      <FormControl aria-required={required || undefined}>
         <DayOfMonthPicker
           value={field.value ? Number(field.value) : null}
           onChange={(day) => field.onChange(String(day))}

@@ -69,6 +69,7 @@ export const BillForm = ({
             placeholder={t("property.placeholder")}
             options={propertyOptions}
             onValueChange={onPropertyChange}
+            required
           />
         )}
 
@@ -84,6 +85,7 @@ export const BillForm = ({
             placeholder={t("service.placeholder")}
             options={serviceSelectOptions}
             disabled={serviceSelectOptions.length === 0}
+            required
           />
         )}
 
@@ -93,6 +95,7 @@ export const BillForm = ({
           label={t("month.label")}
           placeholder={t("month.placeholder")}
           max={currentYearMonth()}
+          required
         />
 
         <FormTextField
@@ -103,6 +106,7 @@ export const BillForm = ({
           type="number"
           inputMode="decimal"
           description={expectedHint}
+          required
         />
 
         <FormTextareaField

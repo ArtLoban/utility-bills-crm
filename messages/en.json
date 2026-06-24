@@ -362,6 +362,9 @@
       }
     },
     "validation": {
+      "property": {
+        "required": "Property is required"
+      },
       "service": {
         "required": "Service is required"
       },

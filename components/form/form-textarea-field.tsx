@@ -24,6 +24,7 @@ export const FormTextareaField = <T extends FieldValues>({
   label,
   description,
   className,
+  required,
   showCounter,
   ...textareaProps
 }: TProps<T>) => {
@@ -44,10 +45,11 @@ export const FormTextareaField = <T extends FieldValues>({
       label={label}
       description={description}
       className={className}
+      required={required}
       labelAccessory={counter}
     >
       {(field) => (
-        <FormControl>
+        <FormControl aria-required={required || undefined}>
           <Textarea {...field} value={field.value ?? ""} {...textareaProps} />
         </FormControl>
       )}

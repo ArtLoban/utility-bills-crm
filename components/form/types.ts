@@ -7,4 +7,5 @@ export type TFormFieldBaseProps<T extends FieldValues> = {
   label?: string;
   description?: ReactNode;
   className?: string;
+  required?: boolean;
 };

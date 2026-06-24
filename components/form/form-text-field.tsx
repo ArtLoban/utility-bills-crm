@@ -21,6 +21,7 @@ export const FormTextField = <T extends FieldValues>({
   label,
   description,
   className,
+  required,
   ...inputProps
 }: TProps<T>) => (
   <FormFieldShell
@@ -29,9 +30,10 @@ export const FormTextField = <T extends FieldValues>({
     label={label}
     description={description}
     className={className}
+    required={required}
   >
     {(field) => (
-      <FormControl>
+      <FormControl aria-required={required || undefined}>
         <Input {...field} value={field.value ?? ""} {...inputProps} />
       </FormControl>
     )}

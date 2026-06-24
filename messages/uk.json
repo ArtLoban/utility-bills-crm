@@ -1002,6 +1002,9 @@
       }
     },
     "validation": {
+      "property": {
+        "required": "Об'єкт обов'язковий"
+      },
       "service": {
         "required": "Послуга обов'язкова"
       },

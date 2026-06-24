@@ -20,6 +20,7 @@ export const FormMonthField = <T extends FieldValues>({
   label,
   description,
   className,
+  required,
   min,
   max,
   disabled,
@@ -31,9 +32,10 @@ export const FormMonthField = <T extends FieldValues>({
     label={label}
     description={description}
     className={className}
+    required={required}
   >
     {(field) => (
-      <FormControl>
+      <FormControl aria-required={required || undefined}>
         <MonthPicker
           value={field.value ?? null}
           onChange={field.onChange}

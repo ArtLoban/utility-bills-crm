@@ -38,9 +38,10 @@ export type TUpdateBillInput = z.infer<typeof updateBillSchema>;
 // Client form schema. Messages are relative i18n keys under the "bills" namespace,
 // translated by useZodForm. `amount` stays a string (the input model) and is converted
 // to a number at the action boundary, which keeps this schema transform-free.
-// `property` is a UI-only field that filters the service options — it is not persisted.
+// `property` is not persisted on the bill (the link is via `serviceId`), but it is required
+// in the form: the user must pick a property to load and choose its services.
 export const billFormSchema = z.object({
-  property: z.string(),
+  property: z.string().min(1, "validation.property.required"),
   serviceId: z.string().min(1, "validation.service.required"),
   month: z.string().regex(MONTH_PATTERN, "validation.month.invalid"),
   amount: z

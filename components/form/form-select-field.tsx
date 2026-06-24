@@ -32,6 +32,7 @@ export const FormSelectField = <T extends FieldValues, E extends TSelectableEnti
   label,
   description,
   className,
+  required,
   options,
   placeholder,
   clearable = false,
@@ -44,6 +45,7 @@ export const FormSelectField = <T extends FieldValues, E extends TSelectableEnti
     label={label}
     description={description}
     className={className}
+    required={required}
   >
     {(field) => (
       <Select
@@ -55,7 +57,7 @@ export const FormSelectField = <T extends FieldValues, E extends TSelectableEnti
         }}
         disabled={disabled}
       >
-        <FormControl>
+        <FormControl aria-required={required || undefined}>
           <SelectTrigger className="w-full">
             <SelectValue placeholder={placeholder} />
           </SelectTrigger>
