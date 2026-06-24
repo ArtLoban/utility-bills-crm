@@ -1,35 +1,28 @@
-import { format } from "date-fns";
-
 import { cn } from "@/lib/utils";
-import { Badge } from "@/components/ui/badge";
+import { ROUTES } from "@/lib/routes";
+import { formatDisplayDate } from "@/lib/format/date";
 import { PageContainer } from "@/components/page-container";
 import { PageMeta } from "@/components/page-meta";
+import { DemoBadge } from "@/app/(admin)/art-admin/_components/demo-badge";
 import type { TAdminUserDetailResult } from "@/features/admin-users/types";
-
 import { RoleBadge } from "../../../_components/role-badge";
 import { DeletedBanner } from "./components/deleted-banner";
 import { UserInfoCard } from "./components/user-info-card";
 import { UserPropertiesCard } from "./components/user-properties-card";
 
-type TProps = { user: TAdminUserDetailResult };
+type TProps = {
+  user: TAdminUserDetailResult;
+};
 
-export const UserDetail = async ({ user }: TProps) => {
+export const UserDetail = ({ user }: TProps) => {
   const isDeleted = user.deletedAt !== null;
   const displayName = user.name ?? user.email;
 
   const metaItems = [
     user.email,
     <RoleBadge key="role" role={user.systemRole} />,
-    user.isDemo ? (
-      <Badge
-        key="demo"
-        variant="outline"
-        className="border-blue-200 text-blue-600 dark:border-blue-900 dark:text-blue-400"
-      >
-        Demo
-      </Badge>
-    ) : null,
-    `Joined ${format(user.createdAt, "MMMM yyyy")}`,
+    user.isDemo ? <DemoBadge key="demo" /> : null,
+    `Joined ${formatDisplayDate(user.createdAt)}`,
   ].filter(Boolean);
 
   return (
@@ -41,8 +34,8 @@ export const UserDetail = async ({ user }: TProps) => {
       }
       meta={<PageMeta items={metaItems} />}
       breadcrumbs={[
-        { label: "art-admin", href: "/art-admin" },
-        { label: "users", href: "/art-admin/users" },
+        { label: "art-admin", href: ROUTES.admin.root },
+        { label: "users", href: ROUTES.admin.users },
         { label: displayName },
       ]}
       banner={isDeleted ? <DeletedBanner deletedAt={user.deletedAt!} /> : undefined}

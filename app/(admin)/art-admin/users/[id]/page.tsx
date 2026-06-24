@@ -11,17 +11,7 @@ type TProps = {
   params: Promise<{ id: string }>;
 };
 
-export async function generateMetadata({ params }: TProps): Promise<Metadata> {
-  const { id } = await params;
-
-  const guard = await requireAdmin();
-  if (!guard.ok) return { title: "Not Found — Admin" };
-
-  const user = await getAdminUserDetail(id);
-  if (!user) return { title: "Not Found — Admin" };
-
-  return { title: `${user.name ?? user.email} — Admin` };
-}
+export const metadata: Metadata = { title: "User — Admin" };
 
 export default async function AdminUserDetailPage({ params }: TProps) {
   const { id } = await params;
