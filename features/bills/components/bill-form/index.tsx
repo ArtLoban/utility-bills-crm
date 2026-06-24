@@ -18,7 +18,7 @@ import { BILL_LIMITS, type TBillFormValues } from "@/features/bills/schema";
 import { BillFormField } from "@/features/bills/types";
 import type { TExpectedAmount } from "@/features/ledger/types";
 import { ServiceChip } from "./components/service-chip";
-import { ReadOnlyField } from "./components/read-only-field";
+import { ReadOnlyField } from "@/components/read-only-field";
 
 type TProps = {
   form: UseFormReturn<TBillFormValues>;

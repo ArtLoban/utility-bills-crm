@@ -49,11 +49,14 @@ export type TPaymentsListResult = {
   totals: { amount: string };
 };
 
-// --- Form types ---
+// --- Form field names ---
 
-export type TPaymentFormValues = {
-  serviceId: string;
-  paidAt: string;
-  amount: number;
-  notes?: string;
-};
+export const PaymentFormField = {
+  PROPERTY: "property",
+  SERVICE_ID: "serviceId",
+  PAID_AT: "paidAt",
+  AMOUNT: "amount",
+  NOTES: "notes",
+} as const;
+
+export type TPaymentFormField = (typeof PaymentFormField)[keyof typeof PaymentFormField];

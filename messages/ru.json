@@ -257,6 +257,39 @@
     }
   },
   "payments": {
+    "fields": {
+      "property": { "label": "Объект", "placeholder": "Выберите объект" },
+      "service": {
+        "label": "Услуга",
+        "placeholder": "Выберите услугу",
+        "placeholderNoProperty": "Сначала выберите объект"
+      },
+      "paidAt": { "label": "Дата" },
+      "amount": {
+        "label": "Сумма",
+        "placeholder": "напр. 680",
+        "currentDebt": "Текущий долг: {amount}"
+      },
+      "notes": { "label": "Примечания", "placeholder": "Любые замечания…" }
+    },
+    "validation": {
+      "property": { "required": "Объект обязателен" },
+      "service": { "required": "Услуга обязательна" },
+      "date": { "invalid": "Некорректная дата" },
+      "amount": { "required": "Сумма обязательна", "invalid": "Введите корректную сумму" },
+      "notes": { "tooLong": "Примечания слишком длинные (макс. 1000 символов)" }
+    },
+    "modal": {
+      "add": { "title": "Записать платёж", "submit": "Записать платёж" },
+      "edit": { "title": "Редактировать платёж", "submit": "Сохранить" },
+      "cancel": "Отмена",
+      "saving": "Сохранение…",
+      "formError": "Проверьте форму и попробуйте снова."
+    },
+    "toast": {
+      "added": "Платёж записан.",
+      "updated": "Платёж обновлён."
+    },
     "list": {
       "title": "Платежи",
       "meta": {

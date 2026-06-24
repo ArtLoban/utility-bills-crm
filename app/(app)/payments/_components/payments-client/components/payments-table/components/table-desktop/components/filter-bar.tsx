@@ -1,5 +1,7 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
 import { DateRangeFilter } from "@/components/date-range-filter";
 import { TableFilters } from "@/components/data-table/table-filters";
 import { SelectInput } from "@/components/select-input";
@@ -13,6 +15,7 @@ type TProps = {
 };
 
 export const FilterBar = ({ queryFilters }: TProps) => {
+  const t = useTranslations("payments.list.filters");
   const { form, values, hasActiveFilters, handleClear } = queryFilters;
   const { properties } = usePaymentsTable();
   const serviceOptions = useServiceOptions();
@@ -23,13 +26,13 @@ export const FilterBar = ({ queryFilters }: TProps) => {
       <SelectInput
         form={form}
         field={FiltersFormField.PROPERTY_ID}
-        label="Property"
+        label={t("property")}
         options={properties}
       />
       <SelectInput
         form={form}
         field={FiltersFormField.SERVICES}
-        label="Service"
+        label={t("service")}
         options={serviceOptions}
       />
     </TableFilters>

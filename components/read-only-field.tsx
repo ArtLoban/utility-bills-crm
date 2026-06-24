@@ -5,8 +5,6 @@ type TProps = {
   children: ReactNode;
 };
 
-// A locked field: same vertical rhythm as a real form field (FormItem),
-// but the value is static — rendered in a muted box instead of a control.
 export const ReadOnlyField = ({ label, children }: TProps) => (
   <div className="flex flex-col gap-1.5">
     <span className="text-sm leading-none font-normal">{label}</span>

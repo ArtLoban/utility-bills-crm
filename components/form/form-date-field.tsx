@@ -1,0 +1,51 @@
+"use client";
+
+import { type FieldValues } from "react-hook-form";
+
+import { FormControl } from "@/components/ui/form";
+import { DatePicker } from "@/components/date-picker";
+import { FormFieldShell } from "./form-field-shell";
+import { type TFormFieldBaseProps } from "./types";
+
+type TProps<T extends FieldValues> = TFormFieldBaseProps<T> & {
+  min?: string;
+  max?: string;
+  disabled?: boolean;
+  placeholder?: string;
+};
+
+export const FormDateField = <T extends FieldValues>({
+  control,
+  name,
+  label,
+  description,
+  className,
+  required,
+  min,
+  max,
+  disabled,
+  placeholder,
+}: TProps<T>) => (
+  <FormFieldShell
+    control={control}
+    name={name}
+    label={label}
+    description={description}
+    className={className}
+    required={required}
+  >
+    {(field) => (
+      <FormControl aria-required={required || undefined}>
+        <DatePicker
+          value={field.value ?? null}
+          onChange={field.onChange}
+          min={min}
+          max={max}
+          disabled={disabled}
+          placeholder={placeholder}
+          fullWidth
+        />
+      </FormControl>
+    )}
+  </FormFieldShell>
+);

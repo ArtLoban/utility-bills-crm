@@ -1,30 +1,24 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useForm, useWatch } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
+import { useZodForm } from "@/lib/forms/use-zod-form";
 import { getServiceLabel } from "@/lib/constants/service-colors";
 import { getServiceBalanceAction } from "@/features/ledger/actions";
+import { useActionErrorHandler } from "@/lib/hooks/use-action-error-handler";
+import { ERROR_CODES } from "@/lib/errors";
+import { paymentFormSchema } from "@/features/payments/schema";
+import { PaymentFormField } from "@/features/payments/types";
+import { buildDefaultValues } from "@/features/payments/utils/build-default-values";
+import { recordPayment, editPayment } from "@/features/payments/actions";
 import type { TBalance } from "@/features/ledger/types";
 import type { PropertyId } from "@/lib/db/schema/properties";
+import type { PaymentId } from "@/lib/db/schema/payments";
+import type { TServiceId } from "@/lib/db/schema/services";
 import type { TServiceOption } from "@/lib/db/access/payments";
 import type { TPaymentGlobalRow } from "@/features/payments/types";
-import { paymentSchema } from "../schema";
-import type { TPaymentFormValues } from "../types";
-import { recordPayment, editPayment } from "../actions";
-import { useActionErrorHandler } from "@/lib/hooks/use-action-error-handler";
-import type { PaymentId } from "@/lib/db/schema/payments";
-
-const todayIso = (): string => new Date().toISOString().slice(0, 10);
-
-const makeDefaultValues = (payment?: TPaymentGlobalRow): TPaymentFormValues => ({
-  serviceId: payment?.payment.serviceId ?? "",
-  paidAt: payment?.payment.paidAt ?? todayIso(),
-  amount: payment?.payment.amount ? Number(payment.payment.amount) : (0 as number),
-  notes: payment?.payment.notes ?? "",
-});
 
 type TParams = {
   payment?: TPaymentGlobalRow;
@@ -33,85 +27,89 @@ type TParams = {
   onClose: () => void;
 };
 
-export const usePaymentForm = ({ payment, propertyOptions, serviceOptions, onClose }: TParams) => {
-  // No onClose on error — payment modal stays open so the user can correct or acknowledge.
-  const handleActionError = useActionErrorHandler({});
+export const usePaymentForm = ({
+  payment,
+  propertyOptions = [],
+  serviceOptions = {},
+  onClose,
+}: TParams) => {
+  const t = useTranslations("payments");
+  const handleActionError = useActionErrorHandler({ onClose });
   const isEditMode = payment !== undefined;
 
-  const form = useForm<TPaymentFormValues>({
-    resolver: zodResolver(paymentSchema),
-    defaultValues: makeDefaultValues(payment),
+  const form = useZodForm({
+    schema: paymentFormSchema,
+    namespace: "payments",
+    defaultValues: buildDefaultValues(payment),
+    mode: "onTouched",
   });
 
-  const initialPropertyId = payment?.property.id ?? "";
-  const [selectedPropertyId, setSelectedPropertyId] = useState<string>(initialPropertyId);
-  const [currentDebt, setCurrentDebt] = useState<TBalance | null>(null);
+  const property = form.watch(PaymentFormField.PROPERTY);
+  const serviceId = form.watch(PaymentFormField.SERVICE_ID);
 
-  const serviceId = useWatch({ control: form.control, name: "serviceId" });
+  const availableServices = (serviceOptions[property as PropertyId] ?? []).map((service) => ({
+    id: service.id,
+    name: getServiceLabel(service.typeCode),
+  }));
+
+  const [debt, setDebt] = useState<{ key: TServiceId; value: TBalance } | null>(null);
 
   useEffect(() => {
     if (!serviceId) return;
     let cancelled = false;
-    getServiceBalanceAction(serviceId).then((result) => {
-      if (!cancelled) setCurrentDebt(result);
+    getServiceBalanceAction(serviceId as TServiceId).then((result) => {
+      if (!cancelled && result)
+        setDebt({
+          key: serviceId as TServiceId,
+          value: result,
+        });
     });
     return () => {
       cancelled = true;
     };
   }, [serviceId]);
 
-  const filteredServices: Array<{ id: string; name: string }> = selectedPropertyId
-    ? (serviceOptions?.[selectedPropertyId as PropertyId] ?? []).map((s) => ({
-        id: s.id,
-        name: getServiceLabel(s.typeCode),
-      }))
-    : [];
+  const currentDebt = debt?.key === serviceId ? debt.value : null;
 
-  const propertyList = propertyOptions ?? [];
-
-  const onPropertyChange = (id: string) => {
-    setSelectedPropertyId(id);
-    form.setValue("serviceId", "", { shouldDirty: true, shouldValidate: false });
-    setCurrentDebt(null);
-  };
+  const resetService = () => form.setValue(PaymentFormField.SERVICE_ID, "");
 
   const handleSave = form.handleSubmit(async (data) => {
-    if (isEditMode) {
-      const result = await editPayment(payment.payment.id as PaymentId, {
-        paidAt: data.paidAt,
-        amount: data.amount,
-        notes: data.notes,
-      });
-      if (!result.ok) {
-        handleActionError(result.error);
+    const response = isEditMode
+      ? await editPayment(payment.payment.id as PaymentId, {
+          paidAt: data.paidAt,
+          amount: Number(data.amount),
+          notes: data.notes,
+        })
+      : await recordPayment({
+          serviceId: data.serviceId as TServiceId,
+          paidAt: data.paidAt,
+          amount: Number(data.amount),
+          notes: data.notes,
+        });
+
+    if (!response.ok) {
+      if (response.error.code === ERROR_CODES.VALIDATION) {
+        form.setError("root", { message: t("modal.formError") });
         return;
       }
-      toast.success("Payment updated");
-    } else {
-      const result = await recordPayment({
-        serviceId: data.serviceId,
-        paidAt: data.paidAt,
-        amount: data.amount,
-        notes: data.notes,
-      });
-      if (!result.ok) {
-        handleActionError(result.error);
-        return;
-      }
-      toast.success("Payment recorded");
+      handleActionError(response.error);
+      return;
     }
+
+    toast.success(t(isEditMode ? "toast.updated" : "toast.added"));
     onClose();
   });
 
   return {
     form,
-    isSaving: form.formState.isSubmitting,
-    properties: propertyList,
-    filteredServices,
-    selectedPropertyId,
-    onPropertyChange,
     handleSave,
+    isSaving: form.formState.isSubmitting,
     isEditMode,
+    properties: propertyOptions,
+    availableServices,
     currentDebt,
+    resetService,
+    lockedPropertyName: payment?.property.name,
+    lockedServiceLabel: payment ? getServiceLabel(payment.serviceTypeCode) : undefined,
   };
 };

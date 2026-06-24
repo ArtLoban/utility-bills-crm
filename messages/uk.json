@@ -257,6 +257,39 @@
     }
   },
   "payments": {
+    "fields": {
+      "property": { "label": "Об'єкт", "placeholder": "Виберіть об'єкт" },
+      "service": {
+        "label": "Послуга",
+        "placeholder": "Виберіть послугу",
+        "placeholderNoProperty": "Спочатку виберіть об'єкт"
+      },
+      "paidAt": { "label": "Дата" },
+      "amount": {
+        "label": "Сума",
+        "placeholder": "напр. 680",
+        "currentDebt": "Поточний борг: {amount}"
+      },
+      "notes": { "label": "Примітки", "placeholder": "Будь-які нотатки…" }
+    },
+    "validation": {
+      "property": { "required": "Об'єкт обов'язковий" },
+      "service": { "required": "Послуга обов'язкова" },
+      "date": { "invalid": "Некоректна дата" },
+      "amount": { "required": "Сума обов'язкова", "invalid": "Введіть коректну суму" },
+      "notes": { "tooLong": "Примітки надто довгі (макс. 1000 символів)" }
+    },
+    "modal": {
+      "add": { "title": "Записати платіж", "submit": "Записати платіж" },
+      "edit": { "title": "Редагувати платіж", "submit": "Зберегти" },
+      "cancel": "Скасувати",
+      "saving": "Збереження…",
+      "formError": "Перевірте форму та спробуйте ще раз."
+    },
+    "toast": {
+      "added": "Платіж записано.",
+      "updated": "Платіж оновлено."
+    },
     "list": {
       "title": "Платежі",
       "meta": {

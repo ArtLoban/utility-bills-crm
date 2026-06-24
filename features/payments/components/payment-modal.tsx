@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 import { Modal } from "@/components/modal";
 import type { PropertyId } from "@/lib/db/schema/properties";
@@ -17,36 +18,41 @@ type TProps = {
 
 export const PaymentModal = ({ payment, propertyOptions, serviceOptions }: TProps) => {
   const router = useRouter();
+  const t = useTranslations("payments");
   const onClose = () => router.back();
 
   const {
     form,
-    isSaving,
-    properties,
-    filteredServices,
-    selectedPropertyId,
-    onPropertyChange,
     handleSave,
+    isSaving,
     isEditMode,
+    properties,
+    availableServices,
     currentDebt,
+    resetService,
+    lockedPropertyName,
+    lockedServiceLabel,
   } = usePaymentForm({ payment, propertyOptions, serviceOptions, onClose });
 
   return (
     <Modal
       open={true}
       onOpenChange={(open) => !open && onClose()}
-      title={isEditMode ? "Edit Payment" : "Record Payment"}
-      confirmLabel={isEditMode ? "Update" : "Record Payment"}
+      title={t(isEditMode ? "modal.edit.title" : "modal.add.title")}
+      confirmLabel={t(isEditMode ? "modal.edit.submit" : "modal.add.submit")}
+      cancelLabel={t("modal.cancel")}
       onConfirm={handleSave}
       isSaving={isSaving}
     >
       <PaymentForm
         form={form}
+        isEditMode={isEditMode}
         properties={properties}
-        services={filteredServices}
-        selectedPropertyId={selectedPropertyId}
-        onPropertyChange={onPropertyChange}
+        availableServices={availableServices}
         currentDebt={currentDebt}
+        onPropertyChange={resetService}
+        lockedPropertyName={lockedPropertyName}
+        lockedServiceLabel={lockedServiceLabel}
       />
     </Modal>
   );

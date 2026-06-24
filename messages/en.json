@@ -394,6 +394,39 @@
     }
   },
   "payments": {
+    "fields": {
+      "property": { "label": "Property", "placeholder": "Select property" },
+      "service": {
+        "label": "Service",
+        "placeholder": "Select service",
+        "placeholderNoProperty": "Select property first"
+      },
+      "paidAt": { "label": "Date" },
+      "amount": {
+        "label": "Amount",
+        "placeholder": "e.g. 680",
+        "currentDebt": "Current debt: {amount}"
+      },
+      "notes": { "label": "Notes", "placeholder": "Any remarks…" }
+    },
+    "validation": {
+      "property": { "required": "Property is required" },
+      "service": { "required": "Service is required" },
+      "date": { "invalid": "Invalid date" },
+      "amount": { "required": "Amount is required", "invalid": "Enter a valid amount" },
+      "notes": { "tooLong": "Notes are too long (max 1000 characters)" }
+    },
+    "modal": {
+      "add": { "title": "Record Payment", "submit": "Record Payment" },
+      "edit": { "title": "Edit Payment", "submit": "Update" },
+      "cancel": "Cancel",
+      "saving": "Saving…",
+      "formError": "Please check the form and try again."
+    },
+    "toast": {
+      "added": "Payment recorded.",
+      "updated": "Payment updated."
+    },
     "list": {
       "title": "Payments",
       "meta": {
