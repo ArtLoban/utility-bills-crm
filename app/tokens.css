@@ -128,6 +128,7 @@
     /* Domain: type card (unselected state — property type selector) */
     --type-card-bg: var(--neutral-0);
     --type-card-border: var(--neutral-200);
+    --type-card-hover-bg: var(--neutral-100);
 
     /* Form: filled-field tint (filled inputs, selected type cards) */
     --field-tint-bg: var(--purple-50);
@@ -196,6 +197,7 @@
 
     --type-card-bg: var(--neutral-900);
     --type-card-border: var(--neutral-700); /* #3f3f46 ≈ oklch(0.371 0 0) */
+    --type-card-hover-bg: var(--neutral-800);
 
     /* Form: filled-field tint — semi-transparent overlay on dark backgrounds */
     --field-tint-bg: color-mix(in oklch, var(--purple-500) 16%, transparent);

@@ -1,8 +1,11 @@
 "use client";
 
+import { type KeyboardEvent, useRef } from "react";
 import { useTranslations } from "next-intl";
+
 import type { TPropertyType } from "@/lib/db/schema/properties";
 import { PROPERTY_TYPE_OPTIONS } from "@/features/properties/property-type";
+import { PropertyTypeCard } from "./property-type-card";
 
 type TProps = {
   value: TPropertyType | undefined;
@@ -11,35 +14,55 @@ type TProps = {
 
 export const PropertyTypeSelector = ({ value, onChange }: TProps) => {
   const t = useTranslations("properties");
+  const cardsRef = useRef<(HTMLButtonElement | null)[]>([]);
+
+  const selectedIndex = PROPERTY_TYPE_OPTIONS.findIndex((option) => option.value === value);
+  const tabbableIndex = selectedIndex === -1 ? 0 : selectedIndex;
+
+  const moveTo = (index: number) => {
+    const count = PROPERTY_TYPE_OPTIONS.length;
+    const nextIndex = (index + count) % count;
+    const nextOption = PROPERTY_TYPE_OPTIONS[nextIndex];
+    if (!nextOption) return;
+    onChange(nextOption.value);
+    cardsRef.current[nextIndex]?.focus();
+  };
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLButtonElement>, index: number) => {
+    switch (event.key) {
+      case "ArrowRight":
+      case "ArrowDown":
+        event.preventDefault();
+        moveTo(index + 1);
+        break;
+      case "ArrowLeft":
+      case "ArrowUp":
+        event.preventDefault();
+        moveTo(index - 1);
+        break;
+    }
+  };
 
   return (
-    <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-      {PROPERTY_TYPE_OPTIONS.map(({ value: optionValue, Icon }) => {
-        const isSelected = value === optionValue;
-        return (
-          <button
-            key={optionValue}
-            type="button"
-            onClick={() => onChange(optionValue)}
-            className="flex cursor-pointer flex-col items-center gap-1.5 rounded-lg px-2 py-2.5 transition-[border-color,background-color] duration-150"
-            style={{
-              border: `1px solid ${isSelected ? "var(--field-tint-border)" : "var(--type-card-border)"}`,
-              background: isSelected ? "var(--field-tint-bg)" : "var(--type-card-bg)",
-            }}
-          >
-            <Icon
-              size={20}
-              style={{ color: isSelected ? "var(--field-tint-fg)" : "var(--muted-foreground)" }}
-            />
-            <span
-              className={isSelected ? "text-xs font-medium" : "text-xs font-normal"}
-              style={{ color: isSelected ? "var(--field-tint-fg)" : "var(--muted-foreground)" }}
-            >
-              {t(`type.${optionValue}`)}
-            </span>
-          </button>
-        );
-      })}
+    <div
+      role="radiogroup"
+      aria-label={t("fields.type.label")}
+      className="grid grid-cols-2 gap-2 sm:grid-cols-4"
+    >
+      {PROPERTY_TYPE_OPTIONS.map(({ value: optionValue, Icon }, index) => (
+        <PropertyTypeCard
+          key={optionValue}
+          ref={(element) => {
+            cardsRef.current[index] = element;
+          }}
+          label={t(`type.${optionValue}`)}
+          Icon={Icon}
+          isSelected={value === optionValue}
+          tabIndex={index === tabbableIndex ? 0 : -1}
+          onSelect={() => onChange(optionValue)}
+          onKeyDown={(event) => handleKeyDown(event, index)}
+        />
+      ))}
     </div>
   );
 };
