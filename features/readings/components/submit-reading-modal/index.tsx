@@ -179,7 +179,6 @@ const SubmitReadingModal = ({
                   value={form.valueT1}
                   onChange={(e) => set("valueT1")(e.target.value)}
                   placeholder="e.g. 12650"
-                  autoFocus
                   className="h-9"
                   style={getValueInputStyle(t1Filled, warningFlags.t1)}
                 />
@@ -224,7 +223,6 @@ const SubmitReadingModal = ({
                     value={form.valueT1}
                     onChange={(e) => set("valueT1")(e.target.value)}
                     placeholder="e.g. 8210"
-                    autoFocus
                     className="h-9"
                     style={getValueInputStyle(t1Filled, warningFlags.t1)}
                   />

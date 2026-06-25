@@ -180,7 +180,6 @@ const ReplaceMeterModal = ({ meter }: TProps) => {
               onChange={(e) => set("serialNumber")(e.target.value)}
               placeholder="e.g. NIK-67890"
               className="h-9"
-              autoFocus
             />
           </div>
 

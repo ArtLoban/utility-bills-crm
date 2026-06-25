@@ -105,7 +105,6 @@ export const DatePicker = ({
           startMonth={navStart}
           endMonth={navEnd}
           locale={dateFnsLocale}
-          autoFocus
         />
       </PopoverContent>
     </Popover>

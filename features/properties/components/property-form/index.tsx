@@ -26,7 +26,6 @@ export const PropertyForm = ({ control }: TProps) => {
         label={t("name.label")}
         placeholder={t("name.placeholder")}
         maxLength={PROPERTY_LIMITS.name}
-        autoFocus
       />
 
       <FormField

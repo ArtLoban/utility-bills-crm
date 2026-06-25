@@ -31,7 +31,6 @@ export const EditServiceFormContent = ({ serviceId, initialNotes }: TProps) => {
           placeholder="Any notes about this service…"
           maxLength={SERVICE_LIMITS.notes}
           rows={4}
-          autoFocus
         />
       </FormField>
 
