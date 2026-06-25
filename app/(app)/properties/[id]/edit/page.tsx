@@ -28,9 +28,7 @@ export default async function EditPropertyPage({ params }: TProps) {
         { label: t("modal.edit.title") },
       ]}
     >
-      <div className="max-w-2xl">
-        <PropertyFormContent property={property} />
-      </div>
+      <PropertyFormContent property={property} />
     </PageContainer>
   );
 }

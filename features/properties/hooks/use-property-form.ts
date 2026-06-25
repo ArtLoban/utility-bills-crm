@@ -9,7 +9,7 @@ import { createProperty, editProperty } from "@/features/properties/actions";
 import { useActionErrorHandler } from "@/lib/hooks/use-action-error-handler";
 import { ERROR_CODES } from "@/lib/errors";
 import type { TPropertyDetail } from "@/app/(app)/properties/[id]/_data/queries";
-import { buildDefaultValues } from "../utils/build-default-values";
+import { buildDefaultValues } from "@/features/properties/utils/build-default-values";
 
 type TParams = {
   property?: TPropertyDetail;

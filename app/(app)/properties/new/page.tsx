@@ -15,9 +15,7 @@ export default async function NewPropertyPage() {
         { label: t("modal.add.title") },
       ]}
     >
-      <div className="max-w-2xl">
-        <PropertyFormContent />
-      </div>
+      <PropertyFormContent />
     </PageContainer>
   );
 }

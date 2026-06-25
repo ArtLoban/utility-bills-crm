@@ -4,6 +4,7 @@ import { type ReactNode } from "react";
 import { type ControllerRenderProps, type FieldPath, type FieldValues } from "react-hook-form";
 
 import { FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { RequiredMarker } from "./required-marker";
 import { type TFormFieldBaseProps } from "./types";
 
 type TProps<T extends FieldValues> = TFormFieldBaseProps<T> & {
@@ -24,11 +25,7 @@ export const FormFieldShell = <T extends FieldValues>({
   const labelNode = label ? (
     <FormLabel>
       {label}
-      {required ? (
-        <span aria-hidden="true" className="text-destructive -ml-1">
-          *
-        </span>
-      ) : null}
+      {required ? <RequiredMarker /> : null}
     </FormLabel>
   ) : null;
 
