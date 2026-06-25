@@ -28,6 +28,7 @@ import { readings } from "../schema/readings";
 import { bills } from "../schema/bills";
 import { payments } from "../schema/payments";
 import { DEMO_EMAIL, FAMILY_DEMO_EMAIL } from "@/lib/auth/constants";
+import { toIsoDate } from "@/lib/format/date";
 
 // ---------------------------------------------------------------------------
 // DB setup — module level so TTx can be derived via typeof db
@@ -62,9 +63,6 @@ const reading28 = (date: Date): Date =>
 
 const pay5next = (date: Date): Date =>
   new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth() + 1, 5));
-
-// date columns (bills.periodStart/periodEnd, payments.paidAt) require YYYY-MM-DD strings
-const toDateStr = (date: Date): string => date.toISOString().slice(0, 10);
 
 const round2 = (n: number): string => n.toFixed(2);
 const round3 = (n: number): string => n.toFixed(3);
@@ -195,8 +193,8 @@ const billInsert = async (
   amount: string,
   createdBy: UserId,
 ): Promise<void> => {
-  const periodStart = toDateStr(firstOfMonth(month));
-  const periodEnd = toDateStr(lastOfMonth(month));
+  const periodStart = toIsoDate(firstOfMonth(month));
+  const periodEnd = toIsoDate(lastOfMonth(month));
   await tx.insert(bills).values({
     serviceId,
     periodStart,
@@ -214,7 +212,7 @@ const paymentInsert = async (
   amount: string,
   createdBy: UserId,
 ): Promise<void> => {
-  await tx.insert(payments).values({ serviceId, paidAt: toDateStr(paidAt), amount, createdBy });
+  await tx.insert(payments).values({ serviceId, paidAt: toIsoDate(paidAt), amount, createdBy });
 };
 
 type TSeedMeteredOpts = {

@@ -8,6 +8,9 @@ export const DISPLAY_DATE_PLACEHOLDER = "dd/mm/yyyy"; // empty-state hint matchi
 // Today's local date as a machine-value ISO string — the canonical default for date fields.
 export const todayIso = (): string => format(new Date(), ISO_DATE_FORMAT);
 
+export const toIsoDate = (date: Date): string =>
+  date.toISOString().slice(0, ISO_DATE_FORMAT.length);
+
 export const formatDisplayDate = (date: Date | null | undefined): string =>
   date ? format(new Date(date), DISPLAY_DATE_FORMAT) : "—";
 

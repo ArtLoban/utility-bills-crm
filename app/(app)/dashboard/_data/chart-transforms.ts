@@ -1,4 +1,5 @@
 import type { TMonthlyExpensesAggregate } from "@/features/ledger";
+import { toIsoDate } from "@/lib/format/date";
 
 export type TPieEntry = { code: string; total: number };
 export type TPivotRow = Record<string, string | number>;
@@ -36,7 +37,7 @@ export const resolveDefaultDateRange = (): { dateFrom: string; dateTo: string } 
   const dateFrom = new Date(dateTo);
   dateFrom.setUTCMonth(dateFrom.getUTCMonth() - 11);
   return {
-    dateFrom: dateFrom.toISOString().slice(0, 10),
-    dateTo: dateTo.toISOString().slice(0, 10),
+    dateFrom: toIsoDate(dateFrom),
+    dateTo: toIsoDate(dateTo),
   };
 };

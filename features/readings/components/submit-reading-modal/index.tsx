@@ -7,6 +7,7 @@ import { Dialog, DialogClose, DialogContent, DialogTitle } from "@/components/ui
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ACCENT, SUCCESS, TINT_BG, TINT_BORDER } from "@/lib/constants/ui-tokens";
+import { todayIso } from "@/lib/format/date";
 import type { TReading } from "@/lib/db/schema/readings";
 import type { TMeter } from "@/lib/db/schema/meters";
 import type { TServiceType } from "@/lib/db/schema/service-types";
@@ -167,7 +168,7 @@ const SubmitReadingModal = ({
                 value={form.readAt}
                 onChange={(e) => set("readAt")(e.target.value)}
                 className="h-9"
-                max={new Date().toISOString().slice(0, 10)}
+                max={todayIso()}
               />
             </div>
 

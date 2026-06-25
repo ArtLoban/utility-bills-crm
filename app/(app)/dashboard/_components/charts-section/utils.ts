@@ -1,4 +1,5 @@
 import { ROUTES } from "@/lib/routes";
+import { toIsoDate } from "@/lib/format/date";
 
 import type { TTooltipRow } from "./components/chart-tooltip-card";
 
@@ -30,7 +31,7 @@ export const lastDayOfMonth = (isoFirstOfMonth: string): string => {
   const [year, month] = isoFirstOfMonth.split("-").map(Number) as [number, number];
   // Day 0 of the next month = last day of the current month.
   const d = new Date(Date.UTC(year, month, 0)); // month is 1-based here (JS months are 0-based)
-  return d.toISOString().slice(0, 10);
+  return toIsoDate(d);
 };
 
 // Build a bills list URL pre-filtered by service code(s) and date range.

@@ -13,6 +13,7 @@ import { billByIdForUser } from "@/lib/db/access/bills";
 import { requirePropertyRole } from "@/lib/db/access/properties";
 import { appError, err, ok } from "@/lib/errors";
 import type { Result, TAppError } from "@/lib/errors";
+import { toIsoDate } from "@/lib/format/date";
 import { createBillSchema, updateBillSchema } from "./schema";
 import type { TCreateBillInput, TUpdateBillInput } from "./schema";
 
@@ -26,9 +27,9 @@ const expandMonth = (
   const firstDay = new Date(Date.UTC(year, mo - 1, 1));
   const lastDay = new Date(Date.UTC(year, mo, 0)); // day 0 of next month = last day of current
   return {
-    periodStart: firstDay.toISOString().slice(0, 10),
-    periodEnd: lastDay.toISOString().slice(0, 10),
-    periodMonth: firstDay.toISOString().slice(0, 10),
+    periodStart: toIsoDate(firstDay),
+    periodEnd: toIsoDate(lastDay),
+    periodMonth: toIsoDate(firstDay),
   };
 };
 

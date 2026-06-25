@@ -9,14 +9,13 @@ import { changeProvider } from "@/features/contracts/actions";
 import { changeProviderSchema } from "@/features/contracts/schema";
 import { useActionErrorHandler } from "@/lib/hooks/use-action-error-handler";
 import { ERROR_CODES } from "@/lib/errors";
+import { todayIso } from "@/lib/format/date";
 import type { TChangeProviderFormState } from "@/features/contracts/types";
 import type { TServiceId } from "@/lib/db/schema/services";
 
 type TParams = {
   serviceId: TServiceId;
 };
-
-const today = () => new Date().toISOString().slice(0, 10);
 
 export const useChangeProviderForm = ({ serviceId }: TParams) => {
   const t = useTranslations("contracts");
@@ -25,7 +24,7 @@ export const useChangeProviderForm = ({ serviceId }: TParams) => {
 
   const [form, setForm] = useState<TChangeProviderFormState>({
     providerId: "",
-    changeDate: today(),
+    changeDate: todayIso(),
     notes: "",
   });
   const [errors, setErrors] = useState<Partial<Record<keyof TChangeProviderFormState, string>>>({});

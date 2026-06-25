@@ -8,6 +8,7 @@ import type { TMeter } from "@/lib/db/schema/meters";
 import { createReading, updateReading } from "@/features/readings/actions";
 import { useActionErrorHandler } from "@/lib/hooks/use-action-error-handler";
 import { ERROR_CODES } from "@/lib/errors";
+import { todayIso, toIsoDate } from "@/lib/format/date";
 
 type TFormState = {
   readAt: string;
@@ -30,12 +31,6 @@ type TParams = {
   onClose: () => void;
 };
 
-const todayIso = (): string => {
-  const d = new Date();
-  d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
-  return d.toISOString().slice(0, 10);
-};
-
 const toDatetimeOffset = (dateStr: string): string => {
   // Convert YYYY-MM-DD to an ISO 8601 datetime with timezone offset.
   // We use local midnight to preserve the user's intent.
@@ -48,7 +43,7 @@ const toDatetimeOffset = (dateStr: string): string => {
 };
 
 const makeInitialState = (reading?: TReading): TFormState => ({
-  readAt: reading ? new Date(reading.readAt).toISOString().slice(0, 10) : todayIso(),
+  readAt: reading ? toIsoDate(new Date(reading.readAt)) : todayIso(),
   valueT1: reading ? String(reading.valueT1) : "",
   valueT2: reading?.valueT2 != null ? String(reading.valueT2) : "",
   valueT3: reading?.valueT3 != null ? String(reading.valueT3) : "",

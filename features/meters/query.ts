@@ -1,6 +1,7 @@
 import { and, asc, eq, isNull, lte } from "drizzle-orm";
 
 import { db } from "@/lib/db/client";
+import { toIsoDate } from "@/lib/format/date";
 import type { UserId } from "@/lib/db/schema/auth";
 import { meters } from "@/lib/db/schema/meters";
 import type { MeterId } from "@/lib/db/schema/meters";
@@ -36,14 +37,14 @@ const generateMonthAxis = (from: string, to: string): string[] => {
   const end = new Date(to.slice(0, 7) + "-01T00:00:00Z");
   const cur = new Date(start);
   while (cur <= end) {
-    months.push(cur.toISOString().slice(0, 10));
+    months.push(toIsoDate(cur));
     cur.setUTCMonth(cur.getUTCMonth() + 1);
   }
   return months;
 };
 
 const toMonthKey = (date: Date): string =>
-  new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), 1)).toISOString().slice(0, 10);
+  toIsoDate(new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), 1)));
 
 // --- Queries ---
 
