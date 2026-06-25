@@ -5,6 +5,9 @@ export const ISO_DATE_FORMAT = "yyyy-MM-dd"; // machine value: URLs, DB, form st
 export const DISPLAY_DATE_FORMAT = "dd/MM/yyyy"; // human display, e.g. "10/06/2026"
 export const DISPLAY_DATE_PLACEHOLDER = "dd/mm/yyyy"; // empty-state hint matching DISPLAY_DATE_FORMAT
 
+// Today's local date as a machine-value ISO string — the canonical default for date fields.
+export const todayIso = (): string => format(new Date(), ISO_DATE_FORMAT);
+
 export const formatDisplayDate = (date: Date | null | undefined): string =>
   date ? format(new Date(date), DISPLAY_DATE_FORMAT) : "—";
 
@@ -14,5 +17,6 @@ export const formatRelativeTime = (date: Date): string =>
 export const formatDateShort = (sortTs: number): string => {
   const s = sortTs.toString();
   const date = new Date(+s.slice(0, 4), +s.slice(4, 6) - 1, +s.slice(6, 8));
+
   return format(date, "MMM d, yyyy");
 };

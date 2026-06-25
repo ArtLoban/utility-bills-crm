@@ -5,6 +5,7 @@ import {
   getProvidersForContractPage,
 } from "@/app/(app)/properties/[id]/services/[sid]/_data/queries";
 import { CreateContractModal } from "@/features/contracts";
+import { PROPERTY_ROLES } from "@/lib/db/schema/properties";
 import type { TServiceId } from "@/lib/db/schema/services";
 
 type TProps = {
@@ -20,7 +21,7 @@ export default async function InterceptedNewContractPage({ params }: TProps) {
     getProvidersForContractPage(),
   ]);
 
-  if (!serviceResult.ok || serviceResult.value.role === "viewer") notFound();
+  if (!serviceResult.ok || serviceResult.value.role === PROPERTY_ROLES.VIEWER) notFound();
 
   return <CreateContractModal serviceId={serviceId} providers={providers} />;
 }

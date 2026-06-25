@@ -24,9 +24,9 @@ export type {
   TUpdateContractNotesInput,
 } from "./schema";
 
-export type { TCreateContractFormState, TChangeProviderFormState } from "./types";
+export type { TChangeProviderFormState } from "./types";
 
 export { CreateContractModal } from "./components/create-contract-modal";
-export { CreateContractFormContent } from "./components/create-contract-modal/create-contract-form-content";
+export { CreateContractFormContent } from "./components/create-contract-form-content";
 export { ChangeProviderModal } from "./components/change-provider-modal";
 export { ChangeProviderFormContent } from "./components/change-provider-modal/change-provider-form-content";

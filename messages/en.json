@@ -859,6 +859,9 @@
     "noProviders": {
       "message": "No providers yet.",
       "link": "Add a provider first."
+    },
+    "page": {
+      "addMeta": "Set up a new contract for this service."
     }
   },
   "services": {

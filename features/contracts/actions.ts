@@ -75,11 +75,7 @@ export const createContract = async (
     return ok(contract);
   } catch (error) {
     if (isExclusionViolation(error)) {
-      return err(
-        appError.validation(
-          "An active contract for this service already exists in the selected period",
-        ),
-      );
+      return err(appError.validation("validation.overlap"));
     }
     throw error;
   }
