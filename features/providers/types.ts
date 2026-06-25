@@ -1,6 +1,8 @@
-export type TFormState = {
-  name: string;
-  website: string;
-  phone: string;
-  notes: string;
-};
+export const ProviderFormField = {
+  NAME: "name",
+  WEBSITE: "website",
+  PHONE: "phone",
+  NOTES: "notes",
+} as const;
+
+export type TProviderFormField = (typeof ProviderFormField)[keyof typeof ProviderFormField];

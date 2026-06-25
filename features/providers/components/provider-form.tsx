@@ -1,67 +1,63 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { type UseFormReturn } from "react-hook-form";
 
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { FormField } from "@/components/form-field";
-import { PROVIDER_LIMITS } from "@/features/providers/schema";
-import type { TFormState } from "@/features/providers/types";
+import { Form } from "@/components/ui/form";
+import { FormFields } from "@/components/form/form-fields";
+import { FormTextField } from "@/components/form/form-text-field";
+import { FormTextareaField } from "@/components/form/form-textarea-field";
+import { PROVIDER_LIMITS, type TProviderInput } from "@/features/providers/schema";
+import { ProviderFormField } from "@/features/providers/types";
 
 type TProps = {
-  form: TFormState;
-  errors: Record<string, string>;
-  formError?: string | null;
-  set: (key: keyof TFormState) => (value: string) => void;
+  form: UseFormReturn<TProviderInput>;
 };
 
-export const ProviderForm = ({ form, errors, formError, set }: TProps) => {
-  const t = useTranslations("providers");
+export const ProviderForm = ({ form }: TProps) => {
+  const t = useTranslations("providers.fields");
+  const { control } = form;
+  const rootError = form.formState.errors.root?.message;
 
   return (
-    <div className="flex flex-col gap-4">
-      <FormField label={t("fields.name.label")} error={errors.name}>
-        <Input
-          autoFocus
-          value={form.name}
-          onChange={(e) => set("name")(e.target.value)}
-          placeholder={t("fields.name.placeholder")}
+    <Form {...form}>
+      <FormFields>
+        <FormTextField
+          control={control}
+          name={ProviderFormField.NAME}
+          label={t("name.label")}
+          placeholder={t("name.placeholder")}
           maxLength={PROVIDER_LIMITS.name}
-          className="h-9"
+          required
         />
-      </FormField>
 
-      <FormField label={t("fields.website.label")} optional error={errors.website}>
-        <Input
-          value={form.website}
-          onChange={(e) => set("website")(e.target.value)}
-          placeholder={t("fields.website.placeholder")}
+        <FormTextField
+          control={control}
+          name={ProviderFormField.WEBSITE}
+          label={t("website.label")}
+          placeholder={t("website.placeholder")}
           maxLength={PROVIDER_LIMITS.website}
-          className="h-9"
         />
-      </FormField>
 
-      <FormField label={t("fields.phone.label")} optional error={errors.phone}>
-        <Input
-          value={form.phone}
-          onChange={(e) => set("phone")(e.target.value)}
-          placeholder={t("fields.phone.placeholder")}
+        <FormTextField
+          control={control}
+          name={ProviderFormField.PHONE}
+          label={t("phone.label")}
+          placeholder={t("phone.placeholder")}
           maxLength={PROVIDER_LIMITS.phone}
-          className="h-9"
         />
-      </FormField>
 
-      <FormField label={t("fields.notes.label")} optional error={errors.notes}>
-        <Textarea
-          value={form.notes}
-          onChange={(e) => set("notes")(e.target.value)}
-          placeholder={t("fields.notes.placeholder")}
+        <FormTextareaField
+          control={control}
+          name={ProviderFormField.NOTES}
+          label={t("notes.label")}
+          placeholder={t("notes.placeholder")}
           maxLength={PROVIDER_LIMITS.notes}
           rows={3}
         />
-      </FormField>
 
-      {formError && <p className="text-destructive text-sm">{formError}</p>}
-    </div>
+        {rootError ? <p className="text-destructive text-sm">{rootError}</p> : null}
+      </FormFields>
+    </Form>
   );
 };

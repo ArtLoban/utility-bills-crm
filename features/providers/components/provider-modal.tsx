@@ -17,8 +17,7 @@ export const ProviderModal = ({ provider }: TProps) => {
   const t = useTranslations("providers");
   const onClose = () => router.back();
 
-  const { form, errors, formError, set, handleSave, isSaving, canSave, isEditMode } =
-    useProviderForm({ provider, onClose });
+  const { form, handleSave, isSaving, isEditMode } = useProviderForm({ provider, onClose });
 
   return (
     <Modal
@@ -26,11 +25,11 @@ export const ProviderModal = ({ provider }: TProps) => {
       onOpenChange={(open) => !open && onClose()}
       title={t(isEditMode ? "modal.edit.title" : "modal.add.title")}
       confirmLabel={t(isEditMode ? "modal.edit.submit" : "modal.add.submit")}
+      cancelLabel={t("modal.cancel")}
       onConfirm={handleSave}
       isSaving={isSaving}
-      canSave={canSave}
     >
-      <ProviderForm form={form} errors={errors} formError={formError} set={set} />
+      <ProviderForm form={form} />
     </Modal>
   );
 };

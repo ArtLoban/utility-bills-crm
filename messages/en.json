@@ -721,6 +721,14 @@
       "addButton": "Add provider",
       "subtitle": "{count, plural, one {1 provider} other {# providers}} · {inUse, plural, one {1 in use} other {# in use}}"
     },
+    "page": {
+      "new": {
+        "meta": "Create new provider"
+      },
+      "edit": {
+        "meta": "Edit provider details"
+      }
+    },
     "empty": {
       "title": "No providers yet",
       "body": "Add your utility service providers to use them in contracts."

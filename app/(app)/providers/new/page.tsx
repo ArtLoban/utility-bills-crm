@@ -14,7 +14,7 @@ export default async function NewProviderPage() {
         { label: t("list.title"), href: ROUTES.providers },
         { label: t("modal.add.title") },
       ]}
-      meta={<span className="text-sm text-zinc-500">Create new Provider</span>}
+      meta={<span className="text-muted-foreground text-sm">{t("page.new.meta")}</span>}
     >
       <ProviderFormContent />
     </PageContainer>

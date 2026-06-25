@@ -26,7 +26,7 @@ export default async function EditProviderPage({ params }: TProps) {
         { label: t("list.title"), href: ROUTES.providers },
         { label: t("modal.edit.title") },
       ]}
-      meta={<span className="text-sm text-zinc-500">Update the details below.</span>}
+      meta={<span className="text-muted-foreground text-sm">{t("page.edit.meta")}</span>}
     >
       <ProviderFormContent provider={provider} />
     </PageContainer>

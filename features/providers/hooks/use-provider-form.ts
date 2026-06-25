@@ -1,14 +1,14 @@
 "use client";
 
-import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
+import { useZodForm } from "@/lib/forms/use-zod-form";
 import { providerSchema } from "@/features/providers/schema";
 import { createProvider, editProvider } from "@/features/providers/actions";
+import { buildDefaultValues } from "@/features/providers/utils/build-default-values";
 import { useActionErrorHandler } from "@/lib/hooks/use-action-error-handler";
 import { ERROR_CODES } from "@/lib/errors";
-import type { TFormState } from "@/features/providers/types";
 import type { TProvider } from "@/lib/db/schema/providers";
 
 type TParams = {
@@ -16,67 +16,40 @@ type TParams = {
   onClose: () => void;
 };
 
-const makeInitialState = (provider?: TProvider): TFormState => ({
-  name: provider?.name ?? "",
-  website: provider?.website ?? "",
-  phone: provider?.phone ?? "",
-  notes: provider?.notes ?? "",
-});
-
 export const useProviderForm = ({ provider, onClose }: TParams) => {
   const t = useTranslations("providers");
   const handleActionError = useActionErrorHandler({ onClose });
-  const [form, setForm] = useState<TFormState>(() => makeInitialState(provider));
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [formError, setFormError] = useState<string | null>(null);
-  const [isSaving, setIsSaving] = useState(false);
-
-  const set = (key: keyof TFormState) => (value: string) => {
-    setForm((f) => ({ ...f, [key]: value }));
-    if (errors[key]) setErrors((e) => ({ ...e, [key]: "" }));
-    if (formError) setFormError(null);
-  };
-
   const isEditMode = provider !== undefined;
-  const canSave = form.name.trim() !== "";
 
-  const handleSave = async () => {
-    const result = providerSchema.safeParse(form);
-    if (!result.success) {
-      const fieldErrors: Record<string, string> = {};
-      result.error.issues.forEach((issue) => {
-        const field = issue.path[0] as string;
-        // providerSchema messages are relative keys within the "providers" namespace.
-        // Translate here so ProviderForm renders plain strings, not i18n keys.
-        if (!fieldErrors[field]) fieldErrors[field] = t(issue.message as Parameters<typeof t>[0]);
-      });
-      setErrors(fieldErrors);
+  const form = useZodForm({
+    schema: providerSchema,
+    namespace: "providers",
+    defaultValues: buildDefaultValues(provider),
+    mode: "onTouched",
+  });
+
+  const handleSave = form.handleSubmit(async (data) => {
+    const response = isEditMode
+      ? await editProvider(provider.id, data)
+      : await createProvider(data);
+
+    if (!response.ok) {
+      if (response.error.code === ERROR_CODES.VALIDATION) {
+        form.setError("root", { message: t("modal.formError") });
+        return;
+      }
+      handleActionError(response.error);
       return;
     }
 
-    setIsSaving(true);
-    try {
-      const response = isEditMode
-        ? await editProvider(provider.id, result.data)
-        : await createProvider(result.data);
+    toast.success(t(isEditMode ? "toast.updated" : "toast.added"));
+    onClose();
+  });
 
-      if (!response.ok) {
-        // ValidationError → inline per decision #105 (form validation never a toast).
-        // DemoModeError / NotFoundError → handled by shared error handler.
-        if (response.error.code === ERROR_CODES.VALIDATION) {
-          setFormError(t("modal.formError"));
-        } else {
-          handleActionError(response.error);
-        }
-        return;
-      }
-
-      toast.success(t(isEditMode ? "toast.updated" : "toast.added"));
-      onClose();
-    } finally {
-      setIsSaving(false);
-    }
+  return {
+    form,
+    handleSave,
+    isSaving: form.formState.isSubmitting,
+    isEditMode,
   };
-
-  return { form, errors, formError, set, handleSave, isSaving, canSave, isEditMode };
 };
