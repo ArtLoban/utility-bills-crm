@@ -1,79 +1,83 @@
 "use client";
 
-import { subDays } from "date-fns";
 import { useTranslations } from "next-intl";
+import { type UseFormReturn, useWatch } from "react-hook-form";
 
-import { cn } from "@/lib/utils";
-import { formatDisplayDate } from "@/lib/format/date";
 import {
-  FIELD_HINT_LABEL_CLASS,
-  FIELD_INPUT_CLASS,
-  FIELD_LABEL_CLASS,
-  FIELD_TEXTAREA_CLASS,
-} from "../constants";
-import { Callout } from "./callout";
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { FormFields } from "@/components/form/form-fields";
+import { FormDateField } from "@/components/form/form-date-field";
+import { FormTextareaField } from "@/components/form/form-textarea-field";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  PAYMENT_DETAILS_LIMITS,
+  type TChangePaymentDetailsForm,
+} from "@/features/payment-details/schema";
+import { UPDATE_CONTRACT_NAMESPACE } from "../constants";
+import { PaymentFormField } from "../types";
+import { ChangeCallout } from "./change-callout";
 
-type TPaymentDetailsFormFields = {
-  details: string;
-  setDetails: (v: string) => void;
-  changeDate: string;
-  setChangeDate: (v: string) => void;
-  notes: string;
-  setNotes: (v: string) => void;
+type TProps = {
+  form: UseFormReturn<TChangePaymentDetailsForm>;
 };
 
-type TProps = { fields: TPaymentDetailsFormFields };
-
-export const PaymentDetailsForm = ({ fields }: TProps) => {
-  const t = useTranslations("services.detail.updateContract");
-  const closing = fields.changeDate
-    ? formatDisplayDate(subDays(new Date(fields.changeDate), 1))
-    : null;
-  const opening = fields.changeDate ? formatDisplayDate(new Date(fields.changeDate)) : null;
+export const PaymentDetailsForm = ({ form }: TProps) => {
+  const t = useTranslations(UPDATE_CONTRACT_NAMESPACE);
+  const { control, formState } = form;
+  const rootError = formState.errors.root?.message;
+  const changeDate = useWatch({ control, name: PaymentFormField.CHANGE_DATE });
 
   return (
-    <div className="flex flex-col gap-4">
-      <div>
-        <label className={FIELD_LABEL_CLASS}>{t("fields.effectiveFrom")}</label>
-        <input
-          type="date"
-          value={fields.changeDate}
-          onChange={(e) => fields.setChangeDate(e.target.value)}
-          className={FIELD_INPUT_CLASS}
+    <Form {...form}>
+      <FormFields>
+        <FormDateField
+          control={control}
+          name={PaymentFormField.CHANGE_DATE}
+          label={t("fields.effectiveFrom")}
+          required
         />
-      </div>
 
-      <div>
-        <label className={FIELD_LABEL_CLASS}>{t("fields.newPayment")}</label>
-        <p className="text-muted-foreground mb-2 text-xs">{t("fields.paymentHint")}</p>
-        <textarea
-          value={fields.details}
-          onChange={(e) => fields.setDetails(e.target.value)}
-          rows={5}
-          placeholder={t("fields.paymentPlaceholder")}
-          className={cn(FIELD_TEXTAREA_CLASS, "resize-y font-mono leading-relaxed")}
+        <FormField
+          control={control}
+          name={PaymentFormField.DETAILS}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>{t("fields.newPayment")}</FormLabel>
+              <FormDescription>{t("fields.paymentHint")}</FormDescription>
+              <FormControl>
+                <Textarea
+                  {...field}
+                  value={field.value ?? ""}
+                  rows={5}
+                  placeholder={t("fields.paymentPlaceholder")}
+                  maxLength={PAYMENT_DETAILS_LIMITS.details}
+                  className="resize-y font-mono leading-relaxed"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-      </div>
 
-      <div>
-        <label className={FIELD_HINT_LABEL_CLASS}>{t("fields.notesOptional")}</label>
-        <textarea
-          value={fields.notes}
-          onChange={(e) => fields.setNotes(e.target.value)}
+        <FormTextareaField
+          control={control}
+          name={PaymentFormField.NOTES}
+          label={t("fields.notesOptional")}
+          maxLength={PAYMENT_DETAILS_LIMITS.notes}
           rows={2}
-          className={cn(FIELD_TEXTAREA_CLASS, "resize-none")}
         />
-      </div>
 
-      {closing && opening && (
-        <Callout>
-          {t.rich("callout.payment", {
-            closing,
-            opening,
-            b: (chunks) => <strong>{chunks}</strong>,
-          })}
-        </Callout>
-      )}
-    </div>
+        <ChangeCallout changeDate={changeDate} messageKey="callout.payment" />
+
+        {rootError ? <p className="text-destructive text-sm">{rootError}</p> : null}
+      </FormFields>
+    </Form>
   );
 };

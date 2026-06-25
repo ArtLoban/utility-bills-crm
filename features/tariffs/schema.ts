@@ -9,6 +9,35 @@ export const TARIFF_LIMITS = {
 // Numeric rate/amount validation: must be a valid positive/non-negative decimal string.
 const rateField = z.string().trim().optional().or(z.literal(""));
 const fixedAmountField = z.string().trim().optional().or(z.literal(""));
+const notesField = z
+  .string()
+  .trim()
+  .max(TARIFF_LIMITS.notes, "validation.notes.tooLong")
+  .optional()
+  .or(z.literal(""));
+
+// Exactly one of {rates, fixed} must be supplied. Shared by create/change/form schemas.
+const refineRateXorFixed = (
+  data: { rateT1?: string; fixedAmount?: string },
+  ctx: z.RefinementCtx,
+): void => {
+  const hasRates = !!data.rateT1;
+  const hasFixed = !!data.fixedAmount;
+  if (!hasRates && !hasFixed) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["rateT1"],
+      message: "validation.rateOrFixedRequired",
+    });
+  }
+  if (hasRates && hasFixed) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["fixedAmount"],
+      message: "validation.rateAndFixedMutuallyExclusive",
+    });
+  }
+};
 
 export const createTariffSchema = z
   .object({
@@ -21,65 +50,26 @@ export const createTariffSchema = z
     rateT3: rateField,
     // Fixed shape
     fixedAmount: fixedAmountField,
-    notes: z
-      .string()
-      .trim()
-      .max(TARIFF_LIMITS.notes, "validation.notes.tooLong")
-      .optional()
-      .or(z.literal("")),
+    notes: notesField,
   })
-  .superRefine((data, ctx) => {
-    const hasRates = !!data.rateT1;
-    const hasFixed = !!data.fixedAmount;
-    if (!hasRates && !hasFixed) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ["rateT1"],
-        message: "validation.rateOrFixedRequired",
-      });
-    }
-    if (hasRates && hasFixed) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ["fixedAmount"],
-        message: "validation.rateAndFixedMutuallyExclusive",
-      });
-    }
-  });
+  .superRefine(refineRateXorFixed);
+
+// Fields shared between the action schema (with contractId) and the client form
+// schema (without it). The form schema drops contractId — injected at submit.
+const changeTariffFields = {
+  changeDate: z.string().min(1, "validation.changeDate.required"),
+  rateT1: rateField,
+  rateT2: rateField,
+  rateT3: rateField,
+  fixedAmount: fixedAmountField,
+  notes: notesField,
+};
 
 export const changeTariffSchema = z
-  .object({
-    contractId: z.string().uuid(),
-    changeDate: z.string().min(1, "validation.changeDate.required"),
-    rateT1: rateField,
-    rateT2: rateField,
-    rateT3: rateField,
-    fixedAmount: fixedAmountField,
-    notes: z
-      .string()
-      .trim()
-      .max(TARIFF_LIMITS.notes, "validation.notes.tooLong")
-      .optional()
-      .or(z.literal("")),
-  })
-  .superRefine((data, ctx) => {
-    const hasRates = !!data.rateT1;
-    const hasFixed = !!data.fixedAmount;
-    if (!hasRates && !hasFixed) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ["rateT1"],
-        message: "validation.rateOrFixedRequired",
-      });
-    }
-    if (hasRates && hasFixed) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ["fixedAmount"],
-        message: "validation.rateAndFixedMutuallyExclusive",
-      });
-    }
-  });
+  .object({ contractId: z.string().uuid(), ...changeTariffFields })
+  .superRefine(refineRateXorFixed);
+
+export const changeTariffFormSchema = z.object(changeTariffFields).superRefine(refineRateXorFixed);
 
 export const updateTariffNotesSchema = z.object({
   notes: z
@@ -92,4 +82,5 @@ export const updateTariffNotesSchema = z.object({
 
 export type TCreateTariffInput = z.infer<typeof createTariffSchema>;
 export type TChangeTariffInput = z.infer<typeof changeTariffSchema>;
+export type TChangeTariffForm = z.infer<typeof changeTariffFormSchema>;
 export type TUpdateTariffNotesInput = z.infer<typeof updateTariffNotesSchema>;

@@ -936,6 +936,9 @@
         "apply": "Apply change",
         "goToProvider": "Go to change provider",
         "saving": "Saving…",
+        "toast": {
+          "saved": "Change applied"
+        },
         "options": {
           "tariffLabel": "Tariff changed",
           "tariffHelper": "New rate or fixed amount applied",
@@ -964,6 +967,47 @@
           "tariff": "The current tariff will be closed on <b>{closing}</b>. New tariff applies from <b>{opening}</b>.",
           "account": "The old account number will be closed on <b>{closing}</b>. New number applies from <b>{opening}</b>.",
           "payment": "Old payment details will be closed on <b>{closing}</b>. New details apply from <b>{opening}</b>."
+        },
+        "validation": {
+          "changeDate": {
+            "required": "Change date is required"
+          },
+          "notes": {
+            "tooLong": "Notes are too long (max 1000 characters)"
+          },
+          "value": {
+            "required": "Account number is required",
+            "tooLong": "Account number is too long (max 200 characters)"
+          },
+          "details": {
+            "required": "Payment details are required",
+            "tooLong": "Payment details are too long (max 2000 characters)"
+          },
+          "overlap": "Another record already covers this period.",
+          "rateOrFixedRequired": "Enter a rate or a fixed amount",
+          "rateAndFixedMutuallyExclusive": "Enter either rates or a fixed amount, not both",
+          "tariff": {
+            "noCurrentTariff": "There is no current tariff to change.",
+            "meteredRequiresRates": "This metered service requires at least one rate.",
+            "meteredForbidsFixed": "A metered service cannot have a fixed amount.",
+            "fixedRequiresAmount": "This fixed service requires a monthly amount.",
+            "fixedForbidsRates": "A fixed service cannot have per-unit rates.",
+            "beforeContractStart": "The change date must be after the contract start date.",
+            "afterContractEnd": "The change date must be before the contract end date.",
+            "exceedsContractEnd": "The tariff cannot extend past the contract end date."
+          },
+          "accountNumber": {
+            "noCurrent": "There is no current account number to change.",
+            "beforeContractStart": "The change date must be after the contract start date.",
+            "afterContractEnd": "The change date must be before the contract end date.",
+            "exceedsContractEnd": "The account number cannot extend past the contract end date."
+          },
+          "paymentDetails": {
+            "noCurrent": "There are no current payment details to change.",
+            "beforeContractStart": "The change date must be after the contract start date.",
+            "afterContractEnd": "The change date must be before the contract end date.",
+            "exceedsContractEnd": "The payment details cannot extend past the contract end date."
+          }
         }
       },
       "history": {

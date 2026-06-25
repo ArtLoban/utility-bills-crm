@@ -47,6 +47,10 @@ export const updatePaymentDetailsNotesSchema = z.object({
     .or(z.literal("")),
 });
 
+// Client form schema — drops contractId (injected at submit).
+export const changePaymentDetailsFormSchema = changePaymentDetailsSchema.omit({ contractId: true });
+
 export type TCreatePaymentDetailsInput = z.infer<typeof createPaymentDetailsSchema>;
 export type TChangePaymentDetailsInput = z.infer<typeof changePaymentDetailsSchema>;
+export type TChangePaymentDetailsForm = z.infer<typeof changePaymentDetailsFormSchema>;
 export type TUpdatePaymentDetailsNotesInput = z.infer<typeof updatePaymentDetailsNotesSchema>;

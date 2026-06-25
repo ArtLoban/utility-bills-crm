@@ -1,155 +1,144 @@
 "use client";
 
-import { subDays } from "date-fns";
 import { useTranslations } from "next-intl";
+import { type UseFormReturn, useWatch } from "react-hook-form";
 
-import { cn } from "@/lib/utils";
-import { formatDisplayDate } from "@/lib/format/date";
-import { UNIT_LABELS, ZONE_COLOR_VARS } from "@/lib/constants/zones";
-import type { TServiceType } from "@/lib/db/schema/service-types";
 import {
-  FIELD_HINT_LABEL_CLASS,
-  FIELD_INPUT_CLASS,
-  FIELD_LABEL_CLASS,
-  FIELD_TEXTAREA_CLASS,
-} from "../constants";
-import { Callout } from "./callout";
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { FormFields } from "@/components/form/form-fields";
+import { FormDateField } from "@/components/form/form-date-field";
+import { FormTextareaField } from "@/components/form/form-textarea-field";
+import { Input } from "@/components/ui/input";
+import { UNIT_LABELS, ZONE_COLOR_VARS } from "@/lib/constants/zones";
+import { TARIFF_LIMITS, type TChangeTariffForm } from "@/features/tariffs/schema";
+import type { TServiceType } from "@/lib/db/schema/service-types";
+import { UPDATE_CONTRACT_NAMESPACE } from "../constants";
+import { TariffFormField } from "../types";
+import { ChangeCallout } from "./change-callout";
 
-type TTariffFormFields = {
-  changeDate: string;
-  setChangeDate: (v: string) => void;
-  rateT1: string;
-  setRateT1: (v: string) => void;
-  rateT2: string;
-  setRateT2: (v: string) => void;
-  rateT3: string;
-  setRateT3: (v: string) => void;
-  fixedAmount: string;
-  setFixedAmount: (v: string) => void;
-  notes: string;
-  setNotes: (v: string) => void;
+type TProps = {
+  form: UseFormReturn<TChangeTariffForm>;
+  serviceType: TServiceType;
 };
 
-type TProps = { fields: TTariffFormFields; serviceType: TServiceType };
+const RATE_FIELDS = [
+  { name: TariffFormField.RATE_T1, color: ZONE_COLOR_VARS[0], labelKey: "fields.t1" },
+  { name: TariffFormField.RATE_T2, color: ZONE_COLOR_VARS[1], labelKey: "fields.t2" },
+  { name: TariffFormField.RATE_T3, color: ZONE_COLOR_VARS[2], labelKey: "fields.t3" },
+] as const;
 
-export const TariffForm = ({ fields, serviceType }: TProps) => {
-  const t = useTranslations("services.detail.updateContract");
+export const TariffForm = ({ form, serviceType }: TProps) => {
+  const t = useTranslations(UPDATE_CONTRACT_NAMESPACE);
   const tRates = useTranslations("services.detail.contract.rates");
+  const { control, formState } = form;
+  const rootError = formState.errors.root?.message;
 
+  const changeDate = useWatch({ control, name: TariffFormField.CHANGE_DATE });
   const isMetered = serviceType.measurementType === "metered";
   const unitLabel = serviceType.unit ? UNIT_LABELS[serviceType.unit] : "";
   const perUnit = tRates("perUnit", { unit: unitLabel });
-
-  const closing = fields.changeDate
-    ? formatDisplayDate(subDays(new Date(fields.changeDate), 1))
-    : null;
-  const opening = fields.changeDate ? formatDisplayDate(new Date(fields.changeDate)) : null;
-
-  const rates = [
-    {
-      value: fields.rateT1,
-      set: fields.setRateT1,
-      color: ZONE_COLOR_VARS[0],
-      label: t("fields.t1"),
-    },
-    ...(serviceType.supportsZones
-      ? [
-          {
-            value: fields.rateT2,
-            set: fields.setRateT2,
-            color: ZONE_COLOR_VARS[1],
-            label: t("fields.t2"),
-          },
-          {
-            value: fields.rateT3,
-            set: fields.setRateT3,
-            color: ZONE_COLOR_VARS[2],
-            label: t("fields.t3"),
-          },
-        ]
-      : []),
-  ];
+  const rates = serviceType.supportsZones ? RATE_FIELDS : RATE_FIELDS.slice(0, 1);
 
   return (
-    <div className="flex flex-col gap-4">
-      <div>
-        <label className={FIELD_LABEL_CLASS}>{t("fields.effectiveFrom")}</label>
-        <input
-          type="date"
-          value={fields.changeDate}
-          onChange={(e) => fields.setChangeDate(e.target.value)}
-          className={FIELD_INPUT_CLASS}
+    <Form {...form}>
+      <FormFields>
+        <FormDateField
+          control={control}
+          name={TariffFormField.CHANGE_DATE}
+          label={t("fields.effectiveFrom")}
+          required
         />
-      </div>
 
-      {isMetered ? (
-        <div>
-          <label className={FIELD_HINT_LABEL_CLASS}>{t("fields.newRates")}</label>
-          <div className="grid grid-cols-2 gap-3">
-            {rates.map((rate, i) => (
-              <div key={i}>
-                <div className="text-muted-foreground mb-1 text-xs font-medium">{rate.label}</div>
-                <div className="relative">
-                  <input
-                    type="number"
-                    step="0.0001"
-                    min="0"
-                    placeholder="0.0000"
-                    value={rate.value}
-                    onChange={(e) => rate.set(e.target.value)}
-                    className="h-9 w-full rounded-md border pr-12 pl-2.5 text-sm tabular-nums outline-none"
-                    style={{
-                      borderColor: `color-mix(in srgb, ${rate.color} 50%, transparent)`,
-                      background: `color-mix(in srgb, ${rate.color} 5%, transparent)`,
-                    }}
-                  />
-                  <span className="text-muted-foreground pointer-events-none absolute top-1/2 right-2.5 -translate-y-1/2 text-xs">
-                    {perUnit}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      ) : (
-        <div>
-          <label className={FIELD_LABEL_CLASS}>{t("fields.monthlyAmount")}</label>
-          <div className="relative max-w-40">
-            <input
-              type="number"
-              step="0.01"
-              min="0"
-              placeholder="0.00"
-              value={fields.fixedAmount}
-              onChange={(e) => fields.setFixedAmount(e.target.value)}
-              className={cn(FIELD_INPUT_CLASS, "pr-12 tabular-nums")}
-            />
-            <span className="text-muted-foreground pointer-events-none absolute top-1/2 right-2.5 -translate-y-1/2 text-xs">
-              {tRates("perMonth")}
+        {isMetered ? (
+          <div className="flex flex-col gap-1.5">
+            <span className="text-muted-foreground text-sm font-medium">
+              {t("fields.newRates")}
             </span>
+            <div className="grid grid-cols-2 gap-3">
+              {rates.map(({ name, color, labelKey }) => (
+                <FormField
+                  key={name}
+                  control={control}
+                  name={name}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-muted-foreground text-xs font-medium">
+                        {t(labelKey)}
+                      </FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <Input
+                            {...field}
+                            value={field.value ?? ""}
+                            type="number"
+                            step="0.0001"
+                            min="0"
+                            placeholder="0.0000"
+                            className="pr-12 tabular-nums"
+                            style={{
+                              borderColor: `color-mix(in srgb, ${color} 50%, transparent)`,
+                              background: `color-mix(in srgb, ${color} 5%, transparent)`,
+                            }}
+                          />
+                          <span className="text-muted-foreground pointer-events-none absolute top-1/2 right-2.5 -translate-y-1/2 text-xs">
+                            {perUnit}
+                          </span>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              ))}
+            </div>
           </div>
-        </div>
-      )}
+        ) : (
+          <FormField
+            control={control}
+            name={TariffFormField.FIXED_AMOUNT}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("fields.monthlyAmount")}</FormLabel>
+                <FormControl>
+                  <div className="relative max-w-40">
+                    <Input
+                      {...field}
+                      value={field.value ?? ""}
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      placeholder="0.00"
+                      className="pr-12 tabular-nums"
+                    />
+                    <span className="text-muted-foreground pointer-events-none absolute top-1/2 right-2.5 -translate-y-1/2 text-xs">
+                      {tRates("perMonth")}
+                    </span>
+                  </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
 
-      <div>
-        <label className={FIELD_HINT_LABEL_CLASS}>{t("fields.notesOptional")}</label>
-        <textarea
-          value={fields.notes}
-          onChange={(e) => fields.setNotes(e.target.value)}
+        <FormTextareaField
+          control={control}
+          name={TariffFormField.NOTES}
+          label={t("fields.notesOptional")}
+          maxLength={TARIFF_LIMITS.notes}
           rows={2}
-          className={cn(FIELD_TEXTAREA_CLASS, "resize-none")}
         />
-      </div>
 
-      {closing && opening && (
-        <Callout>
-          {t.rich("callout.tariff", {
-            closing,
-            opening,
-            b: (chunks) => <strong>{chunks}</strong>,
-          })}
-        </Callout>
-      )}
-    </div>
+        <ChangeCallout changeDate={changeDate} messageKey="callout.tariff" />
+
+        {rootError ? <p className="text-destructive text-sm">{rootError}</p> : null}
+      </FormFields>
+    </Form>
   );
 };
