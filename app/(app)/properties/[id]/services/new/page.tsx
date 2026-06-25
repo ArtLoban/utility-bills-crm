@@ -25,16 +25,20 @@ export default async function NewServicePage({ params }: TProps) {
   if (!dataResult.ok) notFound();
 
   const property = propertyResult.value;
-  const t = await getTranslations("services.serviceForm");
+  const [t, tNav] = await Promise.all([
+    getTranslations("services.serviceForm"),
+    getTranslations("nav"),
+  ]);
 
   return (
     <PageContainer
       title={t("title")}
       breadcrumbs={[
-        { label: "Properties", href: ROUTES.properties },
-        { label: property.name, href: `/properties/${id}` },
+        { label: tNav("properties"), href: ROUTES.properties },
+        { label: property.name, href: `${ROUTES.properties}/${id}` },
         { label: t("breadcrumb") },
       ]}
+      meta={<span className="text-muted-foreground text-sm">{t("meta")}</span>}
     >
       <AddServiceSetupForm
         propertyId={propertyId}

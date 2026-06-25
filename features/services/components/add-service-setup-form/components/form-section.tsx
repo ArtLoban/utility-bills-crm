@@ -11,15 +11,14 @@ type TProps = {
 };
 
 export const FormSection = ({ n, title, desc, inactive = false, accent, children }: TProps) => {
-  const badgeStyle = inactive
-    ? undefined
-    : accent
-      ? {
-          background: `${accent}18`,
-          border: `1px solid ${accent}30`,
+  const badgeStyle =
+    inactive || !accent
+      ? undefined
+      : {
+          background: `color-mix(in srgb, ${accent} 18%, transparent)`,
+          border: `1px solid color-mix(in srgb, ${accent} 30%, transparent)`,
           color: accent,
-        }
-      : undefined;
+        };
 
   return (
     <section className="bg-card overflow-hidden rounded-lg border">

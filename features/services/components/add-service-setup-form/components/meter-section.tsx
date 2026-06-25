@@ -1,27 +1,27 @@
 "use client";
 
-import { Calendar } from "lucide-react";
 import { useTranslations } from "next-intl";
-import type { Control, FieldErrors } from "react-hook-form";
-import { Controller } from "react-hook-form";
+import type { Control } from "react-hook-form";
 
-import { FormField } from "@/components/form-field";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { FormDateField } from "@/components/form/form-date-field";
+import { FormTextField } from "@/components/form/form-text-field";
+import { FormTextareaField } from "@/components/form/form-textarea-field";
+import { METER_LIMITS } from "@/features/meters/schema";
 import type { TServiceType } from "@/lib/db/schema/service-types";
-import type { TFormValues } from "../schema";
+import { ServiceMeterField } from "../schema";
+import type { TServiceSetupForm } from "../schema";
 import { MeterEngagementRow } from "./meter-engagement-row";
 import { ZoneSelector } from "./zone-selector";
 
 type TProps = {
+  control: Control<TServiceSetupForm>;
   selectedType: TServiceType;
   engaged: boolean;
-  onToggle: (v: boolean) => void;
-  control: Control<TFormValues>;
-  errors: FieldErrors<TFormValues>;
+  onToggle: (engaged: boolean) => void;
 };
 
-export const MeterSection = ({ selectedType, engaged, onToggle, control, errors }: TProps) => {
+export const MeterSection = ({ control, selectedType, engaged, onToggle }: TProps) => {
   const t = useTranslations("services.serviceForm");
 
   return (
@@ -33,104 +33,59 @@ export const MeterSection = ({ selectedType, engaged, onToggle, control, errors 
         onToggle={onToggle}
       />
 
-      {engaged && (
+      {engaged ? (
         <>
-          <FormField label={t("fields.zoneCount.label")}>
-            <Controller
-              name="meter.zoneCount"
-              control={control}
-              shouldUnregister
-              render={({ field }) => (
-                <ZoneSelector
-                  value={(field.value as 1 | 2 | 3) ?? 1}
-                  onChange={field.onChange}
-                  supportsZones={selectedType.supportsZones}
-                />
-              )}
-            />
-          </FormField>
+          <FormField
+            control={control}
+            name={ServiceMeterField.ZONE_COUNT}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("fields.zoneCount.label")}</FormLabel>
+                <FormControl>
+                  <ZoneSelector
+                    value={field.value}
+                    onChange={field.onChange}
+                    supportsZones={selectedType.supportsZones}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <FormField label={t("fields.serialNumber.label")} optional>
-              <Controller
-                name="meter.serialNumber"
-                control={control}
-                shouldUnregister
-                render={({ field }) => (
-                  <Input
-                    placeholder={t("fields.serialNumber.placeholder")}
-                    value={field.value ?? ""}
-                    onChange={field.onChange}
-                  />
-                )}
-              />
-            </FormField>
+            <FormTextField
+              control={control}
+              name={ServiceMeterField.SERIAL_NUMBER}
+              label={t("fields.serialNumber.label")}
+              placeholder={t("fields.serialNumber.placeholder")}
+              maxLength={METER_LIMITS.serialNumber}
+            />
 
-            <FormField label={t("fields.installedAt.label")} optional>
-              <div className="relative">
-                <Controller
-                  name="meter.installedAt"
-                  control={control}
-                  shouldUnregister
-                  render={({ field }) => (
-                    <Input
-                      type="date"
-                      className="h-9 pl-9"
-                      value={field.value ?? ""}
-                      onChange={field.onChange}
-                    />
-                  )}
-                />
-                <Calendar
-                  size={14}
-                  className="text-muted-foreground pointer-events-none absolute top-1/2 left-2.5 -translate-y-1/2"
-                />
-              </div>
-            </FormField>
+            <FormDateField
+              control={control}
+              name={ServiceMeterField.INSTALLED_AT}
+              label={t("fields.installedAt.label")}
+            />
           </div>
 
-          <FormField
+          <FormDateField
+            control={control}
+            name={ServiceMeterField.METER_VALID_FROM}
             label={t("fields.meterValidFrom.label")}
-            error={errors.meter?.meterValidFrom?.message}
-          >
-            <div className="relative">
-              <Controller
-                name="meter.meterValidFrom"
-                control={control}
-                shouldUnregister
-                render={({ field }) => (
-                  <Input
-                    type="date"
-                    className="h-9 pl-9"
-                    value={field.value ?? ""}
-                    onChange={field.onChange}
-                  />
-                )}
-              />
-              <Calendar
-                size={14}
-                className="text-muted-foreground pointer-events-none absolute top-1/2 left-2.5 -translate-y-1/2"
-              />
-            </div>
-          </FormField>
+            required
+          />
 
-          <FormField label={t("fields.meterNotes.label")} optional>
-            <Controller
-              name="meter.meterNotes"
-              control={control}
-              shouldUnregister
-              render={({ field }) => (
-                <Textarea
-                  placeholder={t("fields.meterNotes.placeholder")}
-                  rows={3}
-                  value={field.value ?? ""}
-                  onChange={field.onChange}
-                />
-              )}
-            />
-          </FormField>
+          <FormTextareaField
+            control={control}
+            name={ServiceMeterField.METER_NOTES}
+            label={t("fields.meterNotes.label")}
+            placeholder={t("fields.meterNotes.placeholder")}
+            maxLength={METER_LIMITS.notes}
+            rows={3}
+          />
         </>
-      )}
+      ) : null}
     </div>
   );
 };

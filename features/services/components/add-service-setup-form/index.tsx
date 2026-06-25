@@ -1,16 +1,14 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Controller } from "react-hook-form";
 
+import { Form } from "@/components/ui/form";
 import { FormContainer } from "@/components/form-container";
-import { FormField } from "@/components/form-field";
-import { Textarea } from "@/components/ui/textarea";
 import { getServiceTypeVisuals, type TServiceTypeCode } from "@/features/services/service-type";
-import type { TServiceTypeId } from "@/lib/db/schema/service-types";
+import { ROUTES } from "@/lib/routes";
 import type { TProps } from "./types";
 import { useAddServiceSetup } from "./hooks/use-add-service-setup";
-import { FormSection } from "./components/setup-section";
+import { FormSection } from "./components/form-section";
 import { FormErrorBanner } from "./components/form-error-banner";
 import { ServiceTypeSection } from "./components/service-type-section";
 import { ContractSection } from "./components/contract-section";
@@ -29,7 +27,6 @@ export const AddServiceSetupForm = ({
     form,
     meterEngaged,
     setMeterEngaged,
-    formError,
     isSaving,
     canSave,
     selectedType,
@@ -38,101 +35,81 @@ export const AddServiceSetupForm = ({
     onSubmit,
   } = useAddServiceSetup({ propertyId, serviceTypes });
 
-  const {
-    control,
-    setValue,
-    watch,
-    formState: { errors },
-  } = form;
-
-  const selectedTypeId = watch("serviceTypeId");
+  const { control } = form;
+  const rootError = form.formState.errors.root?.message;
   const isActive = selectedType !== null;
-
   const accentColor = selectedType
     ? getServiceTypeVisuals(selectedType.code as TServiceTypeCode).color
     : undefined;
 
   return (
-    <FormContainer
-      onSubmit={onSubmit}
-      backHref={`/properties/${propertyId}`}
-      submitText={t("submit")}
-      isSaving={isSaving}
-      canSave={canSave}
-      size="md"
-      noCard
-    >
-      <div className="flex flex-col gap-4 pb-2">
-        {formError && <FormErrorBanner title={t("error.title")}>{formError}</FormErrorBanner>}
+    <Form {...form}>
+      <FormContainer
+        onSubmit={onSubmit}
+        backHref={`${ROUTES.properties}/${propertyId}`}
+        submitText={t("submit")}
+        isSaving={isSaving}
+        canSave={canSave}
+        size="md"
+        noCard
+      >
+        <div className="flex flex-col gap-4 pb-2">
+          {rootError ? (
+            <FormErrorBanner title={t("error.title")}>{rootError}</FormErrorBanner>
+          ) : null}
 
-        <FormSection
-          n={1}
-          title={t("sections.type.title")}
-          desc={t("sections.type.desc")}
-          accent={accentColor}
-        >
-          <ServiceTypeSection
-            serviceTypes={serviceTypes}
-            existingTypeIds={existingTypeIds}
-            selectedTypeId={selectedTypeId}
-            onSelect={(id: TServiceTypeId) => setValue("serviceTypeId", id)}
-          />
-          <FormField label={t("fields.serviceNotes.label")} optional>
-            <Controller
-              name="serviceNotes"
-              control={control}
-              render={({ field }) => (
-                <Textarea
-                  placeholder={t("fields.serviceNotes.placeholder")}
-                  rows={3}
-                  value={field.value ?? ""}
-                  onChange={field.onChange}
-                />
-              )}
-            />
-          </FormField>
-        </FormSection>
-
-        <FormSection
-          n={2}
-          title={t("sections.contract.title")}
-          desc={t("sections.contract.desc")}
-          inactive={!isActive}
-        >
-          <ContractSection providers={providers} control={control} errors={errors} />
-        </FormSection>
-
-        <FormSection
-          n={3}
-          title={t("sections.tariff.title")}
-          desc={t("sections.tariff.desc")}
-          inactive={!isActive}
-        >
-          <TariffSection
-            selectedType={selectedType}
-            effectiveZoneCount={effectiveZoneCount}
-            control={control}
-            errors={errors}
-          />
-        </FormSection>
-
-        {isMetered && (
           <FormSection
-            n={4}
-            title={t("sections.meter.title")}
-            desc={t("sections.meter.desc")}
-            inactive={!isActive}
+            n={1}
+            title={t("sections.type.title")}
+            desc={t("sections.type.desc")}
+            accent={accentColor}
           >
-            <MeterSection
-              selectedType={selectedType!}
-              engaged={meterEngaged}
-              onToggle={setMeterEngaged}
+            <ServiceTypeSection
               control={control}
-              errors={errors}
+              serviceTypes={serviceTypes}
+              existingTypeIds={existingTypeIds}
             />
           </FormSection>
-        )}
-      </div>
-    </FormContainer>
+
+          <FormSection
+            n={2}
+            title={t("sections.contract.title")}
+            desc={t("sections.contract.desc")}
+            inactive={!isActive}
+          >
+            <ContractSection control={control} providers={providers} />
+          </FormSection>
+
+          <FormSection
+            n={3}
+            title={t("sections.tariff.title")}
+            desc={t("sections.tariff.desc")}
+            inactive={!isActive}
+          >
+            <TariffSection
+              control={control}
+              selectedType={selectedType}
+              effectiveZoneCount={effectiveZoneCount}
+            />
+          </FormSection>
+
+          {isMetered && selectedType ? (
+            <FormSection
+              n={4}
+              title={t("sections.meter.title")}
+              desc={t("sections.meter.desc")}
+              inactive={!isActive}
+            >
+              <MeterSection
+                control={control}
+                selectedType={selectedType}
+                engaged={meterEngaged}
+                onToggle={setMeterEngaged}
+              />
+            </FormSection>
+          ) : null}
+        </div>
+      </FormContainer>
+    </Form>
   );
 };

@@ -1,52 +1,75 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import type { Control } from "react-hook-form";
 
+import { FormField, FormItem, FormMessage } from "@/components/ui/form";
+import { FormTextareaField } from "@/components/form/form-textarea-field";
 import { getServiceTypeVisuals, type TServiceTypeCode } from "@/features/services/service-type";
-import type { TServiceType, TServiceTypeId } from "@/lib/db/schema/service-types";
-import { ServiceTypeCard } from "./service-type-card";
+import type { TServiceType } from "@/lib/db/schema/service-types";
+import { SERVICE_LIMITS } from "@/features/services/schema";
+import { ServiceSetupFormField } from "../schema";
+import type { TServiceSetupForm } from "../schema";
+import type { TServiceTypeOption } from "../types";
+import { ServiceTypeSelector } from "./service-type-selector";
 
 type TProps = {
+  control: Control<TServiceSetupForm>;
   serviceTypes: TServiceType[];
-  existingTypeIds: TServiceTypeId[];
-  selectedTypeId: string;
-  onSelect: (id: TServiceTypeId) => void;
+  existingTypeIds: TServiceType["id"][];
 };
 
-export const ServiceTypeSection = ({
-  serviceTypes,
-  existingTypeIds,
-  selectedTypeId,
-  onSelect,
-}: TProps) => {
+export const ServiceTypeSection = ({ control, serviceTypes, existingTypeIds }: TProps) => {
   const t = useTranslations("services");
-  const existingSet = new Set(existingTypeIds);
 
-  const getMeasurementLabel = (st: TServiceType): string => {
-    if (st.measurementType === "fixed") return t("serviceForm.measurement.fixed");
-    if (st.supportsZones) return t("serviceForm.measurement.meteredZones");
+  const getMeasurementLabel = (serviceType: TServiceType): string => {
+    if (serviceType.measurementType === "fixed") return t("serviceForm.measurement.fixed");
+    if (serviceType.supportsZones) return t("serviceForm.measurement.meteredZones");
+
     return t("serviceForm.measurement.metered");
   };
 
+  const existingSet = new Set(existingTypeIds);
+  const options: TServiceTypeOption[] = serviceTypes.map((serviceType) => {
+    const { color, Icon } = getServiceTypeVisuals(serviceType.code as TServiceTypeCode);
+
+    return {
+      id: serviceType.id,
+      label: t(`types.${serviceType.code as TServiceTypeCode}`),
+      measurementLabel: getMeasurementLabel(serviceType),
+      color,
+      Icon,
+      isDisabled: existingSet.has(serviceType.id),
+    };
+  });
+
   return (
-    <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
-      {serviceTypes.map((st) => {
-        const { color, Icon } = getServiceTypeVisuals(st.code as TServiceTypeCode);
-        return (
-          <ServiceTypeCard
-            key={st.id}
-            serviceType={st}
-            Icon={Icon}
-            color={color}
-            label={t(`types.${st.code as TServiceTypeCode}`)}
-            measurementLabel={getMeasurementLabel(st)}
-            isSelected={selectedTypeId === st.id}
-            isDisabled={existingSet.has(st.id)}
-            addedBadgeLabel={t("serviceForm.badge.added")}
-            onClick={() => onSelect(st.id as TServiceTypeId)}
-          />
-        );
-      })}
+    <div className="flex flex-col gap-4">
+      <FormField
+        control={control}
+        name={ServiceSetupFormField.SERVICE_TYPE_ID}
+        render={({ field }) => (
+          <FormItem>
+            <ServiceTypeSelector
+              value={field.value}
+              onChange={field.onChange}
+              options={options}
+              addedBadgeLabel={t("serviceForm.badge.added")}
+              ariaLabel={t("serviceForm.sections.type.title")}
+            />
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      <FormTextareaField
+        control={control}
+        name={ServiceSetupFormField.SERVICE_NOTES}
+        label={t("serviceForm.fields.serviceNotes.label")}
+        placeholder={t("serviceForm.fields.serviceNotes.placeholder")}
+        maxLength={SERVICE_LIMITS.notes}
+        rows={3}
+      />
     </div>
   );
 };

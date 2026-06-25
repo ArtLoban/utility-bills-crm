@@ -1004,6 +1004,7 @@
     "serviceForm": {
       "title": "Add service",
       "breadcrumb": "Add service",
+      "meta": "Set up a new utility service for this property.",
       "sections": {
         "type": {
           "title": "Service type",
@@ -1107,6 +1108,31 @@
         "alreadyExists": "A service of this type is already active for this property.",
         "overlap": "The dates overlap with an existing entry.",
         "generic": "Something went wrong. Please try again."
+      },
+      "validation": {
+        "serviceTypeId": {
+          "required": "Select a service type"
+        },
+        "providerId": {
+          "required": "Please select a provider"
+        },
+        "contractValidFrom": {
+          "required": "Start date is required"
+        },
+        "tariffValidFrom": {
+          "required": "Start date is required"
+        },
+        "meterValidFrom": {
+          "required": "Start date is required"
+        },
+        "serialNumber": {
+          "tooLong": "Serial number is too long (max 100 characters)"
+        },
+        "notes": {
+          "tooLong": "Notes are too long (max 1000 characters)"
+        },
+        "rateOrFixedRequired": "Enter a rate or a fixed amount",
+        "rateAndFixedMutuallyExclusive": "Enter either a rate or a fixed amount, not both"
       },
       "hint": {
         "singleZone": "Billed at a single rate. Add a meter below to bill by day/night or three zones.",
