@@ -13,4 +13,4 @@ export type {
 } from "./schema";
 export { AddServiceSetupForm } from "./components/add-service-setup-form";
 export { EditServiceModal } from "./components/edit-service-modal";
-export { EditServiceFormContent } from "./components/edit-service-modal/edit-service-form-content";
+export { EditServiceFormContent } from "./components/edit-service-form-content";

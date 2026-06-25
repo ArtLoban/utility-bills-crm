@@ -1,11 +1,12 @@
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 
 import { getPropertyDetail } from "@/app/(app)/properties/[id]/_data/queries";
 import { getServiceDetail } from "../_data/queries";
 import { EditServiceFormContent } from "@/features/services";
 import { PageContainer } from "@/components/page-container";
 import { ROUTES } from "@/lib/routes";
-import type { PropertyId } from "@/lib/db/schema/properties";
+import { PROPERTY_ROLES, type PropertyId } from "@/lib/db/schema/properties";
 import type { TServiceId } from "@/lib/db/schema/services";
 
 type TProps = {
@@ -15,30 +16,37 @@ type TProps = {
 export default async function EditServicePage({ params }: TProps) {
   const { id, sid } = await params;
 
-  const [propertyResult, serviceResult] = await Promise.all([
+  const [propertyResult, serviceResult, t, tNav, tTypes] = await Promise.all([
     getPropertyDetail(id as PropertyId),
     getServiceDetail(sid as TServiceId),
+    getTranslations("services.editNotes"),
+    getTranslations("nav"),
+    getTranslations("services.types"),
   ]);
 
   if (!propertyResult.ok) notFound();
-  if (!serviceResult.ok || serviceResult.value.role === "viewer") notFound();
+  if (!serviceResult.ok || serviceResult.value.role === PROPERTY_ROLES.VIEWER) notFound();
 
   const property = propertyResult.value;
   const { service, serviceType } = serviceResult.value;
+  const serviceName = tTypes(serviceType.code as Parameters<typeof tTypes>[0]);
 
   return (
     <PageContainer
-      title="Edit notes"
+      title={t("title")}
       breadcrumbs={[
-        { label: "Properties", href: ROUTES.properties },
-        { label: property.name, href: `/properties/${id}` },
-        { label: serviceType.code, href: `/properties/${id}/services/${sid}` },
-        { label: "Edit notes" },
+        { label: tNav("properties"), href: ROUTES.properties },
+        { label: property.name, href: `${ROUTES.properties}/${id}` },
+        { label: serviceName, href: `${ROUTES.properties}/${id}/services/${sid}` },
+        { label: t("title") },
       ]}
+      meta={<span className="text-muted-foreground text-sm">{t("meta")}</span>}
     >
-      <div className="max-w-2xl">
-        <EditServiceFormContent serviceId={service.id} initialNotes={service.notes ?? null} />
-      </div>
+      <EditServiceFormContent
+        propertyId={property.id}
+        serviceId={service.id}
+        initialNotes={service.notes}
+      />
     </PageContainer>
   );
 }

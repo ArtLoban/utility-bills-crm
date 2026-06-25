@@ -1001,6 +1001,23 @@
         "payment": "Payment · {period}"
       }
     },
+    "editNotes": {
+      "title": "Edit notes",
+      "meta": "Update the notes for this service.",
+      "label": "Notes",
+      "placeholder": "Any notes about this service…",
+      "submit": "Save notes",
+      "cancel": "Cancel",
+      "formError": "Something went wrong. Please try again.",
+      "toast": {
+        "saved": "Notes saved."
+      },
+      "validation": {
+        "notes": {
+          "tooLong": "Notes are too long (max 1000 characters)"
+        }
+      }
+    },
     "serviceForm": {
       "title": "Add service",
       "breadcrumb": "Add service",
