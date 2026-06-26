@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import type { TContractId } from "@/lib/db/schema/contracts";
 import type { TServiceId } from "@/lib/db/schema/services";
 import type { TServiceType } from "@/lib/db/schema/service-types";
-import { UpdateContractModal } from "./update-contract-modal";
+import { UpdateContractModal } from "@/features/contracts/components/update-contract-modal";
 
 type TProps = {
   contractId: TContractId;
