@@ -41,7 +41,6 @@ export default async function MeterPage({ params, searchParams }: TProps) {
   const property = propertyResult.value;
   const { meter, serviceType } = meterResult.value;
 
-  // Verify the meter belongs to the requested property.
   if (meter.propertyId !== id) notFound();
 
   const activeTab = resolveMeterTab(tab);
@@ -52,14 +51,7 @@ export default async function MeterPage({ params, searchParams }: TProps) {
       case METER_TABS.OVERVIEW:
         return <OverviewTab meter={meter} serviceType={serviceType} propertyName={property.name} />;
       case METER_TABS.READINGS:
-        return (
-          <ReadingsTab
-            meter={meter}
-            serviceType={serviceType}
-            propertyName={property.name}
-            role={property.role}
-          />
-        );
+        return <ReadingsTab meter={meter} serviceType={serviceType} role={property.role} />;
       default:
         return assertNever(activeTab);
     }

@@ -1,4 +1,90 @@
 {
+  "readings": {
+    "form": {
+      "title": {
+        "create": "Submit reading",
+        "edit": "Edit reading"
+      },
+      "meta": {
+        "create": "Record a new reading for this meter.",
+        "edit": "Update this meter reading."
+      },
+      "actions": {
+        "submit": "Submit",
+        "submitAnyway": "Submit anyway",
+        "save": "Save",
+        "saveAnyway": "Save anyway",
+        "saving": "Saving…",
+        "cancel": "Cancel"
+      },
+      "fields": {
+        "readAt": {
+          "label": "Reading date"
+        },
+        "value": {
+          "label": "Value ({unit})",
+          "labelZone": "Value {zone} — {suffix} ({unit})",
+          "placeholder": "e.g. 12650"
+        },
+        "notes": {
+          "label": "Notes",
+          "placeholder": "Any remarks about this reading…"
+        }
+      },
+      "zone": {
+        "day": "day",
+        "night": "night",
+        "peak": "peak"
+      },
+      "unitFallback": "units",
+      "hint": {
+        "last": "Last reading was {value} on {date}",
+        "lastShort": "Last: {value} · {date}",
+        "noPrevious": "No previous readings",
+        "delta": "Δ {delta} {unit}"
+      },
+      "warning": {
+        "full": "This value is lower than the last reading ({value}). Correct? (meter replacement, rollover, or input error)",
+        "short": "Lower than last ({value}). Correct?"
+      },
+      "meterContext": {
+        "title": "{type} meter",
+        "serial": "SN {serial}",
+        "zones": "{count} zones"
+      }
+    },
+    "toast": {
+      "created": "Reading saved",
+      "updated": "Reading updated"
+    },
+    "validation": {
+      "meterId": {
+        "invalid": "Invalid meter"
+      },
+      "readAt": {
+        "required": "Reading date is required"
+      },
+      "value": {
+        "required": "Value is required",
+        "invalid": "Enter a valid number",
+        "negative": "Value cannot be negative"
+      },
+      "notes": {
+        "tooLong": "Notes are too long (max 1000 characters)"
+      },
+      "window": {
+        "before": "Reading date is before the meter's active period — check the meter's active-since date",
+        "after": "Reading date is after the meter was deactivated"
+      },
+      "zone": {
+        "t2ForSingle": "Zone 2 value provided for a single-zone meter",
+        "t3ForSingle": "Zone 3 value provided for a single-zone meter",
+        "t2Required": "Zone 2 value is required for this meter",
+        "t3ForTwo": "Zone 3 value provided for a two-zone meter",
+        "t3Required": "Zone 3 value is required for a three-zone meter"
+      }
+    }
+  },
   "reminders": {
     "title": "Reminders",
     "monthlyNote": "Reminders repeat every month.",

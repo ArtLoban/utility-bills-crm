@@ -1,4 +1,4 @@
-import { and, desc, eq, inArray, isNull, max, sql } from "drizzle-orm";
+import { and, desc, eq, inArray, isNull, lt, max, sql } from "drizzle-orm";
 
 import { db } from "@/lib/db/client";
 import { readings } from "@/lib/db/schema/readings";
@@ -42,6 +42,28 @@ export const mostRecentReadingForMeter = async (
     .select()
     .from(readings)
     .where(and(eq(readings.meterId, meterId), isNull(readings.deletedAt)))
+    .orderBy(desc(readings.readAt))
+    .limit(1);
+
+  return ok(rows[0] ?? null);
+};
+
+// The reading immediately preceding `before` — used to compute the warning/delta context
+// when editing an existing reading.
+export const previousReadingForMeter = async (
+  userId: UserId,
+  meterId: MeterId,
+  before: Date,
+): Promise<Result<TReading | null, TAppError>> => {
+  const access = await meterByIdForUser(userId, meterId);
+  if (!access.ok) return access;
+
+  const rows = await db
+    .select()
+    .from(readings)
+    .where(
+      and(eq(readings.meterId, meterId), isNull(readings.deletedAt), lt(readings.readAt, before)),
+    )
     .orderBy(desc(readings.readAt))
     .limit(1);
 

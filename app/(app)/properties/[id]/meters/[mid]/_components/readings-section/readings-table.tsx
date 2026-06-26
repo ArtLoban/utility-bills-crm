@@ -13,19 +13,12 @@ type TProps = {
   readings: TReading[];
   meter: TMeter;
   serviceType: TServiceType;
-  propertyName: string;
   canMutate: boolean;
 };
 
 const HEAD_CLASS = "text-muted-foreground px-4 text-xs font-medium tracking-wide uppercase";
 
-export const ReadingsTable = ({
-  readings,
-  meter,
-  serviceType,
-  propertyName,
-  canMutate,
-}: TProps) => {
+export const ReadingsTable = ({ readings, meter, serviceType, canMutate }: TProps) => {
   const t = useTranslations("meters.detail");
   const unitLabel = serviceType.unit ? UNIT_LABELS[serviceType.unit] : "";
   const withUnit = (label: string) =>
@@ -52,17 +45,8 @@ export const ReadingsTable = ({
         </TableRow>
       </TableHeader>
       <TableBody>
-        {readings.map((reading, i) => (
-          <ReadingRow
-            key={reading.id}
-            reading={reading}
-            meter={meter}
-            serviceType={serviceType}
-            propertyName={propertyName}
-            // Sorted DESC — the previous reading is the next item in the array.
-            lastReadingBeforeThis={readings[i + 1] ?? null}
-            canMutate={canMutate}
-          />
+        {readings.map((reading) => (
+          <ReadingRow key={reading.id} reading={reading} meter={meter} canMutate={canMutate} />
         ))}
       </TableBody>
     </Table>

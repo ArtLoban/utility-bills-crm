@@ -1,41 +1,24 @@
-"use client";
-
-import { useState } from "react";
+import Link from "next/link";
 import { Gauge } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
 
 import { Button } from "@/components/ui/button";
-import { SubmitReadingModal } from "@/features/readings/components/submit-reading-modal";
+import { ROUTES } from "@/lib/routes";
 import type { TMeter } from "@/lib/db/schema/meters";
-import type { TServiceType } from "@/lib/db/schema/service-types";
-import type { TReading } from "@/lib/db/schema/readings";
 
 type TProps = {
   meter: TMeter;
-  serviceType: TServiceType;
-  propertyName: string;
-  lastReading: TReading | null;
 };
 
-export const SubmitReadingButton = ({ meter, serviceType, propertyName, lastReading }: TProps) => {
-  const [readingOpen, setReadingOpen] = useState(false);
-  const t = useTranslations("services.detail.meter");
+export const SubmitReadingButton = async ({ meter }: TProps) => {
+  const t = await getTranslations("services.detail.meter");
 
   return (
-    <>
-      <Button size="sm" onClick={() => setReadingOpen(true)}>
+    <Button size="sm" asChild>
+      <Link href={`${ROUTES.properties}/${meter.propertyId}/meters/${meter.id}/reading/new`}>
         <Gauge className="size-3.5" />
         {t("submitReading")}
-      </Button>
-
-      <SubmitReadingModal
-        open={readingOpen}
-        onOpenChange={setReadingOpen}
-        meter={meter}
-        serviceType={serviceType}
-        propertyName={propertyName}
-        lastReading={lastReading}
-      />
-    </>
+      </Link>
+    </Button>
   );
 };

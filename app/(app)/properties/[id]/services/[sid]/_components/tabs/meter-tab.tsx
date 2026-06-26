@@ -8,17 +8,10 @@ type TProps = {
   serviceId: TServiceId;
   propertyId: string;
   serviceType: TServiceType;
-  propertyName: string;
   canEdit: boolean;
 };
 
-export const MeterTab = async ({
-  serviceId,
-  propertyId,
-  serviceType,
-  propertyName,
-  canEdit,
-}: TProps) => {
+export const MeterTab = async ({ serviceId, propertyId, serviceType, canEdit }: TProps) => {
   const currentMeter = await getCurrentMeterForService(serviceId);
   const lastReading = currentMeter ? await getLastReadingForMeter(currentMeter) : null;
 
@@ -28,16 +21,7 @@ export const MeterTab = async ({
       propertyId={propertyId}
       serviceType={serviceType}
       lastReading={lastReading}
-      action={
-        currentMeter && canEdit ? (
-          <SubmitReadingButton
-            meter={currentMeter}
-            serviceType={serviceType}
-            propertyName={propertyName}
-            lastReading={lastReading}
-          />
-        ) : undefined
-      }
+      action={currentMeter && canEdit ? <SubmitReadingButton meter={currentMeter} /> : undefined}
     />
   );
 };

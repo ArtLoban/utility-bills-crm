@@ -77,7 +77,6 @@ export default async function ServicePage({ params, searchParams }: TProps) {
             serviceId={serviceId}
             propertyId={id}
             serviceType={serviceType}
-            propertyName={property.name}
             canEdit={canEdit}
           />
         );

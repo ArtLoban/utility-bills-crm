@@ -17,20 +17,21 @@ import { createReadingSchema, updateReadingSchema } from "./schema";
 import type { TCreateReadingInput, TUpdateReadingInput } from "./schema";
 
 // Validates that readAt falls within the meter's system temporal window [validFrom, validTo ?? ∞).
+// Returns a validation error carrying a relative i18n key (namespace "readings") — the client
+// translates it on the ERROR_CODES.VALIDATION branch.
 const validateReadingWindow = (readAt: Date, meter: TMeter): TAppError | null => {
   if (readAt < meter.validFrom) {
-    return appError.validation(
-      "Reading date is before the meter's active period — check the meter's active-since date",
-    );
+    return appError.validation("validation.window.before");
   }
   if (meter.validTo !== null && readAt >= meter.validTo) {
-    return appError.validation("Reading date is after the meter was deactivated");
+    return appError.validation("validation.window.after");
   }
   return null;
 };
 
 // Validates that zone values are consistent with the meter's zoneCount.
 // zoneCount=1 → valueT2/T3 absent. zoneCount=2 → valueT2 present, valueT3 absent. Etc.
+// Messages are relative i18n keys (namespace "readings").
 const validateZoneValues = (
   zoneCount: number,
   valueT2: number | undefined,
@@ -38,24 +39,24 @@ const validateZoneValues = (
 ): TAppError | null => {
   if (zoneCount === 1) {
     if (valueT2 !== undefined) {
-      return appError.validation("Zone 2 value provided for a single-zone meter");
+      return appError.validation("validation.zone.t2ForSingle");
     }
     if (valueT3 !== undefined) {
-      return appError.validation("Zone 3 value provided for a single-zone meter");
+      return appError.validation("validation.zone.t3ForSingle");
     }
   } else if (zoneCount === 2) {
     if (valueT2 === undefined) {
-      return appError.validation("Zone 2 value is required for a two-zone meter");
+      return appError.validation("validation.zone.t2Required");
     }
     if (valueT3 !== undefined) {
-      return appError.validation("Zone 3 value provided for a two-zone meter");
+      return appError.validation("validation.zone.t3ForTwo");
     }
   } else if (zoneCount === 3) {
     if (valueT2 === undefined) {
-      return appError.validation("Zone 2 value is required for a three-zone meter");
+      return appError.validation("validation.zone.t2Required");
     }
     if (valueT3 === undefined) {
-      return appError.validation("Zone 3 value is required for a three-zone meter");
+      return appError.validation("validation.zone.t3Required");
     }
   }
   return null;
