@@ -11,7 +11,6 @@ import type { TServiceType } from "@/lib/db/schema/service-types";
 import { ServiceSetupFormField } from "../schema";
 import type { TServiceSetupForm } from "../schema";
 import { RateInputs } from "./rate-inputs";
-import { FixedAmountInput } from "./fixed-amount-input";
 
 type TProps = {
   control: Control<TServiceSetupForm>;
@@ -34,7 +33,14 @@ export const TariffSection = ({ control, selectedType, effectiveZoneCount }: TPr
           supportsZones={supportsZones}
         />
       ) : measurementType === "fixed" ? (
-        <FixedAmountInput control={control} />
+        <FormTextField
+          control={control}
+          name={ServiceSetupFormField.FIXED_AMOUNT}
+          label={t("fields.fixedAmount.label")}
+          description={t("hint.fixedAmount")}
+          placeholder={t("fields.fixedAmount.placeholder")}
+          adornment="UAH"
+        />
       ) : (
         <div className="flex flex-col gap-2">
           <p className="text-muted-foreground text-sm font-medium">{t("fields.rate.label")}</p>

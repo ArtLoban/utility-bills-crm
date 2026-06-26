@@ -3,8 +3,7 @@
 import { useTranslations } from "next-intl";
 import type { Control } from "react-hook-form";
 
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import { FormTextField } from "@/components/form/form-text-field";
 import { ZONE_LABELS } from "../constants";
 import { ServiceSetupFormField } from "../schema";
 import type { TServiceSetupForm } from "../schema";
@@ -38,23 +37,17 @@ export const RateInputs = ({ control, effectiveZoneCount, supportsZones }: TProp
         style={{ gridTemplateColumns: `repeat(${effectiveZoneCount}, 1fr)` }}
       >
         {rateFields.map((name, index) => (
-          <FormField
+          <FormTextField
             key={name}
             control={control}
             name={name}
-            render={({ field }) => (
-              <FormItem>
-                {isMultiZone ? (
-                  <FormLabel className="text-muted-foreground text-[11px] tracking-wide uppercase">
-                    {t(`zoneLabels.${zoneLabels[index]}` as Parameters<typeof t>[0])}
-                  </FormLabel>
-                ) : null}
-                <FormControl>
-                  <Input placeholder="0.00" {...field} />
-                </FormControl>
-                {index === 0 ? <FormMessage /> : null}
-              </FormItem>
-            )}
+            placeholder="0.00"
+            label={
+              isMultiZone
+                ? t(`zoneLabels.${zoneLabels[index]}` as Parameters<typeof t>[0])
+                : undefined
+            }
+            labelClassName="text-muted-foreground text-xs tracking-wide uppercase"
           />
         ))}
       </div>
