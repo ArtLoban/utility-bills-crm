@@ -21,7 +21,7 @@ export const RadioOption = ({ value, selected, onSelect, label, helper, children
     <div
       className={cn(
         "rounded-lg border-[1.5px] transition-colors",
-        isActive ? "border-primary bg-primary/5" : "border-border bg-card",
+        isActive ? "border-primary" : "border-border",
       )}
     >
       <button

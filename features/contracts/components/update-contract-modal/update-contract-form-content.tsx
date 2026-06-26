@@ -38,6 +38,7 @@ export const UpdateContractFormContent = ({
     <FormContainer
       onSubmit={handleConfirm}
       backHref={`${ROUTES.properties}/${propertyId}/services/${serviceId}`}
+      size="md"
       submitText={isProvider ? t("goToProvider") : t("apply")}
       cancelText={t("cancel")}
       savingText={tForm("saving")}

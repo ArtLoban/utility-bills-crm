@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Loader2, type LucideIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 type TSize = "sm" | "md" | "lg";
 
@@ -54,12 +55,17 @@ export const Modal = (props: TProps) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className={SIZE_CLASS[size]}>
+      <DialogContent
+        className={cn(
+          SIZE_CLASS[size],
+          "max-h-[calc(100dvh-2rem)] grid-rows-[auto_minmax(0,1fr)_auto]",
+        )}
+      >
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           {description && <DialogDescription>{description}</DialogDescription>}
         </DialogHeader>
-        {children && <div>{children}</div>}
+        {children && <div className="overflow-y-auto">{children}</div>}
         <DialogFooter>
           <Button variant="outline" asChild>
             <DialogClose>{cancelLabel}</DialogClose>

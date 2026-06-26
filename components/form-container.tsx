@@ -6,8 +6,8 @@ import Link from "next/link";
 
 const SIZE_MAP = {
   sm: { maxWidth: "max-w-[440px]" },
-  // sm: { maxWidth: "max-w-[598px]" },
-  md: { maxWidth: "max-w-[758px]" },
+  md: { maxWidth: "max-w-[598px]" },
+  lg: { maxWidth: "max-w-[758px]" },
 } as const;
 
 type TProps = {

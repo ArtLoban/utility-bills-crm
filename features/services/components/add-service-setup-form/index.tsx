@@ -50,7 +50,7 @@ export const AddServiceSetupForm = ({
         submitText={t("submit")}
         isSaving={isSaving}
         canSave={canSave}
-        size="md"
+        size="lg"
         noCard
       >
         <div className="flex flex-col gap-4 pb-2">
