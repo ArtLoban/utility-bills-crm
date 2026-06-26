@@ -3,19 +3,10 @@
 import { useTranslations } from "next-intl";
 import { type UseFormReturn, useWatch } from "react-hook-form";
 
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form } from "@/components/ui/form";
 import { FormFields } from "@/components/form/form-fields";
 import { FormDateField } from "@/components/form/form-date-field";
 import { FormTextareaField } from "@/components/form/form-textarea-field";
-import { Textarea } from "@/components/ui/textarea";
 import {
   PAYMENT_DETAILS_LIMITS,
   type TChangePaymentDetailsForm,
@@ -44,26 +35,15 @@ export const PaymentDetailsForm = ({ form }: TProps) => {
           required
         />
 
-        <FormField
+        <FormTextareaField
           control={control}
           name={PaymentFormField.DETAILS}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{t("fields.newPayment")}</FormLabel>
-              <FormDescription>{t("fields.paymentHint")}</FormDescription>
-              <FormControl>
-                <Textarea
-                  {...field}
-                  value={field.value ?? ""}
-                  rows={5}
-                  placeholder={t("fields.paymentPlaceholder")}
-                  maxLength={PAYMENT_DETAILS_LIMITS.details}
-                  className="resize-y font-mono leading-relaxed"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label={t("fields.newPayment")}
+          description={t("fields.paymentHint")}
+          placeholder={t("fields.paymentPlaceholder")}
+          maxLength={PAYMENT_DETAILS_LIMITS.details}
+          textareaClassName="resize-y font-mono leading-relaxed"
+          rows={5}
         />
 
         <FormTextareaField

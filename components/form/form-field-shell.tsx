@@ -9,6 +9,7 @@ import { type TFormFieldBaseProps } from "./types";
 
 type TProps<T extends FieldValues> = TFormFieldBaseProps<T> & {
   labelAccessory?: ReactNode;
+  labelClassName?: string;
   children: (field: ControllerRenderProps<T, FieldPath<T>>) => ReactNode;
 };
 
@@ -20,10 +21,11 @@ export const FormFieldShell = <T extends FieldValues>({
   className,
   required,
   labelAccessory,
+  labelClassName,
   children,
 }: TProps<T>) => {
   const labelNode = label ? (
-    <FormLabel>
+    <FormLabel className={labelClassName}>
       {label}
       {required ? <RequiredMarker /> : null}
     </FormLabel>

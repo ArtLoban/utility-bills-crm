@@ -1,6 +1,10 @@
 import type { TServiceTypeUnit } from "@/lib/db/schema/service-types";
 
-export const ZONE_COLOR_VARS = ["var(--zone-t1)", "var(--zone-t2)", "var(--zone-t3)"];
+export const ZONE_COLOR_VARS: readonly [string, string, string] = [
+  "var(--zone-t1)",
+  "var(--zone-t2)",
+  "var(--zone-t3)",
+];
 export const FIXED_RATE_COLOR_VAR = "var(--rate-fixed)";
 
 // Hex mirror of --zone-t{1,2,3} for Recharts SVG strokes (SVG can't resolve CSS vars).

@@ -16,6 +16,7 @@ type TTextareaProps = Pick<
 type TProps<T extends FieldValues> = TFormFieldBaseProps<T> &
   TTextareaProps & {
     showCounter?: boolean;
+    textareaClassName?: string;
   };
 
 export const FormTextareaField = <T extends FieldValues>({
@@ -26,6 +27,7 @@ export const FormTextareaField = <T extends FieldValues>({
   className,
   required,
   showCounter,
+  textareaClassName,
   ...textareaProps
 }: TProps<T>) => {
   const value = useWatch({ control, name });
@@ -50,7 +52,12 @@ export const FormTextareaField = <T extends FieldValues>({
     >
       {(field) => (
         <FormControl aria-required={required || undefined}>
-          <Textarea {...field} value={field.value ?? ""} {...textareaProps} />
+          <Textarea
+            {...field}
+            value={field.value ?? ""}
+            {...textareaProps}
+            className={textareaClassName}
+          />
         </FormControl>
       )}
     </FormFieldShell>
