@@ -931,6 +931,9 @@
       },
       "updateContract": {
         "title": "Update contract",
+        "page": {
+          "meta": "Apply a change to this service's contract."
+        },
         "prompt": "What's changing?",
         "cancel": "Cancel",
         "apply": "Apply change",

@@ -1,4 +1,4 @@
-import { FileText } from "lucide-react";
+import { FileText, Settings2 } from "lucide-react";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 
@@ -19,7 +19,6 @@ import type { TPaymentDetails } from "@/lib/db/schema/payment-details";
 import type { TAttributeHistory } from "../../_data/queries";
 import { ContractCardClient } from "./components/contract-card-client";
 import { TariffRateChips } from "./components/tariff-rate-chips";
-import { UpdateContractButton } from "./components/update-contract-button";
 
 type TProps = {
   serviceId: TServiceId;
@@ -81,12 +80,14 @@ export const ContractCard = async ({
         (canEdit || contractHistory.length > 1) && (
           <div className="flex items-center gap-2">
             {canEdit && (
-              <UpdateContractButton
-                contractId={currentContract.contract.id}
-                serviceId={serviceId}
-                serviceType={serviceType}
-                propertyId={propertyId}
-              />
+              <Button asChild>
+                <Link
+                  href={`${ROUTES.properties}/${propertyId}/services/${serviceId}/contract/update`}
+                >
+                  <Settings2 className="size-3.5" />
+                  {t("updateContract")}
+                </Link>
+              </Button>
             )}
             {contractHistory.length > 1 && (
               <ContractCardClient

@@ -30,3 +30,5 @@ export { CreateContractModal } from "./components/create-contract-modal";
 export { CreateContractFormContent } from "./components/create-contract-form-content";
 export { ChangeProviderModal } from "./components/change-provider-modal";
 export { ChangeProviderFormContent } from "./components/change-provider-modal/change-provider-form-content";
+export { UpdateContractModal } from "./components/update-contract-modal";
+export { UpdateContractFormContent } from "./components/update-contract-modal/update-contract-form-content";

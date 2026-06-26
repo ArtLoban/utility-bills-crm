@@ -3,7 +3,8 @@
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 
-import { Modal } from "@/components/modal";
+import { FormContainer } from "@/components/form-container";
+import { ROUTES } from "@/lib/routes";
 import type { TContractId } from "@/lib/db/schema/contracts";
 import type { TServiceId } from "@/lib/db/schema/services";
 import type { TServiceType } from "@/lib/db/schema/service-types";
@@ -19,8 +20,14 @@ type TProps = {
   propertyId: string;
 };
 
-export const UpdateContractModal = ({ contractId, serviceId, serviceType, propertyId }: TProps) => {
+export const UpdateContractFormContent = ({
+  contractId,
+  serviceId,
+  serviceType,
+  propertyId,
+}: TProps) => {
   const t = useTranslations(UPDATE_CONTRACT_NAMESPACE);
+  const tForm = useTranslations("common.form");
   const router = useRouter();
   const onClose = () => router.back();
 
@@ -28,15 +35,13 @@ export const UpdateContractModal = ({ contractId, serviceId, serviceType, proper
     useUpdateContract({ contractId, serviceId, propertyId, onClose });
 
   return (
-    <Modal
-      open
-      onOpenChange={(open) => !open && onClose()}
-      title={t("title")}
-      description={t("prompt")}
-      size="lg"
-      onConfirm={handleConfirm}
-      confirmLabel={isProvider ? t("goToProvider") : t("apply")}
-      cancelLabel={t("cancel")}
+    <FormContainer
+      onSubmit={handleConfirm}
+      backHref={`${ROUTES.properties}/${propertyId}/services/${serviceId}`}
+      submitText={isProvider ? t("goToProvider") : t("apply")}
+      cancelText={t("cancel")}
+      savingText={tForm("saving")}
+      footerText={tForm("syncNote")}
       isSaving={isSaving}
     >
       <UpdateContractFields
@@ -47,6 +52,6 @@ export const UpdateContractModal = ({ contractId, serviceId, serviceType, proper
         accountForm={account.form}
         paymentForm={payment.form}
       />
-    </Modal>
+    </FormContainer>
   );
 };
