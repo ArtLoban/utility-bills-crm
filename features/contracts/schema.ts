@@ -39,10 +39,12 @@ export const updateContractNotesSchema = z.object({
     .or(z.literal("")),
 });
 
-// Client form schema — the user-editable subset; serviceId is injected on submit.
+// Client form schemas — the user-editable subset; serviceId is injected on submit.
 export const createContractFormSchema = createContractSchema.omit({ serviceId: true });
+export const changeProviderFormSchema = changeProviderSchema.omit({ serviceId: true });
 
 export type TCreateContractInput = z.infer<typeof createContractSchema>;
 export type TChangeProviderInput = z.infer<typeof changeProviderSchema>;
 export type TUpdateContractNotesInput = z.infer<typeof updateContractNotesSchema>;
 export type TCreateContractForm = z.infer<typeof createContractFormSchema>;
+export type TChangeProviderForm = z.infer<typeof changeProviderFormSchema>;

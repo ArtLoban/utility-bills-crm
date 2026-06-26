@@ -4,10 +4,10 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 
 import { Modal } from "@/components/modal";
+import { useChangeProviderForm } from "@/features/contracts/hooks/use-change-provider-form";
+import { ChangeProviderForm } from "./change-provider-form";
 import type { ProviderId, TProvider } from "@/lib/db/schema/providers";
 import type { TServiceId } from "@/lib/db/schema/services";
-import { useChangeProviderForm } from "./hooks/use-change-provider-form";
-import { ChangeProviderFormContent } from "./change-provider-form-content";
 
 type TProps = {
   serviceId: TServiceId;
@@ -20,9 +20,7 @@ export const ChangeProviderModal = ({ serviceId, currentProviderId, providers }:
   const t = useTranslations("contracts");
   const onClose = () => router.back();
 
-  const { form, errors, formError, set, handleSave, isSaving, canSave } = useChangeProviderForm({
-    serviceId,
-  });
+  const { form, handleSave, isSaving } = useChangeProviderForm({ serviceId, onClose });
 
   const availableProviders = providers.filter((p) => p.id !== currentProviderId);
 
@@ -32,18 +30,12 @@ export const ChangeProviderModal = ({ serviceId, currentProviderId, providers }:
       onOpenChange={(open) => !open && onClose()}
       title={t("modal.changeProvider.title")}
       confirmLabel={t("modal.changeProvider.submit")}
+      cancelLabel={t("modal.cancel")}
       onConfirm={handleSave}
       isSaving={isSaving}
-      canSave={canSave && availableProviders.length > 0}
+      canSave={availableProviders.length > 0}
     >
-      <ChangeProviderFormContent
-        form={form}
-        errors={errors}
-        formError={formError}
-        set={set}
-        providers={providers}
-        currentProviderId={currentProviderId}
-      />
+      <ChangeProviderForm form={form} providers={availableProviders} />
     </Modal>
   );
 };

@@ -860,6 +860,10 @@
       "message": "No providers yet.",
       "link": "Add a provider first."
     },
+    "noOtherProviders": {
+      "message": "No other providers to switch to.",
+      "link": "Add a provider first."
+    },
     "page": {
       "addMeta": "Set up a new contract for this service."
     }

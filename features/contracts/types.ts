@@ -4,8 +4,8 @@ export const CreateContractFormField = {
   NOTES: "notes",
 } as const;
 
-export type TChangeProviderFormState = {
-  providerId: string;
-  changeDate: string;
-  notes: string;
-};
+export const ChangeProviderFormField = {
+  NEW_PROVIDER_ID: "newProviderId",
+  CHANGE_DATE: "changeDate",
+  NOTES: "notes",
+} as const;
