@@ -65,7 +65,7 @@ export const Modal = (props: TProps) => {
           <DialogTitle>{title}</DialogTitle>
           {description && <DialogDescription>{description}</DialogDescription>}
         </DialogHeader>
-        {children && <div className="overflow-y-auto">{children}</div>}
+        {children && <div className="-mx-5 overflow-y-auto px-5 py-1">{children}</div>}
         <DialogFooter>
           <Button variant="outline" asChild>
             <DialogClose>{cancelLabel}</DialogClose>
