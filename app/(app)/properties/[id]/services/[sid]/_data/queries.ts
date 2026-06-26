@@ -77,7 +77,7 @@ export const getAttributeHistory = async (
           isNull(tariffs.deletedAt),
         ),
       )
-      .orderBy(asc(tariffs.contractId), asc(tariffs.validFrom)),
+      .orderBy(asc(tariffs.contractId), desc(tariffs.validFrom)),
 
     db
       .select({ accountNumber: accountNumbers })
@@ -90,7 +90,7 @@ export const getAttributeHistory = async (
           isNull(accountNumbers.deletedAt),
         ),
       )
-      .orderBy(asc(accountNumbers.contractId), asc(accountNumbers.validFrom)),
+      .orderBy(asc(accountNumbers.contractId), desc(accountNumbers.validFrom)),
 
     db
       .select({ paymentDetail: paymentDetails })
@@ -103,7 +103,7 @@ export const getAttributeHistory = async (
           isNull(paymentDetails.deletedAt),
         ),
       )
-      .orderBy(asc(paymentDetails.contractId), asc(paymentDetails.validFrom)),
+      .orderBy(asc(paymentDetails.contractId), desc(paymentDetails.validFrom)),
   ]);
 
   const tariffsByContract: Record<TContractId, TTariff[]> = {};

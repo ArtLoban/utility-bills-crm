@@ -50,7 +50,7 @@ export const TimelineEntry = ({
 
   return (
     <div className="flex">
-      <div className="flex w-7 flex-col items-center">
+      <div className="hidden w-7 flex-col items-center sm:flex">
         <div
           className={cn(
             "mt-3.5 size-3 shrink-0 rounded-full",
@@ -61,7 +61,7 @@ export const TimelineEntry = ({
       </div>
       <div
         className={cn(
-          "ml-3 flex-1 overflow-hidden rounded-lg border",
+          "flex-1 overflow-hidden rounded-lg border sm:ml-3",
           isCurrent ? "border-primary/20 bg-primary/5" : "border-border bg-card",
         )}
       >
@@ -71,11 +71,11 @@ export const TimelineEntry = ({
             isCurrent ? "border-primary/20 bg-primary/10" : "border-border bg-muted/40",
           )}
         >
-          <span className="text-foreground text-sm font-semibold">
+          <span className="text-foreground text-sm">
             {formatPeriod(contract.validFrom, contract.validTo, present)}
           </span>
           {isCurrent && (
-            <span className="bg-primary text-primary-foreground rounded-full px-2 py-0.5 text-xs font-semibold">
+            <span className="bg-primary text-primary-foreground rounded-full px-2 py-0.5 text-xs">
               {t("current")}
             </span>
           )}

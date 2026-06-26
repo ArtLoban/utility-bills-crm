@@ -25,7 +25,7 @@ export const ContractHistoryDrawer = ({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="right" className="data-[side=right]:sm:max-w-xl">
+      <SheetContent side="right" className="data-[side=right]:w-full data-[side=right]:sm:max-w-xl">
         <SheetHeader className="border-b">
           <SheetTitle className="text-md">{t("title")}</SheetTitle>
         </SheetHeader>
