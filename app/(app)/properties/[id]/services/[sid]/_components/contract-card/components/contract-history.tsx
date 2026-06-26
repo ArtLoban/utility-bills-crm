@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
 import type { TContractWithProvider } from "@/lib/db/access/contracts";
-import type { TAttributeHistory } from "@/app/(app)/properties/[id]/services/[sid]/_data/queries";
+import type { TAttributeHistory } from "../../../_data/queries";
 import { ContractHistoryDrawer } from "./contract-history-drawer";
 
 type TProps = {
@@ -14,7 +14,7 @@ type TProps = {
   attributeHistory: TAttributeHistory;
 };
 
-export const ContractCardClient = ({ contractHistory, attributeHistory }: TProps) => {
+export const ContractHistory = ({ contractHistory, attributeHistory }: TProps) => {
   const [historyOpen, setHistoryOpen] = useState(false);
   const t = useTranslations("services.detail.contract");
 

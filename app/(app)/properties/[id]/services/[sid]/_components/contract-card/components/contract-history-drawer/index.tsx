@@ -1,10 +1,9 @@
 "use client";
 
-import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetClose, SheetContent, SheetTitle } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetFooter, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import type { TContractWithProvider } from "@/lib/db/access/contracts";
 import type { TAttributeHistory } from "@/app/(app)/properties/[id]/services/[sid]/_data/queries";
 import { TimelineEntry } from "./components/timeline-entry";
@@ -26,23 +25,12 @@ export const ContractHistoryDrawer = ({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent
-        side="right"
-        showCloseButton={false}
-        className="flex w-[520px] max-w-[520px] flex-col p-0"
-      >
-        <div className="border-border flex shrink-0 items-center justify-between border-b px-5 py-4">
-          <SheetTitle className="text-md text-foreground font-semibold tracking-[-0.2px]">
-            {t("title")}
-          </SheetTitle>
-          <SheetClose asChild>
-            <Button variant="ghost" size="icon-sm" aria-label={t("close")}>
-              <X className="size-4" />
-            </Button>
-          </SheetClose>
-        </div>
+      <SheetContent side="right" className="data-[side=right]:sm:max-w-xl">
+        <SheetHeader className="border-b">
+          <SheetTitle className="text-md">{t("title")}</SheetTitle>
+        </SheetHeader>
 
-        <div className="flex-1 overflow-y-auto p-5">
+        <div className="flex flex-1 flex-col gap-5 overflow-y-auto pr-4 pl-3">
           {history.length === 0 ? (
             <p className="text-muted-foreground text-sm">{t("empty")}</p>
           ) : (
@@ -58,12 +46,11 @@ export const ContractHistoryDrawer = ({
             ))
           )}
         </div>
-
-        <div className="border-border bg-muted/40 flex shrink-0 items-center border-t px-5 py-3.5">
+        <SheetFooter className="bg-muted/40 border-t">
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             {t("close")}
           </Button>
-        </div>
+        </SheetFooter>
       </SheetContent>
     </Sheet>
   );

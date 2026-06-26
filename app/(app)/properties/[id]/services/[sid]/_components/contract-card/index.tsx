@@ -17,7 +17,7 @@ import type { TTariff } from "@/lib/db/schema/tariffs";
 import type { TAccountNumber } from "@/lib/db/schema/account-numbers";
 import type { TPaymentDetails } from "@/lib/db/schema/payment-details";
 import type { TAttributeHistory } from "../../_data/queries";
-import { ContractCardClient } from "./components/contract-card-client";
+import { ContractHistory } from "./components/contract-history";
 import { TariffRateChips } from "./components/tariff-rate-chips";
 
 type TProps = {
@@ -77,26 +77,19 @@ export const ContractCard = async ({
       title={t("title")}
       description={t("subtitle")}
       actions={
-        (canEdit || contractHistory.length > 1) && (
-          <div className="flex items-center gap-2">
-            {canEdit && (
-              <Button asChild>
-                <Link
-                  href={`${ROUTES.properties}/${propertyId}/services/${serviceId}/contract/update`}
-                >
-                  <Settings2 className="size-3.5" />
-                  {t("updateContract")}
-                </Link>
-              </Button>
-            )}
-            {contractHistory.length > 1 && (
-              <ContractCardClient
-                contractHistory={contractHistory}
-                attributeHistory={attributeHistory}
-              />
-            )}
-          </div>
-        )
+        <div className="flex items-center gap-2">
+          {canEdit && (
+            <Button asChild>
+              <Link
+                href={`${ROUTES.properties}/${propertyId}/services/${serviceId}/contract/update`}
+              >
+                <Settings2 className="size-3.5" />
+                {t("updateContract")}
+              </Link>
+            </Button>
+          )}
+          <ContractHistory contractHistory={contractHistory} attributeHistory={attributeHistory} />
+        </div>
       }
     >
       <div className="p-5">
