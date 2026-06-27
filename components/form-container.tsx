@@ -45,7 +45,7 @@ export const FormContainer = (props: TProps) => {
 
   return (
     <div className={cn("mx-auto w-full", maxWidth, className)}>
-      {noCard ? children : <div className="rounded-lg border p-6">{children}</div>}
+      {noCard ? children : <div className="rounded-lg border p-4 sm:p-6">{children}</div>}
       <div className="mt-5 flex items-center justify-between">
         <Button variant="outline" asChild>
           <Link href={backHref}>
@@ -64,7 +64,7 @@ export const FormContainer = (props: TProps) => {
           )}
         </Button>
       </div>
-      <div className="mt-4 text-center text-xs text-zinc-500">{footerText}</div>
+      <div className="text-muted-foreground mt-4 text-center text-xs">{footerText}</div>
     </div>
   );
 };

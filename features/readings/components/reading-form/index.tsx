@@ -33,8 +33,8 @@ type TProps = {
 };
 
 const GRID_COLS: Record<number, string> = {
-  2: "grid-cols-2",
-  3: "grid-cols-3",
+  2: "grid-cols-1 sm:grid-cols-2",
+  3: "grid-cols-1 sm:grid-cols-3",
 };
 
 export const ReadingForm = ({
