@@ -4,7 +4,7 @@ import { and, eq, isNotNull } from "drizzle-orm";
 import { db } from "@/lib/db/client";
 import { users } from "@/lib/db/schema/auth";
 import type { UserId } from "@/lib/db/schema/auth";
-import { properties, propertyAccess } from "@/lib/db/schema/properties";
+import { properties, propertyAccess, PROPERTY_ROLES } from "@/lib/db/schema/properties";
 import type { PropertyId } from "@/lib/db/schema/properties";
 import { auth } from "@/lib/auth";
 
@@ -170,8 +170,18 @@ describe("propertiesCount", () => {
       .where(and(eq(propertyAccess.userId, userId1), eq(propertyAccess.propertyId, propertyId2)));
 
     await db.insert(propertyAccess).values([
-      { propertyId: propertyId1, userId: userId1, propertyRole: "owner", grantedBy: userId1 },
-      { propertyId: propertyId2, userId: userId1, propertyRole: "editor", grantedBy: userId1 },
+      {
+        propertyId: propertyId1,
+        userId: userId1,
+        propertyRole: PROPERTY_ROLES.OWNER,
+        grantedBy: userId1,
+      },
+      {
+        propertyId: propertyId2,
+        userId: userId1,
+        propertyRole: PROPERTY_ROLES.EDITOR,
+        grantedBy: userId1,
+      },
     ]);
     // Soft-delete one
     await db

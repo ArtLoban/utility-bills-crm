@@ -15,6 +15,7 @@ import type { TServiceId } from "@/lib/db/schema/services";
 import { contractByIdForUser, currentContractForService } from "@/lib/db/access/contracts";
 import { providerByIdForUser } from "@/lib/db/access/providers";
 import { requirePropertyRole } from "@/lib/db/access/properties";
+import { PROPERTY_ROLES } from "@/lib/db/schema/properties";
 import { serviceByIdForUser } from "@/lib/db/access/services";
 import { appError, err, ok } from "@/lib/errors";
 import type { Result, TAppError } from "@/lib/errors";
@@ -52,7 +53,7 @@ export const createContract = async (
   if (!serviceAccess.ok) return serviceAccess;
 
   const propertyId = serviceAccess.value.service.propertyId;
-  const roleGuard = await requirePropertyRole(userId, propertyId, "editor");
+  const roleGuard = await requirePropertyRole(userId, propertyId, PROPERTY_ROLES.EDITOR);
   if (!roleGuard.ok) return roleGuard;
 
   // Validate that the provider belongs to the current user (prevents cross-user leakage).
@@ -99,7 +100,7 @@ export const closeContract = async (
   const roleGuard = await requirePropertyRole(
     userId,
     serviceAccess.value.service.propertyId,
-    "editor",
+    PROPERTY_ROLES.EDITOR,
   );
   if (!roleGuard.ok) return roleGuard;
 
@@ -137,7 +138,7 @@ export const changeProvider = async (
   if (!serviceAccess.ok) return serviceAccess;
 
   const propertyId = serviceAccess.value.service.propertyId;
-  const roleGuard = await requirePropertyRole(userId, propertyId, "editor");
+  const roleGuard = await requirePropertyRole(userId, propertyId, PROPERTY_ROLES.EDITOR);
   if (!roleGuard.ok) return roleGuard;
 
   // Validate that the new provider belongs to the current user.
@@ -210,7 +211,7 @@ export const updateContractNotes = async (
   const roleGuard = await requirePropertyRole(
     userId,
     serviceAccess.value.service.propertyId,
-    "editor",
+    PROPERTY_ROLES.EDITOR,
   );
   if (!roleGuard.ok) return roleGuard;
 
@@ -241,7 +242,7 @@ export const softDeleteContract = async (
   const roleGuard = await requirePropertyRole(
     userId,
     serviceAccess.value.service.propertyId,
-    "editor",
+    PROPERTY_ROLES.EDITOR,
   );
   if (!roleGuard.ok) return roleGuard;
 

@@ -8,6 +8,7 @@ import { db } from "@/lib/db/client";
 import { meters } from "@/lib/db/schema/meters";
 import type { MeterId, TMeter } from "@/lib/db/schema/meters";
 import { readings } from "@/lib/db/schema/readings";
+import { PROPERTY_ROLES } from "@/lib/db/schema/properties";
 import type { PropertyId } from "@/lib/db/schema/properties";
 import type { TServiceTypeId } from "@/lib/db/schema/service-types";
 import { serviceTypes } from "@/lib/db/schema/service-types";
@@ -56,7 +57,7 @@ export const createMeter = async (input: TCreateMeterInput): Promise<Result<TMet
   const propertyId = parsed.data.propertyId as PropertyId;
   const serviceTypeId = parsed.data.serviceTypeId as TServiceTypeId;
 
-  const roleGuard = await requirePropertyRole(userId, propertyId, "editor");
+  const roleGuard = await requirePropertyRole(userId, propertyId, PROPERTY_ROLES.EDITOR);
   if (!roleGuard.ok) return roleGuard;
 
   const zoneError = await checkZoneCompatibility(serviceTypeId, parsed.data.zoneCount);
@@ -105,7 +106,11 @@ export const updateMeter = async (
   const meterAccess = await meterByIdForUser(userId, meterId);
   if (!meterAccess.ok) return meterAccess;
 
-  const roleGuard = await requirePropertyRole(userId, meterAccess.value.propertyId, "editor");
+  const roleGuard = await requirePropertyRole(
+    userId,
+    meterAccess.value.propertyId,
+    PROPERTY_ROLES.EDITOR,
+  );
   if (!roleGuard.ok) return roleGuard;
 
   const installedAt = parsed.data.installedAt ? new Date(parsed.data.installedAt) : null;
@@ -149,7 +154,11 @@ export const replaceMeter = async (
     return err(appError.validation("validation.replace.alreadyClosed"));
   }
 
-  const roleGuard = await requirePropertyRole(userId, currentMeter.propertyId, "editor");
+  const roleGuard = await requirePropertyRole(
+    userId,
+    currentMeter.propertyId,
+    PROPERTY_ROLES.EDITOR,
+  );
   if (!roleGuard.ok) return roleGuard;
 
   const replacementDate = new Date(parsed.data.replacementDate);
@@ -203,7 +212,11 @@ export const softDeleteMeter = async (meterId: MeterId): Promise<Result<void, TA
   const meterAccess = await meterByIdForUser(userId, meterId);
   if (!meterAccess.ok) return meterAccess;
 
-  const roleGuard = await requirePropertyRole(userId, meterAccess.value.propertyId, "editor");
+  const roleGuard = await requirePropertyRole(
+    userId,
+    meterAccess.value.propertyId,
+    PROPERTY_ROLES.EDITOR,
+  );
   if (!roleGuard.ok) return roleGuard;
 
   const now = new Date();

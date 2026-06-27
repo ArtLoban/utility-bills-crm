@@ -6,6 +6,7 @@ import {
 } from "@/app/(app)/properties/[id]/services/[sid]/_data/queries";
 import { ChangeProviderModal } from "@/features/contracts";
 import type { TServiceId } from "@/lib/db/schema/services";
+import { PROPERTY_ROLES } from "@/lib/db/schema/properties";
 
 type TProps = {
   params: Promise<{ id: string; sid: string }>;
@@ -20,7 +21,7 @@ export default async function InterceptedChangeProviderPage({ params }: TProps) 
     getProvidersForContractPage(),
   ]);
 
-  if (!serviceResult.ok || serviceResult.value.role === "viewer") notFound();
+  if (!serviceResult.ok || serviceResult.value.role === PROPERTY_ROLES.VIEWER) notFound();
 
   const { currentContract } = serviceResult.value;
   if (!currentContract) notFound();

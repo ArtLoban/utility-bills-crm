@@ -4,7 +4,7 @@ import { and, eq, inArray, isNull } from "drizzle-orm";
 import { db } from "@/lib/db/client";
 import { users } from "@/lib/db/schema/auth";
 import type { UserId } from "@/lib/db/schema/auth";
-import { properties, propertyAccess } from "@/lib/db/schema/properties";
+import { properties, propertyAccess, PROPERTY_ROLES } from "@/lib/db/schema/properties";
 import type { PropertyId } from "@/lib/db/schema/properties";
 import { providers } from "@/lib/db/schema/providers";
 import type { ProviderId } from "@/lib/db/schema/providers";
@@ -52,13 +52,13 @@ beforeAll(async () => {
     {
       propertyId: testPropertyId,
       userId: testUserId,
-      propertyRole: "owner",
+      propertyRole: PROPERTY_ROLES.OWNER,
       grantedBy: testUserId,
     },
     {
       propertyId: testPropertyId,
       userId: testViewerUserId,
-      propertyRole: "viewer",
+      propertyRole: PROPERTY_ROLES.VIEWER,
       grantedBy: testUserId,
     },
   ]);

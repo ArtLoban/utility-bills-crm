@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { softDeleteProperty } from "@/features/properties";
 import { ROUTES } from "@/lib/routes";
+import { PROPERTY_ROLES } from "@/lib/db/schema/properties";
 import type { PropertyId, TPropertyRole } from "@/lib/db/schema/properties";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 
@@ -30,7 +31,7 @@ export const PropertyDeleteAction = ({ propertyId, propertyName, role }: TProps)
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  if (role !== "owner") return null;
+  if (role !== PROPERTY_ROLES.OWNER) return null;
 
   const handleDelete = async () => {
     setIsDeleting(true);

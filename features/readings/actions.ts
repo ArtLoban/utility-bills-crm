@@ -11,6 +11,7 @@ import type { MeterId, TMeter } from "@/lib/db/schema/meters";
 import { meterByIdForUser } from "@/lib/db/access/meters";
 import { readingByIdForUser } from "@/lib/db/access/readings";
 import { requirePropertyRole } from "@/lib/db/access/properties";
+import { PROPERTY_ROLES } from "@/lib/db/schema/properties";
 import { appError, err, ok } from "@/lib/errors";
 import type { Result, TAppError } from "@/lib/errors";
 import { createReadingSchema, updateReadingSchema } from "./schema";
@@ -79,7 +80,7 @@ export const createReading = async (
   if (!meterAccess.ok) return meterAccess;
   const meter = meterAccess.value;
 
-  const roleGuard = await requirePropertyRole(userId, meter.propertyId, "editor");
+  const roleGuard = await requirePropertyRole(userId, meter.propertyId, PROPERTY_ROLES.EDITOR);
   if (!roleGuard.ok) return roleGuard;
 
   const readAt = new Date(parsed.data.readAt);
@@ -130,7 +131,7 @@ export const updateReading = async (
   if (!meterAccess.ok) return meterAccess;
   const meter = meterAccess.value;
 
-  const roleGuard = await requirePropertyRole(userId, meter.propertyId, "editor");
+  const roleGuard = await requirePropertyRole(userId, meter.propertyId, PROPERTY_ROLES.EDITOR);
   if (!roleGuard.ok) return roleGuard;
 
   const readAt = new Date(parsed.data.readAt);
@@ -171,7 +172,7 @@ export const softDeleteReading = async (readingId: ReadingId): Promise<Result<vo
   if (!meterAccess.ok) return meterAccess;
   const meter = meterAccess.value;
 
-  const roleGuard = await requirePropertyRole(userId, meter.propertyId, "editor");
+  const roleGuard = await requirePropertyRole(userId, meter.propertyId, PROPERTY_ROLES.EDITOR);
   if (!roleGuard.ok) return roleGuard;
 
   await db

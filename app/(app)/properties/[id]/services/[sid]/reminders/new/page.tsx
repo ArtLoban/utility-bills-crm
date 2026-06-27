@@ -5,6 +5,7 @@ import { getPropertyDetail } from "@/app/(app)/properties/[id]/_data/queries";
 import { PageContainer } from "@/components/page-container";
 import { ReminderFormContent } from "@/features/notifications";
 import { ROUTES } from "@/lib/routes";
+import { PROPERTY_ROLES } from "@/lib/db/schema/properties";
 import type { PropertyId } from "@/lib/db/schema/properties";
 import type { TServiceId } from "@/lib/db/schema/services";
 
@@ -23,7 +24,7 @@ export default async function NewReminderPage({ params }: TProps) {
   ]);
 
   if (!propertyResult.ok) notFound();
-  if (!serviceResult.ok || serviceResult.value.role === "viewer") notFound();
+  if (!serviceResult.ok || serviceResult.value.role === PROPERTY_ROLES.VIEWER) notFound();
 
   const property = propertyResult.value;
   const { serviceType } = serviceResult.value;

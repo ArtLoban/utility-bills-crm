@@ -11,6 +11,7 @@ import { services } from "@/lib/db/schema/services";
 import type { TServiceId } from "@/lib/db/schema/services";
 import { billByIdForUser } from "@/lib/db/access/bills";
 import { requirePropertyRole } from "@/lib/db/access/properties";
+import { PROPERTY_ROLES } from "@/lib/db/schema/properties";
 import { appError, err, ok } from "@/lib/errors";
 import type { Result, TAppError } from "@/lib/errors";
 import { toIsoDate } from "@/lib/format/date";
@@ -52,7 +53,7 @@ export const createBill = async (input: TCreateBillInput): Promise<Result<TBill,
 
   if (!service) return err(appError.notFound("service", serviceId));
 
-  const guard = await requirePropertyRole(userId, service.propertyId, "editor");
+  const guard = await requirePropertyRole(userId, service.propertyId, PROPERTY_ROLES.EDITOR);
   if (!guard.ok) return guard;
 
   const { periodStart, periodEnd, periodMonth } = expandMonth(parsed.data.month);
@@ -90,7 +91,7 @@ export const editBill = async (
   const access = await billByIdForUser(userId, billId);
   if (!access.ok) return access;
 
-  const guard = await requirePropertyRole(userId, access.value.property.id, "editor");
+  const guard = await requirePropertyRole(userId, access.value.property.id, PROPERTY_ROLES.EDITOR);
   if (!guard.ok) return guard;
 
   const updateValues: Record<string, unknown> = {};
@@ -129,7 +130,7 @@ export const softDeleteBill = async (billId: BillId): Promise<Result<void, TAppE
   const access = await billByIdForUser(userId, billId);
   if (!access.ok) return access;
 
-  const guard = await requirePropertyRole(userId, access.value.property.id, "editor");
+  const guard = await requirePropertyRole(userId, access.value.property.id, PROPERTY_ROLES.EDITOR);
   if (!guard.ok) return guard;
 
   await db

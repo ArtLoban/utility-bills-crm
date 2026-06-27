@@ -6,6 +6,7 @@ import { getTranslations } from "next-intl/server";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { Button } from "@/components/ui/button";
 import { ROUTES } from "@/lib/routes";
+import { PROPERTY_ROLES } from "@/lib/db/schema/properties";
 import type { TPropertyRole } from "@/lib/db/schema/properties";
 import type { TService } from "@/lib/db/schema/services";
 import type { TServiceType } from "@/lib/db/schema/service-types";
@@ -64,7 +65,7 @@ export const ServicePageHeader = async ({
           </div>
         </div>
 
-        {role !== "viewer" && (
+        {role !== PROPERTY_ROLES.VIEWER && (
           <div className="flex items-center justify-end gap-2">
             <Button variant="outline" asChild>
               <Link href={editHref}>

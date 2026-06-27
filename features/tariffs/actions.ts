@@ -11,6 +11,7 @@ import type { TContractId } from "@/lib/db/schema/contracts";
 import { contractByIdForUser } from "@/lib/db/access/contracts";
 import { tariffByIdForUser, currentTariffForContract } from "@/lib/db/access/tariffs";
 import { requirePropertyRole } from "@/lib/db/access/properties";
+import { PROPERTY_ROLES } from "@/lib/db/schema/properties";
 import { serviceByIdForUser } from "@/lib/db/access/services";
 import { appError, err, ok } from "@/lib/errors";
 import type { Result, TAppError } from "@/lib/errors";
@@ -87,7 +88,7 @@ export const createTariff = async (
   const roleGuard = await requirePropertyRole(
     userId,
     serviceAccess.value.service.propertyId,
-    "editor",
+    PROPERTY_ROLES.EDITOR,
   );
   if (!roleGuard.ok) return roleGuard;
 
@@ -164,7 +165,7 @@ export const changeTariff = async (
   const roleGuard = await requirePropertyRole(
     userId,
     serviceAccess.value.service.propertyId,
-    "editor",
+    PROPERTY_ROLES.EDITOR,
   );
   if (!roleGuard.ok) return roleGuard;
 
@@ -256,7 +257,7 @@ export const updateTariffNotes = async (
   const roleGuard = await requirePropertyRole(
     userId,
     serviceAccess.value.service.propertyId,
-    "editor",
+    PROPERTY_ROLES.EDITOR,
   );
   if (!roleGuard.ok) return roleGuard;
 
@@ -288,7 +289,7 @@ export const softDeleteTariff = async (tariffId: TTariffId): Promise<Result<void
   const roleGuard = await requirePropertyRole(
     userId,
     serviceAccess.value.service.propertyId,
-    "editor",
+    PROPERTY_ROLES.EDITOR,
   );
   if (!roleGuard.ok) return roleGuard;
 

@@ -10,6 +10,7 @@ import { formatDisplayDate } from "@/lib/format/date";
 import { getServiceTypeVisuals, TServiceTypeCode } from "@/features/services/service-type";
 import type { TContractWithProvider } from "@/lib/db/access/contracts";
 import type { TCurrentContractSummary } from "@/lib/db/access/services";
+import { PROPERTY_ROLES } from "@/lib/db/schema/properties";
 import type { TPropertyRole } from "@/lib/db/schema/properties";
 import type { TServiceId } from "@/lib/db/schema/services";
 import type { TServiceType } from "@/lib/db/schema/service-types";
@@ -46,7 +47,7 @@ export const ContractCard = async ({
   role,
 }: TProps) => {
   const t = await getTranslations("services.detail.contract");
-  const canEdit = role !== "viewer";
+  const canEdit = role !== PROPERTY_ROLES.VIEWER;
 
   if (!currentContract) {
     return (

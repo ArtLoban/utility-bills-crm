@@ -4,7 +4,7 @@ import { inArray } from "drizzle-orm";
 import { db } from "@/lib/db/client";
 import { users } from "@/lib/db/schema/auth";
 import type { UserId } from "@/lib/db/schema/auth";
-import { properties, propertyAccess } from "@/lib/db/schema/properties";
+import { properties, propertyAccess, PROPERTY_ROLES } from "@/lib/db/schema/properties";
 import type { PropertyId } from "@/lib/db/schema/properties";
 import { services } from "@/lib/db/schema/services";
 import type { TServiceId } from "@/lib/db/schema/services";
@@ -62,12 +62,12 @@ beforeAll(async () => {
 
   // --- Property access ---
   await db.insert(propertyAccess).values([
-    { propertyId, userId, propertyRole: "owner", grantedBy: userId },
+    { propertyId, userId, propertyRole: PROPERTY_ROLES.OWNER, grantedBy: userId },
     // otherUserId owns otherProperty, not the main property
     {
       propertyId: otherPropertyId,
       userId: otherUserId,
-      propertyRole: "owner",
+      propertyRole: PROPERTY_ROLES.OWNER,
       grantedBy: otherUserId,
     },
   ]);

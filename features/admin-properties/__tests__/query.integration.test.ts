@@ -4,7 +4,7 @@ import { eq } from "drizzle-orm";
 import { db } from "@/lib/db/client";
 import { users } from "@/lib/db/schema/auth";
 import type { UserId } from "@/lib/db/schema/auth";
-import { properties, propertyAccess } from "@/lib/db/schema/properties";
+import { properties, propertyAccess, PROPERTY_ROLES } from "@/lib/db/schema/properties";
 import type { PropertyId } from "@/lib/db/schema/properties";
 import { services } from "@/lib/db/schema/services";
 import { serviceTypes } from "@/lib/db/schema/service-types";
@@ -74,20 +74,30 @@ beforeAll(async () => {
 
   // property_access: user1 owns apartment and cottage; user1+user2 both own house
   await db.insert(propertyAccess).values([
-    { propertyId: propActiveApartment, userId: userId1, propertyRole: "owner", grantedBy: userId1 },
+    {
+      propertyId: propActiveApartment,
+      userId: userId1,
+      propertyRole: PROPERTY_ROLES.OWNER,
+      grantedBy: userId1,
+    },
     {
       propertyId: propActiveHouse,
       userId: userId1,
-      propertyRole: "owner",
+      propertyRole: PROPERTY_ROLES.OWNER,
       grantedBy: userId1,
     },
     {
       propertyId: propActiveHouse,
       userId: userId2,
-      propertyRole: "owner",
+      propertyRole: PROPERTY_ROLES.OWNER,
       grantedBy: userId1,
     },
-    { propertyId: propDeletedCottage, userId: userId1, propertyRole: "owner", grantedBy: userId1 },
+    {
+      propertyId: propDeletedCottage,
+      userId: userId1,
+      propertyRole: PROPERTY_ROLES.OWNER,
+      grantedBy: userId1,
+    },
   ]);
 
   // Services on apartment: one active + one soft-deleted → count should be 1

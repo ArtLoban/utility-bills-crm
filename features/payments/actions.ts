@@ -11,6 +11,7 @@ import { services } from "@/lib/db/schema/services";
 import type { TServiceId } from "@/lib/db/schema/services";
 import { paymentByIdForUser } from "@/lib/db/access/payments";
 import { requirePropertyRole } from "@/lib/db/access/properties";
+import { PROPERTY_ROLES } from "@/lib/db/schema/properties";
 import { appError, err, ok } from "@/lib/errors";
 import type { Result, TAppError } from "@/lib/errors";
 import { createPaymentSchema, updatePaymentSchema } from "./schema";
@@ -37,7 +38,7 @@ export const recordPayment = async (
 
   if (!service) return err(appError.notFound("service", serviceId));
 
-  const guard = await requirePropertyRole(userId, service.propertyId, "editor");
+  const guard = await requirePropertyRole(userId, service.propertyId, PROPERTY_ROLES.EDITOR);
   if (!guard.ok) return guard;
 
   const [row] = await db
@@ -71,7 +72,7 @@ export const editPayment = async (
   const access = await paymentByIdForUser(userId, paymentId);
   if (!access.ok) return access;
 
-  const guard = await requirePropertyRole(userId, access.value.property.id, "editor");
+  const guard = await requirePropertyRole(userId, access.value.property.id, PROPERTY_ROLES.EDITOR);
   if (!guard.ok) return guard;
 
   const updateValues: Record<string, unknown> = {};
@@ -99,7 +100,7 @@ export const softDeletePayment = async (paymentId: PaymentId): Promise<Result<vo
   const access = await paymentByIdForUser(userId, paymentId);
   if (!access.ok) return access;
 
-  const guard = await requirePropertyRole(userId, access.value.property.id, "editor");
+  const guard = await requirePropertyRole(userId, access.value.property.id, PROPERTY_ROLES.EDITOR);
   if (!guard.ok) return guard;
 
   await db

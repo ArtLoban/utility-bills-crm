@@ -7,6 +7,7 @@ import { requireMutableUser } from "@/lib/auth/guards";
 import { db } from "@/lib/db/client";
 import { serviceTypes } from "@/lib/db/schema/service-types";
 import type { TService } from "@/lib/db/schema/services";
+import { PROPERTY_ROLES } from "@/lib/db/schema/properties";
 import type { PropertyId } from "@/lib/db/schema/properties";
 import type { ProviderId } from "@/lib/db/schema/providers";
 import type { TServiceTypeId } from "@/lib/db/schema/service-types";
@@ -86,7 +87,7 @@ export const createServiceWithSetup = async (
   const providerId = parsed.data.providerId as ProviderId;
 
   // Permission check up front — before the transaction opens.
-  const roleGuard = await requirePropertyRole(userId, propertyId, "editor");
+  const roleGuard = await requirePropertyRole(userId, propertyId, PROPERTY_ROLES.EDITOR);
   if (!roleGuard.ok) return roleGuard;
 
   // Validate provider ownership — prevents cross-user contract creation.

@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { requireUser } from "@/lib/auth/guards";
 import { propertyMembers, MemberRemoveDialog } from "@/features/sharing";
 import { getPropertyDetail } from "@/app/(app)/properties/[id]/_data/queries";
+import { PROPERTY_ROLES } from "@/lib/db/schema/properties";
 import type { PropertyId } from "@/lib/db/schema/properties";
 
 type TProps = {
@@ -22,7 +23,7 @@ export default async function InterceptedRemoveUserPage({ params }: TProps) {
   if (!membersResult.ok || !propertyResult.ok) notFound();
 
   const currentMember = membersResult.value.find((m) => m.userId === userId);
-  if (currentMember?.role !== "owner") notFound();
+  if (currentMember?.role !== PROPERTY_ROLES.OWNER) notFound();
 
   const targetMember = membersResult.value.find((m) => m.userId === uid);
   if (!targetMember) notFound();

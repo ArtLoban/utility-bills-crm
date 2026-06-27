@@ -14,6 +14,7 @@ import {
   currentPaymentDetailsForContract,
 } from "@/lib/db/access/payment-details";
 import { requirePropertyRole } from "@/lib/db/access/properties";
+import { PROPERTY_ROLES } from "@/lib/db/schema/properties";
 import { serviceByIdForUser } from "@/lib/db/access/services";
 import { appError, err, ok } from "@/lib/errors";
 import type { Result, TAppError } from "@/lib/errors";
@@ -72,7 +73,7 @@ export const createPaymentDetails = async (
   const roleGuard = await requirePropertyRole(
     userId,
     serviceAccess.value.service.propertyId,
-    "editor",
+    PROPERTY_ROLES.EDITOR,
   );
   if (!roleGuard.ok) return roleGuard;
 
@@ -131,7 +132,7 @@ export const changePaymentDetails = async (
   const roleGuard = await requirePropertyRole(
     userId,
     serviceAccess.value.service.propertyId,
-    "editor",
+    PROPERTY_ROLES.EDITOR,
   );
   if (!roleGuard.ok) return roleGuard;
 
@@ -203,7 +204,7 @@ export const updatePaymentDetailsNotes = async (
   const roleGuard = await requirePropertyRole(
     userId,
     serviceAccess.value.service.propertyId,
-    "editor",
+    PROPERTY_ROLES.EDITOR,
   );
   if (!roleGuard.ok) return roleGuard;
 
@@ -237,7 +238,7 @@ export const softDeletePaymentDetails = async (
   const roleGuard = await requirePropertyRole(
     userId,
     serviceAccess.value.service.propertyId,
-    "editor",
+    PROPERTY_ROLES.EDITOR,
   );
   if (!roleGuard.ok) return roleGuard;
 

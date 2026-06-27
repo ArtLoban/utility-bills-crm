@@ -14,6 +14,7 @@ import {
   currentAccountNumberForContract,
 } from "@/lib/db/access/account-numbers";
 import { requirePropertyRole } from "@/lib/db/access/properties";
+import { PROPERTY_ROLES } from "@/lib/db/schema/properties";
 import { serviceByIdForUser } from "@/lib/db/access/services";
 import { appError, err, ok } from "@/lib/errors";
 import type { Result, TAppError } from "@/lib/errors";
@@ -71,7 +72,7 @@ export const createAccountNumber = async (
   const roleGuard = await requirePropertyRole(
     userId,
     serviceAccess.value.service.propertyId,
-    "editor",
+    PROPERTY_ROLES.EDITOR,
   );
   if (!roleGuard.ok) return roleGuard;
 
@@ -130,7 +131,7 @@ export const changeAccountNumber = async (
   const roleGuard = await requirePropertyRole(
     userId,
     serviceAccess.value.service.propertyId,
-    "editor",
+    PROPERTY_ROLES.EDITOR,
   );
   if (!roleGuard.ok) return roleGuard;
 
@@ -202,7 +203,7 @@ export const updateAccountNumberNotes = async (
   const roleGuard = await requirePropertyRole(
     userId,
     serviceAccess.value.service.propertyId,
-    "editor",
+    PROPERTY_ROLES.EDITOR,
   );
   if (!roleGuard.ok) return roleGuard;
 
@@ -236,7 +237,7 @@ export const softDeleteAccountNumber = async (
   const roleGuard = await requirePropertyRole(
     userId,
     serviceAccess.value.service.propertyId,
-    "editor",
+    PROPERTY_ROLES.EDITOR,
   );
   if (!roleGuard.ok) return roleGuard;
 

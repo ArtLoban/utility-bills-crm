@@ -6,6 +6,7 @@ import { getAddServicePageData } from "./_data/queries";
 import { AddServiceSetupForm } from "@/features/services";
 import { PageContainer } from "@/components/page-container";
 import { ROUTES } from "@/lib/routes";
+import { PROPERTY_ROLES } from "@/lib/db/schema/properties";
 import type { PropertyId } from "@/lib/db/schema/properties";
 
 type TProps = {
@@ -21,7 +22,7 @@ export default async function NewServicePage({ params }: TProps) {
     getAddServicePageData(propertyId),
   ]);
 
-  if (!propertyResult.ok || propertyResult.value.role === "viewer") notFound();
+  if (!propertyResult.ok || propertyResult.value.role === PROPERTY_ROLES.VIEWER) notFound();
   if (!dataResult.ok) notFound();
 
   const property = propertyResult.value;

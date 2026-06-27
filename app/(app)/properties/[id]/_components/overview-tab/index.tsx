@@ -3,6 +3,7 @@ import { Lightbulb, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import type { TServiceListItem } from "@/lib/db/access/services";
+import { PROPERTY_ROLES } from "@/lib/db/schema/properties";
 import type { TPropertyRole } from "@/lib/db/schema/properties";
 import type { TServiceId } from "@/lib/db/schema/services";
 import type { TServiceTypeId } from "@/lib/db/schema/service-types";
@@ -24,7 +25,7 @@ const OverviewTab = ({
   serviceBalances,
   lastReadingByServiceType,
 }: TProps) => {
-  const canEdit = role !== "viewer";
+  const canEdit = role !== PROPERTY_ROLES.VIEWER;
   const addHref = `/properties/${propertyId}/services/new`;
 
   if (services.length === 0) {

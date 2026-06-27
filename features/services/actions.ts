@@ -11,6 +11,7 @@ import { accountNumbers } from "@/lib/db/schema/account-numbers";
 import { paymentDetails } from "@/lib/db/schema/payment-details";
 import { services } from "@/lib/db/schema/services";
 import type { TService, TServiceId } from "@/lib/db/schema/services";
+import { PROPERTY_ROLES } from "@/lib/db/schema/properties";
 import type { PropertyId } from "@/lib/db/schema/properties";
 import type { TServiceTypeId } from "@/lib/db/schema/service-types";
 import { requirePropertyRole } from "@/lib/db/access/properties";
@@ -36,7 +37,7 @@ export const createService = async (
   const serviceTypeId = parsed.data.serviceTypeId as TServiceTypeId;
   const notes = parsed.data.notes || null;
 
-  const guard = await requirePropertyRole(userId, propertyId, "editor");
+  const guard = await requirePropertyRole(userId, propertyId, PROPERTY_ROLES.EDITOR);
   if (!guard.ok) return guard;
 
   try {
@@ -87,7 +88,7 @@ export const editService = async (
 
   // Role check covers missing property, no access, and insufficient role.
   // Decision #108: all three surface as NotFoundError — not ForbiddenError.
-  const guard = await requirePropertyRole(userId, propertyId, "editor");
+  const guard = await requirePropertyRole(userId, propertyId, PROPERTY_ROLES.EDITOR);
   if (!guard.ok) return guard;
 
   await db
@@ -116,7 +117,7 @@ export const softDeleteService = async (
   if (rows.length === 0) return err(appError.notFound("service", serviceId));
   const propertyId = rows[0]!.propertyId;
 
-  const guard = await requirePropertyRole(userId, propertyId, "editor");
+  const guard = await requirePropertyRole(userId, propertyId, PROPERTY_ROLES.EDITOR);
   if (!guard.ok) return guard;
 
   await db.transaction(async (tx) => {

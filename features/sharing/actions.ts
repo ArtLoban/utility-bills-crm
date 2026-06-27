@@ -5,7 +5,7 @@ import { and, eq, isNull } from "drizzle-orm";
 
 import { requireMutableUser } from "@/lib/auth/guards";
 import { db } from "@/lib/db/client";
-import { propertyAccess } from "@/lib/db/schema/properties";
+import { propertyAccess, PROPERTY_ROLES } from "@/lib/db/schema/properties";
 import type { PropertyId } from "@/lib/db/schema/properties";
 import { users } from "@/lib/db/schema/auth";
 import type { UserId } from "@/lib/db/schema/auth";
@@ -28,7 +28,7 @@ export const inviteToProperty = async (
   if (!authGuard.ok) return authGuard;
   const userId = authGuard.value;
 
-  const guard = await requirePropertyRole(userId, propertyId, "owner");
+  const guard = await requirePropertyRole(userId, propertyId, PROPERTY_ROLES.OWNER);
   if (!guard.ok) return guard;
 
   const { email, role } = parsed.data;
@@ -84,7 +84,7 @@ export const changePropertyRole = async (
   if (!authGuard.ok) return authGuard;
   const userId = authGuard.value;
 
-  const guard = await requirePropertyRole(userId, propertyId, "owner");
+  const guard = await requirePropertyRole(userId, propertyId, PROPERTY_ROLES.OWNER);
   if (!guard.ok) return guard;
 
   const { targetUserId, newRole } = parsed.data;
@@ -110,7 +110,7 @@ export const changePropertyRole = async (
   }
 
   // Another owner's role is immutable — only that owner can act on their own ownership.
-  if (targetUserId !== userId && targetAccess.role === "owner") {
+  if (targetUserId !== userId && targetAccess.role === PROPERTY_ROLES.OWNER) {
     return err(appError.forbidden("OWNER_PROTECTED"));
   }
 
@@ -122,13 +122,17 @@ export const changePropertyRole = async (
       .where(
         and(
           eq(propertyAccess.propertyId, propertyId),
-          eq(propertyAccess.propertyRole, "owner"),
+          eq(propertyAccess.propertyRole, PROPERTY_ROLES.OWNER),
           isNull(propertyAccess.deletedAt),
         ),
       )
       .for("update");
 
-    if (ownerRows.length === 1 && ownerRows[0]!.userId === targetUserId && newRole !== "owner") {
+    if (
+      ownerRows.length === 1 &&
+      ownerRows[0]!.userId === targetUserId &&
+      newRole !== PROPERTY_ROLES.OWNER
+    ) {
       return err(appError.forbidden("LAST_OWNER"));
     }
 
@@ -160,7 +164,7 @@ export const removePropertyAccess = async (
   if (!authGuard.ok) return authGuard;
   const userId = authGuard.value;
 
-  const guard = await requirePropertyRole(userId, propertyId, "owner");
+  const guard = await requirePropertyRole(userId, propertyId, PROPERTY_ROLES.OWNER);
   if (!guard.ok) return guard;
 
   const { targetUserId } = parsed.data;
@@ -187,7 +191,7 @@ export const removePropertyAccess = async (
   }
 
   // Owners are protected — another owner must leave themselves via leaveProperty.
-  if (targetAccess.role === "owner") {
+  if (targetAccess.role === PROPERTY_ROLES.OWNER) {
     return err(appError.forbidden("OWNER_PROTECTED"));
   }
 
@@ -221,7 +225,7 @@ export const leaveProperty = async (propertyId: PropertyId): Promise<Result<void
     return err(appError.notFound("property", propertyId));
   }
 
-  if (ownAccess.role === "owner") {
+  if (ownAccess.role === PROPERTY_ROLES.OWNER) {
     // Lock owner rows and check last-owner constraint inside the transaction
     // to prevent a concurrent double-leave from dropping the property to zero owners.
     const result = await db.transaction(async (tx) => {
@@ -231,7 +235,7 @@ export const leaveProperty = async (propertyId: PropertyId): Promise<Result<void
         .where(
           and(
             eq(propertyAccess.propertyId, propertyId),
-            eq(propertyAccess.propertyRole, "owner"),
+            eq(propertyAccess.propertyRole, PROPERTY_ROLES.OWNER),
             isNull(propertyAccess.deletedAt),
           ),
         )

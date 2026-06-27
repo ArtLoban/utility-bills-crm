@@ -4,7 +4,7 @@ import { inArray } from "drizzle-orm";
 import { db } from "@/lib/db/client";
 import { users } from "@/lib/db/schema/auth";
 import type { UserId } from "@/lib/db/schema/auth";
-import { properties, propertyAccess } from "@/lib/db/schema/properties";
+import { properties, propertyAccess, PROPERTY_ROLES } from "@/lib/db/schema/properties";
 import type { PropertyId } from "@/lib/db/schema/properties";
 import { services } from "@/lib/db/schema/services";
 import { serviceTypes } from "@/lib/db/schema/service-types";
@@ -67,11 +67,11 @@ beforeAll(async () => {
 
   // --- Property access ---
   await db.insert(propertyAccess).values([
-    { propertyId, userId, propertyRole: "owner", grantedBy: userId },
+    { propertyId, userId, propertyRole: PROPERTY_ROLES.OWNER, grantedBy: userId },
     {
       propertyId: otherPropertyId,
       userId: otherUserId,
-      propertyRole: "owner",
+      propertyRole: PROPERTY_ROLES.OWNER,
       grantedBy: otherUserId,
     },
   ]);
@@ -133,7 +133,9 @@ beforeAll(async () => {
 
   await db
     .insert(propertyAccess)
-    .values([{ propertyId: twoZonePropId, userId, propertyRole: "owner", grantedBy: userId }]);
+    .values([
+      { propertyId: twoZonePropId, userId, propertyRole: PROPERTY_ROLES.OWNER, grantedBy: userId },
+    ]);
   await db
     .insert(services)
     .values([{ propertyId: twoZonePropId, serviceTypeId: electricityTypeId }]);
@@ -163,7 +165,9 @@ beforeAll(async () => {
 
   await db
     .insert(propertyAccess)
-    .values([{ propertyId: replacePropId, userId, propertyRole: "owner", grantedBy: userId }]);
+    .values([
+      { propertyId: replacePropId, userId, propertyRole: PROPERTY_ROLES.OWNER, grantedBy: userId },
+    ]);
   await db
     .insert(services)
     .values([{ propertyId: replacePropId, serviceTypeId: electricityTypeId }]);

@@ -4,7 +4,7 @@ import { and, eq, inArray, isNull } from "drizzle-orm";
 import { db } from "@/lib/db/client";
 import { users } from "@/lib/db/schema/auth";
 import type { UserId } from "@/lib/db/schema/auth";
-import { properties, propertyAccess } from "@/lib/db/schema/properties";
+import { properties, propertyAccess, PROPERTY_ROLES } from "@/lib/db/schema/properties";
 import type { PropertyId } from "@/lib/db/schema/properties";
 import { ERROR_CODES, errorMessage } from "@/lib/errors";
 import { auth } from "@/lib/auth";
@@ -67,19 +67,19 @@ beforeEach(async () => {
     {
       propertyId: testPropertyId,
       userId: ownerUserId,
-      propertyRole: "owner",
+      propertyRole: PROPERTY_ROLES.OWNER,
       grantedBy: ownerUserId,
     },
     {
       propertyId: testPropertyId,
       userId: editorUserId,
-      propertyRole: "editor",
+      propertyRole: PROPERTY_ROLES.EDITOR,
       grantedBy: ownerUserId,
     },
     {
       propertyId: testPropertyId,
       userId: viewerUserId,
-      propertyRole: "viewer",
+      propertyRole: PROPERTY_ROLES.VIEWER,
       grantedBy: ownerUserId,
     },
   ]);
@@ -109,7 +109,7 @@ describe("inviteToProperty", () => {
     mockAuth(ownerUserId);
     const result = await inviteToProperty(testPropertyId, {
       email: "nobody@test.invalid",
-      role: "viewer",
+      role: PROPERTY_ROLES.VIEWER,
     });
     expect(result.ok).toBe(false);
     if (result.ok) return;
@@ -121,7 +121,7 @@ describe("inviteToProperty", () => {
     mockAuth(ownerUserId);
     const result = await inviteToProperty(testPropertyId, {
       email: "test-sharing-editor@test.invalid",
-      role: "viewer",
+      role: PROPERTY_ROLES.VIEWER,
     });
     expect(result.ok).toBe(false);
     if (result.ok) return;
@@ -134,7 +134,7 @@ describe("inviteToProperty", () => {
     const before = new Date();
     const result = await inviteToProperty(testPropertyId, {
       email: "test-sharing-invitee@test.invalid",
-      role: "viewer",
+      role: PROPERTY_ROLES.VIEWER,
     });
     expect(result.ok).toBe(true);
 
@@ -151,7 +151,7 @@ describe("inviteToProperty", () => {
       .limit(1);
 
     expect(row).toBeDefined();
-    expect(row!.propertyRole).toBe("viewer");
+    expect(row!.propertyRole).toBe(PROPERTY_ROLES.VIEWER);
     expect(row!.grantedBy).toBe(ownerUserId);
     expect(row!.grantedAt.getTime()).toBeGreaterThanOrEqual(before.getTime());
   });
@@ -162,7 +162,7 @@ describe("inviteToProperty", () => {
     // Invite first time
     await inviteToProperty(testPropertyId, {
       email: "test-sharing-invitee@test.invalid",
-      role: "viewer",
+      role: PROPERTY_ROLES.VIEWER,
     });
 
     // Simulate removal (soft-delete)
@@ -180,7 +180,7 @@ describe("inviteToProperty", () => {
     // Re-invite should succeed — fresh INSERT, not a revival of the soft-deleted row
     const result = await inviteToProperty(testPropertyId, {
       email: "test-sharing-invitee@test.invalid",
-      role: "editor",
+      role: PROPERTY_ROLES.EDITOR,
     });
     expect(result.ok).toBe(true);
 
@@ -195,14 +195,14 @@ describe("inviteToProperty", () => {
         ),
       );
     expect(activeRows).toHaveLength(1);
-    expect(activeRows[0]!.propertyRole).toBe("editor");
+    expect(activeRows[0]!.propertyRole).toBe(PROPERTY_ROLES.EDITOR);
   });
 
   it("editor caller — gate returns NotFoundError", async () => {
     mockAuth(editorUserId);
     const result = await inviteToProperty(testPropertyId, {
       email: "test-sharing-invitee@test.invalid",
-      role: "viewer",
+      role: PROPERTY_ROLES.VIEWER,
     });
     expect(result.ok).toBe(false);
     if (result.ok) return;
@@ -213,7 +213,7 @@ describe("inviteToProperty", () => {
     mockAuth(viewerUserId);
     const result = await inviteToProperty(testPropertyId, {
       email: "test-sharing-invitee@test.invalid",
-      role: "viewer",
+      role: PROPERTY_ROLES.VIEWER,
     });
     expect(result.ok).toBe(false);
     if (result.ok) return;
@@ -240,7 +240,7 @@ describe("changePropertyRole", () => {
 
     const result = await changePropertyRole(testPropertyId, {
       targetUserId: editorUserId,
-      newRole: "editor",
+      newRole: PROPERTY_ROLES.EDITOR,
     });
     expect(result.ok).toBe(true);
 
@@ -255,7 +255,7 @@ describe("changePropertyRole", () => {
         ),
       )
       .limit(1);
-    expect(after!.role).toBe("editor");
+    expect(after!.role).toBe(PROPERTY_ROLES.EDITOR);
     expect(after!.updatedAt.getTime()).toBe(before!.updatedAt.getTime());
   });
 
@@ -266,13 +266,13 @@ describe("changePropertyRole", () => {
     await db.insert(propertyAccess).values({
       propertyId: testPropertyId,
       userId: secondOwnerUserId,
-      propertyRole: "owner",
+      propertyRole: PROPERTY_ROLES.OWNER,
       grantedBy: ownerUserId,
     });
 
     const result = await changePropertyRole(testPropertyId, {
       targetUserId: secondOwnerUserId,
-      newRole: "editor",
+      newRole: PROPERTY_ROLES.EDITOR,
     });
     expect(result.ok).toBe(false);
     if (result.ok) return;
@@ -284,7 +284,7 @@ describe("changePropertyRole", () => {
     mockAuth(ownerUserId);
     const result = await changePropertyRole(testPropertyId, {
       targetUserId: ownerUserId,
-      newRole: "editor",
+      newRole: PROPERTY_ROLES.EDITOR,
     });
     expect(result.ok).toBe(false);
     if (result.ok) return;
@@ -298,13 +298,13 @@ describe("changePropertyRole", () => {
     await db.insert(propertyAccess).values({
       propertyId: testPropertyId,
       userId: secondOwnerUserId,
-      propertyRole: "owner",
+      propertyRole: PROPERTY_ROLES.OWNER,
       grantedBy: ownerUserId,
     });
 
     const result = await changePropertyRole(testPropertyId, {
       targetUserId: ownerUserId,
-      newRole: "editor",
+      newRole: PROPERTY_ROLES.EDITOR,
     });
     expect(result.ok).toBe(true);
 
@@ -319,7 +319,7 @@ describe("changePropertyRole", () => {
         ),
       )
       .limit(1);
-    expect(row!.role).toBe("editor");
+    expect(row!.role).toBe(PROPERTY_ROLES.EDITOR);
   });
 
   it("grant metadata immutability — grantedBy and grantedAt unchanged after role change", async () => {
@@ -339,7 +339,7 @@ describe("changePropertyRole", () => {
 
     const result = await changePropertyRole(testPropertyId, {
       targetUserId: editorUserId,
-      newRole: "viewer",
+      newRole: PROPERTY_ROLES.VIEWER,
     });
     expect(result.ok).toBe(true);
 
@@ -359,7 +359,7 @@ describe("changePropertyRole", () => {
       )
       .limit(1);
 
-    expect(after!.role).toBe("viewer");
+    expect(after!.role).toBe(PROPERTY_ROLES.VIEWER);
     expect(after!.grantedBy).toBe(before!.grantedBy);
     expect(after!.grantedAt.getTime()).toBe(before!.grantedAt.getTime());
   });
@@ -368,7 +368,7 @@ describe("changePropertyRole", () => {
     mockAuth(editorUserId);
     const result = await changePropertyRole(testPropertyId, {
       targetUserId: viewerUserId,
-      newRole: "editor",
+      newRole: PROPERTY_ROLES.EDITOR,
     });
     expect(result.ok).toBe(false);
     if (result.ok) return;
@@ -379,7 +379,7 @@ describe("changePropertyRole", () => {
     mockAuth(viewerUserId);
     const result = await changePropertyRole(testPropertyId, {
       targetUserId: editorUserId,
-      newRole: "viewer",
+      newRole: PROPERTY_ROLES.VIEWER,
     });
     expect(result.ok).toBe(false);
     if (result.ok) return;
@@ -405,7 +405,7 @@ describe("removePropertyAccess", () => {
     await db.insert(propertyAccess).values({
       propertyId: testPropertyId,
       userId: secondOwnerUserId,
-      propertyRole: "owner",
+      propertyRole: PROPERTY_ROLES.OWNER,
       grantedBy: ownerUserId,
     });
 
@@ -509,7 +509,7 @@ describe("leaveProperty", () => {
     await db.insert(propertyAccess).values({
       propertyId: testPropertyId,
       userId: secondOwnerUserId,
-      propertyRole: "owner",
+      propertyRole: PROPERTY_ROLES.OWNER,
       grantedBy: ownerUserId,
     });
 

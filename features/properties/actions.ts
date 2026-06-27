@@ -12,7 +12,7 @@ import { paymentDetails } from "@/lib/db/schema/payment-details";
 import { readings } from "@/lib/db/schema/readings";
 import { bills } from "@/lib/db/schema/bills";
 import { payments } from "@/lib/db/schema/payments";
-import { properties, propertyAccess } from "@/lib/db/schema/properties";
+import { properties, propertyAccess, PROPERTY_ROLES } from "@/lib/db/schema/properties";
 import { services } from "@/lib/db/schema/services";
 import { tariffs } from "@/lib/db/schema/tariffs";
 import type { PropertyId, TProperty } from "@/lib/db/schema/properties";
@@ -44,7 +44,7 @@ export const createProperty = async (
     await tx.insert(propertyAccess).values({
       propertyId: newProperty!.id,
       userId,
-      propertyRole: "owner",
+      propertyRole: PROPERTY_ROLES.OWNER,
       grantedBy: userId,
     });
 
@@ -68,7 +68,7 @@ export const editProperty = async (
   if (!authGuard.ok) return authGuard;
   const userId = authGuard.value;
 
-  const guard = await requirePropertyRole(userId, propertyId, "editor");
+  const guard = await requirePropertyRole(userId, propertyId, PROPERTY_ROLES.EDITOR);
   if (!guard.ok) return guard;
 
   const { name, type, address, notes } = parsed.data;
@@ -90,7 +90,7 @@ export const softDeleteProperty = async (
   if (!authGuard.ok) return authGuard;
   const userId = authGuard.value;
 
-  const guard = await requirePropertyRole(userId, propertyId, "owner");
+  const guard = await requirePropertyRole(userId, propertyId, PROPERTY_ROLES.OWNER);
   if (!guard.ok) return guard;
 
   await db.transaction(async (tx) => {
