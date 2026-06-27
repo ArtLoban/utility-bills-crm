@@ -8,6 +8,7 @@ import { db } from "@/lib/db/client";
 import { users } from "@/lib/db/schema";
 import { appError, err, ok } from "@/lib/errors";
 import type { Result, TAppError } from "@/lib/errors";
+import { ROUTES } from "@/lib/routes";
 
 import { profileNameSchema } from "./schema";
 import type { TProfileNameInput } from "./schema";
@@ -28,6 +29,6 @@ export const updateProfileName = async (
 
   // Revalidate all routes under the app layout so AppNav and Dashboard
   // greeting reflect the new name without requiring a full page reload.
-  revalidatePath("/", "layout");
+  revalidatePath(ROUTES.home, "layout");
   return ok(undefined);
 };

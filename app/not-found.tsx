@@ -5,6 +5,7 @@ import { SearchX } from "lucide-react";
 import { PublicHeader } from "@/components/public-header";
 import { Button } from "@/components/ui/button";
 import { IconBadge } from "@/components/icon-badge";
+import { ROUTES } from "@/lib/routes";
 
 export const metadata: Metadata = {
   title: "404 — Page not found",
@@ -27,7 +28,7 @@ export default async function NotFound() {
 
         <div className="mt-6 w-full max-w-72 md:w-auto">
           <Button asChild variant="default" className="h-11 w-full md:h-9 md:w-auto">
-            <Link href="/">{t("goHome")}</Link>
+            <Link href={ROUTES.home}>{t("goHome")}</Link>
           </Button>
         </div>
       </main>

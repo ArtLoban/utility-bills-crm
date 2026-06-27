@@ -9,6 +9,7 @@ import { TriangleAlert } from "lucide-react";
 import * as Sentry from "@sentry/nextjs";
 import { Button } from "@/components/ui/button";
 import { IconBadge } from "@/components/icon-badge";
+import { ROUTES } from "@/lib/routes";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -45,7 +46,7 @@ export default function GlobalError({ error, reset }: TProps) {
 
           <div className="mt-6 flex w-full max-w-72 flex-col-reverse gap-2.5 md:w-auto md:max-w-none md:flex-row md:gap-3">
             <Button asChild variant="outline" className="h-11 w-full md:h-9 md:w-auto">
-              <Link href="/">Go home</Link>
+              <Link href={ROUTES.home}>Go home</Link>
             </Button>
             <Button variant="default" className="h-11 w-full md:h-9 md:w-auto" onClick={reset}>
               Try again

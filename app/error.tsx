@@ -7,6 +7,7 @@ import { useTranslations } from "next-intl";
 import * as Sentry from "@sentry/nextjs";
 import { Button } from "@/components/ui/button";
 import { IconBadge } from "@/components/icon-badge";
+import { ROUTES } from "@/lib/routes";
 
 type TProps = {
   error: Error & { digest?: string };
@@ -34,7 +35,7 @@ export default function RootError({ error, reset }: TProps) {
 
       <div className="mt-6 flex w-full max-w-72 flex-col-reverse gap-2.5 md:w-auto md:max-w-none md:flex-row md:gap-3">
         <Button asChild variant="outline" className="h-11 w-full md:h-9 md:w-auto">
-          <Link href="/">{t("goHome")}</Link>
+          <Link href={ROUTES.home}>{t("goHome")}</Link>
         </Button>
         <Button variant="default" className="h-11 w-full md:h-9 md:w-auto" onClick={reset}>
           {t("tryAgain")}

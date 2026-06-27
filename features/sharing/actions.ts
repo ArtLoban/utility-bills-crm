@@ -12,6 +12,7 @@ import type { UserId } from "@/lib/db/schema/auth";
 import { requirePropertyRole } from "@/lib/db/access/properties";
 import { appError, err, ok } from "@/lib/errors";
 import type { Result, TAppError } from "@/lib/errors";
+import { ROUTES } from "@/lib/routes";
 import { INVITE_ERROR, inviteSchema, changeRoleSchema, removeAccessSchema } from "./schema";
 import type { TInviteInput, TChangeRoleInput, TRemoveAccessInput } from "./schema";
 
@@ -263,6 +264,6 @@ export const leaveProperty = async (propertyId: PropertyId): Promise<Result<void
   }
 
   revalidatePath(`/properties/${propertyId}/sharing`);
-  revalidatePath("/properties");
+  revalidatePath(ROUTES.properties);
   return ok(undefined);
 };

@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
 
 import { PageContainer } from "@/components/page-container";
+import { ROUTES } from "@/lib/routes";
 
 import { useAboutForm } from "./hooks/use-about-form";
 import { useGlobalForm } from "./hooks/use-global-form";
@@ -78,7 +79,7 @@ export const LandingCmsClient = ({ initialData }: TProps) => {
           Edit the public landing pages. Changes publish immediately.
         </p>
       }
-      breadcrumbs={[{ label: "art-admin", href: "/art-admin" }, { label: "landing" }]}
+      breadcrumbs={[{ label: "art-admin", href: ROUTES.admin.root }, { label: "landing" }]}
     >
       <div>
         <div className="-mx-4 overflow-x-auto px-4 sm:-mx-6 sm:px-6 md:mx-0 md:overflow-visible md:px-0">

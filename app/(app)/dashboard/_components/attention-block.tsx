@@ -4,6 +4,7 @@ import { getTranslations, getFormatter, getLocale } from "next-intl/server";
 
 import { DataCard } from "@/components/data-card";
 import { formatMoney } from "@/lib/format/money";
+import { ROUTES } from "@/lib/routes";
 import type { TAttentionData } from "../_data/types";
 
 type TProps = {
@@ -41,7 +42,7 @@ export const AttentionBlock = async ({ data }: TProps) => {
               })}
             </span>
             <Link
-              href="/bills"
+              href={ROUTES.bills}
               className="text-primary inline-flex shrink-0 items-center gap-0.5 text-[13px] font-medium no-underline"
             >
               {t("viewDetails")}
@@ -61,7 +62,7 @@ export const AttentionBlock = async ({ data }: TProps) => {
               })}
             </span>
             <Link
-              href="/meters"
+              href={ROUTES.meters}
               className="text-primary inline-flex shrink-0 items-center gap-0.5 text-[13px] font-medium no-underline"
             >
               {t("goToMeters")}

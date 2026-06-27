@@ -17,7 +17,13 @@ export const generateMetadata = async (): Promise<Metadata> => {
   return {
     title: { absolute: title },
     description,
-    openGraph: { type: "website", url: "/", title, description, siteName: "Utility Bills CRM" },
+    openGraph: {
+      type: "website",
+      url: ROUTES.home,
+      title,
+      description,
+      siteName: "Utility Bills CRM",
+    },
     twitter: { card: "summary_large_image", title, description },
   };
 };

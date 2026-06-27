@@ -19,6 +19,7 @@ import type { PropertyId, TProperty } from "@/lib/db/schema/properties";
 import { requirePropertyRole } from "@/lib/db/access/properties";
 import { appError, err, ok } from "@/lib/errors";
 import type { Result, TAppError } from "@/lib/errors";
+import { ROUTES } from "@/lib/routes";
 import { propertySchema } from "./schema";
 import type { TPropertyInput } from "./schema";
 
@@ -51,7 +52,7 @@ export const createProperty = async (
     return newProperty!;
   });
 
-  revalidatePath("/properties");
+  revalidatePath(ROUTES.properties);
   return ok(property);
 };
 
@@ -78,7 +79,7 @@ export const editProperty = async (
     .set({ name, type, address: address || null, notes: notes || null })
     .where(and(eq(properties.id, propertyId), isNull(properties.deletedAt)));
 
-  revalidatePath("/properties");
+  revalidatePath(ROUTES.properties);
   revalidatePath(`/properties/${propertyId}`);
   return ok(undefined);
 };
@@ -186,6 +187,6 @@ export const softDeleteProperty = async (
     await tx.update(properties).set({ deletedAt: now }).where(eq(properties.id, propertyId));
   });
 
-  revalidatePath("/properties");
+  revalidatePath(ROUTES.properties);
   return ok(undefined);
 };

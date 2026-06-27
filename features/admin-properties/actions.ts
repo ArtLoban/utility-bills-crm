@@ -20,6 +20,7 @@ import { requireAdmin } from "@/lib/auth/guards";
 import { appError, err, ok } from "@/lib/errors";
 import type { Result, TAppError } from "@/lib/errors";
 import { unwrapOrThrow } from "@/lib/unwrap-or-throw";
+import { ROUTES } from "@/lib/routes";
 
 const guardAdmin = async (): Promise<void> => {
   await unwrapOrThrow(await requireAdmin());
@@ -120,9 +121,9 @@ export const restoreProperty = async (propertyId: string): Promise<Result<void, 
       .where(eq(properties.id, propertyId as PropertyId));
   });
 
-  revalidatePath("/art-admin/properties");
+  revalidatePath(ROUTES.admin.properties);
   revalidatePath(`/art-admin/properties/${propertyId}`);
-  revalidatePath("/properties");
+  revalidatePath(ROUTES.properties);
   return ok(undefined);
 };
 
@@ -144,6 +145,6 @@ export const hardDeleteProperty = async (propertyId: string): Promise<Result<voi
 
   await db.delete(properties).where(eq(properties.id, propertyId as PropertyId));
 
-  revalidatePath("/art-admin/properties");
+  revalidatePath(ROUTES.admin.properties);
   return ok(undefined);
 };

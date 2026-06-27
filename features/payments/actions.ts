@@ -14,6 +14,7 @@ import { requirePropertyRole } from "@/lib/db/access/properties";
 import { PROPERTY_ROLES } from "@/lib/db/schema/properties";
 import { appError, err, ok } from "@/lib/errors";
 import type { Result, TAppError } from "@/lib/errors";
+import { ROUTES } from "@/lib/routes";
 import { createPaymentSchema, updatePaymentSchema } from "./schema";
 import type { TCreatePaymentInput, TUpdatePaymentInput } from "./schema";
 
@@ -52,7 +53,7 @@ export const recordPayment = async (
     })
     .returning();
 
-  revalidatePath("/payments");
+  revalidatePath(ROUTES.payments);
   return ok(row!);
 };
 
@@ -88,7 +89,7 @@ export const editPayment = async (
       .where(and(eq(payments.id, paymentId), isNull(payments.deletedAt)));
   }
 
-  revalidatePath("/payments");
+  revalidatePath(ROUTES.payments);
   return ok(undefined);
 };
 
@@ -108,6 +109,6 @@ export const softDeletePayment = async (paymentId: PaymentId): Promise<Result<vo
     .set({ deletedAt: new Date() })
     .where(and(eq(payments.id, paymentId), isNull(payments.deletedAt)));
 
-  revalidatePath("/payments");
+  revalidatePath(ROUTES.payments);
   return ok(undefined);
 };

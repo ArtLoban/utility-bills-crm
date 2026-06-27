@@ -23,7 +23,7 @@ export const startDemoSessionAction = async () => {
 };
 
 export const signOutAction = async () => {
-  await signOut({ redirectTo: "/" });
+  await signOut({ redirectTo: ROUTES.home });
 };
 
 export const signOutToGoogleAction = async () => {

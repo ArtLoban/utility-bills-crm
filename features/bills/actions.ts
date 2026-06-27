@@ -15,6 +15,7 @@ import { PROPERTY_ROLES } from "@/lib/db/schema/properties";
 import { appError, err, ok } from "@/lib/errors";
 import type { Result, TAppError } from "@/lib/errors";
 import { toIsoDate } from "@/lib/format/date";
+import { ROUTES } from "@/lib/routes";
 import { createBillSchema, updateBillSchema } from "./schema";
 import type { TCreateBillInput, TUpdateBillInput } from "./schema";
 
@@ -71,7 +72,7 @@ export const createBill = async (input: TCreateBillInput): Promise<Result<TBill,
     })
     .returning();
 
-  revalidatePath("/bills");
+  revalidatePath(ROUTES.bills);
   return ok(row!);
 };
 
@@ -118,7 +119,7 @@ export const editBill = async (
       .where(and(eq(bills.id, billId), isNull(bills.deletedAt)));
   }
 
-  revalidatePath("/bills");
+  revalidatePath(ROUTES.bills);
   return ok(undefined);
 };
 
@@ -138,6 +139,6 @@ export const softDeleteBill = async (billId: BillId): Promise<Result<void, TAppE
     .set({ deletedAt: new Date() })
     .where(and(eq(bills.id, billId), isNull(bills.deletedAt)));
 
-  revalidatePath("/bills");
+  revalidatePath(ROUTES.bills);
   return ok(undefined);
 };

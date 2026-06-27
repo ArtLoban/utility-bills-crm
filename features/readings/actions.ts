@@ -14,6 +14,7 @@ import { requirePropertyRole } from "@/lib/db/access/properties";
 import { PROPERTY_ROLES } from "@/lib/db/schema/properties";
 import { appError, err, ok } from "@/lib/errors";
 import type { Result, TAppError } from "@/lib/errors";
+import { ROUTES } from "@/lib/routes";
 import { createReadingSchema, updateReadingSchema } from "./schema";
 import type { TCreateReadingInput, TUpdateReadingInput } from "./schema";
 
@@ -105,7 +106,7 @@ export const createReading = async (
     .returning();
 
   revalidatePath(`/properties/${meter.propertyId}/meters/${meterId}`);
-  revalidatePath("/meters");
+  revalidatePath(ROUTES.meters);
 
   return ok(row[0]!);
 };
@@ -154,7 +155,7 @@ export const updateReading = async (
     .where(and(eq(readings.id, readingId), isNull(readings.deletedAt)));
 
   revalidatePath(`/properties/${meter.propertyId}/meters/${reading.meterId}`);
-  revalidatePath("/meters");
+  revalidatePath(ROUTES.meters);
 
   return ok(undefined);
 };
@@ -181,7 +182,7 @@ export const softDeleteReading = async (readingId: ReadingId): Promise<Result<vo
     .where(and(eq(readings.id, readingId), isNull(readings.deletedAt)));
 
   revalidatePath(`/properties/${meter.propertyId}/meters/${reading.meterId}`);
-  revalidatePath("/meters");
+  revalidatePath(ROUTES.meters);
 
   return ok(undefined);
 };

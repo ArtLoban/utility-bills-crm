@@ -16,6 +16,7 @@ import { meterByIdForUser } from "@/lib/db/access/meters";
 import { requirePropertyRole } from "@/lib/db/access/properties";
 import { appError, err, ok } from "@/lib/errors";
 import type { Result, TAppError } from "@/lib/errors";
+import { ROUTES } from "@/lib/routes";
 import { insertMeterInternal } from "./lib";
 import { createMeterSchema, replaceMeterSchema, updateMeterSchema } from "./schema";
 import type { TCreateMeterInput, TReplaceMeterInput, TUpdateMeterInput } from "./schema";
@@ -80,7 +81,7 @@ export const createMeter = async (input: TCreateMeterInput): Promise<Result<TMet
     );
 
     revalidatePath(`/properties/${propertyId}/meters`);
-    revalidatePath("/meters");
+    revalidatePath(ROUTES.meters);
     return ok(meter);
   } catch (error) {
     if (isExclusionViolation(error)) {
@@ -128,7 +129,7 @@ export const updateMeter = async (
 
   revalidatePath(`/properties/${meterAccess.value.propertyId}/meters`);
   revalidatePath(`/properties/${meterAccess.value.propertyId}/meters/${meterId}`);
-  revalidatePath("/meters");
+  revalidatePath(ROUTES.meters);
   return ok(undefined);
 };
 
@@ -194,7 +195,7 @@ export const replaceMeter = async (
 
     revalidatePath(`/properties/${currentMeter.propertyId}/meters`);
     revalidatePath(`/properties/${currentMeter.propertyId}/meters/${currentMeterId}`);
-    revalidatePath("/meters");
+    revalidatePath(ROUTES.meters);
     return ok(newMeter);
   } catch (error) {
     if (isExclusionViolation(error)) {
@@ -234,6 +235,6 @@ export const softDeleteMeter = async (meterId: MeterId): Promise<Result<void, TA
   });
 
   revalidatePath(`/properties/${meterAccess.value.propertyId}/meters`);
-  revalidatePath("/meters");
+  revalidatePath(ROUTES.meters);
   return ok(undefined);
 };

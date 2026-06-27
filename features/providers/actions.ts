@@ -11,6 +11,7 @@ import type { ProviderId, TProvider } from "@/lib/db/schema/providers";
 import { providerByIdForUser } from "@/lib/db/access/providers";
 import { appError, err, ok } from "@/lib/errors";
 import type { Result, TAppError } from "@/lib/errors";
+import { ROUTES } from "@/lib/routes";
 import { providerSchema } from "./schema";
 import type { TProviderInput } from "./schema";
 
@@ -38,7 +39,7 @@ export const createProvider = async (
     })
     .returning();
 
-  revalidatePath("/providers");
+  revalidatePath(ROUTES.providers);
   return ok(newProvider!);
 };
 
@@ -65,7 +66,7 @@ export const editProvider = async (
     .set({ name, website: website || null, phone: phone || null, notes: notes || null })
     .where(and(eq(providers.id, providerId), isNull(providers.deletedAt)));
 
-  revalidatePath("/providers");
+  revalidatePath(ROUTES.providers);
   return ok(undefined);
 };
 
@@ -96,6 +97,6 @@ export const softDeleteProvider = async (
     .set({ deletedAt: new Date() })
     .where(and(eq(providers.id, providerId), isNull(providers.deletedAt)));
 
-  revalidatePath("/providers");
+  revalidatePath(ROUTES.providers);
   return ok(undefined);
 };

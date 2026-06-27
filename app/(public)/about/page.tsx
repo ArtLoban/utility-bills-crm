@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getPublicAbout, getPublicLinks } from "@/features/landing-cms";
+import { ROUTES } from "@/lib/routes";
 import { HeroSection } from "./_components/hero-section";
 import { LinksSection } from "./_components/links-section";
 import { ProseSection } from "./_components/prose-section";
@@ -14,7 +15,7 @@ export const generateMetadata = async (): Promise<Metadata> => {
     description,
     openGraph: {
       type: "website",
-      url: "/about",
+      url: ROUTES.about,
       title,
       description,
       siteName: "Utility Bills CRM",

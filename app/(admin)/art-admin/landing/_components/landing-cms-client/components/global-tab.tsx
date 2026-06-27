@@ -6,6 +6,7 @@ import { Briefcase, Eye, Folder, GitBranch, Link } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import type { TGlobalPayload } from "@/features/landing-cms";
+import { ROUTES } from "@/lib/routes";
 
 import { CmsSection } from "./cms-section";
 import { FieldLabel } from "./field-label";
@@ -177,7 +178,7 @@ export const GlobalTab = ({ form, onSave }: TProps) => {
         <div className="flex flex-col gap-3">
           <VisibilityRow
             pageName="About page"
-            pagePath="/about"
+            pagePath={ROUTES.about}
             visNav={aboutNavVisible}
             urlAccess={aboutUrlAccessible}
             onVisNav={(v) => form.setValue("aboutNavVisible", v, { shouldDirty: true })}
@@ -185,7 +186,7 @@ export const GlobalTab = ({ form, onSave }: TProps) => {
           />
           <VisibilityRow
             pageName="Project page"
-            pagePath="/project"
+            pagePath={ROUTES.project}
             visNav={projectNavVisible}
             urlAccess={projectUrlAccessible}
             onVisNav={(v) => form.setValue("projectNavVisible", v, { shouldDirty: true })}
