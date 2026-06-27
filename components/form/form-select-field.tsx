@@ -21,8 +21,6 @@ type TProps<T extends FieldValues, E extends TSelectableEntity> = TFormFieldBase
   placeholder?: string;
   clearable?: boolean;
   disabled?: boolean;
-  // Fires after the field updates — use it to react to the change, e.g. reset a
-  // dependent field (property → service).
   onValueChange?: (value: string | null) => void;
 };
 
