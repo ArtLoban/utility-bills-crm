@@ -12,7 +12,7 @@ import type { UserId } from "@/lib/db/schema/auth";
 import { requirePropertyRole } from "@/lib/db/access/properties";
 import { appError, err, ok } from "@/lib/errors";
 import type { Result, TAppError } from "@/lib/errors";
-import { inviteSchema, changeRoleSchema, removeAccessSchema } from "./schema";
+import { INVITE_ERROR, inviteSchema, changeRoleSchema, removeAccessSchema } from "./schema";
 import type { TInviteInput, TChangeRoleInput, TRemoveAccessInput } from "./schema";
 
 export const inviteToProperty = async (
@@ -40,7 +40,7 @@ export const inviteToProperty = async (
     .limit(1);
 
   if (!targetUser) {
-    return err(appError.validation("USER_NOT_FOUND"));
+    return err(appError.validation(INVITE_ERROR.USER_NOT_FOUND));
   }
 
   const [existingAccess] = await db
@@ -56,7 +56,7 @@ export const inviteToProperty = async (
     .limit(1);
 
   if (existingAccess) {
-    return err(appError.validation("ALREADY_HAS_ACCESS"));
+    return err(appError.validation(INVITE_ERROR.ALREADY_HAS_ACCESS));
   }
 
   // grantedAt defaults to NOW() via the DB column default — not set explicitly.

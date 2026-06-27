@@ -1479,6 +1479,12 @@
       "ownerInfo": "People you invite need an existing account. They will get immediate access — no email confirmation required in this version.",
       "readOnly": "Only owners can invite people and change roles."
     },
+    "validation": {
+      "email": {
+        "required": "Enter an email address",
+        "invalid": "Enter a valid email address"
+      }
+    },
     "inviteModal": {
       "title": "Invite person",
       "emailLabel": "Email",
