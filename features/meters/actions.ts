@@ -150,7 +150,7 @@ export const replaceMeter = async (
   const currentMeter = meterAccess.value;
 
   if (currentMeter.validTo !== null) {
-    return err(appError.validation("This meter has already been replaced or closed"));
+    return err(appError.validation("validation.replace.alreadyClosed"));
   }
 
   const roleGuard = await requirePropertyRole(userId, currentMeter.propertyId, "editor");
@@ -159,7 +159,7 @@ export const replaceMeter = async (
   const replacementDate = new Date(parsed.data.replacementDate);
 
   if (replacementDate <= currentMeter.validFrom) {
-    return err(appError.validation("Replacement date must be after the meter's start date"));
+    return err(appError.validation("validation.replace.dateBeforeStart"));
   }
 
   const zoneError = await checkZoneCompatibility(currentMeter.serviceTypeId, parsed.data.zoneCount);
@@ -193,11 +193,7 @@ export const replaceMeter = async (
     return ok(newMeter);
   } catch (error) {
     if (isExclusionViolation(error)) {
-      return err(
-        appError.validation(
-          "An active meter for this service already exists in the selected period",
-        ),
-      );
+      return err(appError.validation("validation.replace.overlap"));
     }
     throw error;
   }

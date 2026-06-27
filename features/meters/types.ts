@@ -1,5 +1,15 @@
 import { TDataTableParams } from "@/components/data-table/types";
 
+// --- Replace-meter form field names (single source for RHF names + defaults) ---
+
+export const ReplaceMeterFormField = {
+  REPLACEMENT_DATE: "replacementDate",
+  SERIAL_NUMBER: "serialNumber",
+  ZONE_COUNT: "zoneCount",
+  INSTALLED_AT: "installedAt",
+  NOTES: "notes",
+} as const;
+
 // --- Sort allow-list ---
 
 export const METERS_SORT_COLUMNS = {

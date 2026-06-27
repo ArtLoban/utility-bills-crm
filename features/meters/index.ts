@@ -6,3 +6,5 @@ export type { TAvailableConsumptionService, TMonthlyConsumptionAggregate } from 
 export { loadMetersParams } from "./query-params";
 export { METERS_SORT_COLUMNS, METER_STATUSES, METERS_FILTERS } from "./types";
 export type { TMeterSortColumn, TMeterStatus, TMetersListParams } from "./types";
+export { ReplaceMeterModal } from "./components/replace-meter-modal";
+export { ReplaceMeterFormContent } from "./components/replace-meter-form-content";

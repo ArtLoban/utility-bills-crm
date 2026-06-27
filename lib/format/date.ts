@@ -11,6 +11,17 @@ export const todayIso = (): string => format(new Date(), ISO_DATE_FORMAT);
 export const toIsoDate = (date: Date): string =>
   date.toISOString().slice(0, ISO_DATE_FORMAT.length);
 
+export const toDatetimeOffset = (dateStr: string): string => {
+  const date = new Date(`${dateStr}T00:00:00`);
+  const offset = -date.getTimezoneOffset();
+  const sign = offset >= 0 ? "+" : "-";
+
+  const hh = String(Math.floor(Math.abs(offset) / 60)).padStart(2, "0");
+  const mm = String(Math.abs(offset) % 60).padStart(2, "0");
+
+  return `${dateStr}T00:00:00${sign}${hh}:${mm}`;
+};
+
 export const formatDisplayDate = (date: Date | null | undefined): string =>
   date ? format(new Date(date), DISPLAY_DATE_FORMAT) : "—";
 

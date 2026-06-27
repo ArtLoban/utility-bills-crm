@@ -1,5 +1,11 @@
 import type { TServiceTypeUnit } from "@/lib/db/schema/service-types";
 
+export const METER_ZONE_COUNTS = [1, 2, 3] as const;
+export type TZoneCount = (typeof METER_ZONE_COUNTS)[number]; // 1 | 2 | 3
+
+export const ZONE_COUNT_VALUES = ["1", "2", "3"] as const;
+export type TZoneCountValue = (typeof ZONE_COUNT_VALUES)[number]; // "1" | "2" | "3"
+
 export const ZONE_COLOR_VARS: readonly [string, string, string] = [
   "var(--zone-t1)",
   "var(--zone-t2)",

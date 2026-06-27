@@ -120,8 +120,14 @@
       "confirm": "Delete"
     },
     "modal": {
-      "add": { "title": "Add reminder", "submit": "Add reminder" },
-      "edit": { "title": "Edit reminder", "submit": "Save changes" },
+      "add": {
+        "title": "Add reminder",
+        "submit": "Add reminder"
+      },
+      "edit": {
+        "title": "Edit reminder",
+        "submit": "Save changes"
+      },
       "cancel": "Cancel",
       "formError": "Something went wrong. Please try again."
     },
@@ -340,6 +346,60 @@
           "triggerDesc": "Installed (newest)"
         }
       }
+    },
+    "replaceForm": {
+      "title": "Replace meter",
+      "meta": "Replace this meter with a new one.",
+      "newMeterDivider": "New meter",
+      "fields": {
+        "replacementDate": {
+          "label": "Replacement date",
+          "hint": "When the new meter takes over."
+        },
+        "serialNumber": {
+          "label": "Serial number",
+          "placeholder": "e.g. NIK-67890"
+        },
+        "zoneCount": {
+          "label": "Zones"
+        },
+        "installedAt": {
+          "label": "Installed at"
+        },
+        "notes": {
+          "label": "Notes",
+          "placeholder": "Anything worth noting about this replacement…"
+        }
+      },
+      "info": {
+        "current": "The current meter will be marked as removed on the replacement date.",
+        "history": "All its readings stay attached to it for history.",
+        "fresh": "The new meter starts fresh from this date forward."
+      },
+      "actions": {
+        "replace": "Replace",
+        "replacing": "Replacing…",
+        "cancel": "Cancel"
+      },
+      "toast": {
+        "success": "Meter replaced."
+      }
+    },
+    "validation": {
+      "replacementDate": {
+        "required": "Select the replacement date"
+      },
+      "serialNumber": {
+        "tooLong": "Serial number is too long"
+      },
+      "notes": {
+        "tooLong": "Note is too long"
+      },
+      "replace": {
+        "alreadyClosed": "This meter has already been replaced or closed.",
+        "dateBeforeStart": "The replacement date must be after the meter's start date.",
+        "overlap": "An active meter for this service already exists in the selected period."
+      }
     }
   },
   "bills": {
@@ -481,30 +541,55 @@
   },
   "payments": {
     "fields": {
-      "property": { "label": "Property", "placeholder": "Select property" },
+      "property": {
+        "label": "Property",
+        "placeholder": "Select property"
+      },
       "service": {
         "label": "Service",
         "placeholder": "Select service",
         "placeholderNoProperty": "Select property first"
       },
-      "paidAt": { "label": "Date" },
+      "paidAt": {
+        "label": "Date"
+      },
       "amount": {
         "label": "Amount",
         "placeholder": "e.g. 680",
         "currentDebt": "Current debt: {amount}"
       },
-      "notes": { "label": "Notes", "placeholder": "Any remarks…" }
+      "notes": {
+        "label": "Notes",
+        "placeholder": "Any remarks…"
+      }
     },
     "validation": {
-      "property": { "required": "Property is required" },
-      "service": { "required": "Service is required" },
-      "date": { "invalid": "Invalid date" },
-      "amount": { "required": "Amount is required", "invalid": "Enter a valid amount" },
-      "notes": { "tooLong": "Notes are too long (max 1000 characters)" }
+      "property": {
+        "required": "Property is required"
+      },
+      "service": {
+        "required": "Service is required"
+      },
+      "date": {
+        "invalid": "Invalid date"
+      },
+      "amount": {
+        "required": "Amount is required",
+        "invalid": "Enter a valid amount"
+      },
+      "notes": {
+        "tooLong": "Notes are too long (max 1000 characters)"
+      }
     },
     "modal": {
-      "add": { "title": "Record Payment", "submit": "Record Payment" },
-      "edit": { "title": "Edit Payment", "submit": "Update" },
+      "add": {
+        "title": "Record Payment",
+        "submit": "Record Payment"
+      },
+      "edit": {
+        "title": "Edit Payment",
+        "submit": "Update"
+      },
       "cancel": "Cancel",
       "saving": "Saving…",
       "formError": "Please check the form and try again."
