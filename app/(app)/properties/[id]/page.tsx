@@ -9,7 +9,7 @@ import { servicesByPropertyId } from "@/lib/db/access/services";
 import { lastReadingDatesByServiceType } from "@/lib/db/access/readings";
 import { balancesForServices } from "@/features/ledger";
 import type { TBalance } from "@/features/ledger";
-import { propertyMembers } from "@/features/sharing";
+import { propertyMembers, SharingTab } from "@/features/sharing";
 import { getPropertyDetail } from "./_data/queries";
 import { OverviewTab } from "./_components/overview-tab";
 import { PropertyTabsNav } from "./_components/property-tabs-nav";
@@ -21,7 +21,6 @@ import { PropertyMeta } from "./_components/property-meta";
 import { PropertyActions } from "./_components/property-actions";
 import { getPropertyMeters } from "./meters/_data/queries";
 import { MetersClient } from "./meters/_components/meters-client";
-import { SharingTab } from "./_components/sharing-tab";
 import type { PropertyId } from "@/lib/db/schema/properties";
 import type { TServiceId } from "@/lib/db/schema/services";
 
@@ -92,7 +91,7 @@ export default async function PropertyPage({ params, searchParams }: TProps) {
 
       tabContent = (
         <SharingTab
-          propertyId={id}
+          propertyId={propertyId}
           members={membersResult.value}
           currentUserId={userId}
           propertyName={property.name}

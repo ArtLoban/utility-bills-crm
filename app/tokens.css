@@ -58,6 +58,10 @@
     --green-600: oklch(0.596 0.127 163.2); /* #059669 — positive amounts / success on light bg */
     --green-500: oklch(0.696 0.149 162.5); /* #10b981 — positive amounts / success on dark bg */
 
+    --blue-700: oklch(0.48 0.21 264);
+    --green-700: oklch(0.52 0.13 156);
+    --amber-700: oklch(0.52 0.14 58);
+
     /* ─── Layer 2: Semantic — light ───────────────────────────────── */
 
     --background: var(--neutral-0);
@@ -135,6 +139,27 @@
     --field-tint-border: var(--purple-100);
     --field-tint-fg: var(--purple-600);
 
+    /* Domain: property role badges (owner/editor/viewer) */
+    --role-owner-bg: var(--purple-50);
+    --role-owner-border: var(--purple-100);
+    --role-owner-fg: var(--purple-600);
+    --role-editor-bg: color-mix(in oklch, var(--blue-500) 10%, var(--neutral-0));
+    --role-editor-border: color-mix(in oklch, var(--blue-500) 28%, var(--neutral-0));
+    --role-editor-fg: var(--blue-700);
+    --role-viewer-bg: var(--neutral-100);
+    --role-viewer-border: var(--neutral-200);
+    --role-viewer-fg: var(--neutral-500);
+
+    /* Domain: member avatar palette (deterministic by user id) */
+    --avatar-0-bg: color-mix(in oklch, var(--purple-500) 30%, var(--neutral-0));
+    --avatar-0-fg: var(--purple-600);
+    --avatar-1-bg: color-mix(in oklch, var(--blue-500) 30%, var(--neutral-0));
+    --avatar-1-fg: var(--blue-700);
+    --avatar-2-bg: color-mix(in oklch, var(--green-500) 30%, var(--neutral-0));
+    --avatar-2-fg: var(--green-700);
+    --avatar-3-bg: color-mix(in oklch, var(--amber-500) 32%, var(--neutral-0));
+    --avatar-3-fg: var(--amber-700);
+
     /* Landing: decorative glows (hero-section, features-section, tech-section) */
     --hero-glow: oklch(0.498 0.258 292.3 / 18%);
     --hero-glow-sub: oklch(0.397 0.221 293 / 12%);
@@ -203,6 +228,27 @@
     --field-tint-bg: color-mix(in oklch, var(--purple-500) 16%, transparent);
     --field-tint-border: color-mix(in oklch, var(--purple-500) 40%, transparent);
     --field-tint-fg: var(--purple-400);
+
+    /* Domain: property role badges — translucent overlays on dark backgrounds */
+    --role-owner-bg: color-mix(in oklch, var(--purple-500) 16%, transparent);
+    --role-owner-border: color-mix(in oklch, var(--purple-500) 40%, transparent);
+    --role-owner-fg: var(--purple-400);
+    --role-editor-bg: color-mix(in oklch, var(--blue-500) 16%, transparent);
+    --role-editor-border: color-mix(in oklch, var(--blue-500) 40%, transparent);
+    --role-editor-fg: var(--blue-500);
+    --role-viewer-bg: var(--neutral-800);
+    --role-viewer-border: var(--neutral-700);
+    --role-viewer-fg: var(--neutral-400);
+
+    /* Domain: member avatar palette — translucent overlays on dark backgrounds */
+    --avatar-0-bg: color-mix(in oklch, var(--purple-500) 28%, transparent);
+    --avatar-0-fg: var(--purple-300);
+    --avatar-1-bg: color-mix(in oklch, var(--blue-500) 28%, transparent);
+    --avatar-1-fg: var(--blue-500);
+    --avatar-2-bg: color-mix(in oklch, var(--green-500) 28%, transparent);
+    --avatar-2-fg: var(--green-500);
+    --avatar-3-bg: color-mix(in oklch, var(--amber-500) 28%, transparent);
+    --avatar-3-fg: var(--amber-500);
 
     --hero-glow: oklch(0.6 0.24 292 / 30%);
     --hero-glow-sub: oklch(0.42 0.23 292 / 34%);

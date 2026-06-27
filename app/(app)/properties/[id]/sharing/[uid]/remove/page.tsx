@@ -1,9 +1,8 @@
 import { notFound } from "next/navigation";
 
 import { requireUser } from "@/lib/auth/guards";
-import { propertyMembers } from "@/features/sharing";
+import { propertyMembers, MemberRemoveDialog } from "@/features/sharing";
 import { getPropertyDetail } from "../../../_data/queries";
-import { RemoveUserModal } from "../../../_components/sharing-tab/components/remove-user-modal";
 import type { PropertyId } from "@/lib/db/schema/properties";
 
 type TProps = {
@@ -29,9 +28,9 @@ export default async function RemoveUserPage({ params }: TProps) {
   if (!targetMember) notFound();
 
   return (
-    <RemoveUserModal
+    <MemberRemoveDialog
       member={targetMember}
-      propertyId={id}
+      propertyId={propertyId}
       propertyName={propertyResult.value.name}
     />
   );

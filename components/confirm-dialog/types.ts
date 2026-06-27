@@ -9,18 +9,18 @@ export type TProps = {
   title: string;
   tone?: TTone;
   icon: ReactNode;
+  closeButton?: boolean;
+
   entityPreview?: ReactNode;
   description: ReactNode;
   secondaryText?: ReactNode;
   warningText?: ReactNode;
-
+  children?: ReactNode;
   requireType?: string;
 
   confirmLabel?: string;
   confirmIcon?: ReactNode;
   cancelLabel?: string | null;
-  closeButton?: boolean;
-
   isPending?: boolean;
   onConfirm: () => void;
 };

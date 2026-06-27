@@ -1463,9 +1463,9 @@
       "addedOn": "Added on {date}"
     },
     "roles": {
-      "Owner": "Owner",
-      "Editor": "Editor",
-      "Viewer": "Viewer"
+      "owner": "Owner",
+      "editor": "Editor",
+      "viewer": "Viewer"
     },
     "actions": {
       "invite": "Invite person",
@@ -1473,7 +1473,8 @@
       "removeAccess": "Remove access",
       "cancel": "Cancel",
       "sendInvite": "Send invite",
-      "gotIt": "Got it"
+      "gotIt": "Got it",
+      "menu": "Member actions"
     },
     "banner": {
       "ownerInfo": "People you invite need an existing account. They will get immediate access — no email confirmation required in this version.",

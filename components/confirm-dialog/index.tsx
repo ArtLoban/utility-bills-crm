@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import { TONE_CONFIG } from "./constants";
 import type { TProps } from "./types";
 
+// TODO: refactor (LATER!)
 export const ConfirmDialog = ({
   open,
   onOpenChange,
@@ -20,6 +21,7 @@ export const ConfirmDialog = ({
   description,
   secondaryText,
   warningText,
+  children,
   requireType,
   confirmLabel = "Confirm",
   confirmIcon,
@@ -112,6 +114,8 @@ export const ConfirmDialog = ({
               {warningText}
             </p>
           )}
+
+          {children}
 
           {requireType && (
             <>
