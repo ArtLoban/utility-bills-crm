@@ -49,7 +49,7 @@ export const MemberRemoveDialog = ({ member, propertyId, propertyName }: TProps)
       open
       onOpenChange={(open) => !open && router.back()}
       tone="destructive"
-      icon={<UserMinus size={22} strokeWidth={1.75} />}
+      icon={UserMinus}
       title={t("removeModal.title")}
       entityPreview={
         <>

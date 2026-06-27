@@ -172,6 +172,9 @@
     "sessionExpired": "Your session has expired. Please sign in again.",
     "demoBlocked": "This action isn't available in demo mode.",
     "saveError": "Failed to save. Please try again.",
+    "confirm": {
+      "typeToConfirm": "To confirm, type <code>{token}</code> below."
+    },
     "notes": {
       "title": "Notes",
       "empty": "No notes added yet."

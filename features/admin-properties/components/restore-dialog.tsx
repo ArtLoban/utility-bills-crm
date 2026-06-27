@@ -46,10 +46,10 @@ export const RestoreDialog = ({
       open={open}
       onOpenChange={onOpenChange}
       tone="warning"
-      icon={<RotateCcw size={22} strokeWidth={1.75} />}
+      icon={RotateCcw}
       title="Restore this property?"
       description={`${propertyName} will become active again. Users who had access will see it restored.`}
-      confirmIcon={<RotateCcw size={15} strokeWidth={2} />}
+      confirmIcon={RotateCcw}
       confirmLabel="Restore"
       cancelLabel="Cancel"
       isPending={isPending}

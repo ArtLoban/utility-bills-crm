@@ -55,7 +55,7 @@ export const DeleteReminderAction = ({ reminderId }: TProps) => {
         onOpenChange={setOpen}
         title={t("delete.title")}
         tone="destructive"
-        icon={<Trash2 size={18} />}
+        icon={Trash2}
         description={t("delete.description")}
         confirmLabel={t("delete.confirm")}
         cancelLabel={t("modal.cancel")}

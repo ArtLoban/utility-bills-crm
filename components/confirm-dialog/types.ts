@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import type { LucideIcon } from "lucide-react";
 
 export type TTone = "destructive" | "warning" | "info";
 
@@ -8,8 +9,7 @@ export type TProps = {
 
   title: string;
   tone?: TTone;
-  icon: ReactNode;
-  closeButton?: boolean;
+  icon: LucideIcon;
 
   entityPreview?: ReactNode;
   description: ReactNode;
@@ -18,9 +18,9 @@ export type TProps = {
   children?: ReactNode;
   requireType?: string;
 
-  confirmLabel?: string;
-  confirmIcon?: ReactNode;
-  cancelLabel?: string | null;
+  confirmLabel: string;
+  confirmIcon?: LucideIcon;
+  cancelLabel: string | null;
   isPending?: boolean;
   onConfirm: () => void;
 };

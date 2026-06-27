@@ -14,6 +14,8 @@ import { cn } from "@/lib/utils";
 
 type TSize = "sm" | "md" | "lg";
 
+export type TModalVariant = "default" | "warning" | "destructive" | "destructiveStrong";
+
 const SIZE_CLASS: Record<TSize, string> = {
   sm: "sm:max-w-[400px]",
   md: "sm:max-w-[480px]",
@@ -28,12 +30,12 @@ export type TProps = {
   onOpenChange: (open: boolean) => void;
   onConfirm?: () => void;
   confirmLabel?: string;
-  cancelLabel?: string;
+  cancelLabel?: string | null;
   confirmIcon?: LucideIcon;
   canSave?: boolean;
   isSaving?: boolean;
   size?: TSize;
-  variant?: "default" | "warning" | "destructive" | "destructiveStrong";
+  variant?: TModalVariant;
 };
 
 export const Modal = (props: TProps) => {
@@ -66,10 +68,12 @@ export const Modal = (props: TProps) => {
           {description && <DialogDescription>{description}</DialogDescription>}
         </DialogHeader>
         {children && <div className="-mx-5 overflow-y-auto px-5 py-1">{children}</div>}
-        <DialogFooter>
-          <Button variant="outline" asChild>
-            <DialogClose>{cancelLabel}</DialogClose>
-          </Button>
+        <DialogFooter className={cn(cancelLabel === null && "sm:justify-end")}>
+          {cancelLabel !== null && (
+            <Button variant="outline" asChild>
+              <DialogClose>{cancelLabel}</DialogClose>
+            </Button>
+          )}
           <Button
             type="button"
             onClick={onConfirm}

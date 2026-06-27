@@ -27,7 +27,7 @@ export const LeavePropertyDialog = ({
       open={open}
       onOpenChange={onOpenChange}
       tone="destructive"
-      icon={<LogOut size={22} strokeWidth={1.75} />}
+      icon={LogOut}
       title={t("leaveConfirmModal.title")}
       description={t.rich("leaveConfirmModal.body", {
         propertyName,

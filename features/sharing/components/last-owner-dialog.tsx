@@ -21,7 +21,7 @@ export const LastOwnerDialog = ({ open, onOpenChange, propertyName }: TProps) =>
       open={open}
       onOpenChange={onOpenChange}
       tone="warning"
-      icon={<AlertCircle size={22} strokeWidth={1.75} />}
+      icon={AlertCircle}
       title={t("lastOwnerModal.title")}
       description={t.rich("lastOwnerModal.body", {
         propertyName,

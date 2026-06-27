@@ -16,8 +16,7 @@ import {
 import { softDeleteProperty } from "@/features/properties";
 import { ROUTES } from "@/lib/routes";
 import type { PropertyId, TPropertyRole } from "@/lib/db/schema/properties";
-import { IconBadge } from "@/components/icon-badge";
-import { Modal } from "@/components/modal";
+import { ConfirmDialog } from "@/components/confirm-dialog";
 
 type TProps = {
   propertyId: PropertyId;
@@ -68,26 +67,24 @@ export const PropertyDeleteAction = ({ propertyId, propertyName, role }: TProps)
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <Modal
-        title={t("delete.title")}
+      <ConfirmDialog
         open={confirmOpen}
         onOpenChange={setConfirmOpen}
-        onConfirm={handleDelete}
-        variant="destructiveStrong"
-        confirmIcon={Trash2}
-        confirmLabel={t("delete.menuItem")}
-        isSaving={isDeleting}
-      >
-        <div className="my-3 flex flex-col items-center gap-4">
-          <IconBadge icon={Trash2} color="var(--destructive)" size="xl" border={true} />
-          <p className="text-center text-sm">
+        tone="destructive"
+        icon={Trash2}
+        title={t("delete.title")}
+        description={
+          <>
             {t("delete.descriptionPrefix")} <strong>{propertyName}</strong>?
-          </p>
-          <p className="text-destructive text-sm leading-snug font-semibold">
-            This action cannot be undone.
-          </p>
-        </div>
-      </Modal>
+          </>
+        }
+        warningText={t("delete.description")}
+        confirmIcon={Trash2}
+        confirmLabel={t("delete.confirm")}
+        cancelLabel={t("modal.cancel")}
+        isPending={isDeleting}
+        onConfirm={handleDelete}
+      />
     </>
   );
 };

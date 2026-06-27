@@ -166,20 +166,6 @@
     --section-glow: oklch(0.498 0.258 292.3 / 16%);
     /* Landing: band background — mockup sections + footer (same in light & dark) */
     --lander-band-bg: #5b5b60;
-
-    /* ConfirmDialog. DevNote. Custom */
-    --confirm-default: var(--purple-600);
-    --confirm-warning: var(--amber-500);
-    --confirm-destructive: var(--destructive);
-
-    /* ConfirmDialog tone tokens (Layer 3: component) TODO: Remove! */
-    --confirm-destructive-icon-bg: color-mix(in oklch, var(--destructive) 12%, transparent);
-    --confirm-destructive-icon-border: color-mix(in oklch, var(--destructive) 28%, transparent);
-    --confirm-warning-icon-bg: color-mix(in oklch, var(--amber-500) 12%, transparent);
-    --confirm-warning-icon-border: color-mix(in oklch, var(--amber-500) 28%, transparent);
-    --confirm-warning-accent: var(--amber-500);
-    --confirm-info-icon-bg: color-mix(in oklch, var(--primary) 10%, transparent);
-    --confirm-info-icon-border: color-mix(in oklch, var(--primary) 25%, transparent);
   }
 }
 

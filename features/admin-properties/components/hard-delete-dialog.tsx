@@ -46,7 +46,7 @@ export const HardDeleteDialog = ({
       open={open}
       onOpenChange={onOpenChange}
       tone="destructive"
-      icon={<Trash2 size={22} strokeWidth={1.75} />}
+      icon={Trash2}
       title="Delete this property permanently?"
       description={`${propertyName} and all its data will be permanently erased. This cannot be undone.`}
       warningText="This action is irreversible."
