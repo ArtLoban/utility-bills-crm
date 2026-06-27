@@ -85,3 +85,18 @@ export const replaceMeterFormSchema = z.object({
 });
 
 export type TReplaceMeterFormValues = z.infer<typeof replaceMeterFormSchema>;
+
+// ----- Client form schema (Add meter) -----
+// Like the replace form: raw strings; the hook parses dates to datetime-with-offset and zoneCount
+// to a number on submit (createMeterSchema re-validates the parsed payload). serviceTypeId is part
+// of the form (the user picks it); propertyId comes from the route, not the form.
+export const createMeterFormSchema = z.object({
+  serviceTypeId: z.string().min(1, "validation.serviceTypeId.required"),
+  serialNumber: z.string().max(METER_LIMITS.serialNumber, "validation.serialNumber.tooLong"),
+  zoneCount: z.enum(ZONE_COUNT_VALUES),
+  installedAt: z.string(),
+  validFrom: z.string().min(1, "validation.validFrom.required"),
+  notes: z.string().max(METER_LIMITS.notes, "validation.notes.tooLong"),
+});
+
+export type TCreateMeterFormValues = z.infer<typeof createMeterFormSchema>;

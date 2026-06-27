@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 
 import { requireUser } from "@/lib/auth/guards";
+import { assertNever } from "@/lib/assert-never";
 import { servicesByPropertyId } from "@/lib/db/access/services";
 import { lastReadingDatesByServiceType } from "@/lib/db/access/readings";
 import { balancesForServices } from "@/features/ledger";
@@ -55,54 +56,63 @@ export default async function PropertyPage({ params, searchParams }: TProps) {
 
   let tabContent: ReactNode;
 
-  if (activeTab === TABS.OVERVIEW) {
-    const servicesResult = await servicesByPropertyId(userId, propertyId);
-    const services = servicesResult.ok ? servicesResult.value : [];
-    const serviceIds = services.map((s) => s.service.id as TServiceId);
-    const [serviceBalances, lastReadingByServiceType] = await Promise.all([
-      serviceIds.length > 0 ? balancesForServices(serviceIds) : new Map<TServiceId, TBalance>(),
-      lastReadingDatesByServiceType(propertyId),
-    ]);
+  switch (activeTab) {
+    case TABS.OVERVIEW: {
+      const servicesResult = await servicesByPropertyId(userId, propertyId);
+      const services = servicesResult.ok ? servicesResult.value : [];
+      const serviceIds = services.map((s) => s.service.id as TServiceId);
+      const [serviceBalances, lastReadingByServiceType] = await Promise.all([
+        serviceIds.length > 0 ? balancesForServices(serviceIds) : new Map<TServiceId, TBalance>(),
+        lastReadingDatesByServiceType(propertyId),
+      ]);
 
-    tabContent = (
-      <OverviewTab
-        services={services}
-        role={property.role}
-        propertyId={id}
-        serviceBalances={serviceBalances}
-        lastReadingByServiceType={lastReadingByServiceType}
-      />
-    );
-  } else if (activeTab === TABS.METERS) {
-    const metersResult = await getPropertyMeters(propertyId);
+      tabContent = (
+        <OverviewTab
+          services={services}
+          role={property.role}
+          propertyId={id}
+          serviceBalances={serviceBalances}
+          lastReadingByServiceType={lastReadingByServiceType}
+        />
+      );
+      break;
+    }
+    case TABS.METERS: {
+      const metersResult = await getPropertyMeters(propertyId);
+      if (!metersResult.ok) notFound();
 
-    if (!metersResult.ok) notFound();
+      tabContent = (
+        <MetersClient propertyId={id} meters={metersResult.value} role={property.role} />
+      );
+      break;
+    }
+    case TABS.SHARING: {
+      const membersResult = await propertyMembers(userId, propertyId);
+      if (!membersResult.ok) notFound();
 
-    tabContent = <MetersClient propertyId={id} meters={metersResult.value} role={property.role} />;
-  } else {
-    // TABS.SHARING
-    const membersResult = await propertyMembers(userId, propertyId);
-    if (!membersResult.ok) notFound();
-
-    tabContent = (
-      <SharingTab
-        propertyId={id}
-        members={membersResult.value}
-        currentUserId={userId}
-        propertyName={property.name}
-      />
-    );
+      tabContent = (
+        <SharingTab
+          propertyId={id}
+          members={membersResult.value}
+          currentUserId={userId}
+          propertyName={property.name}
+        />
+      );
+      break;
+    }
+    default:
+      assertNever(activeTab);
   }
 
   return (
     <PageContainer
       title={property.name}
-      meta={<PropertyMeta property={property} />}
       breadcrumbs={[
         { label: tNav("properties"), href: ROUTES.properties },
         { label: property.name },
       ]}
       actions={<PropertyActions property={property} />}
+      meta={<PropertyMeta property={property} />}
     >
       <PropertyTabsNav propertyId={id} activeTab={activeTab} />
       {tabContent}

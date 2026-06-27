@@ -37,9 +37,9 @@ const checkZoneCompatibility = async (
     .where(eq(serviceTypes.id, serviceTypeId))
     .limit(1);
 
-  if (rows.length === 0) return appError.validation("Service type not found");
+  if (rows.length === 0) return appError.validation("validation.zone.serviceTypeNotFound");
   if (!rows[0]!.supportsZones && zoneCount > 1) {
-    return appError.validation("This service type does not support multiple zones");
+    return appError.validation("validation.zone.unsupported");
   }
   return null;
 };
@@ -83,11 +83,7 @@ export const createMeter = async (input: TCreateMeterInput): Promise<Result<TMet
     return ok(meter);
   } catch (error) {
     if (isExclusionViolation(error)) {
-      return err(
-        appError.validation(
-          "An active meter for this service already exists in the selected period",
-        ),
-      );
+      return err(appError.validation("validation.create.overlap"));
     }
     throw error;
   }

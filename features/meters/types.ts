@@ -10,6 +10,17 @@ export const ReplaceMeterFormField = {
   NOTES: "notes",
 } as const;
 
+// --- Add-meter form field names ---
+
+export const CreateMeterFormField = {
+  SERVICE_TYPE_ID: "serviceTypeId",
+  SERIAL_NUMBER: "serialNumber",
+  ZONE_COUNT: "zoneCount",
+  INSTALLED_AT: "installedAt",
+  VALID_FROM: "validFrom",
+  NOTES: "notes",
+} as const;
+
 // --- Sort allow-list ---
 
 export const METERS_SORT_COLUMNS = {

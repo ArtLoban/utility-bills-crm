@@ -8,3 +8,5 @@ export { METERS_SORT_COLUMNS, METER_STATUSES, METERS_FILTERS } from "./types";
 export type { TMeterSortColumn, TMeterStatus, TMetersListParams } from "./types";
 export { ReplaceMeterModal } from "./components/replace-meter-modal";
 export { ReplaceMeterFormContent } from "./components/replace-meter-form-content";
+export { AddMeterModal } from "./components/add-meter-modal";
+export { AddMeterFormContent } from "./components/add-meter-form-content";

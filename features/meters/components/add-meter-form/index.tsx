@@ -9,25 +9,33 @@ import { FormDateField } from "@/components/form/form-date-field";
 import { FormTextField } from "@/components/form/form-text-field";
 import { FormSelectField } from "@/components/form/form-select-field";
 import { FormTextareaField } from "@/components/form/form-textarea-field";
-import { toIsoDate } from "@/lib/format/date";
-import { METER_LIMITS, type TReplaceMeterFormValues } from "@/features/meters/schema";
-import { ReplaceMeterFormField } from "@/features/meters/types";
-import type { TMeter } from "@/lib/db/schema/meters";
-
+import { METER_LIMITS, type TCreateMeterFormValues } from "@/features/meters/schema";
 import { ZONE_COUNT_OPTIONS } from "@/features/meters/constants";
-import { ReplacementInfo } from "./components/replacement-info";
+import { CreateMeterFormField } from "@/features/meters/types";
+import { type TServiceTypeCode } from "@/features/services/service-type";
+import type { TServiceType } from "@/lib/db/schema/service-types";
 
 type TProps = {
-  form: UseFormReturn<TReplaceMeterFormValues>;
-  meter: TMeter;
+  form: UseFormReturn<TCreateMeterFormValues>;
+  availableServiceTypes: TServiceType[];
   supportsZones: boolean;
 };
 
-export const ReplaceMeterForm = ({ form, meter, supportsZones }: TProps) => {
-  const t = useTranslations("meters.replaceForm");
+export const AddMeterForm = ({ form, availableServiceTypes, supportsZones }: TProps) => {
+  const t = useTranslations("meters.addForm");
+  const tTypes = useTranslations("services.types");
   const tZone = useTranslations("meters.detail.details.zoneCount");
   const { control, formState } = form;
   const rootError = formState.errors.root?.message;
+
+  if (availableServiceTypes.length === 0) {
+    return <p className="text-muted-foreground text-sm">{t("empty")}</p>;
+  }
+
+  const serviceOptions = availableServiceTypes.map((st) => ({
+    id: st.id,
+    name: tTypes(st.code as TServiceTypeCode),
+  }));
 
   const zoneOptions = ZONE_COUNT_OPTIONS.map(({ value, labelKey }) => ({
     id: value,
@@ -37,26 +45,19 @@ export const ReplaceMeterForm = ({ form, meter, supportsZones }: TProps) => {
   return (
     <Form {...form}>
       <FormFields>
-        <FormDateField
+        <FormSelectField
           control={control}
-          name={ReplaceMeterFormField.REPLACEMENT_DATE}
-          label={t("fields.replacementDate.label")}
-          description={t("fields.replacementDate.hint")}
-          min={toIsoDate(meter.validFrom)}
+          name={CreateMeterFormField.SERVICE_TYPE_ID}
+          label={t("fields.serviceType.label")}
+          description={t("fields.serviceType.hint")}
+          placeholder={t("fields.serviceType.placeholder")}
+          options={serviceOptions}
           required
         />
 
-        <div className="flex items-center gap-2.5">
-          <hr className="border-border flex-1" />
-          <span className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
-            {t("newMeterDivider")}
-          </span>
-          <hr className="border-border flex-1" />
-        </div>
-
         <FormTextField
           control={control}
-          name={ReplaceMeterFormField.SERIAL_NUMBER}
+          name={CreateMeterFormField.SERIAL_NUMBER}
           label={t("fields.serialNumber.label")}
           placeholder={t("fields.serialNumber.placeholder")}
           maxLength={METER_LIMITS.serialNumber}
@@ -65,7 +66,7 @@ export const ReplaceMeterForm = ({ form, meter, supportsZones }: TProps) => {
         {supportsZones ? (
           <FormSelectField
             control={control}
-            name={ReplaceMeterFormField.ZONE_COUNT}
+            name={CreateMeterFormField.ZONE_COUNT}
             label={t("fields.zoneCount.label")}
             options={zoneOptions}
             required
@@ -74,20 +75,26 @@ export const ReplaceMeterForm = ({ form, meter, supportsZones }: TProps) => {
 
         <FormDateField
           control={control}
-          name={ReplaceMeterFormField.INSTALLED_AT}
+          name={CreateMeterFormField.INSTALLED_AT}
           label={t("fields.installedAt.label")}
+        />
+
+        <FormDateField
+          control={control}
+          name={CreateMeterFormField.VALID_FROM}
+          label={t("fields.validFrom.label")}
+          description={t("fields.validFrom.hint")}
+          required
         />
 
         <FormTextareaField
           control={control}
-          name={ReplaceMeterFormField.NOTES}
+          name={CreateMeterFormField.NOTES}
           label={t("fields.notes.label")}
           placeholder={t("fields.notes.placeholder")}
           maxLength={METER_LIMITS.notes}
           rows={3}
         />
-
-        <ReplacementInfo />
 
         {rootError ? <p className="text-destructive text-sm">{rootError}</p> : null}
       </FormFields>

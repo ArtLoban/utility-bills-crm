@@ -1,6 +1,9 @@
+import { notFound } from "next/navigation";
+
+import { getPropertyDetail } from "@/app/(app)/properties/[id]/_data/queries";
 import { getAvailableServiceTypesForMeter } from "@/app/(app)/properties/[id]/meters/_data/queries";
-import { AddMeterModal } from "@/app/(app)/properties/[id]/meters/_components/add-meter-modal";
-import type { PropertyId } from "@/lib/db/schema/properties";
+import { AddMeterModal } from "@/features/meters";
+import { PROPERTY_ROLES, type PropertyId } from "@/lib/db/schema/properties";
 
 type TProps = {
   params: Promise<{ id: string }>;
@@ -8,6 +11,15 @@ type TProps = {
 
 export default async function InterceptedAddMeterPage({ params }: TProps) {
   const { id } = await params;
-  const availableServiceTypes = await getAvailableServiceTypesForMeter(id as PropertyId);
+  const propertyId = id as PropertyId;
+
+  const [propertyResult, availableServiceTypes] = await Promise.all([
+    getPropertyDetail(propertyId),
+    getAvailableServiceTypesForMeter(propertyId),
+  ]);
+
+  if (!propertyResult.ok) notFound();
+  if (propertyResult.value.role === PROPERTY_ROLES.VIEWER) notFound();
+
   return <AddMeterModal propertyId={id} availableServiceTypes={availableServiceTypes} />;
 }

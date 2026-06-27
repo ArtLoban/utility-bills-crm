@@ -210,6 +210,19 @@
     "more": "More"
   },
   "meters": {
+    "propertyTab": {
+      "title": "Meters",
+      "addButton": "Add meter",
+      "empty": {
+        "title": "No meters yet",
+        "body": "Add a meter to start tracking readings for this property.",
+        "cta": "Add meter"
+      },
+      "history": "{count, plural, one {# replaced meter} other {# replaced meters}}",
+      "row": {
+        "replace": "Replace"
+      }
+    },
     "detail": {
       "title": "{type} meter",
       "tabs": {
@@ -385,15 +398,70 @@
         "success": "Meter replaced."
       }
     },
+    "addForm": {
+      "title": "Add meter",
+      "description": "Register a new meter for a service on this property.",
+      "empty": "All services on this property already have an active meter.",
+      "fields": {
+        "serviceType": {
+          "label": "Service type",
+          "placeholder": "Select service",
+          "hint": "Only services without an active meter are shown."
+        },
+        "serialNumber": {
+          "label": "Serial number",
+          "placeholder": "e.g. NIK-12345"
+        },
+        "zoneCount": {
+          "label": "Zones"
+        },
+        "installedAt": {
+          "label": "Installed at"
+        },
+        "validFrom": {
+          "label": "Active since",
+          "hint": "When this meter started being used. Often the same as the installation date."
+        },
+        "notes": {
+          "label": "Notes",
+          "placeholder": "Where it's located, anything worth remembering…"
+        }
+      },
+      "actions": {
+        "add": "Add meter",
+        "adding": "Adding…",
+        "cancel": "Cancel"
+      },
+      "toast": {
+        "success": "Meter added."
+      }
+    },
     "validation": {
       "replacementDate": {
         "required": "Select the replacement date"
+      },
+      "serviceTypeId": {
+        "required": "Select a service type",
+        "invalid": "Invalid service type"
+      },
+      "validFrom": {
+        "required": "Select when the meter became active"
+      },
+      "propertyId": {
+        "invalid": "Invalid property"
       },
       "serialNumber": {
         "tooLong": "Serial number is too long"
       },
       "notes": {
         "tooLong": "Note is too long"
+      },
+      "create": {
+        "overlap": "An active meter for this service already exists in the selected period."
+      },
+      "zone": {
+        "serviceTypeNotFound": "Service type not found",
+        "unsupported": "This service type does not support multiple zones"
       },
       "replace": {
         "alreadyClosed": "This meter has already been replaced or closed.",
