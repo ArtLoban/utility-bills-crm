@@ -1,18 +1,12 @@
 "use client";
 
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 
-import { saveProjectCms } from "@/features/landing-cms/actions";
-import { projectSchema } from "@/features/landing-cms/schema";
-import type { TProjectPayload } from "@/features/landing-cms/types";
+import { saveProjectCms, projectSchema, type TProjectPayload } from "@/features/landing-cms";
+import { useZodForm } from "@/lib/forms/use-zod-form";
 
 export const useProjectForm = (initial: TProjectPayload) => {
-  const form = useForm<TProjectPayload>({
-    resolver: zodResolver(projectSchema),
-    defaultValues: initial,
-  });
+  const form = useZodForm({ schema: projectSchema, defaultValues: initial });
 
   const { isDirty, isSubmitting } = form.formState;
 
@@ -26,5 +20,10 @@ export const useProjectForm = (initial: TProjectPayload) => {
     toast.success("Project content saved.");
   });
 
-  return { form, isDirty, isSaving: isSubmitting, handleSave };
+  return {
+    form,
+    isDirty,
+    isSaving: isSubmitting,
+    handleSave,
+  };
 };

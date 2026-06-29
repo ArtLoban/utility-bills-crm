@@ -1,6 +1,6 @@
 "use client";
 
-import { type ComponentProps } from "react";
+import { type ComponentProps, type ReactNode } from "react";
 import { type FieldValues, useWatch } from "react-hook-form";
 
 import { FormControl } from "@/components/ui/form";
@@ -16,6 +16,7 @@ type TTextareaProps = Pick<
 type TProps<T extends FieldValues> = TFormFieldBaseProps<T> &
   TTextareaProps & {
     showCounter?: boolean;
+    labelAccessory?: ReactNode;
     textareaClassName?: string;
   };
 
@@ -27,6 +28,7 @@ export const FormTextareaField = <T extends FieldValues>({
   className,
   required,
   showCounter,
+  labelAccessory,
   textareaClassName,
   ...textareaProps
 }: TProps<T>) => {
@@ -48,7 +50,7 @@ export const FormTextareaField = <T extends FieldValues>({
       description={description}
       className={className}
       required={required}
-      labelAccessory={counter}
+      labelAccessory={labelAccessory ?? counter}
     >
       {(field) => (
         <FormControl aria-required={required || undefined}>

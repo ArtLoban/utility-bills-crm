@@ -1,15 +1,22 @@
-import { Controller, type Path, type UseFormReturn } from "react-hook-form";
+"use client";
+
+import { type UseFormReturn } from "react-hook-form";
 
 import { Activity, Blocks, Sparkles } from "lucide-react";
 
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { Form } from "@/components/ui/form";
+import { FormTextField } from "@/components/form/form-text-field";
+import { FormTextareaField } from "@/components/form/form-textarea-field";
 import type { TProjectPayload } from "@/features/landing-cms";
 
 import { CardSubBlock } from "./card-sub-block";
 import { CmsSection } from "./cms-section";
-import { FieldLabel } from "./field-label";
+import { FieldHint } from "./field-hint";
 import { SaveRow } from "./save-row";
+
+// projectSchema guarantees exactly six architecture cards (z.tuple of 6); literal
+// indices keep the `archCards.N.*` field names typed without a cast.
+const ARCH_INDICES = [0, 1, 2, 3, 4, 5] as const;
 
 type TProps = {
   form: UseFormReturn<TProjectPayload>;
@@ -22,64 +29,29 @@ export const ProjectTab = ({ form, onSave }: TProps) => {
   const heroTitle = form.watch("heroTitle");
   const heroDesc = form.watch("heroDesc");
   const status = form.watch("status");
-  const archCards = form.watch("archCards");
-  const archCardErrors = form.formState.errors.archCards;
 
   return (
-    <div>
+    <Form {...form}>
       <CmsSection
         icon={<Sparkles className="size-[14px]" />}
         title="Hero"
         description="Top of the project page — intro to the deep-dive."
       >
-        <div className="mb-4">
-          <Controller
-            control={form.control}
-            name="heroTitle"
-            render={({ field, fieldState }) => (
-              <div>
-                <FieldLabel hint={`${heroTitle.length} chars`} htmlFor="project-hero-title">
-                  Hero title
-                </FieldLabel>
-                <Input
-                  id="project-hero-title"
-                  value={field.value}
-                  onChange={field.onChange}
-                  className="h-9 text-[13.5px]"
-                />
-                {fieldState.error && (
-                  <p className="text-destructive mt-1 text-xs">{fieldState.error.message}</p>
-                )}
-              </div>
-            )}
-          />
-        </div>
-        <div>
-          <Controller
-            control={form.control}
-            name="heroDesc"
-            render={({ field, fieldState }) => (
-              <div>
-                <FieldLabel hint={`${heroDesc.length} chars`} htmlFor="project-hero-desc">
-                  Hero description
-                </FieldLabel>
-                <Textarea
-                  id="project-hero-desc"
-                  value={field.value}
-                  onChange={field.onChange}
-                  rows={4}
-                  className="text-[13.5px] leading-[1.55]"
-                />
-                {fieldState.error && (
-                  <p className="text-destructive mt-1 text-xs">{fieldState.error.message}</p>
-                )}
-                <p className="text-muted-foreground mt-2.5 text-xs leading-[1.55]">
-                  Supports **bold** and `code` markers.
-                </p>
-              </div>
-            )}
-          />
-        </div>
+        <FormTextField
+          control={form.control}
+          name="heroTitle"
+          label="Hero title"
+          labelAccessory={<FieldHint>{heroTitle.length} chars</FieldHint>}
+          className="mb-4"
+        />
+        <FormTextareaField
+          control={form.control}
+          name="heroDesc"
+          label="Hero description"
+          labelAccessory={<FieldHint>{heroDesc.length} chars</FieldHint>}
+          description="Supports **bold** and `code` markers."
+          rows={4}
+        />
       </CmsSection>
 
       <CmsSection
@@ -88,24 +60,13 @@ export const ProjectTab = ({ form, onSave }: TProps) => {
         description="Six cards explaining the key technical decisions."
       >
         <div className="grid grid-cols-1 gap-3.5">
-          {archCards.map((card, i) => (
+          {ARCH_INDICES.map((i) => (
             <CardSubBlock
               key={i}
               index={i + 1}
-              title={card.title}
-              body={card.body}
-              onTitle={(v) =>
-                form.setValue(`archCards.${i}.title` as Path<TProjectPayload>, v, {
-                  shouldDirty: true,
-                })
-              }
-              onBody={(v) =>
-                form.setValue(`archCards.${i}.body` as Path<TProjectPayload>, v, {
-                  shouldDirty: true,
-                })
-              }
-              titleError={archCardErrors?.[i]?.title?.message}
-              bodyError={archCardErrors?.[i]?.body?.message}
+              control={form.control}
+              titleName={`archCards.${i}.title`}
+              bodyName={`archCards.${i}.body`}
             />
           ))}
         </div>
@@ -116,33 +77,17 @@ export const ProjectTab = ({ form, onSave }: TProps) => {
         title="Current status"
         description="Where the project stands right now."
       >
-        <Controller
+        <FormTextareaField
           control={form.control}
           name="status"
-          render={({ field, fieldState }) => (
-            <div>
-              <FieldLabel hint={`${status.length} chars`} htmlFor="project-status">
-                Status
-              </FieldLabel>
-              <Textarea
-                id="project-status"
-                value={field.value}
-                onChange={field.onChange}
-                rows={5}
-                className="text-[13.5px] leading-[1.55]"
-              />
-              {fieldState.error && (
-                <p className="text-destructive mt-1 text-xs">{fieldState.error.message}</p>
-              )}
-              <p className="text-muted-foreground mt-2.5 text-xs leading-[1.55]">
-                Separate paragraphs with a blank line. Supports **bold** and `code` markers.
-              </p>
-            </div>
-          )}
+          label="Status"
+          labelAccessory={<FieldHint>{status.length} chars</FieldHint>}
+          description="Separate paragraphs with a blank line. Supports **bold** and `code` markers."
+          rows={5}
         />
       </CmsSection>
 
       <SaveRow isDirty={isDirty} isSaving={isSubmitting} onSave={onSave} />
-    </div>
+    </Form>
   );
 };

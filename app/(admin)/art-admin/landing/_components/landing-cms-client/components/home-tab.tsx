@@ -1,18 +1,23 @@
 "use client";
 
 import { useState } from "react";
-import { Controller, type Path, type UseFormReturn } from "react-hook-form";
+import { type UseFormReturn } from "react-hook-form";
 
 import { ChevronDown, Code2, Image as ImageIcon, Layers, Sparkles } from "lucide-react";
 
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { Form } from "@/components/ui/form";
+import { FormTextField } from "@/components/form/form-text-field";
+import { FormTextareaField } from "@/components/form/form-textarea-field";
 import type { THomePayload } from "@/features/landing-cms";
 
 import { CardSubBlock } from "./card-sub-block";
 import { CmsSection } from "./cms-section";
-import { FieldLabel } from "./field-label";
+import { FieldHint } from "./field-hint";
 import { SaveRow } from "./save-row";
+
+// homeSchema guarantees exactly four feature cards (z.tuple of 4); literal indices
+// keep the `featureCards.N.*` field names typed without a cast.
+const CARD_INDICES = [0, 1, 2, 3] as const;
 
 type TProps = {
   form: UseFormReturn<THomePayload>;
@@ -28,61 +33,28 @@ export const HomeTab = ({ form, onSave }: TProps) => {
   const heroTitle = form.watch("heroTitle");
   const heroDesc = form.watch("heroDesc");
   const techHighlights = form.watch("techHighlights");
-  const featureCards = form.watch("featureCards");
-  const featureCardErrors = form.formState.errors.featureCards;
 
   return (
-    <div>
+    <Form {...form}>
       <CmsSection
         icon={<Sparkles className="size-[14px]" />}
         title="Hero"
         description="Top of the home page — first thing visitors read."
       >
-        <div className="mb-4">
-          <Controller
-            control={form.control}
-            name="heroTitle"
-            render={({ field, fieldState }) => (
-              <div>
-                <FieldLabel hint={`${heroTitle.length} chars`} htmlFor="home-hero-title">
-                  Hero title
-                </FieldLabel>
-                <Input
-                  id="home-hero-title"
-                  value={field.value}
-                  onChange={field.onChange}
-                  className="h-9 text-[13.5px]"
-                />
-                {fieldState.error && (
-                  <p className="text-destructive mt-1 text-xs">{fieldState.error.message}</p>
-                )}
-              </div>
-            )}
-          />
-        </div>
-        <div>
-          <Controller
-            control={form.control}
-            name="heroDesc"
-            render={({ field, fieldState }) => (
-              <div>
-                <FieldLabel hint={`${heroDesc.length} chars`} htmlFor="home-hero-desc">
-                  Hero description
-                </FieldLabel>
-                <Textarea
-                  id="home-hero-desc"
-                  value={field.value}
-                  onChange={field.onChange}
-                  rows={4}
-                  className="text-[13.5px] leading-[1.55]"
-                />
-                {fieldState.error && (
-                  <p className="text-destructive mt-1 text-xs">{fieldState.error.message}</p>
-                )}
-              </div>
-            )}
-          />
-        </div>
+        <FormTextField
+          control={form.control}
+          name="heroTitle"
+          label="Hero title"
+          labelAccessory={<FieldHint>{heroTitle.length} chars</FieldHint>}
+          className="mb-4"
+        />
+        <FormTextareaField
+          control={form.control}
+          name="heroDesc"
+          label="Hero description"
+          labelAccessory={<FieldHint>{heroDesc.length} chars</FieldHint>}
+          rows={4}
+        />
       </CmsSection>
 
       <CmsSection
@@ -90,58 +62,23 @@ export const HomeTab = ({ form, onSave }: TProps) => {
         title="Screenshot captions"
         description="Text underneath each product screenshot."
       >
-        <div className="mb-4">
-          <Controller
-            control={form.control}
-            name="dashboardCaption"
-            render={({ field, fieldState }) => (
-              <div>
-                <FieldLabel hint="Under the dashboard mockup" htmlFor="home-cap-dash">
-                  Dashboard caption
-                </FieldLabel>
-                <Textarea
-                  id="home-cap-dash"
-                  value={field.value}
-                  onChange={field.onChange}
-                  rows={2}
-                  className="text-[13.5px] leading-[1.55]"
-                />
-                {fieldState.error && (
-                  <p className="text-destructive mt-1 text-xs">{fieldState.error.message}</p>
-                )}
-                <p className="text-muted-foreground mt-2.5 text-xs leading-[1.55]">
-                  Supports **bold** and `code` markers.
-                </p>
-              </div>
-            )}
-          />
-        </div>
-        <div>
-          <Controller
-            control={form.control}
-            name="propertyCaption"
-            render={({ field, fieldState }) => (
-              <div>
-                <FieldLabel hint="Under the property detail mockup" htmlFor="home-cap-prop">
-                  Property detail caption
-                </FieldLabel>
-                <Textarea
-                  id="home-cap-prop"
-                  value={field.value}
-                  onChange={field.onChange}
-                  rows={2}
-                  className="text-[13.5px] leading-[1.55]"
-                />
-                {fieldState.error && (
-                  <p className="text-destructive mt-1 text-xs">{fieldState.error.message}</p>
-                )}
-                <p className="text-muted-foreground mt-2.5 text-xs leading-[1.55]">
-                  Supports **bold** and `code` markers.
-                </p>
-              </div>
-            )}
-          />
-        </div>
+        <FormTextareaField
+          control={form.control}
+          name="dashboardCaption"
+          label="Dashboard caption"
+          labelAccessory={<FieldHint>Under the dashboard mockup</FieldHint>}
+          description="Supports **bold** and `code` markers."
+          rows={2}
+          className="mb-4"
+        />
+        <FormTextareaField
+          control={form.control}
+          name="propertyCaption"
+          label="Property detail caption"
+          labelAccessory={<FieldHint>Under the property detail mockup</FieldHint>}
+          description="Supports **bold** and `code` markers."
+          rows={2}
+        />
       </CmsSection>
 
       {/* Feature cards — collapsible on mobile */}
@@ -168,24 +105,13 @@ export const HomeTab = ({ form, onSave }: TProps) => {
         </button>
         <div className={`p-[22px_24px] md:block ${cardsExpanded ? "block" : "hidden"}`}>
           <div className="grid grid-cols-1 gap-3.5">
-            {featureCards.map((card, i) => (
+            {CARD_INDICES.map((i) => (
               <CardSubBlock
                 key={i}
                 index={i + 1}
-                title={card.title}
-                body={card.body}
-                onTitle={(v) =>
-                  form.setValue(`featureCards.${i}.title` as Path<THomePayload>, v, {
-                    shouldDirty: true,
-                  })
-                }
-                onBody={(v) =>
-                  form.setValue(`featureCards.${i}.body` as Path<THomePayload>, v, {
-                    shouldDirty: true,
-                  })
-                }
-                titleError={featureCardErrors?.[i]?.title?.message}
-                bodyError={featureCardErrors?.[i]?.body?.message}
+                control={form.control}
+                titleName={`featureCards.${i}.title`}
+                bodyName={`featureCards.${i}.body`}
               />
             ))}
           </div>
@@ -215,33 +141,16 @@ export const HomeTab = ({ form, onSave }: TProps) => {
           />
         </button>
         <div className={`p-[22px_24px] md:block ${techExpanded ? "block" : "hidden"}`}>
-          <Controller
+          <FormTextField
             control={form.control}
             name="techHighlights"
-            render={({ field, fieldState }) => (
-              <div>
-                <FieldLabel
-                  hint={`${techHighlights.length} chars · single line`}
-                  htmlFor="home-tech"
-                >
-                  Tech highlights line
-                </FieldLabel>
-                <Input
-                  id="home-tech"
-                  value={field.value}
-                  onChange={field.onChange}
-                  className="h-9 text-[13.5px]"
-                />
-                {fieldState.error && (
-                  <p className="text-destructive mt-1 text-xs">{fieldState.error.message}</p>
-                )}
-              </div>
-            )}
+            label="Tech highlights line"
+            labelAccessory={<FieldHint>{techHighlights.length} chars · single line</FieldHint>}
           />
         </div>
       </div>
 
       <SaveRow isDirty={isDirty} isSaving={isSubmitting} onSave={onSave} />
-    </div>
+    </Form>
   );
 };

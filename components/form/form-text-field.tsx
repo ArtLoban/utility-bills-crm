@@ -26,6 +26,7 @@ type TInputProps = Pick<
 type TProps<T extends FieldValues> = TFormFieldBaseProps<T> &
   TInputProps & {
     adornment?: ReactNode;
+    labelAccessory?: ReactNode;
     inputClassName?: string;
     labelClassName?: string;
   };
@@ -38,6 +39,7 @@ export const FormTextField = <T extends FieldValues>({
   className,
   required,
   adornment,
+  labelAccessory,
   inputClassName,
   labelClassName,
   ...inputProps
@@ -49,6 +51,7 @@ export const FormTextField = <T extends FieldValues>({
     description={description}
     className={className}
     required={required}
+    labelAccessory={labelAccessory}
     labelClassName={labelClassName}
   >
     {(field) =>
