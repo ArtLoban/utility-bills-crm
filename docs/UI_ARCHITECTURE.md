@@ -857,10 +857,21 @@ Applied consistently in balances, bill amounts, payment amounts, summaries.
 
 ### Internationalization
 
-- All user-facing strings via `t('key')` from next-intl
-- Three languages: en (default), uk, ru
-- Cookie-based strategy (URL unchanged between languages)
-- Landing pages English-only in MVP
+**Localization scope — only the authenticated app is translated.** The three route
+groups differ on purpose:
+
+- **`(app)`** — the authenticated product — is fully localized via next-intl. Every
+  user-facing string goes through `t('key')`; no hardcoded text. Three languages:
+  en (default), uk, ru. Cookie-based strategy (URL unchanged between languages).
+- **`(admin)`** (`/art-admin`) is **permanently English-only** — an internal owner
+  tool, not a localized product surface. Admin strings live in plain English
+  constants (`ADMIN_STRINGS`), never next-intl. Do not route admin text through `t()`.
+- **`(public)`** (landing) is **English-only in MVP**; landing multilingualism is
+  post-MVP (#88). No `t()` on public pages until then.
+
+Shared chrome (theme toggle, user menu, month picker, …) lives in the app and is
+localized there. Its incidental reuse on a public/admin surface does not make those
+surfaces localized — never add `t()` to a public-only or admin-only component.
 
 ---
 
