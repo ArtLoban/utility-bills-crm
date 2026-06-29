@@ -1,53 +1,39 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
-import { updateProfileName, profileNameSchema } from "@/features/profile";
-import { errorMessage } from "@/lib/errors";
+import { profileNameSchema, updateProfileName } from "@/features/profile";
+import { useZodForm } from "@/lib/forms/use-zod-form";
+import { useActionErrorHandler } from "@/lib/hooks/use-action-error-handler";
 
 export const useProfileForm = (initialName: string) => {
   const t = useTranslations("settings.profile");
   const router = useRouter();
+  const handleActionError = useActionErrorHandler({});
 
-  const [currentName, setCurrentName] = useState(initialName);
-  const [savedName, setSavedName] = useState(initialName);
-  const [nameError, setNameError] = useState<string | null>(null);
-  const [isSaving, setIsSaving] = useState(false);
+  const form = useZodForm({
+    schema: profileNameSchema,
+    namespace: "settings.profile",
+    defaultValues: { name: initialName },
+  });
 
-  const dirty = currentName !== savedName;
-
-  const handleNameChange = (value: string) => {
-    setCurrentName(value);
-    if (nameError) setNameError(null);
-  };
-
-  const handleSave = async () => {
-    const result = profileNameSchema.safeParse({ name: currentName });
-    if (!result.success) {
-      setNameError(t(result.error.issues[0]!.message as Parameters<typeof t>[0]));
+  const handleSave = form.handleSubmit(async (data) => {
+    const response = await updateProfileName(data);
+    if (!response.ok) {
+      handleActionError(response.error);
       return;
     }
 
-    setIsSaving(true);
-    try {
-      const response = await updateProfileName({ name: currentName });
+    form.reset(data);
+    toast.success(t("toast.saved"));
+    router.refresh();
+  });
 
-      if (!response.ok) {
-        const key = errorMessage(response.error);
-        setNameError(key ? t(key as Parameters<typeof t>[0]) : null);
-        return;
-      }
-
-      setSavedName(currentName);
-      toast.success(t("toast.saved"));
-      router.refresh();
-    } finally {
-      setIsSaving(false);
-    }
+  return {
+    form,
+    handleSave,
+    isSaving: form.formState.isSubmitting,
   };
-
-  return { currentName, nameError, isSaving, dirty, handleNameChange, handleSave };
 };

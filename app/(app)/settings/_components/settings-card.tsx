@@ -14,7 +14,7 @@ type TSettingsCardHeaderProps = {
 
 type TSettingsCardBodyProps = { children: ReactNode };
 type TSettingsCardFooterProps = { children: ReactNode };
-type TFieldLabelProps = { children: ReactNode };
+type TFieldLabelProps = { children: ReactNode; htmlFor?: string };
 type TFieldHintProps = { children: ReactNode };
 
 const SettingsCard = ({ children, className }: TSettingsCardProps) => (
@@ -49,8 +49,11 @@ const SettingsCardFooter = ({ children }: TSettingsCardFooterProps) => (
   </div>
 );
 
-const FieldLabel = ({ children }: TFieldLabelProps) => (
-  <label className="mb-1.5 block text-sm font-medium text-zinc-950 dark:text-zinc-50">
+const FieldLabel = ({ children, htmlFor }: TFieldLabelProps) => (
+  <label
+    htmlFor={htmlFor}
+    className="mb-1.5 block text-sm font-medium text-zinc-950 dark:text-zinc-50"
+  >
     {children}
   </label>
 );
