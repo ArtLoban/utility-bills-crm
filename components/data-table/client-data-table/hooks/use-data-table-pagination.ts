@@ -10,7 +10,7 @@ type TPaginationState = {
   pageSize: number;
 };
 
-export function useDataTablePagination() {
+export const useDataTablePagination = () => {
   const [query, setQuery] = useQueryStates({
     [DATA_TABLE_PARAMS.PAGE]: parseAsInteger.withDefault(PAGE_DEFAULT),
     [DATA_TABLE_PARAMS.PAGE_SIZE]: parseAsInteger.withDefault(PAGE_SIZE_DEFAULT),
@@ -55,4 +55,4 @@ export function useDataTablePagination() {
     setPageIndex,
     setPageSize,
   };
-}
+};

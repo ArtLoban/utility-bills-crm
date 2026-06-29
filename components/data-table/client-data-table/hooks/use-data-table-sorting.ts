@@ -7,7 +7,7 @@ import { DATA_TABLE_PARAMS, SORT_ORDER, TDefaultSorting } from "@/components/dat
 
 const DEFAULT_SORT_ORDER = SORT_ORDER.DESC;
 
-export function useDataTableSorting(initial?: TDefaultSorting) {
+export const useDataTableSorting = (initial?: TDefaultSorting) => {
   const [query, setQuery] = useQueryStates({
     [DATA_TABLE_PARAMS.SORT_BY]: parseAsString.withDefault(
       initial?.[DATA_TABLE_PARAMS.SORT_BY] ?? "",
@@ -57,4 +57,4 @@ export function useDataTableSorting(initial?: TDefaultSorting) {
     sorting,
     setSorting,
   };
-}
+};
