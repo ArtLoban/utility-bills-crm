@@ -1,7 +1,7 @@
 "use client";
 
 import { Check, ChevronLeft } from "lucide-react";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { LOCALE_CONFIG, getAvailableLocales } from "@/lib/locale/constants";
@@ -17,6 +17,7 @@ type TProps = {
 export const DrawerLangPanel = ({ ruEnabled, onBack }: TProps) => {
   const router = useRouter();
   const currentLocale = useLocale();
+  const t = useTranslations("nav.langPanel");
 
   const availableLocales = getAvailableLocales({
     ruEnabled,
@@ -36,10 +37,10 @@ export const DrawerLangPanel = ({ ruEnabled, onBack }: TProps) => {
         className="hover:bg-accent text-muted-foreground mb-2 flex h-9 items-center gap-1.5 rounded-lg px-2 text-sm font-medium transition-colors"
       >
         <ChevronLeft className="size-4" />
-        Back
+        {t("back")}
       </button>
 
-      <p className="px-3 pb-3 text-[17px] font-semibold tracking-tight">Choose language</p>
+      <p className="px-3 pb-3 text-[17px] font-semibold tracking-tight">{t("title")}</p>
 
       {availableLocales.map((locale) => {
         const config = LOCALE_CONFIG[locale];

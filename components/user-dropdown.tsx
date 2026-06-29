@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { LogOut, Settings, Shield } from "lucide-react";
 import { ROUTES } from "@/lib/routes";
 import { signOutAction } from "@/lib/auth/actions";
@@ -23,13 +24,14 @@ type TProps = {
 export const UserDropdown = ({ user }: TProps) => {
   const { id, name, email, image, systemRole } = user;
   const router = useRouter();
+  const t = useTranslations();
   const color = getAvatarColor(id);
   const initials = getInitials(name, email);
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        aria-label="User menu"
+        aria-label={t("common.a11y.userMenu")}
         className="hover:bg-accent flex cursor-pointer items-center gap-2 rounded-full py-1 pr-1 pl-2 outline-none"
       >
         <span className="hidden max-w-[9rem] truncate text-sm font-medium lg:block">
@@ -38,7 +40,7 @@ export const UserDropdown = ({ user }: TProps) => {
         {image ? (
           <Image
             src={image}
-            alt={name ?? "Avatar"}
+            alt={name ?? t("common.a11y.avatar")}
             width={28}
             height={28}
             className="size-7 rounded-full object-cover"
@@ -64,7 +66,7 @@ export const UserDropdown = ({ user }: TProps) => {
 
         <DropdownMenuItem className="cursor-pointer" onClick={() => router.push(ROUTES.settings)}>
           <Settings className="size-4" />
-          Settings
+          {t("nav.account.settings")}
         </DropdownMenuItem>
 
         {systemRole === "admin" && (
@@ -73,7 +75,7 @@ export const UserDropdown = ({ user }: TProps) => {
             onClick={() => router.push(ROUTES.admin.root)}
           >
             <Shield className="size-4" />
-            Admin panel
+            {t("nav.account.adminPanel")}
           </DropdownMenuItem>
         )}
 
@@ -81,7 +83,7 @@ export const UserDropdown = ({ user }: TProps) => {
 
         <DropdownMenuItem className="cursor-pointer" onClick={() => signOutAction()}>
           <LogOut className="size-4" />
-          Sign out
+          {t("nav.account.signOut")}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

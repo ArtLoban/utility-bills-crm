@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useState } from "react";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { CalendarDays, ChevronLeft, ChevronRight } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -27,6 +27,7 @@ type TProps = {
 export const MonthPicker = React.forwardRef<HTMLButtonElement, TProps>(
   ({ value, onChange, min, max, disabled, placeholder, ...triggerProps }, ref) => {
     const locale = useLocale();
+    const t = useTranslations("common.a11y");
     const [open, setOpen] = useState(false);
 
     const initialYear = (value ? parseYearMonth(value) : parseYearMonth(currentYearMonth())).year;
@@ -73,7 +74,7 @@ export const MonthPicker = React.forwardRef<HTMLButtonElement, TProps>(
               disabled={!canGoPrev}
               onClick={() => setViewYear((year) => year - 1)}
               className="hover:bg-accent flex size-7 items-center justify-center rounded-md transition-colors disabled:pointer-events-none disabled:opacity-40"
-              aria-label="Previous year"
+              aria-label={t("prevYear")}
             >
               <ChevronLeft className="size-4" />
             </button>
@@ -83,7 +84,7 @@ export const MonthPicker = React.forwardRef<HTMLButtonElement, TProps>(
               disabled={!canGoNext}
               onClick={() => setViewYear((year) => year + 1)}
               className="hover:bg-accent flex size-7 items-center justify-center rounded-md transition-colors disabled:pointer-events-none disabled:opacity-40"
-              aria-label="Next year"
+              aria-label={t("nextYear")}
             >
               <ChevronRight className="size-4" />
             </button>

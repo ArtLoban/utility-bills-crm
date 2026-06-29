@@ -199,6 +199,18 @@
         "last6Months": "Останні 6 місяців",
         "last12Months": "Останні 12 місяців"
       }
+    },
+    "a11y": {
+      "toggleTheme": "Перемкнути тему",
+      "switchLanguage": "Змінити мову",
+      "userMenu": "Меню користувача",
+      "openMenu": "Відкрити меню",
+      "closeMenu": "Закрити меню",
+      "lightTheme": "Світла тема",
+      "darkTheme": "Темна тема",
+      "prevYear": "Попередній рік",
+      "nextYear": "Наступний рік",
+      "avatar": "Аватар"
     }
   },
   "nav": {
@@ -210,7 +222,25 @@
     "payments": "Платежі",
     "settings": "Налаштування",
     "adminDashboard": "Панель",
-    "more": "Ще"
+    "more": "Ще",
+    "account": {
+      "title": "Акаунт",
+      "settings": "Налаштування",
+      "adminPanel": "Адмін-панель",
+      "signOut": "Вийти"
+    },
+    "prefs": {
+      "title": "Параметри",
+      "language": "Мова",
+      "theme": "Тема"
+    },
+    "menu": {
+      "title": "Навігація"
+    },
+    "langPanel": {
+      "back": "Назад",
+      "title": "Оберіть мову"
+    }
   },
   "meters": {
     "propertyTab": {

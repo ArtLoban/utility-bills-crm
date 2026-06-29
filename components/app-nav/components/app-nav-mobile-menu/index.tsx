@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Menu } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { DrawerHeader } from "@/components/drawer-header";
 import { DrawerNav } from "./components/drawer-nav";
@@ -19,11 +20,12 @@ type TProps = {
 
 export const AppNavMobileMenu = ({ links, user }: TProps) => {
   const [view, setView] = useState<TView>("main");
+  const t = useTranslations();
 
   return (
     <Sheet onOpenChange={(open) => !open && setView("main")}>
       <SheetTrigger
-        aria-label="Open menu"
+        aria-label={t("common.a11y.openMenu")}
         className="hover:bg-accent hover:text-accent-foreground inline-flex size-9 items-center justify-center rounded-md md:hidden"
       >
         <Menu className="size-5" />
@@ -33,7 +35,7 @@ export const AppNavMobileMenu = ({ links, user }: TProps) => {
         showCloseButton={false}
         className="gap-0 p-0 data-[side=right]:w-80 data-[side=right]:sm:max-w-80"
       >
-        <SheetTitle className="sr-only">Navigation</SheetTitle>
+        <SheetTitle className="sr-only">{t("nav.menu.title")}</SheetTitle>
         <DrawerHeader user={user} />
 
         {view === "main" ? (

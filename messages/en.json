@@ -199,6 +199,18 @@
         "last6Months": "Last 6 months",
         "last12Months": "Last 12 months"
       }
+    },
+    "a11y": {
+      "toggleTheme": "Toggle theme",
+      "switchLanguage": "Switch language",
+      "userMenu": "User menu",
+      "openMenu": "Open menu",
+      "closeMenu": "Close menu",
+      "lightTheme": "Light theme",
+      "darkTheme": "Dark theme",
+      "prevYear": "Previous year",
+      "nextYear": "Next year",
+      "avatar": "Avatar"
     }
   },
   "nav": {
@@ -210,7 +222,25 @@
     "payments": "Payments",
     "settings": "Settings",
     "adminDashboard": "Dashboard",
-    "more": "More"
+    "more": "More",
+    "account": {
+      "title": "Account",
+      "settings": "Settings",
+      "adminPanel": "Admin panel",
+      "signOut": "Sign out"
+    },
+    "prefs": {
+      "title": "Preferences",
+      "language": "Language",
+      "theme": "Theme"
+    },
+    "menu": {
+      "title": "Navigation"
+    },
+    "langPanel": {
+      "back": "Back",
+      "title": "Choose language"
+    }
   },
   "meters": {
     "propertyTab": {

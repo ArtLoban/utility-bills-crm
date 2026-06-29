@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { X } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { SheetClose } from "@/components/ui/sheet";
 import { getAvatarColor } from "@/lib/utils/avatar-color";
@@ -12,6 +13,7 @@ type TProps = {
 
 export const DrawerHeader = ({ user }: TProps) => {
   const { id, name, email, image } = user;
+  const t = useTranslations("common.a11y");
   const color = getAvatarColor(id);
   const initials = getInitials(name, email);
 
@@ -20,7 +22,7 @@ export const DrawerHeader = ({ user }: TProps) => {
       {image ? (
         <Image
           src={image}
-          alt={name ?? "Avatar"}
+          alt={name ?? t("avatar")}
           width={40}
           height={40}
           className="size-10 shrink-0 rounded-full object-cover"
@@ -45,7 +47,7 @@ export const DrawerHeader = ({ user }: TProps) => {
       </div>
       <SheetClose asChild>
         <button
-          aria-label="Close menu"
+          aria-label={t("closeMenu")}
           className="hover:bg-accent -mr-1 flex size-8 shrink-0 items-center justify-center rounded-lg transition-colors"
         >
           <X className="size-5" />

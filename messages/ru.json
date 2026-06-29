@@ -199,6 +199,18 @@
         "last6Months": "Последние 6 месяцев",
         "last12Months": "Последние 12 месяцев"
       }
+    },
+    "a11y": {
+      "toggleTheme": "Переключить тему",
+      "switchLanguage": "Сменить язык",
+      "userMenu": "Меню пользователя",
+      "openMenu": "Открыть меню",
+      "closeMenu": "Закрыть меню",
+      "lightTheme": "Светлая тема",
+      "darkTheme": "Тёмная тема",
+      "prevYear": "Предыдущий год",
+      "nextYear": "Следующий год",
+      "avatar": "Аватар"
     }
   },
   "nav": {
@@ -210,7 +222,25 @@
     "payments": "Платежи",
     "settings": "Настройки",
     "adminDashboard": "Панель",
-    "more": "Ещё"
+    "more": "Ещё",
+    "account": {
+      "title": "Аккаунт",
+      "settings": "Настройки",
+      "adminPanel": "Админ-панель",
+      "signOut": "Выйти"
+    },
+    "prefs": {
+      "title": "Параметры",
+      "language": "Язык",
+      "theme": "Тема"
+    },
+    "menu": {
+      "title": "Навигация"
+    },
+    "langPanel": {
+      "back": "Назад",
+      "title": "Выберите язык"
+    }
   },
   "meters": {
     "propertyTab": {
