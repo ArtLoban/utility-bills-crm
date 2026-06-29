@@ -1,4 +1,4 @@
-import { and, desc, eq, inArray, isNull, lt, max, sql } from "drizzle-orm";
+import { and, asc, count, desc, eq, gte, inArray, isNull, lt, lte, max, sql } from "drizzle-orm";
 
 import { db } from "@/lib/db/client";
 import { readings } from "@/lib/db/schema/readings";
@@ -11,6 +11,67 @@ import type { UserId } from "@/lib/db/schema/auth";
 import { meterByIdForUser } from "./meters";
 import { appError, err, ok } from "@/lib/errors";
 import type { Result, TAppError } from "@/lib/errors";
+import type { TReadingsListParams } from "@/features/readings/types";
+import { TServerPagination } from "@/lib/types/data-table";
+
+// --- List query ---
+
+export type TReadingsListResult = {
+  data: TReading[];
+  pagination: TServerPagination;
+};
+
+// Builds the WHERE conditions for the readings list query.
+// `readAt` is timestamptz while the date filter arrives as YYYY-MM-DD, so the range is
+// compared on the calendar day (`::date`) — inclusive on both ends. (The bills list
+// compares a `date` column directly and needs no cast; here the cast is required.)
+const buildReadingsConditions = (meterId: MeterId, params: TReadingsListParams) => {
+  const conds = [eq(readings.meterId, meterId), isNull(readings.deletedAt)];
+
+  if (params.dateFrom) conds.push(gte(sql`${readings.readAt}::date`, params.dateFrom));
+  if (params.dateTo) conds.push(lte(sql`${readings.readAt}::date`, params.dateTo));
+
+  return and(...conds);
+};
+
+// Builds the ORDER BY clause. `readAt` is the only sortable column; default DESC.
+const buildReadingsOrderBy = (params: TReadingsListParams) => {
+  const dir = params.sortOrder === "asc" ? asc : desc;
+  return [dir(readings.readAt)];
+};
+
+export const getReadingsList = async (
+  userId: UserId,
+  meterId: MeterId,
+  params: TReadingsListParams,
+): Promise<Result<TReadingsListResult, TAppError>> => {
+  const access = await meterByIdForUser(userId, meterId);
+  if (!access.ok) return access;
+
+  const where = buildReadingsConditions(meterId, params);
+  const orderBy = buildReadingsOrderBy(params);
+  const offset = (params.page - 1) * params.pageSize;
+
+  // Two queries run in parallel: total count and the paginated page.
+  const [countResult, rows] = await Promise.all([
+    db.select({ total: count() }).from(readings).where(where),
+    db
+      .select()
+      .from(readings)
+      .where(where)
+      .orderBy(...orderBy)
+      .limit(params.pageSize)
+      .offset(offset),
+  ]);
+
+  const total = countResult[0]?.total ?? 0;
+  const totalPages = Math.max(1, Math.ceil(total / params.pageSize));
+
+  return ok({
+    data: rows,
+    pagination: { page: params.page, pageSize: params.pageSize, total, totalPages },
+  });
+};
 
 // --- Access helpers ---
 // Pure functions: userId is always a parameter. Never read the auth session internally.

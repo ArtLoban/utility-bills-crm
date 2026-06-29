@@ -268,6 +268,22 @@
         "columns": {
           "date": "Дата",
           "notes": "Нотатки"
+        },
+        "filters": {
+          "label": "Фільтри",
+          "clear": "Скинути фільтри",
+          "from": "Від {date}",
+          "to": "До {date}"
+        },
+        "sort": {
+          "title": "Сортування",
+          "readAt": {
+            "label": "Дата",
+            "asc": "Спочатку старі",
+            "desc": "Спочатку нові",
+            "triggerAsc": "Дата (старі)",
+            "triggerDesc": "Дата (нові)"
+          }
         }
       },
       "series": {

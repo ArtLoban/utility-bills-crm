@@ -9,7 +9,7 @@ import { SectionCardEmpty } from "@/components/section-card-empty";
 import { PROPERTY_ROLES } from "@/lib/db/schema/properties";
 import { ROUTES } from "@/lib/routes";
 import type { TPropertyRole } from "@/lib/db/schema/properties";
-import type { TReading } from "@/lib/db/schema/readings";
+import type { TReadingsListResult } from "@/lib/db/access/readings";
 import type { TMeter } from "@/lib/db/schema/meters";
 import type { TServiceType } from "@/lib/db/schema/service-types";
 import { ReadingsTable } from "./readings-table";
@@ -17,14 +17,22 @@ import { ReadingsTable } from "./readings-table";
 type TProps = {
   meter: TMeter;
   serviceType: TServiceType;
-  readings: TReading[];
+  readingsList: TReadingsListResult;
   role: TPropertyRole;
+  hasDateFilter: boolean;
 };
 
-export const ReadingsSection = ({ meter, serviceType, readings, role }: TProps) => {
+export const ReadingsSection = ({
+  meter,
+  serviceType,
+  readingsList,
+  role,
+  hasDateFilter,
+}: TProps) => {
   const t = useTranslations("meters.detail.readings");
   const canMutate = role !== PROPERTY_ROLES.VIEWER;
   const newReadingHref = `${ROUTES.properties}/${meter.propertyId}/meters/${meter.id}/reading/new`;
+  const isEmpty = readingsList.pagination.total === 0 && !hasDateFilter;
 
   return (
     <SectionCard
@@ -35,7 +43,7 @@ export const ReadingsSection = ({ meter, serviceType, readings, role }: TProps) 
         ) : undefined
       }
     >
-      {readings.length === 0 ? (
+      {isEmpty ? (
         <SectionCardEmpty
           icon={Gauge}
           caption={t("empty")}
@@ -46,12 +54,14 @@ export const ReadingsSection = ({ meter, serviceType, readings, role }: TProps) 
           }
         />
       ) : (
-        <ReadingsTable
-          readings={readings}
-          meter={meter}
-          serviceType={serviceType}
-          canMutate={canMutate}
-        />
+        <div className="p-4">
+          <ReadingsTable
+            readingsList={readingsList}
+            meter={meter}
+            serviceType={serviceType}
+            canMutate={canMutate}
+          />
+        </div>
       )}
     </SectionCard>
   );

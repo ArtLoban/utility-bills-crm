@@ -18,7 +18,7 @@ import { resolveMeterTab } from "./_utils/resolve-tab";
 
 type TProps = {
   params: Promise<{ id: string; mid: string }>;
-  searchParams: Promise<{ tab?: string }>;
+  searchParams: Promise<Record<string, string>>;
 };
 
 export const metadata: Metadata = {
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
 
 export default async function MeterPage({ params, searchParams }: TProps) {
   const { id, mid } = await params;
-  const { tab } = await searchParams;
+  const resolvedSearchParams = await searchParams;
   const propertyId = id as PropertyId;
   const meterId = mid as MeterId;
 
@@ -43,7 +43,7 @@ export default async function MeterPage({ params, searchParams }: TProps) {
 
   if (meter.propertyId !== id) notFound();
 
-  const activeTab = resolveMeterTab(tab);
+  const activeTab = resolveMeterTab(resolvedSearchParams.tab);
   const canMutate = property.role !== PROPERTY_ROLES.VIEWER;
 
   const renderActiveTab = (): ReactNode => {
@@ -51,7 +51,14 @@ export default async function MeterPage({ params, searchParams }: TProps) {
       case METER_TABS.OVERVIEW:
         return <OverviewTab meter={meter} serviceType={serviceType} propertyName={property.name} />;
       case METER_TABS.READINGS:
-        return <ReadingsTab meter={meter} serviceType={serviceType} role={property.role} />;
+        return (
+          <ReadingsTab
+            meter={meter}
+            serviceType={serviceType}
+            role={property.role}
+            searchParams={resolvedSearchParams}
+          />
+        );
       default:
         return assertNever(activeTab);
     }

@@ -5,10 +5,13 @@ import { db } from "@/lib/db/client";
 import { meterByIdForUser } from "@/lib/db/access/meters";
 import {
   readingsByMeterId,
+  getReadingsList,
   mostRecentReadingForMeter,
   previousReadingForMeter,
   readingByIdForUser,
 } from "@/lib/db/access/readings";
+import type { TReadingsListResult } from "@/lib/db/access/readings";
+import type { TReadingsListParams } from "@/features/readings/types";
 import type { MeterId, TMeter } from "@/lib/db/schema/meters";
 import type { ReadingId, TReading } from "@/lib/db/schema/readings";
 import { serviceTypes as serviceTypesTable } from "@/lib/db/schema/service-types";
@@ -47,6 +50,15 @@ export const getMeterReadings = async (
   const userId = await requireUser();
 
   return readingsByMeterId(userId, meterId);
+};
+
+export const getMeterReadingsList = async (
+  meterId: MeterId,
+  params: TReadingsListParams,
+): Promise<Result<TReadingsListResult, TAppError>> => {
+  const userId = await requireUser();
+
+  return getReadingsList(userId, meterId, params);
 };
 
 export const getMostRecentReading = async (
