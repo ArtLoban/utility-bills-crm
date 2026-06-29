@@ -17,6 +17,7 @@ import { monthlyExpensesByService } from "../query";
 // Service types are seeded via migration — look up by code.
 let electricityTypeId: TServiceTypeId;
 let gasTypeId: TServiceTypeId;
+let coldWaterTypeId: TServiceTypeId;
 
 let userId: UserId;
 let otherUserId: UserId;
@@ -24,6 +25,7 @@ let propertyId: PropertyId;
 let otherPropertyId: PropertyId;
 let electricityServiceId: TServiceId;
 let gasServiceId: TServiceId;
+let coldWaterServiceId: TServiceId;
 let otherPropertyServiceId: TServiceId;
 
 beforeAll(async () => {
@@ -31,10 +33,11 @@ beforeAll(async () => {
   const sts = await db
     .select({ id: serviceTypes.id, code: serviceTypes.code })
     .from(serviceTypes)
-    .where(inArray(serviceTypes.code, ["electricity", "gas"]));
+    .where(inArray(serviceTypes.code, ["electricity", "gas", "cold_water"]));
 
   electricityTypeId = sts.find((s) => s.code === "electricity")!.id;
   gasTypeId = sts.find((s) => s.code === "gas")!.id;
+  coldWaterTypeId = sts.find((s) => s.code === "cold_water")!.id;
 
   // --- Users ---
   const insertedUsers = await db
@@ -78,17 +81,20 @@ beforeAll(async () => {
     .values([
       { propertyId, serviceTypeId: electricityTypeId },
       { propertyId, serviceTypeId: gasTypeId },
+      { propertyId, serviceTypeId: coldWaterTypeId },
       { propertyId: otherPropertyId, serviceTypeId: electricityTypeId },
     ])
     .returning({ id: services.id });
 
   electricityServiceId = insertedServices[0]!.id;
   gasServiceId = insertedServices[1]!.id;
-  otherPropertyServiceId = insertedServices[2]!.id;
+  coldWaterServiceId = insertedServices[2]!.id;
+  otherPropertyServiceId = insertedServices[3]!.id;
 
   // --- Bills for the main user's property ---
   // Electricity: 3 months (Jan–Mar 2025)
   // Gas: 2 months (Jan–Feb 2025), gap in Mar
+  // Cold water: 1 month (Jan 2025) — present only to assert catalog sortOrder
   // Other property (not accessible to userId): some bills that must NOT appear
   await db.insert(bills).values([
     {
@@ -125,6 +131,13 @@ beforeAll(async () => {
       periodEnd: "2025-02-28",
       periodMonth: "2025-02-01",
       amount: "250.00",
+    },
+    {
+      serviceId: coldWaterServiceId,
+      periodStart: "2025-01-01",
+      periodEnd: "2025-01-31",
+      periodMonth: "2025-01-01",
+      amount: "60.00",
     },
     // Other property's bill — must NOT appear in userId's results
     {
@@ -210,8 +223,8 @@ describe("monthlyExpensesByService", () => {
       propertyId,
     });
 
-    // Should still include electricity and gas from the filtered property
-    expect(result.services).toHaveLength(2);
+    // Should still include electricity, gas and cold water from the filtered property
+    expect(result.services).toHaveLength(3);
   });
 
   it("filters by serviceTypeCodes when provided", async () => {
@@ -255,6 +268,18 @@ describe("monthlyExpensesByService", () => {
     });
 
     const codes = result.services.map((s) => s.code).sort();
-    expect(codes).toEqual(["electricity", "gas"]);
+    expect(codes).toEqual(["cold_water", "electricity", "gas"]);
+  });
+
+  it("orders services by catalog sortOrder, not alphabetically", async () => {
+    const result = await monthlyExpensesByService(userId, {
+      dateFrom: "2025-01-01",
+      dateTo: "2025-03-01",
+    });
+
+    // Canonical "UI display order" from service_types.sortOrder:
+    //   electricity(10), gas(20), cold_water(30)
+    // Alphabetical-by-code would instead yield: cold_water, electricity, gas.
+    expect(result.services.map((s) => s.code)).toEqual(["electricity", "gas", "cold_water"]);
   });
 });

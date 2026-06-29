@@ -327,8 +327,8 @@ export const monthlyExpensesByService = async (
       ),
     )
     .where(conditions)
-    .groupBy(serviceTypes.code, bills.periodMonth)
-    .orderBy(asc(serviceTypes.code), asc(bills.periodMonth));
+    .groupBy(serviceTypes.code, serviceTypes.sortOrder, bills.periodMonth)
+    .orderBy(asc(serviceTypes.sortOrder), asc(bills.periodMonth));
 
   const months = generateMonthAxis(dateFrom, dateTo);
 
