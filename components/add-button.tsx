@@ -1,19 +1,11 @@
-import Link from "next/link";
 import { Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { LinkButton } from "@/components/link-button";
 
 type TProps = {
   href: string;
   text: string;
 };
 
-export const AddButton = ({ href, text }: TProps) => {
-  return (
-    <Button asChild>
-      <Link href={href}>
-        <Plus />
-        {text}
-      </Link>
-    </Button>
-  );
-};
+export const AddButton = ({ href, text }: TProps) => (
+  <LinkButton href={href} icon={Plus} text={text} variant="default" size="default" />
+);

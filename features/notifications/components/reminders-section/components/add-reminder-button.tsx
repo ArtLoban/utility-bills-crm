@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { LinkButton } from "@/components/link-button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { ROUTES } from "@/lib/routes";
 
@@ -17,14 +18,7 @@ export const AddReminderButton = ({ isLinked, newHref }: TProps) => {
   const t = useTranslations("reminders");
 
   if (isLinked) {
-    return (
-      <Button asChild size="sm">
-        <Link href={newHref}>
-          <Plus size={14} />
-          {t("add")}
-        </Link>
-      </Button>
-    );
+    return <LinkButton href={newHref} icon={Plus} text={t("add")} variant="default" />;
   }
 
   return (

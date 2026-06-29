@@ -1,8 +1,7 @@
-import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { Bell, Plus, Send } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import { LinkButton } from "@/components/link-button";
 import { ROUTES } from "@/lib/routes";
 
 type TProps = {
@@ -30,19 +29,14 @@ export const RemindersEmptyState = async ({ isLinked, newHref }: TProps) => {
       </div>
 
       {isLinked ? (
-        <Button asChild size="sm">
-          <Link href={newHref}>
-            <Plus size={14} />
-            {t("add")}
-          </Link>
-        </Button>
+        <LinkButton href={newHref} icon={Plus} text={t("add")} variant="default" />
       ) : (
-        <Button asChild size="sm">
-          <Link href={ROUTES.settings}>
-            <Send size={14} />
-            {t("empty.unlinked.cta")}
-          </Link>
-        </Button>
+        <LinkButton
+          href={ROUTES.settings}
+          icon={Send}
+          text={t("empty.unlinked.cta")}
+          variant="default"
+        />
       )}
     </div>
   );

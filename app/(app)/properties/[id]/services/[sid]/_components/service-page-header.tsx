@@ -1,10 +1,9 @@
 import type { ReactNode } from "react";
-import Link from "next/link";
 import { Pencil } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 
 import { Breadcrumbs } from "@/components/breadcrumbs";
-import { Button } from "@/components/ui/button";
+import { LinkButton } from "@/components/link-button";
 import { ROUTES } from "@/lib/routes";
 import { PROPERTY_ROLES } from "@/lib/db/schema/properties";
 import type { TPropertyRole } from "@/lib/db/schema/properties";
@@ -67,12 +66,7 @@ export const ServicePageHeader = async ({
 
         {role !== PROPERTY_ROLES.VIEWER && (
           <div className="flex items-center justify-end gap-2">
-            <Button variant="outline" asChild>
-              <Link href={editHref}>
-                <Pencil className="size-3.5" />
-                {t("editNotes")}
-              </Link>
-            </Button>
+            <LinkButton href={editHref} icon={Pencil} text={t("editNotes")} size="default" />
             {extraActions}
           </div>
         )}

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 
-import { Button } from "@/components/ui/button";
+import { LinkButton } from "@/components/link-button";
 import { IconBadge } from "@/components/icon-badge";
 import { ROUTES } from "@/lib/routes";
 import type { TMeter } from "@/lib/db/schema/meters";
@@ -54,9 +54,7 @@ export const MeterRow = ({ meter, serviceType, propertyId, canMutate }: TProps) 
       </Link>
 
       {canMutate && !isHistorical && (
-        <Button variant="outline" size="sm" asChild>
-          <Link href={`${meterHref}/replace`}>{t("replace")}</Link>
-        </Button>
+        <LinkButton href={`${meterHref}/replace`} text={t("replace")} />
       )}
     </div>
   );

@@ -1,8 +1,8 @@
 import { cn } from "@/lib/utils";
 import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
+import { LinkButton } from "@/components/link-button";
 import { ChevronLeft, Loader2 } from "lucide-react";
-import Link from "next/link";
 
 const SIZE_MAP = {
   sm: { maxWidth: "max-w-[440px]" },
@@ -47,12 +47,7 @@ export const FormContainer = (props: TProps) => {
     <div className={cn("mx-auto w-full", maxWidth, className)}>
       {noCard ? children : <div className="rounded-lg border p-4 sm:p-6">{children}</div>}
       <div className="mt-5 flex items-center justify-between">
-        <Button variant="outline" asChild>
-          <Link href={backHref}>
-            <ChevronLeft size={16} />
-            {cancelText}
-          </Link>
-        </Button>
+        <LinkButton href={backHref} icon={ChevronLeft} text={cancelText} size="default" />
         <Button type="button" onClick={onSubmit} disabled={isSaving || !canSave}>
           {isSaving ? (
             <>

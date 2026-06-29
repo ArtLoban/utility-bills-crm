@@ -20,7 +20,7 @@ export const ContractHistory = ({ contractHistory, attributeHistory }: TProps) =
 
   return (
     <>
-      <Button variant="outline" onClick={() => setHistoryOpen(true)}>
+      <Button variant="outline" onClick={() => setHistoryOpen(true)} size="sm">
         <History className="size-3.5" />
         {t("viewHistory")}
       </Button>

@@ -1,10 +1,8 @@
-import { FileText, Settings2 } from "lucide-react";
-import Link from "next/link";
+import { Settings2 } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 
-import { Button } from "@/components/ui/button";
+import { LinkButton } from "@/components/link-button";
 import { SectionCard } from "@/components/section-card";
-import { SectionCardEmpty } from "@/components/section-card-empty";
 import { ROUTES } from "@/lib/routes";
 import { formatDisplayDate } from "@/lib/format/date";
 import { getServiceTypeVisuals, TServiceTypeCode } from "@/features/services/service-type";
@@ -20,6 +18,7 @@ import type { TPaymentDetails } from "@/lib/db/schema/payment-details";
 import type { TAttributeHistory } from "../../_data/queries";
 import { ContractHistory } from "./components/contract-history";
 import { TariffRateChips } from "./components/tariff-rate-chips";
+import { EmptyContract } from "@/app/(app)/properties/[id]/services/[sid]/_components/contract-card/components/empty-contract";
 
 type TProps = {
   serviceId: TServiceId;
@@ -48,28 +47,9 @@ export const ContractCard = async ({
 }: TProps) => {
   const t = await getTranslations("services.detail.contract");
   const canEdit = role !== PROPERTY_ROLES.VIEWER;
+  const baseHref = `${ROUTES.properties}/${propertyId}/services/${serviceId}/contract`;
 
-  if (!currentContract) {
-    return (
-      <SectionCard title={t("title")}>
-        <SectionCardEmpty
-          icon={FileText}
-          caption={t("empty")}
-          action={
-            canEdit && (
-              <Button variant="outline" asChild>
-                <Link
-                  href={`${ROUTES.properties}/${propertyId}/services/${serviceId}/contract/new`}
-                >
-                  {t("addContract")}
-                </Link>
-              </Button>
-            )
-          }
-        />
-      </SectionCard>
-    );
-  }
+  if (!currentContract) return <EmptyContract canEdit={canEdit} href={`${baseHref}/new`} />;
 
   const { color, Icon } = getServiceTypeVisuals(serviceType.code as TServiceTypeCode);
 
@@ -80,14 +60,12 @@ export const ContractCard = async ({
       actions={
         <div className="flex items-center gap-2">
           {canEdit && (
-            <Button asChild>
-              <Link
-                href={`${ROUTES.properties}/${propertyId}/services/${serviceId}/contract/update`}
-              >
-                <Settings2 className="size-3.5" />
-                {t("updateContract")}
-              </Link>
-            </Button>
+            <LinkButton
+              href={`${baseHref}/update`}
+              icon={Settings2}
+              text={t("updateContract")}
+              variant="default"
+            />
           )}
           <ContractHistory contractHistory={contractHistory} attributeHistory={attributeHistory} />
         </div>

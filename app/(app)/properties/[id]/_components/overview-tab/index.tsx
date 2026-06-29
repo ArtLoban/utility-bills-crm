@@ -1,6 +1,5 @@
-import Link from "next/link";
 import { Lightbulb, Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { LinkButton } from "@/components/link-button";
 import { Card } from "@/components/ui/card";
 import type { TServiceListItem } from "@/lib/db/access/services";
 import { PROPERTY_ROLES } from "@/lib/db/schema/properties";
@@ -45,12 +44,13 @@ const OverviewTab = ({
               </p>
             </div>
             {canEdit && (
-              <Button asChild>
-                <Link href={addHref}>
-                  <Plus size={16} />
-                  Add service
-                </Link>
-              </Button>
+              <LinkButton
+                href={addHref}
+                icon={Plus}
+                text="Add service"
+                variant="default"
+                size="default"
+              />
             )}
           </div>
         </div>
@@ -69,14 +69,7 @@ const OverviewTab = ({
             {services.length} {services.length === 1 ? "service" : "services"} · Tap a row to open
           </p>
         </div>
-        {canEdit && (
-          <Button asChild variant="outline">
-            <Link href={addHref}>
-              <Plus size={13} />
-              Add service
-            </Link>
-          </Button>
-        )}
+        {canEdit && <LinkButton href={addHref} icon={Plus} text="Add service" size="default" />}
       </div>
 
       <div>

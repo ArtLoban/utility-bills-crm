@@ -1,10 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { Receipt, Wallet } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 
-import { Button } from "@/components/ui/button";
+import { LinkButton } from "@/components/link-button";
 import { SectionCard } from "@/components/section-card";
 import { SectionCardEmpty } from "@/components/section-card-empty";
 import { ROUTES } from "@/lib/routes";
@@ -47,18 +46,8 @@ export const BalanceCard = ({ balance }: TProps) => {
         </p>
         <p className="text-muted-foreground mt-2 text-sm">{subline}</p>
         <div className="mt-5 flex gap-2">
-          <Button variant="outline" asChild>
-            <Link href={ROUTES.bills}>
-              <Receipt className="size-3.5" />
-              {t("viewBills")}
-            </Link>
-          </Button>
-          <Button variant="outline" asChild>
-            <Link href={ROUTES.payments}>
-              <Wallet className="size-3.5" />
-              {t("viewPayments")}
-            </Link>
-          </Button>
+          <LinkButton href={ROUTES.bills} icon={Receipt} text={t("viewBills")} />
+          <LinkButton href={ROUTES.payments} icon={Wallet} text={t("viewPayments")} />
         </div>
       </div>
     </SectionCard>

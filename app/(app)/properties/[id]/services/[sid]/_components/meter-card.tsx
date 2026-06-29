@@ -1,9 +1,8 @@
 import type { ReactNode } from "react";
-import Link from "next/link";
 import { Gauge } from "lucide-react";
 import { getLocale, getTranslations } from "next-intl/server";
 
-import { Button } from "@/components/ui/button";
+import { LinkButton } from "@/components/link-button";
 import { SectionCard } from "@/components/section-card";
 import { SectionCardEmpty } from "@/components/section-card-empty";
 import { KVGrid } from "@/components/kv-grid";
@@ -66,11 +65,10 @@ export const MeterCard = async ({
       actions={
         <div className="flex items-center gap-2">
           {action}
-          <Button variant="ghost" size="sm" asChild>
-            <Link href={`${ROUTES.properties}/${propertyId}/meters/${meter.id}`}>
-              {t("viewDetails")}
-            </Link>
-          </Button>
+          <LinkButton
+            href={`${ROUTES.properties}/${propertyId}/meters/${meter.id}`}
+            text={t("viewDetails")}
+          />
         </div>
       }
     >

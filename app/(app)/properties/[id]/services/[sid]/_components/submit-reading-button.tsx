@@ -1,8 +1,7 @@
-import Link from "next/link";
 import { Gauge } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 
-import { Button } from "@/components/ui/button";
+import { LinkButton } from "@/components/link-button";
 import { ROUTES } from "@/lib/routes";
 import type { TMeter } from "@/lib/db/schema/meters";
 
@@ -14,11 +13,11 @@ export const SubmitReadingButton = async ({ meter }: TProps) => {
   const t = await getTranslations("services.detail.meter");
 
   return (
-    <Button size="sm" asChild>
-      <Link href={`${ROUTES.properties}/${meter.propertyId}/meters/${meter.id}/reading/new`}>
-        <Gauge className="size-3.5" />
-        {t("submitReading")}
-      </Link>
-    </Button>
+    <LinkButton
+      href={`${ROUTES.properties}/${meter.propertyId}/meters/${meter.id}/reading/new`}
+      icon={Gauge}
+      text={t("submitReading")}
+      variant="default"
+    />
   );
 };
