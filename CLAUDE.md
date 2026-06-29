@@ -177,8 +177,9 @@ in this project. They are binding — equal in force to the rules in `.claude/ru
 
 - **Read every file in `.claude/lessons/` before starting any task.** Never repeat a
   logged mistake.
-- **Record a new lesson whenever the author corrects a mistake or a wrong assumption** —
-  before finishing the task, add `NNNN-short-slug.md` (next number) capturing it. Do not
+- **When the author corrects a mistake or a wrong assumption, ask the author first
+  whether to record a lesson — never add one on your own initiative.** Only once the
+  author agrees, add `NNNN-short-slug.md` (next number) before finishing the task. Do not
   rely on memory; the lesson must live in the repo so every future session inherits it.
 - Keep lessons short and actionable: what went wrong, the rule, how to apply it.
 

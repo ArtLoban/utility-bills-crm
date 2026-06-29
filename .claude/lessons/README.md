@@ -6,8 +6,10 @@ They are **binding** — equal in force to `.claude/rules/`. See `CLAUDE.md` §9
 ## Obligations
 
 - **Read every lesson here before starting any task.** Never repeat a logged mistake.
-- **When the author corrects a mistake or a wrong assumption, add a lesson** before
-  finishing the task. The correction must outlive the conversation.
+- **When the author corrects a mistake or a wrong assumption, ask the author first
+  whether to record a lesson — do not add one on your own initiative.** Only after the
+  author agrees, add it before finishing the task so the correction outlives the
+  conversation.
 
 ## Threshold (don't log trifles)
 
