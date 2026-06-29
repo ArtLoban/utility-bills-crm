@@ -554,7 +554,8 @@
         "records": "{count, plural, one {# платёж} few {# платежа} many {# платежей} other {# платежей}}"
       },
       "cta": {
-        "recordPayment": "Добавить платёж"
+        "recordPayment": "Добавить платёж",
+        "addPayment": "Добавить платёж"
       },
       "filters": {
         "label": "Фильтр",
@@ -606,7 +607,8 @@
         "date": "Дата",
         "property": "Объект",
         "service": "Услуга",
-        "amount": "Сумма, ₴"
+        "amount": "Сумма, ₴",
+        "actions": "Действия"
       },
       "actions": {
         "edit": "Редактировать",
@@ -1385,6 +1387,19 @@
           "asc": "Меньше → больше",
           "triggerDesc": "Сумма ↓",
           "triggerAsc": "Сумма ↑"
+        }
+      },
+      "meta": {
+        "records": "{count, plural, one {# счёт} few {# счёта} many {# счетов} other {# счетов}}"
+      },
+      "empty": {
+        "noBills": {
+          "title": "Счетов пока нет",
+          "body": "Добавьте первый счёт, чтобы начать отслеживать расходы."
+        },
+        "filtered": {
+          "title": "Счета не найдены",
+          "cta": "Сбросить фильтры"
         }
       }
     },

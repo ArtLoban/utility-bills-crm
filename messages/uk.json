@@ -554,7 +554,8 @@
         "records": "{count, plural, one {# платіж} few {# платежі} other {# платежів}}"
       },
       "cta": {
-        "recordPayment": "Додати платіж"
+        "recordPayment": "Додати платіж",
+        "addPayment": "Додати платіж"
       },
       "filters": {
         "label": "Фільтр",
@@ -567,13 +568,16 @@
         "allPeriods": "Всі періоди",
         "periodLast12": "Останні 12 місяців",
         "periodLast6": "Останні 6 місяців",
-        "periodLast3": "Останні 3 місяці"
+        "periodLast3": "Останні 3 місяці",
+        "from": "Від {date}",
+        "to": "До {date}"
       },
       "columns": {
         "date": "Дата",
         "property": "Об'єкт",
         "service": "Послуга",
-        "amount": "Сума, ₴"
+        "amount": "Сума, ₴",
+        "actions": "Дії"
       },
       "actions": {
         "edit": "Редагувати",
@@ -588,12 +592,6 @@
         "page": "Сторінка {page} з {total}",
         "prev": "Назад",
         "next": "Далі"
-      },
-      "mobile": {
-        "filters": "Фільтри",
-        "add": "Додати",
-        "apply": "Застосувати",
-        "sortDefault": "Дата (новіші)"
       },
       "empty": {
         "noPayments": {
@@ -612,6 +610,37 @@
           "body": "Цю дію неможливо скасувати.",
           "confirmLabel": "Видалити",
           "cancelLabel": "Скасувати"
+        }
+      },
+      "sort": {
+        "title": "Сортування",
+        "paidAt": {
+          "label": "Дата",
+          "desc": "Спочатку нові",
+          "asc": "Спочатку старі",
+          "triggerDesc": "Дата (нові)",
+          "triggerAsc": "Дата (старі)"
+        },
+        "property": {
+          "label": "Об'єкт",
+          "desc": "Я → А",
+          "asc": "А → Я",
+          "triggerDesc": "Об'єкт Я–А",
+          "triggerAsc": "Об'єкт А–Я"
+        },
+        "service": {
+          "label": "Послуга",
+          "desc": "Я → А",
+          "asc": "А → Я",
+          "triggerDesc": "Послуга Я–А",
+          "triggerAsc": "Послуга А–Я"
+        },
+        "amount": {
+          "label": "Сума",
+          "desc": "Більше → менше",
+          "asc": "Менше → більше",
+          "triggerDesc": "Сума ↓",
+          "triggerAsc": "Сума ↑"
         }
       }
     }
@@ -1358,6 +1387,19 @@
           "asc": "Менше → більше",
           "triggerDesc": "Сума ↓",
           "triggerAsc": "Сума ↑"
+        }
+      },
+      "meta": {
+        "records": "{count, plural, one {# рахунок} few {# рахунки} other {# рахунків}}"
+      },
+      "empty": {
+        "noBills": {
+          "title": "Рахунків ще немає",
+          "body": "Додайте перший рахунок, щоб почати відстежувати витрати."
+        },
+        "filtered": {
+          "title": "Рахунки не знайдено",
+          "cta": "Скинути фільтри"
         }
       }
     },
