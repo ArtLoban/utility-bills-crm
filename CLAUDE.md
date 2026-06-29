@@ -149,9 +149,14 @@ Read the relevant document(s) when working on a related task. Do not preload.
 
 **Forms:**
 
-- `.claude/instructions/forms-system.md` — the two form contexts (data-entry vs
-  filter), the reusable component inventory, the per-form status map, and the
-  migration recipe. Read before touching any form, input, select, or date control.
+Two form contexts, never mixed. **Data-entry** forms (persist on submit) use
+`lib/forms/use-zod-form.ts` (`useZodForm`) + the `components/form/*` field family
+(`FormTextField`, `FormTextareaField`, `FormSelectField`, `FormSwitchField`,
+`FormDateField`, …, all built on `FormFieldShell`). **Filter** forms (URL state via
+nuqs) use `lib/hooks/use-query-filters.tsx` (`useQueryFilters`) + the
+`DateRangeFilter` / `SelectInput` widgets. No raw `useForm`, no native
+`<input>`/`<select>`, no hand-rolled fields. Read these files before touching any
+form, input, select, or date control.
 
 ## 6. Git
 
