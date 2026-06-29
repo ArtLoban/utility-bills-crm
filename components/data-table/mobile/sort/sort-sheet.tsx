@@ -3,24 +3,24 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 import { SheetDialog } from "@/components/sheet-dialog";
 import { Button } from "@/components/ui/button";
 
-export type TSortOption = {
-  id: string;
+export type TSortOption<TId extends string = string> = {
+  id: TId;
   defaultDesc: boolean;
   label: string;
 };
 
-type TProps = {
+type TProps<TId extends string> = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   title: string;
-  options: readonly TSortOption[];
-  currentSortId: string;
+  options: readonly TSortOption<TId>[];
+  currentSortId: TId;
   currentDesc: boolean;
   dirLabel: string;
-  onSort: (id: string, desc: boolean) => void;
+  onSort: (id: TId, desc: boolean) => void;
 };
 
-export const SortSheet = ({
+export const SortSheet = <TId extends string>({
   open,
   onOpenChange,
   title,
@@ -29,8 +29,8 @@ export const SortSheet = ({
   currentDesc,
   dirLabel,
   onSort,
-}: TProps) => {
-  const handleSelect = (option: TSortOption) => {
+}: TProps<TId>) => {
+  const handleSelect = (option: TSortOption<TId>) => {
     const isSame = currentSortId === option.id;
     const nextDesc = isSame ? !currentDesc : option.defaultDesc;
     onSort(option.id, nextDesc);

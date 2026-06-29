@@ -1,17 +1,18 @@
+"use client";
+
 import { format, parseISO } from "date-fns";
 import { Calendar } from "lucide-react";
 import { useTranslations } from "next-intl";
+
+import { FilterChip } from "@/components/filter-chip";
 import { DISPLAY_DATE_FORMAT } from "@/lib/format/date";
-import { usePaymentsTable } from "@/app/(app)/payments/_components/payments-client/context";
-import {
-  FiltersFormField,
-  type TQueryFilters,
-} from "@/app/(app)/payments/_components/payments-client/components/payments-table/types";
 import { DATE_PARAMS } from "@/lib/types/common";
 import { useServiceTypeMetaFactory } from "@/features/services/hooks/use-service-type";
 import type { TServiceTypeCode } from "@/features/services/service-type";
 import { PROPERTY_TYPE_ICONS } from "@/features/properties/property-type";
-import { FilterChip } from "./components/filter-chip";
+import { usePaymentsTable } from "@/app/(app)/payments/_components/payments-client/context";
+
+import { FiltersFormField, type TQueryFilters } from "../../../types";
 
 type TProps = {
   queryFilters: TQueryFilters;

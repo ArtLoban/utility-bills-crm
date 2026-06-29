@@ -3,7 +3,7 @@ export type TMobileSortField<TId extends string = string> = {
   readonly defaultDesc: boolean;
 };
 
-export type TResolvedSort = {
-  id: string;
+export type TResolvedSort<TId extends string = string> = {
+  id: TId;
   desc: boolean;
 };

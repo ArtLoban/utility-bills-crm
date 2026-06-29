@@ -9,17 +9,17 @@ import type { TMobileSortField, TResolvedSort } from "../types";
 import { useSortControls } from "./use-sort-controls";
 import { SortSheet, type TSortOption } from "./sort-sheet";
 
-type TProps = {
+type TProps<TId extends string> = {
   listParams: TListParams;
-  sortFields: readonly TMobileSortField[];
-  defaultSort: TResolvedSort;
+  sortFields: readonly TMobileSortField<TId>[];
+  defaultSort: TResolvedSort<TId>;
   title: string;
-  getTriggerLabel: (id: string, desc: boolean) => string;
-  getOptionLabel: (id: string) => string;
-  getDirLabel: (id: string, desc: boolean) => string;
+  getTriggerLabel: (id: TId, desc: boolean) => string;
+  getOptionLabel: (id: TId) => string;
+  getDirLabel: (id: TId, desc: boolean) => string;
 };
 
-export const SortControls = ({
+export const SortControls = <TId extends string>({
   listParams,
   sortFields,
   defaultSort,
@@ -27,13 +27,13 @@ export const SortControls = ({
   getTriggerLabel,
   getOptionLabel,
   getDirLabel,
-}: TProps) => {
+}: TProps<TId>) => {
   const { sheetOpen, setSheetOpen, currentSortId, currentDesc, isNonDefaultSort, handleSort } =
     useSortControls({ listParams, sortFields, defaultSort });
 
   const Icon = currentDesc ? ChevronDown : ChevronUp;
 
-  const options: TSortOption[] = sortFields.map(({ id, defaultDesc }) => ({
+  const options: TSortOption<TId>[] = sortFields.map(({ id, defaultDesc }) => ({
     id,
     defaultDesc,
     label: getOptionLabel(id),
