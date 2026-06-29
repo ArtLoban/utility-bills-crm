@@ -2,7 +2,9 @@
 
 import { toast } from "sonner";
 
-import { saveAboutCms, aboutSchema, type TAboutPayload } from "@/features/landing-cms";
+import { saveAboutCms } from "@/features/landing-cms/actions";
+import { aboutSchema } from "@/features/landing-cms/schema";
+import type { TAboutPayload } from "@/features/landing-cms/types";
 import { useZodForm } from "@/lib/forms/use-zod-form";
 
 export const useAboutForm = (initial: TAboutPayload) => {

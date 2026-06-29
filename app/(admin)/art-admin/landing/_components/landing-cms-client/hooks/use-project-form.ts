@@ -2,7 +2,9 @@
 
 import { toast } from "sonner";
 
-import { saveProjectCms, projectSchema, type TProjectPayload } from "@/features/landing-cms";
+import { saveProjectCms } from "@/features/landing-cms/actions";
+import { projectSchema } from "@/features/landing-cms/schema";
+import type { TProjectPayload } from "@/features/landing-cms/types";
 import { useZodForm } from "@/lib/forms/use-zod-form";
 
 export const useProjectForm = (initial: TProjectPayload) => {

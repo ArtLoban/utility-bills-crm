@@ -2,7 +2,9 @@
 
 import { toast } from "sonner";
 
-import { saveHomeCms, homeSchema, type THomePayload } from "@/features/landing-cms";
+import { saveHomeCms } from "@/features/landing-cms/actions";
+import { homeSchema } from "@/features/landing-cms/schema";
+import type { THomePayload } from "@/features/landing-cms/types";
 import { useZodForm } from "@/lib/forms/use-zod-form";
 
 export const useHomeForm = (initial: THomePayload) => {

@@ -2,7 +2,9 @@
 
 import { toast } from "sonner";
 
-import { saveGlobalCms, globalSchema, type TGlobalPayload } from "@/features/landing-cms";
+import { saveGlobalCms } from "@/features/landing-cms/actions";
+import { globalSchema } from "@/features/landing-cms/schema";
+import type { TGlobalPayload } from "@/features/landing-cms/types";
 import { useZodForm } from "@/lib/forms/use-zod-form";
 
 export const useGlobalForm = (initial: TGlobalPayload) => {
