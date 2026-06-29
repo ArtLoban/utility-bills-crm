@@ -1088,6 +1088,10 @@
         "tooLong": "Notes are too long (max 1000 characters)"
       },
       "hasActiveContracts": "This provider is referenced by an active contract and cannot be deleted."
+    },
+    "actions": {
+      "edit": "Edit provider",
+      "delete": "Delete provider"
     }
   },
   "contracts": {

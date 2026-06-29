@@ -143,7 +143,7 @@ export const ProviderCard = ({ provider }: TProps) => {
       <div className="flex shrink-0 items-center gap-1.5 pt-px">
         {/* Edit */}
         <Button variant="outline" size="icon" className="h-8 w-8" asChild>
-          <Link href={`${ROUTES.providers}/${provider.id}/edit`}>
+          <Link href={`${ROUTES.providers}/${provider.id}/edit`} aria-label={t("actions.edit")}>
             <Pencil size={14} />
           </Link>
         </Button>
@@ -155,6 +155,7 @@ export const ProviderCard = ({ provider }: TProps) => {
             size="icon"
             className="text-destructive hover:text-destructive h-8 w-8"
             onClick={() => requestDelete(provider)}
+            aria-label={t("actions.delete")}
           >
             <Trash2 size={14} />
           </Button>
@@ -163,7 +164,13 @@ export const ProviderCard = ({ provider }: TProps) => {
             {/* span wrapper required: disabled buttons don't receive pointer events */}
             <TooltipTrigger asChild>
               <span className="inline-flex">
-                <Button variant="outline" size="icon" className="h-8 w-8" disabled>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-8 w-8"
+                  disabled
+                  aria-label={t("actions.delete")}
+                >
                   <Trash2 size={14} />
                 </Button>
               </span>
