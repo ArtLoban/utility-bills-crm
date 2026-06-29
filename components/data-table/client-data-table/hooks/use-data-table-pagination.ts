@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useQueryStates, parseAsInteger } from "nuqs";
-import { DEFAULT_PAGE_SIZE, PAGE_DEFAULT } from "@/components/data-table/constants";
+import { PAGE_SIZE_DEFAULT, PAGE_DEFAULT } from "@/components/data-table/constants";
 import { DATA_TABLE_PARAMS } from "@/components/data-table/types";
 
 const PAGE_INDEX_OFFSET = 1;
@@ -13,7 +13,7 @@ type TPaginationState = {
 export function useDataTablePagination() {
   const [query, setQuery] = useQueryStates({
     [DATA_TABLE_PARAMS.PAGE]: parseAsInteger.withDefault(PAGE_DEFAULT),
-    [DATA_TABLE_PARAMS.PAGE_SIZE]: parseAsInteger.withDefault(DEFAULT_PAGE_SIZE),
+    [DATA_TABLE_PARAMS.PAGE_SIZE]: parseAsInteger.withDefault(PAGE_SIZE_DEFAULT),
   });
 
   const pagination: TPaginationState = useMemo(

@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/select";
 
 import { useDataTablePagination } from "../../../hooks/use-data-table-pagination";
-import { DEFAULT_PAGE_SIZE, PAGE_SIZE_OPTIONS } from "@/components/data-table/constants";
+import { PAGE_SIZE_DEFAULT, PAGE_SIZE_OPTIONS } from "@/components/data-table/constants";
 
 type TProps = {
   value: number;
@@ -22,7 +22,7 @@ export const PageSizeSelector = ({ value }: TProps) => {
   const { setPageSize } = useDataTablePagination();
 
   const handleSizeChange = (size: string | null) => {
-    setPageSize(size ? Number(size) : DEFAULT_PAGE_SIZE);
+    setPageSize(size ? Number(size) : PAGE_SIZE_DEFAULT);
   };
 
   return (
