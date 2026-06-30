@@ -1,4 +1,5 @@
 import { Share2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { LinkButton } from "@/components/link-button";
 import { ROUTES } from "@/lib/routes";
 import { PropertyEditAction } from "./components/property-edit-action";
@@ -10,21 +11,25 @@ type TProps = {
   property: TPropertyDetail;
 };
 
-export const PropertyActions = ({ property }: TProps) => (
-  <div className="flex shrink-0 items-center gap-2">
-    <PropertyEditAction property={property} />
-    {property.role !== PROPERTY_ROLES.VIEWER && (
-      <LinkButton
-        href={`${ROUTES.properties}/${property.id}/sharing`}
-        icon={Share2}
-        text="Share"
-        size="default"
+export const PropertyActions = ({ property }: TProps) => {
+  const t = useTranslations("properties.detail.actions");
+
+  return (
+    <div className="flex shrink-0 items-center gap-2">
+      <PropertyEditAction property={property} />
+      {property.role !== PROPERTY_ROLES.VIEWER && (
+        <LinkButton
+          href={`${ROUTES.properties}/${property.id}/sharing`}
+          icon={Share2}
+          text={t("share")}
+          size="default"
+        />
+      )}
+      <PropertyDeleteAction
+        propertyId={property.id}
+        propertyName={property.name}
+        role={property.role}
       />
-    )}
-    <PropertyDeleteAction
-      propertyId={property.id}
-      propertyName={property.name}
-      role={property.role}
-    />
-  </div>
-);
+    </div>
+  );
+};

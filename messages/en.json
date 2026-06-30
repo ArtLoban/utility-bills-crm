@@ -935,6 +935,17 @@
         "lastReading": "Last reading: {date}",
         "noReadings": "No readings yet",
         "noMeter": "No meter"
+      },
+      "actions": {
+        "edit": "Edit",
+        "share": "Share",
+        "addService": "Add service"
+      },
+      "sectionTitle": "Services on this property",
+      "tapHint": "Tap a row to open",
+      "empty": {
+        "title": "No services yet",
+        "body": "Add your first utility service to start tracking bills and readings."
       }
     },
     "delete": {

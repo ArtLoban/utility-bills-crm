@@ -52,24 +52,24 @@ const ServiceRow = ({
   return (
     <Link
       href={`/properties/${propertyId}/services/${service.id}`}
-      className={`group flex items-center gap-4 px-6 py-[18px] no-underline transition-colors duration-[120ms] hover:bg-zinc-50 dark:hover:bg-zinc-800/50 ${!isLast ? "border-b border-zinc-100 dark:border-zinc-800" : ""}`}
+      className={`group hover:bg-muted flex items-center gap-4 px-6 py-4.5 no-underline transition-colors duration-100 ${!isLast ? "border-border border-b" : ""}`}
     >
       <IconBadge icon={Icon} color={color} />
 
       <div className="min-w-0 flex-1">
-        <p className="mb-0.5 text-sm font-semibold text-zinc-950 dark:text-zinc-50">{name}</p>
-        <p className="truncate text-xs text-zinc-500">{secondary}</p>
+        <p className="text-foreground mb-0.5 text-sm font-semibold">{name}</p>
+        <p className="text-muted-foreground truncate text-xs">{secondary}</p>
       </div>
 
       <p
         className={`shrink-0 text-base font-semibold tabular-nums ${
           balance === null
-            ? "text-zinc-500"
+            ? "text-muted-foreground"
             : balance.balance > 0
               ? "text-destructive"
               : balance.balance < 0
                 ? "text-success"
-                : "text-zinc-500"
+                : "text-muted-foreground"
         }`}
       >
         {balance === null ? "—" : formatBalance(balance.balance, locale)}
@@ -78,7 +78,7 @@ const ServiceRow = ({
       <ChevronRight
         size={16}
         strokeWidth={2}
-        className="shrink-0 text-zinc-400 group-hover:text-violet-600"
+        className="text-muted-foreground group-hover:text-primary shrink-0"
       />
     </Link>
   );
