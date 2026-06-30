@@ -31,7 +31,7 @@ export const AboutTab = ({ form, onSave }: TProps) => {
   return (
     <Form {...form}>
       <CmsSection
-        icon={<User className="size-[14px]" />}
+        icon={<User className="size-3.5" />}
         title="Hero"
         description="Top of the about page — three lines of personal intro."
       >
@@ -60,7 +60,7 @@ export const AboutTab = ({ form, onSave }: TProps) => {
       </CmsSection>
 
       <CmsSection
-        icon={<Briefcase className="size-[14px]" />}
+        icon={<Briefcase className="size-3.5" />}
         title="What I work with"
         description="Title line followed by body paragraphs separated by blank lines."
       >

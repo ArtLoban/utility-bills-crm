@@ -30,7 +30,7 @@ export const FilterControls = ({ queryFilters, ownerFilter, onClear }: TProps) =
       <Button variant={activeCount > 0 ? "active" : "outline"} onClick={() => setSheetOpen(true)}>
         Filters
         {activeCount > 0 && (
-          <span className="bg-brand inline-flex min-w-4 items-center justify-center rounded-full px-1 text-[10.5px] font-bold text-white">
+          <span className="bg-brand inline-flex min-w-4 items-center justify-center rounded-full px-1 text-xs font-bold text-white">
             {activeCount}
           </span>
         )}

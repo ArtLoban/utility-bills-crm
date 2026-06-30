@@ -10,7 +10,7 @@ export const EditingBanner = ({ activeTab }: TProps) => {
   const meta = TAB_PAGE_META[activeTab];
 
   return (
-    <div className="border-border text-muted-foreground mb-5 flex items-center gap-2.5 rounded-lg border bg-zinc-50 px-3.5 py-2.5 text-[12.5px] dark:bg-zinc-900">
+    <div className="border-border text-muted-foreground mb-5 flex items-center gap-2.5 rounded-lg border bg-zinc-50 px-3.5 py-2.5 text-xs dark:bg-zinc-900">
       <span
         className="inline-block h-1.5 w-1.5 shrink-0 rounded-full"
         style={{ background: "#10b981" }}
@@ -26,7 +26,7 @@ export const EditingBanner = ({ activeTab }: TProps) => {
           className="text-muted-foreground hover:text-foreground ml-auto flex items-center gap-1 font-mono text-xs"
         >
           {meta.url}
-          <ExternalLink className="size-[11px]" />
+          <ExternalLink className="size-3" />
         </a>
       )}
     </div>

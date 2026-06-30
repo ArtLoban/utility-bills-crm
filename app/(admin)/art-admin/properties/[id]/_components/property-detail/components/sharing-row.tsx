@@ -10,7 +10,7 @@ type TProps = {
 
 export const SharingRow = ({ user, isLast }: TProps) => (
   <div className={cn("flex items-center gap-3 py-3", !isLast && "border-border border-b")}>
-    <div className="bg-muted text-muted-foreground flex size-[30px] shrink-0 items-center justify-center rounded-full text-[10.5px] font-semibold">
+    <div className="bg-muted text-muted-foreground flex size-7.5 shrink-0 items-center justify-center rounded-full text-xs font-semibold">
       {getInitials(user.name, user.email)}
     </div>
     <span className="flex-1 text-sm font-medium">{user.name ?? user.email}</span>

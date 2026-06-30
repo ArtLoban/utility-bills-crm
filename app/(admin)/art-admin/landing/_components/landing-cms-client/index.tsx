@@ -86,7 +86,7 @@ export const LandingCmsClient = ({ initialData }: TProps) => {
           <CmsTabBar active={activeTab} onChange={handleTabChange} dirtyTabs={dirtyTabs} />
         </div>
 
-        <div className="mt-5 max-w-[672px]">
+        <div className="mt-5 max-w-2xl">
           <EditingBanner activeTab={activeTab} />
 
           {activeTab === "home" && <HomeTab form={home.form} onSave={home.handleSave} />}

@@ -37,7 +37,7 @@ export const HomeTab = ({ form, onSave }: TProps) => {
   return (
     <Form {...form}>
       <CmsSection
-        icon={<Sparkles className="size-[14px]" />}
+        icon={<Sparkles className="size-3.5" />}
         title="Hero"
         description="Top of the home page — first thing visitors read."
       >
@@ -58,7 +58,7 @@ export const HomeTab = ({ form, onSave }: TProps) => {
       </CmsSection>
 
       <CmsSection
-        icon={<ImageIcon className="size-[14px]" />}
+        icon={<ImageIcon className="size-3.5" />}
         title="Screenshot captions"
         description="Text underneath each product screenshot."
       >
@@ -82,20 +82,20 @@ export const HomeTab = ({ form, onSave }: TProps) => {
       </CmsSection>
 
       {/* Feature cards — collapsible on mobile */}
-      <div className="border-border bg-card mb-5 overflow-hidden rounded-[10px] border">
+      <div className="border-border bg-card mb-5 overflow-hidden rounded-lg border">
         <button
           type="button"
           onClick={() => setCardsExpanded((v) => !v)}
-          className="border-border flex w-full items-start gap-3 border-b px-6 pt-[18px] pb-4 md:cursor-default"
+          className="border-border flex w-full items-start gap-3 border-b px-6 pt-4.5 pb-4 md:cursor-default"
         >
-          <div className="bg-muted text-muted-foreground mt-px flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-lg">
-            <Layers className="size-[14px]" />
+          <div className="bg-muted text-muted-foreground mt-px flex size-7.5 shrink-0 items-center justify-center rounded-lg">
+            <Layers className="size-3.5" />
           </div>
           <div className="min-w-0 flex-1 text-left">
-            <div className="text-foreground font-semibold tracking-tight text-[var(--font-size-md)]">
+            <div className="text-foreground text-sm font-semibold tracking-tight">
               Feature cards
             </div>
-            <div className="text-muted-foreground mt-0.5 text-[12.5px]">
+            <div className="text-muted-foreground mt-0.5 text-xs">
               Four cards highlighting what the product does.
             </div>
           </div>
@@ -103,7 +103,7 @@ export const HomeTab = ({ form, onSave }: TProps) => {
             className={`text-muted-foreground mt-px size-4 shrink-0 transition-transform md:hidden ${cardsExpanded ? "rotate-180" : ""}`}
           />
         </button>
-        <div className={`p-[22px_24px] md:block ${cardsExpanded ? "block" : "hidden"}`}>
+        <div className={`px-6 py-5.5 md:block ${cardsExpanded ? "block" : "hidden"}`}>
           <div className="grid grid-cols-1 gap-3.5">
             {CARD_INDICES.map((i) => (
               <CardSubBlock
@@ -119,20 +119,20 @@ export const HomeTab = ({ form, onSave }: TProps) => {
       </div>
 
       {/* Tech highlights — collapsible on mobile */}
-      <div className="border-border bg-card mb-5 overflow-hidden rounded-[10px] border">
+      <div className="border-border bg-card mb-5 overflow-hidden rounded-lg border">
         <button
           type="button"
           onClick={() => setTechExpanded((v) => !v)}
-          className="border-border flex w-full items-start gap-3 border-b px-6 pt-[18px] pb-4 md:cursor-default"
+          className="border-border flex w-full items-start gap-3 border-b px-6 pt-4.5 pb-4 md:cursor-default"
         >
-          <div className="bg-muted text-muted-foreground mt-px flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-lg">
-            <Code2 className="size-[14px]" />
+          <div className="bg-muted text-muted-foreground mt-px flex size-7.5 shrink-0 items-center justify-center rounded-lg">
+            <Code2 className="size-3.5" />
           </div>
           <div className="min-w-0 flex-1 text-left">
-            <div className="text-foreground font-semibold tracking-tight text-[var(--font-size-md)]">
+            <div className="text-foreground text-sm font-semibold tracking-tight">
               Tech highlights
             </div>
-            <div className="text-muted-foreground mt-0.5 text-[12.5px]">
+            <div className="text-muted-foreground mt-0.5 text-xs">
               Single line under the feature cards. Supports **bold** and `code` markers.
             </div>
           </div>
@@ -140,7 +140,7 @@ export const HomeTab = ({ form, onSave }: TProps) => {
             className={`text-muted-foreground mt-px size-4 shrink-0 transition-transform md:hidden ${techExpanded ? "rotate-180" : ""}`}
           />
         </button>
-        <div className={`p-[22px_24px] md:block ${techExpanded ? "block" : "hidden"}`}>
+        <div className={`px-6 py-5.5 md:block ${techExpanded ? "block" : "hidden"}`}>
           <FormTextField
             control={form.control}
             name="techHighlights"

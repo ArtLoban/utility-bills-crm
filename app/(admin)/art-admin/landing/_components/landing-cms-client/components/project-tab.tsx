@@ -33,7 +33,7 @@ export const ProjectTab = ({ form, onSave }: TProps) => {
   return (
     <Form {...form}>
       <CmsSection
-        icon={<Sparkles className="size-[14px]" />}
+        icon={<Sparkles className="size-3.5" />}
         title="Hero"
         description="Top of the project page — intro to the deep-dive."
       >
@@ -55,7 +55,7 @@ export const ProjectTab = ({ form, onSave }: TProps) => {
       </CmsSection>
 
       <CmsSection
-        icon={<Blocks className="size-[14px]" />}
+        icon={<Blocks className="size-3.5" />}
         title="Architecture highlights"
         description="Six cards explaining the key technical decisions."
       >
@@ -73,7 +73,7 @@ export const ProjectTab = ({ form, onSave }: TProps) => {
       </CmsSection>
 
       <CmsSection
-        icon={<Activity className="size-[14px]" />}
+        icon={<Activity className="size-3.5" />}
         title="Current status"
         description="Where the project stands right now."
       >

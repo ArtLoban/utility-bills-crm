@@ -24,29 +24,29 @@ export const GlobalTab = ({ form, onSave }: TProps) => {
   return (
     <Form {...form}>
       <CmsSection
-        icon={<Link className="size-[14px]" />}
+        icon={<Link className="size-3.5" />}
         title="External links"
         description="URLs used across the landing — header, footer, project page."
       >
-        <div className="flex flex-col gap-[18px]">
+        <div className="flex flex-col gap-4.5">
           <UrlField
             control={form.control}
             name="linkedinUrl"
-            icon={<Briefcase className="size-[13px]" />}
+            icon={<Briefcase className="size-3.5" />}
             label="LinkedIn URL"
             hint="Header & about page"
           />
           <UrlField
             control={form.control}
             name="githubUrl"
-            icon={<GitBranch className="size-[13px]" />}
+            icon={<GitBranch className="size-3.5" />}
             label="GitHub profile URL"
             hint="Header & about page"
           />
           <UrlField
             control={form.control}
             name="projectRepoUrl"
-            icon={<Folder className="size-[13px]" />}
+            icon={<Folder className="size-3.5" />}
             label="Project repository URL"
             hint="Project page"
           />
@@ -54,7 +54,7 @@ export const GlobalTab = ({ form, onSave }: TProps) => {
       </CmsSection>
 
       <CmsSection
-        icon={<Eye className="size-[14px]" />}
+        icon={<Eye className="size-3.5" />}
         title="Page visibility"
         description="Each page has two independent switches — nav visibility and URL access."
       >

@@ -15,13 +15,9 @@ export const SaveButton = ({ isDirty, onSave, isSaving = false, fullWidth = fals
     variant="strong"
     disabled={!isDirty || isSaving}
     onClick={onSave}
-    className={cn("h-[38px] rounded-[6px] px-[18px] text-[13.5px]", fullWidth && "w-full")}
+    className={cn("h-9.5 rounded-sm px-4.5 text-sm", fullWidth && "w-full")}
   >
-    {isSaving ? (
-      <Loader2 className="size-[14px] animate-spin" />
-    ) : (
-      <Check className="size-[14px]" />
-    )}
+    {isSaving ? <Loader2 className="size-3.5 animate-spin" /> : <Check className="size-3.5" />}
     Save changes
   </Button>
 );

@@ -17,10 +17,10 @@ export const VisibilityRow = <T extends FieldValues>({
   navVisibleName,
   urlAccessibleName,
 }: TProps<T>) => (
-  <div className="border-border bg-muted rounded-lg border p-[14px_16px]">
+  <div className="border-border bg-muted rounded-lg border px-4 py-3.5">
     <div className="mb-3.5">
-      <div className="text-foreground text-[13.5px] font-semibold">{pageName}</div>
-      <div className="text-muted-foreground mt-0.5 font-mono text-[11.5px]">{pagePath}</div>
+      <div className="text-foreground text-sm font-semibold">{pageName}</div>
+      <div className="text-muted-foreground mt-0.5 font-mono text-xs">{pagePath}</div>
     </div>
     <div className="flex flex-col gap-2.5">
       <FormSwitchField
