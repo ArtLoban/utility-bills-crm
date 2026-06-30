@@ -83,9 +83,7 @@ export const ContractCard = async ({
             <Icon className="size-4" style={{ color }} />
           </div>
           <div>
-            <p className="text-foreground text-sm font-semibold tracking-[-0.1px]">
-              {currentContract.provider.name}
-            </p>
+            <p className="text-foreground text-sm font-semibold">{currentContract.provider.name}</p>
             <p className="text-muted-foreground text-xs">
               {t("inEffectSince", { date: formatDisplayDate(currentContract.contract.validFrom) })}
             </p>

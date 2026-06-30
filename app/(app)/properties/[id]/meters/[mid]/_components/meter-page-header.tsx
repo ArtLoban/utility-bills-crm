@@ -54,7 +54,7 @@ export const MeterPageHeader = async ({
           <IconBadge icon={Icon} color={color} size="lg" border />
 
           <div className="min-w-0 flex-1">
-            <h1 className="text-foreground flex items-center gap-3 text-2xl font-semibold tracking-[-0.6px] md:text-[28px]">
+            <h1 className="text-foreground flex items-center gap-3 text-2xl font-semibold tracking-tight md:text-3xl">
               {meterTitle}
               {isHistorical && <Badge>{t("badge.historical")}</Badge>}
             </h1>

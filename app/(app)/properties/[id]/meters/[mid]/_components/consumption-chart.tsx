@@ -87,7 +87,7 @@ export const ConsumptionChart = ({ readings, meter, serviceType }: TProps) => {
   return (
     <SectionCard title={t("consumption.title")}>
       <div className="px-2 pt-2 pb-4">
-        <ChartContainer config={chartConfig} className="h-[220px] w-full">
+        <ChartContainer config={chartConfig} className="h-55 w-full">
           <LineChart data={data} margin={{ top: 16, right: 24, left: 0, bottom: 4 }}>
             <CartesianGrid vertical={false} strokeDasharray="3 3" className="stroke-border/60" />
             <XAxis

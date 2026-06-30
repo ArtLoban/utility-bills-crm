@@ -55,7 +55,7 @@ export const ServicePageHeader = async ({
           <IconBadge icon={Icon} color={color} size="lg" border />
 
           <div className="min-w-0 flex-1">
-            <h1 className="text-foreground text-2xl font-semibold tracking-[-0.6px] md:text-[28px]">
+            <h1 className="text-foreground text-2xl font-semibold tracking-tight md:text-3xl">
               {name}
             </h1>
             <p className="text-muted-foreground text-sm">
