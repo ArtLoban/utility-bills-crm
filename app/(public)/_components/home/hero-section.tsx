@@ -34,25 +34,54 @@ export const HeroSection = ({ heroTitle, heroDesc }: TProps) => {
 
       <div className="relative mx-auto max-w-6xl px-4 md:px-6">
         {/* Eyebrow badge */}
-        <div className="mb-6 inline-flex items-center gap-1.5 rounded-full border border-violet-200 bg-violet-50 px-2.5 py-1 dark:border-violet-800/50 dark:bg-violet-950/40">
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-            <rect x="0.5" y="0.5" width="4" height="4" rx="0.75" fill="#7c3aed" />
-            <rect x="7.5" y="0.5" width="4" height="4" rx="0.75" fill="#7c3aed" opacity="0.5" />
-            <rect x="0.5" y="7.5" width="4" height="4" rx="0.75" fill="#7c3aed" opacity="0.5" />
-            <rect x="7.5" y="7.5" width="4" height="4" rx="0.75" fill="#7c3aed" opacity="0.3" />
+        <div className="border-primary/20 bg-primary/10 mb-6 inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1">
+          <svg
+            width="12"
+            height="12"
+            viewBox="0 0 12 12"
+            fill="none"
+            aria-hidden="true"
+            className="text-primary"
+          >
+            <rect x="0.5" y="0.5" width="4" height="4" rx="0.75" fill="currentColor" />
+            <rect
+              x="7.5"
+              y="0.5"
+              width="4"
+              height="4"
+              rx="0.75"
+              fill="currentColor"
+              opacity="0.5"
+            />
+            <rect
+              x="0.5"
+              y="7.5"
+              width="4"
+              height="4"
+              rx="0.75"
+              fill="currentColor"
+              opacity="0.5"
+            />
+            <rect
+              x="7.5"
+              y="7.5"
+              width="4"
+              height="4"
+              rx="0.75"
+              fill="currentColor"
+              opacity="0.3"
+            />
           </svg>
-          <span className="text-xs font-medium text-violet-700 dark:text-violet-300">
-            Portfolio project
-          </span>
+          <span className="text-primary text-xs font-medium">Portfolio project</span>
         </div>
 
-        <h1 className="mb-5 max-w-[720px] text-[clamp(40px,5vw,56px)] leading-[1.12] font-semibold tracking-[-0.03em] text-zinc-900 dark:text-zinc-50">
+        <h1 className="text-foreground mb-5 max-w-[720px] text-[clamp(40px,5vw,56px)] leading-[1.12] font-semibold tracking-[-0.03em]">
           {heroTitle}
         </h1>
 
-        <p className="max-w-[580px] text-lg leading-[1.65] text-zinc-500">{heroDesc}</p>
+        <p className="text-muted-foreground max-w-[580px] text-lg leading-[1.65]">{heroDesc}</p>
 
-        <p className="text-md mt-4 max-w-[580px] leading-[1.65] text-zinc-500">
+        <p className="text-md text-muted-foreground mt-4 max-w-[580px] leading-[1.65]">
           Built as a portfolio piece and a real product. The first user is the author&apos;s wife,
           who&apos;s been tracking two apartments in a paper notebook for years.
         </p>

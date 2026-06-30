@@ -35,18 +35,18 @@ export const TechSection = ({ techHighlights }: TProps) => {
       />
       <div className="mx-auto max-w-6xl px-4 md:px-6">
         <div className="mx-auto max-w-[600px] text-center">
-          <p className="mb-2.5 text-xs font-medium tracking-[0.08em] text-violet-600 uppercase dark:text-violet-400">
+          <p className="text-primary mb-2.5 text-xs font-medium tracking-[0.08em] uppercase">
             Stack
           </p>
-          <h2 className="mb-5 text-[clamp(28px,3vw,36px)] font-semibold tracking-[-0.02em] text-zinc-900 dark:text-zinc-50">
+          <h2 className="text-foreground mb-5 text-[clamp(28px,3vw,36px)] font-semibold tracking-[-0.02em]">
             How it&apos;s built
           </h2>
-          <p className="text-base leading-[1.75] text-zinc-500">
+          <p className="text-muted-foreground text-base leading-[1.75]">
             <CmsText value={techHighlights} />
           </p>
           <Link
             href={ROUTES.project}
-            className="text-md mt-5 inline-flex items-center gap-1 font-medium text-violet-600 transition-opacity hover:opacity-75 dark:text-violet-400"
+            className="text-md text-primary mt-5 inline-flex items-center gap-1 font-medium transition-opacity hover:opacity-75"
           >
             Architecture deep-dive
             <ArrowRight className="size-3.5" strokeWidth={2} />

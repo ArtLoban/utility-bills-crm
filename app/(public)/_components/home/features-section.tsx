@@ -59,10 +59,10 @@ export const FeaturesSection = ({ cards }: TProps) => {
       />
       <div className="relative mx-auto max-w-6xl px-4 md:px-6">
         <div className="mb-8 md:mb-12">
-          <p className="mb-2.5 text-xs font-medium tracking-[0.08em] text-violet-600 uppercase dark:text-violet-400">
+          <p className="text-primary mb-2.5 text-xs font-medium tracking-[0.08em] uppercase">
             Features
           </p>
-          <h2 className="text-[clamp(30px,3vw,36px)] font-semibold tracking-[-0.02em] text-zinc-900 dark:text-zinc-50">
+          <h2 className="text-foreground text-[clamp(30px,3vw,36px)] font-semibold tracking-[-0.02em]">
             Built around how households actually work
           </h2>
         </div>
@@ -72,17 +72,15 @@ export const FeaturesSection = ({ cards }: TProps) => {
             return (
               <div
                 key={title}
-                className="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm transition-[transform,box-shadow] duration-150 ease-in-out hover:-translate-y-[3px] hover:shadow-[0_10px_28px_rgba(24,24,27,0.12),0_3px_8px_rgba(24,24,27,0.06)] dark:border-zinc-800 dark:bg-zinc-900 dark:shadow-none dark:hover:translate-y-0 dark:hover:border-zinc-700 dark:hover:shadow-[0_12px_32px_rgba(0,0,0,0.55)]"
+                className="border-border bg-card rounded-xl border p-6 shadow-sm transition-[transform,box-shadow] duration-150 ease-in-out hover:-translate-y-[3px] hover:shadow-[0_10px_28px_rgba(24,24,27,0.12),0_3px_8px_rgba(24,24,27,0.06)] dark:shadow-none dark:hover:translate-y-0 dark:hover:border-zinc-700 dark:hover:shadow-[0_12px_32px_rgba(0,0,0,0.55)]"
               >
                 <div
                   className={`mb-5 inline-flex size-11 items-center justify-center rounded-xl ${badgeBg}`}
                 >
                   <Icon className={`size-5 ${iconColor}`} strokeWidth={1.75} />
                 </div>
-                <p className="text-md mb-2 font-semibold text-zinc-900 dark:text-zinc-50">
-                  {title}
-                </p>
-                <p className="text-sm leading-[1.65] text-zinc-500">
+                <p className="text-md text-foreground mb-2 font-semibold">{title}</p>
+                <p className="text-muted-foreground text-sm leading-[1.65]">
                   <CmsText value={body} />
                 </p>
               </div>
