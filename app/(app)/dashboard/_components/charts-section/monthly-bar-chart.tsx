@@ -61,23 +61,17 @@ export const MonthlyBarChart = ({ aggregate, title, subtitle, getServiceLabel }:
   return (
     <DataCard className="p-5">
       <div className="mb-4">
-        <h3 className="text-sm font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
-          {title}
-        </h3>
-        <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">{subtitle}</p>
+        <h3 className="text-foreground text-sm font-semibold tracking-tight">{title}</h3>
+        <p className="text-muted-foreground mt-0.5 text-xs">{subtitle}</p>
       </div>
 
       <ChartContainer
         config={chartConfig}
-        className="h-[260px] w-full"
+        className="h-65 w-full"
         initialDimension={{ width: 560, height: 260 }}
       >
         <BarChart data={barData} margin={{ top: 8, right: 8, left: 0, bottom: 4 }}>
-          <CartesianGrid
-            vertical={false}
-            strokeDasharray="3 3"
-            className="stroke-zinc-100 dark:stroke-zinc-800"
-          />
+          <CartesianGrid vertical={false} strokeDasharray="3 3" className="stroke-border" />
           <XAxis
             dataKey="month"
             tickLine={false}
@@ -122,7 +116,7 @@ export const MonthlyBarChart = ({ aggregate, title, subtitle, getServiceLabel }:
                       type="button"
                       onClick={() => toggleSeries(code)}
                       className={cn(
-                        "flex cursor-pointer items-center gap-1.5 rounded px-1.5 py-0.5 text-xs transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800",
+                        "hover:bg-muted flex cursor-pointer items-center gap-1.5 rounded px-1.5 py-0.5 text-xs transition-colors",
                         hidden && "text-muted-foreground line-through",
                       )}
                     >

@@ -6,18 +6,11 @@ import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 import { ChartContainer, ChartLegend, ChartTooltip, type ChartConfig } from "@/components/ui/chart";
 import type { TMonthlyConsumptionAggregate } from "@/features/meters";
 import { SERVICE_TYPE_COLORS, type TServiceTypeCode } from "@/features/services/service-type";
+import { ZONE_COLORS_HEX } from "@/lib/constants/zones";
 
 import { ChartTooltipCard } from "./components/chart-tooltip-card";
 import { LineChartLegend } from "./components/line-chart-legend";
 import { formatMonthFull, formatMonthLabel, sumTooltipValues, toTooltipRows } from "./utils";
-
-// Zone color palette for multi-zone meters — matches the meter detail consumption chart.
-// Hex required because these values are set on SVG stroke attributes via ChartContainer.
-const ZONE_COLORS = {
-  t1: "#f59e0b",
-  t2: "#6366f1",
-  t3: "#10b981",
-} as const;
 
 type TProps = {
   aggregate: TMonthlyConsumptionAggregate;
@@ -32,10 +25,10 @@ const ConsumptionChart = ({ aggregate }: TProps) => {
   const chartConfig: ChartConfig = {
     t1: {
       label: isMultiZone ? "T1" : aggregate.unit,
-      color: isMultiZone ? ZONE_COLORS.t1 : serviceColor,
+      color: isMultiZone ? ZONE_COLORS_HEX[0] : serviceColor,
     },
-    t2: { label: "T2", color: ZONE_COLORS.t2 },
-    t3: { label: "T3", color: ZONE_COLORS.t3 },
+    t2: { label: "T2", color: ZONE_COLORS_HEX[1] },
+    t3: { label: "T3", color: ZONE_COLORS_HEX[2] },
   };
 
   // Pivot: one row per month, one property per zone
@@ -55,15 +48,11 @@ const ConsumptionChart = ({ aggregate }: TProps) => {
       {hasData ? (
         <ChartContainer
           config={chartConfig}
-          className="h-[320px] w-full"
+          className="h-80 w-full"
           initialDimension={{ width: 560, height: 320 }}
         >
           <LineChart data={lineData} margin={{ top: 8, right: 8, left: 0, bottom: 4 }}>
-            <CartesianGrid
-              vertical={false}
-              strokeDasharray="3 3"
-              className="stroke-zinc-100 dark:stroke-zinc-800"
-            />
+            <CartesianGrid vertical={false} strokeDasharray="3 3" className="stroke-border" />
             <XAxis
               dataKey="month"
               tickLine={false}
@@ -136,10 +125,8 @@ const ConsumptionChart = ({ aggregate }: TProps) => {
           </LineChart>
         </ChartContainer>
       ) : (
-        <div className="flex h-[320px] items-center justify-center">
-          <p className="text-sm text-zinc-400 dark:text-zinc-600">
-            Submit readings to see the chart.
-          </p>
+        <div className="flex h-80 items-center justify-center">
+          <p className="text-muted-foreground text-sm">{t("consumption.submitReadings")}</p>
         </div>
       )}
     </>

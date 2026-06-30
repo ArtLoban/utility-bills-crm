@@ -42,15 +42,11 @@ const TrendLineChart = ({ aggregate, getServiceLabel }: TProps) => {
   return (
     <ChartContainer
       config={chartConfig}
-      className="h-[320px] w-full"
+      className="h-80 w-full"
       initialDimension={{ width: 560, height: 320 }}
     >
       <LineChart data={lineData} margin={{ top: 8, right: 8, left: 0, bottom: 4 }}>
-        <CartesianGrid
-          vertical={false}
-          strokeDasharray="3 3"
-          className="stroke-zinc-100 dark:stroke-zinc-800"
-        />
+        <CartesianGrid vertical={false} strokeDasharray="3 3" className="stroke-border" />
         <XAxis
           dataKey="month"
           tickLine={false}

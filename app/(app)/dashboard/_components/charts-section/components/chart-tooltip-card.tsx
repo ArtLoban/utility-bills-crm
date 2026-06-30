@@ -16,7 +16,7 @@ type TProps = {
 // colours use semantic tokens so the card follows the active theme — light on the
 // light dashboard, dark in dark mode.
 export const ChartTooltipCard = ({ header, rows, total }: TProps) => (
-  <div className="bg-popover text-popover-foreground min-w-[200px] rounded-md border px-3 py-2.5 text-xs shadow-xl">
+  <div className="bg-popover text-popover-foreground min-w-50 rounded-md border px-3 py-2.5 text-xs shadow-xl">
     {header && <div className="mb-2 border-b pb-1.5 font-semibold">{header}</div>}
 
     <div className="flex flex-col gap-1.5">

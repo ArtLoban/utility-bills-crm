@@ -35,14 +35,12 @@ export const LineChartCard = ({
   <DataCard className="p-5">
     <div className="mb-4 flex items-start justify-between gap-3">
       <div>
-        <h3 className="text-sm font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
-          {title}
-        </h3>
-        <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">{subtitle}</p>
+        <h3 className="text-foreground text-sm font-semibold tracking-tight">{title}</h3>
+        <p className="text-muted-foreground mt-0.5 text-xs">{subtitle}</p>
       </div>
 
       <div className="flex shrink-0 items-center gap-2">
-        <div className="bg-muted flex items-center gap-0.5 rounded-[6px] border p-[3px] dark:border-zinc-700">
+        <div className="bg-muted flex items-center gap-0.5 rounded-sm border p-[3px]">
           {(
             [
               {
@@ -65,7 +63,7 @@ export const LineChartCard = ({
               disabled={disabled}
               onClick={mode === "money" ? onMoneyMode : onConsumptionMode}
               className={cn(
-                "cursor-pointer rounded-[4px] px-3 py-[5px] text-[12.5px] transition-colors disabled:cursor-not-allowed disabled:opacity-40",
+                "cursor-pointer rounded-[4px] px-3 py-[5px] text-xs transition-colors disabled:cursor-not-allowed disabled:opacity-40",
                 isActive
                   ? "bg-background text-foreground font-medium shadow-sm"
                   : "text-muted-foreground font-normal",

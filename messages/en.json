@@ -838,6 +838,10 @@
     }
   },
   "dashboard": {
+    "meta": {
+      "title": "Dashboard",
+      "description": "Overview of your properties, balances, and recent activity."
+    },
     "signedInAs": "Signed in as",
     "signOut": "Sign out",
     "greeting": {
@@ -893,7 +897,8 @@
       },
       "consumption": {
         "servicePicker": "Service",
-        "noServices": "No metered services with readings in the selected period."
+        "noServices": "No metered services with readings in the selected period.",
+        "submitReadings": "Submit readings to see the chart."
       },
       "empty": "No expense data for the selected period."
     }

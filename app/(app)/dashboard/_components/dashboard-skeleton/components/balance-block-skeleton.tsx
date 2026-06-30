@@ -5,7 +5,7 @@ const PROPERTY_NAME_CLASSES = ["w-48", "w-36", "w-32"] as const;
 
 export const BalanceBlockSkeleton = () => (
   <DataCard className="overflow-hidden">
-    <div className="border-b px-6 pt-5 pb-4 dark:border-zinc-800">
+    <div className="border-b px-6 pt-5 pb-4">
       <Skeleton className="h-3 w-28 rounded" />
       <div className="mt-4 grid grid-cols-2 gap-8">
         {[0, 1].map((i) => (

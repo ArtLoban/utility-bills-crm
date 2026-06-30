@@ -92,13 +92,11 @@ export const ChartsSection = ({
   // immediately when the URL updates, but consumptionLineChartSlot stays null until the
   // server re-render completes. Show a skeleton instead of an empty card body.
   const consumptionContent = !hasConsumptionData ? (
-    <div className="flex h-[320px] items-center justify-center">
-      <p className="text-sm text-zinc-400 dark:text-zinc-600">{t("consumption.noServices")}</p>
+    <div className="flex h-80 items-center justify-center">
+      <p className="text-muted-foreground text-sm">{t("consumption.noServices")}</p>
     </div>
   ) : (
-    (consumptionLineChartSlot ?? (
-      <div className="h-[320px] animate-pulse rounded-lg bg-zinc-100 dark:bg-zinc-800" />
-    ))
+    (consumptionLineChartSlot ?? <div className="bg-muted h-80 animate-pulse rounded-lg" />)
   );
 
   const servicePickerSlot =
@@ -107,7 +105,7 @@ export const ChartsSection = ({
         value={chartState.consumptionService ?? consumptionServiceCode ?? undefined}
         onValueChange={(value) => void setChartState({ consumptionService: value })}
       >
-        <SelectTrigger size="sm" className="text-[12.5px]">
+        <SelectTrigger size="sm" className="text-xs">
           <SelectValue />
         </SelectTrigger>
         <SelectContent align="end">
@@ -124,7 +122,7 @@ export const ChartsSection = ({
     <div className="flex flex-col gap-4">
       {/* Mobile section header */}
       <div className="flex items-center justify-between md:hidden">
-        <span className="text-muted-foreground text-[11.5px] font-semibold tracking-[0.6px] uppercase">
+        <span className="text-muted-foreground text-xs font-semibold tracking-wider uppercase">
           {t("title")}
         </span>
         <span className="text-muted-foreground text-xs">{periodLabel}</span>

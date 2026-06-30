@@ -58,22 +58,20 @@ export const ExpensePieChart = ({
   return (
     <DataCard className="p-6">
       <div>
-        <h3 className="text-sm font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
-          {title}
-        </h3>
-        <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">{subtitle}</p>
+        <h3 className="text-foreground text-sm font-semibold tracking-tight">{title}</h3>
+        <p className="text-muted-foreground mt-0.5 text-xs">{subtitle}</p>
       </div>
 
       {pieData.length === 0 ? (
-        <div className="flex h-[200px] items-center justify-center">
-          <p className="text-sm text-zinc-400 dark:text-zinc-500">{t("pie.noData")}</p>
+        <div className="flex h-50 items-center justify-center">
+          <p className="text-muted-foreground text-sm">{t("pie.noData")}</p>
         </div>
       ) : (
         <div className="mt-5 grid grid-cols-1 items-center gap-6 sm:grid-cols-[minmax(0,200px)_1fr]">
-          <div className="relative mx-auto h-[200px] w-[200px]">
+          <div className="relative mx-auto size-50">
             <ChartContainer
               config={chartConfig}
-              className="h-[200px] w-full"
+              className="h-50 w-full"
               initialDimension={{ width: 200, height: 200 }}
             >
               <PieChart>
@@ -119,10 +117,10 @@ export const ExpensePieChart = ({
             </ChartContainer>
 
             <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-muted-foreground text-[10.5px] font-medium tracking-[0.4px] uppercase">
+              <span className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
                 {t("pie.total")}
               </span>
-              <span className="mt-0.5 text-2xl font-semibold tracking-[-0.5px] text-zinc-900 tabular-nums dark:text-zinc-50">
+              <span className="text-foreground mt-0.5 text-2xl font-semibold tracking-tight tabular-nums">
                 {formatMoney(total)}
               </span>
             </div>

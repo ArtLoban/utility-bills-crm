@@ -11,7 +11,7 @@ export const ChartsSectionSkeleton = () => (
     </div>
 
     {/* Desktop: filter bar */}
-    <div className="hidden items-center gap-2 rounded-lg border bg-white px-3.5 py-3 md:flex dark:border-zinc-800 dark:bg-zinc-900">
+    <div className="bg-card hidden items-center gap-2 rounded-lg border px-3.5 py-3 md:flex">
       <Skeleton className="mr-1 h-3 w-11" />
       <Skeleton className="h-8 w-44 rounded-md" />
       <Skeleton className="h-8 w-40 rounded-md" />

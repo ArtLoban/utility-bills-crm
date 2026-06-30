@@ -23,10 +23,13 @@ import { ChartsSection } from "./_components/charts-section";
 import { DashboardEmptyState } from "./_components/dashboard-empty-state";
 import { ConsumptionLineChartServer } from "./_components/charts-section/consumption-line-chart";
 
-export const metadata: Metadata = {
-  title: "Dashboard",
-  description: "Overview of your properties, balances, and recent activity.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("dashboard.meta");
+  return {
+    title: t("title"),
+    description: t("description"),
+  };
+}
 
 export default async function DashboardPage({
   searchParams,
@@ -124,11 +127,7 @@ export default async function DashboardPage({
   // exactly then — money-only views never pay for it.
   const consumptionLineChartSlot =
     chartParams.chartMode === "consumption" && consumptionServiceCode !== null ? (
-      <Suspense
-        fallback={
-          <div className="h-[320px] animate-pulse rounded-lg bg-zinc-100 dark:bg-zinc-800" />
-        }
-      >
+      <Suspense fallback={<div className="bg-muted h-80 animate-pulse rounded-lg" />}>
         <ConsumptionLineChartServer
           userId={userId}
           serviceTypeCode={consumptionServiceCode}
@@ -142,7 +141,7 @@ export default async function DashboardPage({
   return (
     <PageShell>
       <div className="mb-5 md:mb-7">
-        <h2 className="m-0 text-2xl font-semibold tracking-[-0.6px] text-zinc-950 md:text-[28px] dark:text-zinc-50">
+        <h2 className="text-foreground m-0 text-2xl font-semibold tracking-tight md:text-3xl">
           {firstName ? t("greeting.withName", { name: firstName }) : t("greeting.fallback")}
         </h2>
       </div>
