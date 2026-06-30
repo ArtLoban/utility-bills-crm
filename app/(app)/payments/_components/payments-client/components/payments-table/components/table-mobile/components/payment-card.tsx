@@ -21,7 +21,7 @@ export const PaymentCard = ({ payment }: TProps) => {
   const amountStr = formatMoney(row.amount);
 
   return (
-    <div className="flex items-center gap-2 rounded-lg border border-zinc-200 bg-white py-3 pr-2.5 pl-3.5 shadow-[0_1px_2px_rgba(24,24,27,0.04)] dark:border-zinc-800 dark:bg-zinc-900 dark:shadow-none">
+    <div className="border-border bg-card flex items-center gap-2 rounded-lg border py-3 pr-2.5 pl-3.5 shadow-sm dark:shadow-none">
       <div className="min-w-0 flex-1 text-sm">
         <div className="flex items-center gap-2">
           <IconBadge icon={Icon} color={color} size="sm" />

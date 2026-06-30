@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 
 import { requireUser } from "@/lib/auth/guards";
 import { accessibleProperties } from "@/lib/db/access/properties";
@@ -15,6 +16,7 @@ type TProps = {
 export default async function EditPaymentPage({ params }: TProps) {
   const userId = await requireUser();
   const { id } = await params;
+  const t = await getTranslations("payments");
 
   const [paymentResult, serviceOptions, propertiesWithRole] = await Promise.all([
     paymentByIdForUser(userId, id as PaymentId),
@@ -31,9 +33,12 @@ export default async function EditPaymentPage({ params }: TProps) {
 
   return (
     <PageContainer
-      title="Edit Payment"
-      breadcrumbs={[{ label: "Payments", href: ROUTES.payments }, { label: "Edit Payment" }]}
-      meta="todo"
+      title={t("modal.edit.title")}
+      breadcrumbs={[
+        { label: t("list.title"), href: ROUTES.payments },
+        { label: t("modal.edit.title") },
+      ]}
+      meta={<span className="text-muted-foreground text-sm">{t("page.edit.meta")}</span>}
     >
       <PaymentFormContent
         payment={paymentResult.value}

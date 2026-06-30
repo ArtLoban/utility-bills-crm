@@ -713,10 +713,20 @@
     },
     "toast": {
       "added": "Payment recorded.",
-      "updated": "Payment updated."
+      "updated": "Payment updated.",
+      "deleted": "Payment deleted."
+    },
+    "page": {
+      "new": {
+        "meta": "Create new payment"
+      },
+      "edit": {
+        "meta": "Edit payment details"
+      }
     },
     "list": {
       "title": "Payments",
+      "metaDescription": "View and record payments for your utility bills.",
       "meta": {
         "records": "{count, plural, one {# payment} other {# payments}}"
       },
@@ -805,6 +815,7 @@
       "delete": {
         "confirm": {
           "title": "Delete payment",
+          "description": "Delete <b>{service}</b> payment for <b>{property}</b>?",
           "body": "This action cannot be undone.",
           "confirmLabel": "Delete",
           "cancelLabel": "Cancel"

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 
 import { requireUser } from "@/lib/auth/guards";
 import { accessibleProperties } from "@/lib/db/access/properties";
@@ -6,10 +7,13 @@ import { getPaymentsList } from "@/lib/db/access/payments";
 import { loadPaymentsParams } from "@/features/payments/query-params";
 import { PaymentsClient } from "./_components/payments-client";
 
-export const metadata: Metadata = {
-  title: "Payments",
-  description: "View and record payments for your utility bills.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("payments");
+  return {
+    title: t("list.title"),
+    description: t("list.metaDescription"),
+  };
+}
 
 export default async function PaymentsPage({
   searchParams,

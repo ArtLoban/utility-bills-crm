@@ -1,12 +1,13 @@
 import { ReactNode, useState, useTransition } from "react";
-import { softDeletePayment, TPaymentGlobalRow } from "@/features/payments";
-import type { PaymentId } from "@/lib/db/schema";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { Modal } from "@/components/modal";
 import { Trash2 } from "lucide-react";
-import { IconBadge } from "@/components/icon-badge";
-import { getServiceLabel } from "@/lib/constants/service-colors";
+
+import { softDeletePayment, TPaymentGlobalRow } from "@/features/payments";
 import type { TPropertyOption } from "@/features/properties";
+import { ConfirmDialog } from "@/components/confirm-dialog";
+import { useActionErrorHandler } from "@/lib/hooks/use-action-error-handler";
+import { getServiceLabel } from "@/lib/constants/service-colors";
 import { PaymentsTableContext } from "../context";
 
 type TProps = {
@@ -15,18 +16,20 @@ type TProps = {
 };
 
 export const PaymentsTableActions = ({ children, properties }: TProps) => {
+  const t = useTranslations("payments");
   const [rowToDelete, setRowToDelete] = useState<TPaymentGlobalRow | null>(null);
   const [isPending, startTransition] = useTransition();
+  const handleActionError = useActionErrorHandler({ onClose: () => setRowToDelete(null) });
 
   const handleConfirm = () => {
     if (rowToDelete === null) return;
     startTransition(async () => {
-      const result = await softDeletePayment(rowToDelete.payment.id as PaymentId);
+      const result = await softDeletePayment(rowToDelete.payment.id);
       if (!result.ok) {
-        toast.error("Failed to delete payment. Please try again.");
-      } else {
-        toast.success("Payment deleted");
+        handleActionError(result.error);
+        return;
       }
+      toast.success(t("toast.deleted"));
       setRowToDelete(null);
     });
   };
@@ -34,28 +37,23 @@ export const PaymentsTableActions = ({ children, properties }: TProps) => {
   return (
     <PaymentsTableContext value={{ requestDelete: setRowToDelete, properties }}>
       {children}
-      <Modal
-        title="Delete Payment"
+      <ConfirmDialog
         open={rowToDelete !== null}
         onOpenChange={(open) => !open && setRowToDelete(null)}
-        onConfirm={handleConfirm}
-        variant="destructiveStrong"
+        title={t("list.delete.confirm.title")}
+        icon={Trash2}
+        description={t.rich("list.delete.confirm.description", {
+          service: rowToDelete ? getServiceLabel(rowToDelete.serviceTypeCode) : "",
+          property: rowToDelete?.property.name ?? "",
+          b: (chunks) => <strong>{chunks}</strong>,
+        })}
+        warningText={t("list.delete.confirm.body")}
+        confirmLabel={t("list.delete.confirm.confirmLabel")}
         confirmIcon={Trash2}
-        confirmLabel="Delete"
-        isSaving={isPending}
-      >
-        <div className="my-3 flex flex-col items-center gap-4">
-          <IconBadge icon={Trash2} color="var(--destructive)" size="xl" border={true} />
-          <p className="text-center text-sm">
-            Delete{" "}
-            <strong>{rowToDelete ? getServiceLabel(rowToDelete.serviceTypeCode) : ""}</strong>{" "}
-            payment for <strong>{rowToDelete?.property.name ?? ""}</strong>?
-          </p>
-          <p className="text-destructive text-sm leading-snug font-semibold">
-            This cannot be undone.
-          </p>
-        </div>
-      </Modal>
+        cancelLabel={t("list.delete.confirm.cancelLabel")}
+        isPending={isPending}
+        onConfirm={handleConfirm}
+      />
     </PaymentsTableContext>
   );
 };
