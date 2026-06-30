@@ -522,6 +522,19 @@
   "bills": {
     "list": {
       "title": "Bills",
+      "metaDescription": "Track and manage utility bills across your properties.",
+      "cta": {
+        "addBill": "Add Bill"
+      },
+      "delete": {
+        "confirm": {
+          "title": "Delete bill",
+          "description": "Delete <b>{service}</b> bill for <b>{property}</b>?",
+          "body": "This action cannot be undone.",
+          "confirmLabel": "Delete",
+          "cancelLabel": "Cancel"
+        }
+      },
       "columns": {
         "date": "Date",
         "property": "Property",
@@ -644,7 +657,8 @@
     },
     "toast": {
       "added": "Bill added.",
-      "updated": "Bill updated."
+      "updated": "Bill updated.",
+      "deleted": "Bill deleted."
     },
     "page": {
       "new": {

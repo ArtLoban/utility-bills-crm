@@ -2,7 +2,7 @@ import { useServerListParams } from "@/components/data-table/server-table-group/
 import { useQueryFilters } from "@/lib/hooks/use-query-filters";
 import { URL_FIELDS, INITIAL_FILTERS } from "./constants";
 import { TBillsListResult } from "@/lib/db/access/bills";
-import { BillsTableDesktop } from "./components/bills-table";
+import { BillsTableDesktop } from "./components/bills-desktop";
 import { BillsTableMobile } from "./components/bills-mobile";
 import { BILLS_SORT_COLUMNS } from "@/features/bills";
 

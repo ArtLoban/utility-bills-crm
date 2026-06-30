@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 
 import { requireUser } from "@/lib/auth/guards";
 import { accessibleProperties } from "@/lib/db/access/properties";
@@ -6,10 +7,13 @@ import { getBillsList } from "@/lib/db/access/bills";
 import { loadBillsParams } from "@/features/bills/query-params";
 import { BillsClient } from "./_components/bills-client";
 
-export const metadata: Metadata = {
-  title: "Bills",
-  description: "Track and manage utility bills across your properties.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("bills");
+  return {
+    title: t("list.title"),
+    description: t("list.metaDescription"),
+  };
+}
 
 export default async function BillsPage({
   searchParams,

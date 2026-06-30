@@ -1382,6 +1382,19 @@
   "bills": {
     "list": {
       "title": "Счета",
+      "metaDescription": "Отслеживайте и управляйте коммунальными счетами по вашим объектам.",
+      "cta": {
+        "addBill": "Добавить счёт"
+      },
+      "delete": {
+        "confirm": {
+          "title": "Удалить счёт",
+          "description": "Удалить счёт <b>{service}</b> для <b>{property}</b>?",
+          "body": "Это действие нельзя отменить.",
+          "confirmLabel": "Удалить",
+          "cancelLabel": "Отмена"
+        }
+      },
       "columns": {
         "date": "Дата",
         "property": "Объект",
@@ -1504,7 +1517,8 @@
     },
     "toast": {
       "added": "Счёт добавлен.",
-      "updated": "Счёт обновлён."
+      "updated": "Счёт обновлён.",
+      "deleted": "Счёт удалён."
     },
     "page": {
       "new": {

@@ -4,7 +4,7 @@ import { AmountCell } from "@/components/data-table/cells/amount-cell";
 import { DateCell } from "@/components/data-table/cells/date-cell";
 import { ServiceCell } from "@/components/data-table/cells/service-cell";
 import type { TBillGlobalRow } from "@/lib/db/access/bills";
-import { BillRowActions } from "../../components/bill-row-actions";
+import { BillRowActions } from "../../bill-row-actions";
 import { PropertyCell } from "@/components/data-table/cells/property-cell";
 
 type TTranslateFn = ReturnType<typeof useTranslations<"bills.list">>;

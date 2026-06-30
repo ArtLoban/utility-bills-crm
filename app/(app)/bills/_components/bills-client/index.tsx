@@ -25,9 +25,9 @@ export const BillsClient = ({ billsList, properties }: TProps) => {
 
   return (
     <PageContainer
-      title="Bills"
+      title={t("title")}
       meta={<PageMeta items={meta} />}
-      actions={<AddButton href={`${ROUTES.bills}/new`} text="Add Bill" />}
+      actions={<AddButton href={`${ROUTES.bills}/new`} text={t("cta.addBill")} />}
     >
       <BillsTableActions properties={properties}>
         <BillsTable billsList={billsList} />
