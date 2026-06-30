@@ -4,20 +4,27 @@
    of the page theme, creating visual contrast against the light landing page content. */
 
 .mockup {
+  /* Bespoke near-black chrome with a faint blue tint — no matching primitive; intentional. */
   --mockup-bg: #0f0f13;
-  --mockup-card: #18181b;
   --mockup-frame-bg: #16161a;
-  --mockup-border: oklch(0.269 0 0); /* neutral-800 */
-  --mockup-fg: oklch(0.95 0 0);
-  --mockup-fg-sub: #a1a1aa;
   --mockup-muted: #1c1c1f;
-  --mockup-muted-fg: #71717a;
-  --mockup-accent: oklch(0.558 0.288 293); /* purple-600 */
-  --mockup-accent-light: oklch(0.7 0.2 293); /* purple-400 */
-  --mockup-bar-inactive: oklch(0.371 0 0); /* neutral-700 */
   --mockup-url-bg: #1c1c1f;
+  /* zinc-600 — the neutral scale has no 600 step, so this stays raw. */
   --mockup-url-text: #52525b;
-  --mockup-dot-close: oklch(0.371 0 0); /* dimmed — no macOS brand colors in dark context */
-  --mockup-dot-min: oklch(0.371 0 0);
-  --mockup-dot-max: oklch(0.371 0 0);
+  /* Slightly brighter than every standard step — calibrated for the dark facsimile. */
+  --mockup-fg: oklch(0.95 0 0);
+  /* Brightened purple specific to the mockup accent — does not equal --purple-600. */
+  --mockup-accent: oklch(0.558 0.288 293);
+
+  --mockup-card: var(--neutral-900);
+  --mockup-border: var(--neutral-800);
+  --mockup-muted-fg: var(--neutral-500);
+  --mockup-bar-inactive: var(--neutral-700);
+  /* Status accents — mirror the app's destructive/positive on dark. */
+  --mockup-danger: var(--red-400);
+  --mockup-positive: var(--green-500);
+  /* Dimmed dots — no macOS brand colors in this dark context. */
+  --mockup-dot-close: var(--neutral-700);
+  --mockup-dot-min: var(--neutral-700);
+  --mockup-dot-max: var(--neutral-700);
 }

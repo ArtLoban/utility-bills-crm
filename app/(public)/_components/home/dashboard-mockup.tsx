@@ -52,7 +52,12 @@ const PIE_SLICES = [
 ];
 
 const STAT_CARDS = [
-  { label: "Total balance", value: "−₴4,820", sub: "across 3 properties", valueColor: "#f87171" },
+  {
+    label: "Total balance",
+    value: "−₴4,820",
+    sub: "across 3 properties",
+    valueColor: "var(--mockup-danger)",
+  },
   { label: "Billed this month", value: "₴3,180", sub: "11 services", valueColor: null },
   { label: "Paid this month", value: "₴2,640", sub: "6 payments", valueColor: null },
   { label: "Properties", value: "3", sub: "all active", valueColor: null },

@@ -9,7 +9,7 @@ const SERVICES = [
     color: SERVICE_TYPE_COLORS[SERVICE_TYPE_CODES.ELECTRICITY],
     balance: "−₴1,180",
     status: "Due in 3 days",
-    statusColor: "#f87171",
+    statusColor: "var(--mockup-danger)",
   },
   {
     name: "Gas",
@@ -17,7 +17,7 @@ const SERVICES = [
     color: SERVICE_TYPE_COLORS[SERVICE_TYPE_CODES.GAS],
     balance: "−₴640",
     status: "Due in 12 days",
-    statusColor: "#f87171",
+    statusColor: "var(--mockup-danger)",
   },
   {
     name: "Cold water",
@@ -25,7 +25,7 @@ const SERVICES = [
     color: SERVICE_TYPE_COLORS[SERVICE_TYPE_CODES.COLD_WATER],
     balance: "+₴90",
     status: "Overpaid",
-    statusColor: "#4ade80",
+    statusColor: "var(--mockup-positive)",
   },
   {
     name: "Internet",
@@ -197,7 +197,10 @@ export const PropertyDetailMockup = () => {
               <div className="text-right">
                 <div
                   className="text-[13px] font-semibold"
-                  style={{ color: statusColor === "#f87171" ? statusColor : "var(--mockup-fg)" }}
+                  style={{
+                    color:
+                      statusColor === "var(--mockup-danger)" ? statusColor : "var(--mockup-fg)",
+                  }}
                 >
                   {balance}
                 </div>
