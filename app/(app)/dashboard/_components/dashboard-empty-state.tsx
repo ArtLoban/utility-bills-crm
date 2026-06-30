@@ -14,16 +14,7 @@ const DashboardEmptyState = async ({ firstName }: TProps) => {
 
   return (
     <div>
-      <h2
-        className="text-zinc-950 dark:text-zinc-50"
-        style={{
-          margin: 0,
-          marginBottom: 28,
-          fontSize: 28,
-          fontWeight: 600,
-          letterSpacing: -0.6,
-        }}
-      >
+      <h2 className="text-foreground mb-7 text-3xl font-semibold tracking-tight">
         {firstName ? t("greeting.withName", { name: firstName }) : t("greeting.fallback")}
       </h2>
 

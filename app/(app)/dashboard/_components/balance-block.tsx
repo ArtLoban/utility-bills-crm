@@ -5,18 +5,10 @@ import { getTranslations, getLocale } from "next-intl/server";
 import { DataCard } from "@/components/data-card";
 import { formatMoney } from "@/lib/format/money";
 import { cn } from "@/lib/utils";
-import type { TPropertyType } from "@/lib/db/schema/properties";
 import type { TBalanceData } from "../_data/types";
 
 type TProps = {
   data: TBalanceData;
-};
-
-const PropertyIcon = ({ type }: { type: TPropertyType }) => {
-  if (type === "cottage") {
-    return <TreePine size={15} className="text-zinc-500" />;
-  }
-  return <Home size={15} className="text-zinc-500" />;
 };
 
 const balanceColor = (balance: number): string => {
@@ -39,38 +31,32 @@ export const BalanceBlock = async ({ data }: TProps) => {
   return (
     <DataCard className="overflow-hidden">
       {/* Top section — summary KV grid */}
-      <div className="border-b px-6 pt-5 pb-4 dark:border-zinc-800">
-        <div className="text-[12px] font-medium tracking-[0.2px] text-zinc-500 uppercase">
+      <div className="border-b px-6 pt-5 pb-4">
+        <div className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
           {t("title")}
         </div>
 
         <div className="mt-3.5 grid grid-cols-2 gap-8">
           {/* Total debt */}
           <div>
-            <div className="mb-1.5 text-[12.5px] text-zinc-500">{t("totalDebt")}</div>
-            <div
-              className="text-destructive text-2xl leading-none font-semibold tracking-[-0.8px] md:text-[30px]"
-              style={{ fontVariantNumeric: "tabular-nums", fontFeatureSettings: '"tnum" 1' }}
-            >
+            <div className="text-muted-foreground mb-1.5 text-xs">{t("totalDebt")}</div>
+            <div className="text-destructive text-2xl leading-none font-semibold tracking-tight tabular-nums md:text-3xl">
               {"−"}
               {formatMoney(totalDebt, locale)}
             </div>
-            <div className="mt-1.5 text-[12.5px] text-zinc-500">
+            <div className="text-muted-foreground mt-1.5 text-xs">
               {t("acrossServices", { count: debtServicesCount })}
             </div>
           </div>
 
           {/* Total overpayment */}
           <div>
-            <div className="mb-1.5 text-[12.5px] text-zinc-500">{t("totalOverpayment")}</div>
-            <div
-              className="text-success text-2xl leading-none font-semibold tracking-[-0.8px] md:text-[30px]"
-              style={{ fontVariantNumeric: "tabular-nums", fontFeatureSettings: '"tnum" 1' }}
-            >
+            <div className="text-muted-foreground mb-1.5 text-xs">{t("totalOverpayment")}</div>
+            <div className="text-success text-2xl leading-none font-semibold tracking-tight tabular-nums md:text-3xl">
               {"+"}
               {formatMoney(totalOverpayment, locale)}
             </div>
-            <div className="mt-1.5 text-[12.5px] text-zinc-500">
+            <div className="text-muted-foreground mt-1.5 text-xs">
               {t("acrossServices", { count: overpayServicesCount })}
             </div>
           </div>
@@ -79,7 +65,7 @@ export const BalanceBlock = async ({ data }: TProps) => {
 
       {/* By property section */}
       <div>
-        <div className="px-6 pt-3 pb-2 text-[11.5px] font-medium tracking-[0.2px] text-zinc-500 uppercase">
+        <div className="text-muted-foreground px-6 pt-3 pb-2 text-xs font-medium tracking-wide uppercase">
           {t("byProperty")}
         </div>
 
@@ -91,30 +77,30 @@ export const BalanceBlock = async ({ data }: TProps) => {
                 key={property.id}
                 href={`/properties/${property.id}`}
                 className={cn(
-                  "flex items-center gap-3 px-6 py-3 no-underline transition-colors duration-[120ms] hover:bg-zinc-50 dark:hover:bg-zinc-800",
-                  !isLast && "border-b border-zinc-200 dark:border-zinc-800",
+                  "hover:bg-muted flex items-center gap-3 px-6 py-3 no-underline transition-colors duration-100",
+                  !isLast && "border-border border-b",
                 )}
               >
-                <div className="flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-[6px] bg-zinc-100 dark:bg-zinc-800">
-                  <PropertyIcon type={property.type} />
+                <div className="bg-muted flex size-7.5 shrink-0 items-center justify-center rounded-sm">
+                  {property.type === "cottage" ? (
+                    <TreePine size={15} className="text-muted-foreground" />
+                  ) : (
+                    <Home size={15} className="text-muted-foreground" />
+                  )}
                 </div>
 
-                <div className="min-w-0 flex-1 text-[13.5px] font-medium text-zinc-950 dark:text-zinc-50">
+                <div className="text-foreground min-w-0 flex-1 text-sm font-medium">
                   {property.name}
                 </div>
 
                 <div
-                  className="text-sm font-semibold"
-                  style={{
-                    color: balanceColor(property.balance),
-                    fontVariantNumeric: "tabular-nums",
-                    fontFeatureSettings: '"tnum" 1',
-                  }}
+                  className="text-sm font-semibold tabular-nums"
+                  style={{ color: balanceColor(property.balance) }}
                 >
                   {formatBalance(property.balance)}
                 </div>
 
-                <ChevronRight size={15} className="text-zinc-500" />
+                <ChevronRight size={15} className="text-muted-foreground" />
               </Link>
             );
           })}
