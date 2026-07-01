@@ -1,4 +1,3 @@
-import { createSafeContext } from "@/lib/utils/create-safe-context";
 import type { TProvider } from "@/lib/db/schema";
 import { ReactNode, useState } from "react";
 import { Trash2 } from "lucide-react";
@@ -9,15 +8,7 @@ import { ERROR_CODES } from "@/lib/errors";
 import { toast } from "sonner";
 import { IconBadge } from "@/components/icon-badge";
 import { Modal } from "@/components/modal";
-
-type TProviderActionsContext = {
-  requestDelete: (provider: TProvider) => void;
-};
-
-const [ProviderActionsContext, useProviderActions] =
-  createSafeContext<TProviderActionsContext>("ProviderActions");
-
-export { useProviderActions };
+import { ProvidersListContext } from "../context";
 
 export const ProvidersListActions = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
@@ -52,7 +43,7 @@ export const ProvidersListActions = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <ProviderActionsContext value={{ requestDelete: setItemToDelete }}>
+    <ProvidersListContext value={{ requestDelete: setItemToDelete }}>
       {children}
       <Modal
         title={t("delete.title")}
@@ -74,6 +65,6 @@ export const ProvidersListActions = ({ children }: { children: ReactNode }) => {
           </p>
         </div>
       </Modal>
-    </ProviderActionsContext>
+    </ProvidersListContext>
   );
 };

@@ -9,7 +9,7 @@ import { ROUTES } from "@/lib/routes";
 import { AddButton } from "@/components/add-button";
 import { PageMeta } from "@/components/page-meta";
 import type { TProviderWithUsage } from "@/app/(app)/providers/_data/queries";
-import { Providers } from "@/app/(app)/providers/_components/providers-client/components/providers";
+import { ProvidersList } from "@/app/(app)/providers/_components/providers-client/components/providers-list";
 
 type TProps = {
   providers: TProviderWithUsage[];
@@ -29,7 +29,7 @@ export const ProvidersClient = ({ providers }: TProps) => {
       }
     >
       {hasProviders ? (
-        <Providers providers={providers} />
+        <ProvidersList providers={providers} />
       ) : (
         <EmptyStateCard icon={Building2} title={t("empty.title")} body={t("empty.body")} />
       )}

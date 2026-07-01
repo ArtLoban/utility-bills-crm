@@ -10,7 +10,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { ROUTES } from "@/lib/routes";
 import { cn } from "@/lib/utils";
 import type { TProviderWithUsage } from "@/app/(app)/providers/_data/queries";
-import { useProviderActions } from "./providers-list-actions";
+import { useProvidersList } from "../context";
 
 // ── Monogram color palette ────────────────────────────────────────────────────
 // Maps provider IDs (UUIDs) to one of 6 semantic CSS variable colors.
@@ -41,7 +41,7 @@ type TProps = {
 
 export const ProviderCard = ({ provider }: TProps) => {
   const t = useTranslations("providers");
-  const { requestDelete } = useProviderActions();
+  const { requestDelete } = useProvidersList();
 
   const [expanded, setExpanded] = useState(false);
   const [overflows, setOverflows] = useState(false);
