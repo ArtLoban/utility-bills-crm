@@ -36,7 +36,6 @@ export async function generateMetadata({ params }: TProps): Promise<Metadata> {
 
   return {
     title: result.value.name,
-    description: `Bills, meters, and services for ${result.value.name}.`,
   };
 }
 

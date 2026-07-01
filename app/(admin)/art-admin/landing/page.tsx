@@ -25,14 +25,7 @@ import {
 
 export const metadata: Metadata = {
   title: "Landing content — Admin",
-  description: "Edit the public landing pages.",
 };
-
-// ---------------------------------------------------------------------------
-// Mapper helpers — reconstruct form payload shapes from flat DB rows.
-// Falls back to INITIAL_* when a row is missing (seed guarantees rows exist;
-// undefined signals a transiently empty table — defensive, not expected).
-// ---------------------------------------------------------------------------
 
 const mapHomeContent = (
   hero: THomeHero | undefined,

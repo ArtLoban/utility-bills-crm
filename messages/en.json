@@ -522,7 +522,6 @@
   "bills": {
     "list": {
       "title": "Bills",
-      "metaDescription": "Track and manage utility bills across your properties.",
       "cta": {
         "addBill": "Add Bill"
       },
@@ -740,7 +739,6 @@
     },
     "list": {
       "title": "Payments",
-      "metaDescription": "View and record payments for your utility bills.",
       "meta": {
         "records": "{count, plural, one {# payment} other {# payments}}"
       },
@@ -839,8 +837,7 @@
   },
   "dashboard": {
     "meta": {
-      "title": "Dashboard",
-      "description": "Overview of your properties, balances, and recent activity."
+      "title": "Dashboard"
     },
     "signedInAs": "Signed in as",
     "signOut": "Sign out",

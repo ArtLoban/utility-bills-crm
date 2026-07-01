@@ -11,7 +11,6 @@ import { TelegramSection } from "./_components/telegram-section";
 
 export const metadata: Metadata = {
   title: "Settings",
-  description: "Manage your account, profile, and application preferences.",
 };
 
 export default async function SettingsPage() {

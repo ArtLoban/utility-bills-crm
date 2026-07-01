@@ -11,7 +11,6 @@ export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("payments");
   return {
     title: t("list.title"),
-    description: t("list.metaDescription"),
   };
 }
 

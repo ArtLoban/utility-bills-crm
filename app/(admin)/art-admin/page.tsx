@@ -10,7 +10,6 @@ import { StatCard } from "./_components/stat-card";
 
 export const metadata: Metadata = {
   title: "Admin Dashboard",
-  description: "System-wide overview.",
 };
 
 export default async function AdminDashboardPage() {

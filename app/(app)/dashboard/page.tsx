@@ -27,7 +27,6 @@ export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("dashboard.meta");
   return {
     title: t("title"),
-    description: t("description"),
   };
 }
 
