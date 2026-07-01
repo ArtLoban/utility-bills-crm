@@ -6,6 +6,7 @@ import { Globe, Pencil, Phone, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
+import { Surface } from "@/components/surface";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { ROUTES } from "@/lib/routes";
 import { cn } from "@/lib/utils";
@@ -62,7 +63,7 @@ export const ProviderCard = ({ provider }: TProps) => {
   }, []);
 
   return (
-    <div className="bg-card flex items-start gap-4 rounded-lg border px-5 py-[18px] shadow-[0_1px_2px_rgba(24,24,27,0.05)]">
+    <Surface elevation="sm" className="flex items-start gap-4 px-5 py-[18px]">
       {/* Monogram */}
       <div
         className="flex size-11 shrink-0 items-center justify-center rounded-xl text-[17px] leading-none font-semibold tracking-[-0.3px] select-none"
@@ -179,6 +180,6 @@ export const ProviderCard = ({ provider }: TProps) => {
           </Tooltip>
         )}
       </div>
-    </div>
+    </Surface>
   );
 };

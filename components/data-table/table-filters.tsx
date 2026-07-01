@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
+import { Surface } from "@/components/surface";
 import { ReactNode } from "react";
 
 type TProps = {
@@ -15,7 +16,7 @@ export const TableFilters = ({ children, hasActiveFilters, onClear }: TProps) =>
   const t = useTranslations("dataTable.filters");
 
   return (
-    <div className="border-border bg-background mb-4 flex flex-wrap items-center gap-3 rounded-lg border px-3 py-2">
+    <Surface className="bg-background mb-4 flex flex-wrap items-center gap-3 px-3 py-2">
       <span className="pl-0.5 text-sm">{t("label")}</span>
       <div className="flex flex-wrap gap-3">{children}</div>
       <Button
@@ -26,6 +27,6 @@ export const TableFilters = ({ children, hasActiveFilters, onClear }: TProps) =>
       >
         {t("clear")}
       </Button>
-    </div>
+    </Surface>
   );
 };
