@@ -73,7 +73,7 @@ export const useSharingTab = ({ propertyId, members, currentUserId }: TParams) =
     });
   };
 
-  const goToInvite = () => router.push(`${ROUTES.properties}/${propertyId}/sharing/invite`);
+  // TODO: Extract to component
   const goToRemove = (userId: UserId) =>
     router.push(`${ROUTES.properties}/${propertyId}/sharing/${userId}/remove`);
 
@@ -87,7 +87,6 @@ export const useSharingTab = ({ propertyId, members, currentUserId }: TParams) =
     setLeaveConfirmOpen,
     requestLeave,
     confirmLeave,
-    goToInvite,
     goToRemove,
   };
 };

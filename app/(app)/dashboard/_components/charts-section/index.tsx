@@ -128,8 +128,8 @@ export const ChartsSection = ({
         <span className="text-muted-foreground text-xs">{periodLabel}</span>
       </div>
 
-      {/* Filter bar — desktop */}
-      <div className="hidden md:block">
+      {/* Filter bar — desktop TODO: Implement for mobile! */}
+      <div className="-mb-3.5 hidden md:block">
         <FilterBar
           queryFilters={queryFilters}
           properties={properties}

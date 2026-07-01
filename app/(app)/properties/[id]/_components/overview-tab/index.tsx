@@ -59,7 +59,7 @@ const OverviewTab = ({
   }
 
   return (
-    <Card className="overflow-hidden rounded-lg p-0">
+    <Card className="gap-0 overflow-hidden rounded-lg p-0">
       <div className="border-border flex items-center justify-between border-b px-6 py-4.5">
         <div>
           <p className="text-foreground text-sm font-semibold">{t("sectionTitle")}</p>
@@ -68,7 +68,13 @@ const OverviewTab = ({
           </p>
         </div>
         {canEdit && (
-          <LinkButton href={addHref} icon={Plus} text={t("actions.addService")} size="default" />
+          <LinkButton
+            variant="default"
+            href={addHref}
+            icon={Plus}
+            text={t("actions.addService")}
+            size="sm"
+          />
         )}
       </div>
 

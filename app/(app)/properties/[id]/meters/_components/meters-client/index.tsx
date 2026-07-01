@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown, ChevronUp, Gauge } from "lucide-react";
+import { ChevronDown, ChevronUp, Gauge, Plus } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { AddButton } from "@/components/add-button";
@@ -11,6 +11,7 @@ import { ROUTES } from "@/lib/routes";
 import { PROPERTY_ROLES, type TPropertyRole } from "@/lib/db/schema/properties";
 import type { TPropertyMeterRow } from "../../_data/queries";
 import { MeterRow } from "./meter-row";
+import { LinkButton } from "@/components/link-button";
 
 type TProps = {
   propertyId: string;
@@ -32,7 +33,15 @@ export const MetersClient = ({ propertyId, meters, role }: TProps) => {
     <>
       <div className="mb-5 flex items-center justify-between">
         <h2 className="text-foreground text-xl font-semibold tracking-tight">{t("title")}</h2>
-        {canMutate && <AddButton href={addHref} text={t("addButton")} />}
+        {canMutate && (
+          <LinkButton
+            variant="default"
+            href={addHref}
+            icon={Plus}
+            text={t("addButton")}
+            size="sm"
+          />
+        )}
       </div>
 
       {activeMeters.length === 0 ? (

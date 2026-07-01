@@ -12,6 +12,8 @@ import { LastOwnerDialog } from "../last-owner-dialog";
 import { LeavePropertyDialog } from "../leave-property-dialog";
 import { UserCard } from "./components/user-card";
 import { useSharingTab } from "./hooks/use-sharing-tab";
+import { LinkButton } from "@/components/link-button";
+import { ROUTES } from "@/lib/routes";
 
 type TProps = {
   propertyId: PropertyId;
@@ -32,15 +34,25 @@ export const SharingTab = ({ propertyId, members, currentUserId, propertyName }:
     setLeaveConfirmOpen,
     requestLeave,
     confirmLeave,
-    goToInvite,
     goToRemove,
   } = useSharingTab({ propertyId, members, currentUserId });
 
   return (
     <div>
-      <div className="mb-4">
-        <h2 className="m-0 text-lg font-semibold tracking-[-0.2px]">{t("section.title")}</h2>
-        <p className="text-muted-foreground mt-1 mb-0 text-sm">{t("section.subtitle")}</p>
+      <div className="mb-4 flex items-center justify-between">
+        <div>
+          <h2 className="m-0 text-lg font-semibold tracking-[-0.2px]">{t("section.title")}</h2>
+          <p className="text-muted-foreground mt-1 mb-0 text-sm">{t("section.subtitle")}</p>
+        </div>
+        {isOwnerView && (
+          <LinkButton
+            variant="default"
+            href={`${ROUTES.properties}/${propertyId}/sharing/invite`}
+            icon={Plus}
+            text={t("actions.invite")}
+            size="sm"
+          />
+        )}
       </div>
 
       <div className="mb-5 flex flex-col gap-2.5">
@@ -55,20 +67,7 @@ export const SharingTab = ({ propertyId, members, currentUserId, propertyName }:
           />
         ))}
       </div>
-
-      {isOwnerView ? (
-        <>
-          <Button size="lg" onClick={goToInvite} disabled={isLeaving}>
-            <Plus />
-            {t("actions.invite")}
-          </Button>
-          <div className="mt-4">
-            <InfoBanner text={t("banner.ownerInfo")} />
-          </div>
-        </>
-      ) : (
-        <InfoBanner text={t("banner.readOnly")} />
-      )}
+      <InfoBanner text={t(isOwnerView ? "banner.ownerInfo" : "banner.readOnly")} />
 
       <LastOwnerDialog
         open={lastOwnerOpen}
