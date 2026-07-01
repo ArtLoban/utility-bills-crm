@@ -4,6 +4,7 @@ import { User } from "lucide-react";
 import Link from "next/link";
 
 import { IconBadge } from "@/components/icon-badge";
+import { Surface } from "@/components/surface";
 import type { TAdminUserRow } from "@/features/admin-users/types";
 import { formatRelativeTime } from "@/lib/format/date";
 import { ROUTES } from "@/lib/routes";
@@ -20,11 +21,9 @@ export const UserCard = ({ user }: TProps) => {
   const isDeleted = user.deletedAt !== null;
 
   return (
-    <div
-      className={cn(
-        "border-border bg-card flex items-center gap-2 rounded-lg border py-3 pr-2.5 pl-3.5 shadow-sm",
-        isDeleted && "opacity-60",
-      )}
+    <Surface
+      elevation="sm"
+      className={cn("flex items-center gap-2 py-3 pr-2.5 pl-3.5", isDeleted && "opacity-60")}
     >
       <div className="min-w-0 flex-1 text-sm">
         <div className="flex items-center gap-2">
@@ -53,6 +52,6 @@ export const UserCard = ({ user }: TProps) => {
       </div>
 
       <UserRowActions userId={user.id} />
-    </div>
+    </Surface>
   );
 };

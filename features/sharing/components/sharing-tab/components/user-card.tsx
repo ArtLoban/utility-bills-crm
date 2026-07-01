@@ -4,6 +4,7 @@ import { MoreHorizontal } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { Avatar } from "@/components/avatar";
+import { Surface } from "@/components/surface";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -34,7 +35,7 @@ export const UserCard = ({ member, propertyId, isOwnerView, onRemove, onLeave }:
   const showInlineRole = isYou || (isOwnerView && isOwner);
 
   return (
-    <div className="border-border bg-card flex flex-row gap-3.5 rounded-lg border px-5 py-4 shadow-sm">
+    <Surface elevation="sm" className="flex flex-row gap-3.5 px-5 py-4">
       <Avatar size={40} seed={id} name={name} />
 
       <div className="min-w-0 flex-1">
@@ -76,6 +77,6 @@ export const UserCard = ({ member, propertyId, isOwnerView, onRemove, onLeave }:
           </Button>
         )}
       </div>
-    </div>
+    </Surface>
   );
 };

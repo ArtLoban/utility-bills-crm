@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 
 import { LinkButton } from "@/components/link-button";
 import { IconBadge } from "@/components/icon-badge";
+import { Surface } from "@/components/surface";
 import { ROUTES } from "@/lib/routes";
 import type { TMeter } from "@/lib/db/schema/meters";
 import type { TServiceType } from "@/lib/db/schema/service-types";
@@ -30,7 +31,7 @@ export const MeterRow = ({ meter, serviceType, propertyId, canMutate }: TProps) 
   const meterHref = `${ROUTES.properties}/${propertyId}/meters/${meter.id}`;
 
   return (
-    <div className="border-border bg-card flex items-center gap-3.5 rounded-lg border px-5 py-4 shadow-sm">
+    <Surface elevation="sm" className="flex items-center gap-3.5 px-5 py-4">
       <IconBadge icon={Icon} color={color} />
 
       <Link href={meterHref} className="min-w-0 flex-1 no-underline">
@@ -56,6 +57,6 @@ export const MeterRow = ({ meter, serviceType, propertyId, canMutate }: TProps) 
       {canMutate && !isHistorical && (
         <LinkButton href={`${meterHref}/replace`} text={t("replace")} />
       )}
-    </div>
+    </Surface>
   );
 };

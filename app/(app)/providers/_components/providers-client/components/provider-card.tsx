@@ -63,7 +63,7 @@ export const ProviderCard = ({ provider }: TProps) => {
   }, []);
 
   return (
-    <Surface elevation="sm" className="flex items-start gap-4 px-5 py-[18px]">
+    <Surface className="flex items-start gap-4 px-5 py-4">
       {/* Monogram */}
       <div
         className="flex size-11 shrink-0 items-center justify-center rounded-xl text-[17px] leading-none font-semibold tracking-[-0.3px] select-none"

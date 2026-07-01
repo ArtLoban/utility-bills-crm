@@ -4,9 +4,6 @@ import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "@/lib/utils";
 
-// Bordered, rounded container surface. `elevation` controls the shadow behavior:
-// none — flat (toolbars), sm — resting shadow (static cards),
-// hover — resting shadow + lift on hover (clickable cards).
 const surfaceVariants = cva("rounded-lg border bg-card", {
   variants: {
     elevation: {
@@ -22,9 +19,10 @@ const surfaceVariants = cva("rounded-lg border bg-card", {
 type TProps = ComponentProps<"div"> & VariantProps<typeof surfaceVariants> & { asChild?: boolean };
 
 export const Surface = ({ className, elevation, asChild = false, ...props }: TProps) => {
-  const Comp = asChild ? Slot : "div";
+  const Root = asChild ? Slot : "div";
+
   return (
-    <Comp
+    <Root
       data-slot="surface"
       className={cn(surfaceVariants({ elevation, className }))}
       {...props}

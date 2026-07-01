@@ -8,6 +8,7 @@ import { UNIT_LABELS } from "@/lib/constants/zones";
 import type { TMeter } from "@/lib/db/schema/meters";
 import type { TReading } from "@/lib/db/schema/readings";
 import type { TServiceType } from "@/lib/db/schema/service-types";
+import { Surface } from "@/components/surface";
 
 import { ReadingRowActions } from "../../reading-row-actions";
 
@@ -38,7 +39,7 @@ export const ReadingCard = ({ reading, meter, serviceType, canMutate }: TProps) 
   if (meter.zoneCount === 3) zones.push({ label: t("series.t3"), value: reading.valueT3 });
 
   return (
-    <div className="border-border bg-card flex items-center gap-2 rounded-lg border py-3 pr-2.5 pl-3.5 shadow-sm">
+    <Surface elevation="sm" className="flex items-center gap-2 py-3 pr-2.5 pl-3.5">
       <div className="min-w-0 flex-1 text-sm">
         <span className="font-semibold tracking-tight tabular-nums">
           {formatDisplayDate(reading.readAt)}
@@ -60,6 +61,6 @@ export const ReadingCard = ({ reading, meter, serviceType, canMutate }: TProps) 
       </div>
 
       <ReadingRowActions reading={reading} meter={meter} canMutate={canMutate} />
-    </div>
+    </Surface>
   );
 };

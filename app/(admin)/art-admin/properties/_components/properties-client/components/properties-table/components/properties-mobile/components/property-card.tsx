@@ -4,6 +4,7 @@ import Link from "next/link";
 
 import { DateCell } from "@/components/data-table/cells/date-cell";
 import { IconBadge } from "@/components/icon-badge";
+import { Surface } from "@/components/surface";
 import { PROPERTY_TYPE_ICONS, PROPERTY_TYPE_LABELS } from "@/features/properties/property-type";
 import type { TAdminPropertyRow } from "@/features/admin-properties/types";
 import { ROUTES } from "@/lib/routes";
@@ -22,11 +23,9 @@ export const PropertyCard = ({ row }: TProps) => {
   const Icon = PROPERTY_TYPE_ICONS[row.type];
 
   return (
-    <div
-      className={cn(
-        "border-border bg-card flex items-center gap-2 rounded-lg border py-3 pr-2.5 pl-3.5 shadow-sm",
-        isDeleted && "opacity-60",
-      )}
+    <Surface
+      elevation="sm"
+      className={cn("flex items-center gap-2 py-3 pr-2.5 pl-3.5", isDeleted && "opacity-60")}
     >
       <div className="min-w-0 flex-1 text-sm">
         <div className="flex items-center gap-2">
@@ -56,6 +55,6 @@ export const PropertyCard = ({ row }: TProps) => {
       </div>
 
       <PropertyRowActions row={row} />
-    </div>
+    </Surface>
   );
 };

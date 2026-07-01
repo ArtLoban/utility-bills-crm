@@ -5,6 +5,7 @@ import { DISPLAY_DATE_FORMAT } from "@/lib/format/date";
 import { useFormatMoney } from "@/lib/format/use-format-money";
 import type { TPaymentGlobalRow } from "@/features/payments/types";
 import { IconBadge } from "@/components/icon-badge";
+import { Surface } from "@/components/surface";
 import { useServiceTypeMeta } from "@/features/services/hooks/use-service-type";
 import { PaymentRowActions } from "../../table-desktop/components/payment-row-actions";
 
@@ -21,7 +22,7 @@ export const PaymentCard = ({ payment }: TProps) => {
   const amountStr = formatMoney(row.amount);
 
   return (
-    <div className="border-border bg-card flex items-center gap-2 rounded-lg border py-3 pr-2.5 pl-3.5 shadow-sm dark:shadow-none">
+    <Surface elevation="sm" className="flex items-center gap-2 py-3 pr-2.5 pl-3.5">
       <div className="min-w-0 flex-1 text-sm">
         <div className="flex items-center gap-2">
           <IconBadge icon={Icon} color={color} size="sm" />
@@ -43,6 +44,6 @@ export const PaymentCard = ({ payment }: TProps) => {
       </div>
 
       <PaymentRowActions payment={payment} />
-    </div>
+    </Surface>
   );
 };

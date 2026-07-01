@@ -1,5 +1,7 @@
 import { type ReactNode } from "react";
 
+import { Surface } from "@/components/surface";
+
 type TProps = {
   icon: ReactNode;
   title: string;
@@ -8,7 +10,7 @@ type TProps = {
 };
 
 export const CmsSection = ({ icon, title, description, children }: TProps) => (
-  <div className="border-border bg-card mb-5 overflow-hidden rounded-lg border">
+  <Surface className="mb-5 overflow-hidden">
     <div className="border-border flex items-start gap-3 border-b px-6 pt-4.5 pb-4">
       <div className="bg-muted text-muted-foreground mt-px flex size-7.5 shrink-0 items-center justify-center rounded-lg">
         {icon}
@@ -19,5 +21,5 @@ export const CmsSection = ({ icon, title, description, children }: TProps) => (
       </div>
     </div>
     <div className="px-6 py-5.5">{children}</div>
-  </div>
+  </Surface>
 );
