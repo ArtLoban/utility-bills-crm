@@ -2,10 +2,10 @@ import Link from "next/link";
 import { AlertTriangle, ChevronRight } from "lucide-react";
 import { getTranslations, getFormatter, getLocale } from "next-intl/server";
 
-import { DataCard } from "@/components/data-card";
 import { formatMoney } from "@/lib/format/money";
 import { ROUTES } from "@/lib/routes";
 import type { TAttentionData } from "../_data/types";
+import { Surface } from "@/components/surface";
 
 type TProps = {
   data: TAttentionData;
@@ -20,7 +20,10 @@ export const AttentionBlock = async ({ data }: TProps) => {
   const monthLabel = format.dateTime(currentMonth, { year: "numeric", month: "long" });
 
   return (
-    <DataCard className="border-l-warning flex flex-col gap-3 border-l-4 px-6 py-5">
+    <Surface
+      elevation="sm"
+      className="border-l-warning flex flex-col gap-3 border-l-4 px-6 py-5 shadow-xs"
+    >
       <div className="flex items-center gap-2.5">
         <AlertTriangle size={18} className="text-warning" />
         <h3 className="text-foreground m-0 text-sm font-semibold">{t("title")}</h3>
@@ -69,6 +72,6 @@ export const AttentionBlock = async ({ data }: TProps) => {
           </li>
         )}
       </ul>
-    </DataCard>
+    </Surface>
   );
 };

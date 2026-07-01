@@ -6,7 +6,6 @@ import { useTranslations } from "next-intl";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
 import { ChartContainer, ChartLegend, ChartTooltip, type ChartConfig } from "@/components/ui/chart";
-import { DataCard } from "@/components/data-card";
 import { cn } from "@/lib/utils";
 import { useFormatMoney } from "@/lib/format/use-format-money";
 import type { TMonthlyExpensesAggregate } from "@/features/ledger";
@@ -23,6 +22,7 @@ import {
   sumTooltipValues,
   toTooltipRows,
 } from "./utils";
+import { Surface } from "@/components/surface";
 
 type TProps = {
   aggregate: TMonthlyExpensesAggregate;
@@ -59,7 +59,7 @@ export const MonthlyBarChart = ({ aggregate, title, subtitle, getServiceLabel }:
   };
 
   return (
-    <DataCard className="p-5">
+    <Surface elevation="sm" className="p-5 shadow-xs">
       <div className="mb-4">
         <h3 className="text-foreground text-sm font-semibold tracking-tight">{title}</h3>
         <p className="text-muted-foreground mt-0.5 text-xs">{subtitle}</p>
@@ -154,6 +154,6 @@ export const MonthlyBarChart = ({ aggregate, title, subtitle, getServiceLabel }:
           ))}
         </BarChart>
       </ChartContainer>
-    </DataCard>
+    </Surface>
   );
 };

@@ -1,6 +1,6 @@
-import { DataCard } from "@/components/data-card";
 import type { TAdminUserPropertyAccess } from "@/features/admin-users/types";
 import { PropertyRow } from "./property-row";
+import { Surface } from "@/components/surface";
 
 type TProps = {
   userId: string;
@@ -11,7 +11,7 @@ export const UserPropertiesCard = async ({ userId, properties }: TProps) => {
   const count = properties.length;
 
   return (
-    <DataCard className="overflow-hidden">
+    <Surface>
       <div className="border-border border-b px-6 py-4">
         <h3 className="text-sm font-semibold">Properties</h3>
         {count > 0 && (
@@ -39,6 +39,6 @@ export const UserPropertiesCard = async ({ userId, properties }: TProps) => {
           ))}
         </div>
       )}
-    </DataCard>
+    </Surface>
   );
 };

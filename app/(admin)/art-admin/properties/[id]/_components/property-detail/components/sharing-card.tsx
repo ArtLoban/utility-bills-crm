@@ -1,7 +1,7 @@
-import { DataCard } from "@/components/data-card";
 import type { TAdminPropertyDetail } from "@/features/admin-properties";
 
 import { SharingRow } from "./sharing-row";
+import { Surface } from "@/components/surface";
 
 type TProps = {
   owners: TAdminPropertyDetail["owners"];
@@ -10,7 +10,7 @@ type TProps = {
 
 export const SharingCard = ({ owners, isDeleted }: TProps) => {
   return (
-    <DataCard className="overflow-hidden">
+    <Surface>
       <div className="border-border border-b px-6 py-4">
         <h3 className="text-sm font-semibold">Sharing & access</h3>
       </div>
@@ -28,6 +28,6 @@ export const SharingCard = ({ owners, isDeleted }: TProps) => {
           ? "This property has been deleted. Access is read-only."
           : "Users listed above have access to this property. Manage sharing from within the app."}
       </p>
-    </DataCard>
+    </Surface>
   );
 };

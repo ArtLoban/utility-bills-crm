@@ -2,8 +2,8 @@
 
 import type { ReactNode } from "react";
 
-import { DataCard } from "@/components/data-card";
 import { cn } from "@/lib/utils";
+import { Surface } from "@/components/surface";
 
 type TProps = {
   title: string;
@@ -32,7 +32,7 @@ export const LineChartCard = ({
   moneySlot,
   consumptionSlot,
 }: TProps) => (
-  <DataCard className="p-5">
+  <Surface elevation="sm" className="p-5 shadow-xs">
     <div className="mb-4 flex items-start justify-between gap-3">
       <div>
         <h3 className="text-foreground text-sm font-semibold tracking-tight">{title}</h3>
@@ -78,5 +78,5 @@ export const LineChartCard = ({
     </div>
 
     {isConsumptionMode ? consumptionSlot : moneySlot}
-  </DataCard>
+  </Surface>
 );

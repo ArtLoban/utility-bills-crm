@@ -8,7 +8,7 @@ const surfaceVariants = cva("rounded-lg border bg-card", {
   variants: {
     elevation: {
       none: "",
-      sm: "shadow-sm dark:shadow-none",
+      sm: "hover:shadow-sm dark:shadow-none transition-shadow duration-150",
       hover:
         "shadow-sm transition duration-150 hover:-translate-y-px hover:shadow-md dark:shadow-none dark:hover:border-brand-border",
     },

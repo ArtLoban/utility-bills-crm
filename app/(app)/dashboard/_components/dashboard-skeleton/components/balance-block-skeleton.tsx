@@ -1,10 +1,10 @@
 import { Skeleton } from "@/components/ui/skeleton";
-import { DataCard } from "@/components/data-card";
+import { Surface } from "@/components/surface";
 
 const PROPERTY_NAME_CLASSES = ["w-48", "w-36", "w-32"] as const;
 
 export const BalanceBlockSkeleton = () => (
-  <DataCard className="overflow-hidden">
+  <Surface>
     <div className="border-b px-6 pt-5 pb-4">
       <Skeleton className="h-3 w-28 rounded" />
       <div className="mt-4 grid grid-cols-2 gap-8">
@@ -31,5 +31,5 @@ export const BalanceBlockSkeleton = () => (
         ))}
       </div>
     </div>
-  </DataCard>
+  </Surface>
 );

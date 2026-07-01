@@ -5,7 +5,6 @@ import { useTranslations } from "next-intl";
 import { Cell, Pie, PieChart } from "recharts";
 
 import { ChartContainer, ChartTooltip, type ChartConfig } from "@/components/ui/chart";
-import { DataCard } from "@/components/data-card";
 import { useFormatMoney } from "@/lib/format/use-format-money";
 import type { TMonthlyExpensesAggregate } from "@/features/ledger";
 import { SERVICE_TYPE_COLORS } from "@/features/services/service-type";
@@ -14,6 +13,7 @@ import { toPieData } from "../../../_data/chart-transforms";
 import { ChartTooltipCard } from "../components/chart-tooltip-card";
 import { buildBillsDrillUrl } from "../utils";
 import { PieLegend, type TPieLegendItem } from "./components/pie-legend";
+import { Surface } from "@/components/surface";
 
 type TProps = {
   aggregate: TMonthlyExpensesAggregate;
@@ -56,7 +56,7 @@ export const ExpensePieChart = ({
   }));
 
   return (
-    <DataCard className="p-6">
+    <Surface elevation="sm" className="p-6 shadow-xs">
       <div>
         <h3 className="text-foreground text-sm font-semibold tracking-tight">{title}</h3>
         <p className="text-muted-foreground mt-0.5 text-xs">{subtitle}</p>
@@ -129,6 +129,6 @@ export const ExpensePieChart = ({
           <PieLegend items={legendItems} />
         </div>
       )}
-    </DataCard>
+    </Surface>
   );
 };

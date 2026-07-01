@@ -1,6 +1,6 @@
-import { DataCard } from "@/components/data-card";
 import type { TActivityItem } from "@/features/admin-dashboard";
 import { ActivityRow } from "./activity-row";
+import { Surface } from "@/components/surface";
 
 type TProps = {
   items: TActivityItem[];
@@ -13,7 +13,7 @@ export const ActivityFeed = ({ items }: TProps) => {
         <h2 className="text-sm font-semibold">Recent activity</h2>
         <span className="text-muted-foreground text-xs">Last 20 across the system.</span>
       </div>
-      <DataCard className="overflow-hidden">
+      <Surface>
         {items.length === 0 ? (
           <div className="px-6 py-4">
             <p className="text-muted-foreground text-sm">No recent activity</p>
@@ -23,7 +23,7 @@ export const ActivityFeed = ({ items }: TProps) => {
             <ActivityRow key={item.id} item={item} isLast={i === items.length - 1} />
           ))
         )}
-      </DataCard>
+      </Surface>
     </section>
   );
 };

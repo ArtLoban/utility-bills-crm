@@ -2,10 +2,10 @@ import Link from "next/link";
 import { Home, TreePine, ChevronRight } from "lucide-react";
 import { getTranslations, getLocale } from "next-intl/server";
 
-import { DataCard } from "@/components/data-card";
 import { formatMoney } from "@/lib/format/money";
 import { cn } from "@/lib/utils";
 import type { TBalanceData } from "../_data/types";
+import { Surface } from "@/components/surface";
 
 type TProps = {
   data: TBalanceData;
@@ -29,7 +29,7 @@ export const BalanceBlock = async ({ data }: TProps) => {
   };
 
   return (
-    <DataCard className="overflow-hidden">
+    <Surface elevation="sm" className="shadow-xs">
       {/* Top section — summary KV grid */}
       <div className="border-b px-6 pt-5 pb-4">
         <div className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
@@ -106,6 +106,6 @@ export const BalanceBlock = async ({ data }: TProps) => {
           })}
         </div>
       </div>
-    </DataCard>
+    </Surface>
   );
 };
