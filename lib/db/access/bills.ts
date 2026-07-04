@@ -35,6 +35,7 @@ export type TBillGlobalRow = {
   >;
   serviceTypeCode: TServiceTypeCode;
   serviceTypeUnit: TServiceTypeUnit | null;
+  serviceName: string | null;
   property: { id: PropertyId; name: string; type: TPropertyType };
   role: TPropertyRole;
 };
@@ -69,6 +70,7 @@ const BILL_SELECT = {
   },
   serviceTypeCode: serviceTypes.code,
   serviceTypeUnit: serviceTypes.unit,
+  serviceName: services.name,
   propertyId: properties.id,
   propertyName: properties.name,
   propertyType: properties.type,
@@ -88,6 +90,7 @@ const toRow = (r: TRawRow): TBillGlobalRow => ({
   bill: r.bill,
   serviceTypeCode: r.serviceTypeCode as TServiceTypeCode,
   serviceTypeUnit: r.serviceTypeUnit,
+  serviceName: r.serviceName,
   property: { id: r.propertyId, name: r.propertyName, type: r.propertyType },
   role: r.role,
 });

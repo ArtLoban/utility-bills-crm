@@ -28,7 +28,9 @@ export const getPaymentsColumns = (t: TTranslateFn): ColumnDef<TPaymentGlobalRow
     id: "service",
     accessorFn: (row) => row.serviceTypeCode,
     header: t("columns.service"),
-    cell: ({ row }) => <ServiceCell type={row.original.serviceTypeCode} />,
+    cell: ({ row }) => (
+      <ServiceCell type={row.original.serviceTypeCode} name={row.original.serviceName} />
+    ),
   },
   {
     id: "amount",

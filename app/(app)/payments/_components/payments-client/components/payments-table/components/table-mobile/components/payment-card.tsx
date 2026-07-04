@@ -14,8 +14,9 @@ type TProps = {
 };
 
 export const PaymentCard = ({ payment }: TProps) => {
-  const { serviceTypeCode, payment: row, property } = payment;
-  const { color, Icon, label: serviceName } = useServiceTypeMeta(serviceTypeCode);
+  const { serviceTypeCode, serviceName, payment: row, property } = payment;
+  const { color, Icon, label: typeLabel } = useServiceTypeMeta(serviceTypeCode);
+  const serviceLabel = serviceName ?? typeLabel;
   const formatMoney = useFormatMoney();
 
   const dateStr = format(new Date(`${row.paidAt}T00:00:00`), DISPLAY_DATE_FORMAT);
@@ -27,7 +28,7 @@ export const PaymentCard = ({ payment }: TProps) => {
         <div className="flex items-center gap-2">
           <IconBadge icon={Icon} color={color} size="sm" />
           <span className="min-w-0 flex-1 truncate font-semibold tracking-tight">
-            {serviceName}
+            {serviceLabel}
           </span>
           <span className="text-success shrink-0 font-bold whitespace-nowrap tabular-nums">
             {amountStr}

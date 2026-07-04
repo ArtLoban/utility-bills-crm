@@ -37,6 +37,7 @@ export type TPaymentGlobalRow = {
   payment: Pick<TPayment, "id" | "serviceId" | "paidAt" | "amount" | "notes" | "createdAt">;
   serviceTypeCode: TServiceTypeCode;
   serviceTypeUnit: TServiceTypeUnit | null;
+  serviceName: string | null;
   property: { id: PropertyId; name: string; type: TPropertyType };
   role: TPropertyRole;
 };

@@ -15,10 +15,11 @@ type TProps = {
 };
 
 export const BillCard = ({ row }: TProps) => {
-  const { serviceTypeCode, bill, property } = row;
+  const { serviceTypeCode, serviceName, bill, property } = row;
   const formatter = useFormatter();
   const formatMoney = useFormatMoney();
-  const { color, Icon, label: serviceName } = useServiceTypeMeta(serviceTypeCode);
+  const { color, Icon, label: typeLabel } = useServiceTypeMeta(serviceTypeCode);
+  const serviceLabel = serviceName ?? typeLabel;
 
   const dateStr = format(new Date(bill.createdAt), DISPLAY_DATE_FORMAT);
   const periodLabel = formatter.dateTime(new Date(bill.periodMonth), {
@@ -33,7 +34,7 @@ export const BillCard = ({ row }: TProps) => {
         <div className="flex items-center gap-2">
           <IconBadge icon={Icon} color={color} size="sm" />
           <span className="min-w-0 flex-1 truncate font-semibold tracking-tight">
-            {serviceName}
+            {serviceLabel}
           </span>
           <span className="text-destructive shrink-0 font-bold whitespace-nowrap tabular-nums">
             {amountStr}
