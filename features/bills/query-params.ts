@@ -15,6 +15,7 @@ export const billsSearchParams = {
   ),
   propertyId: parseAsString,
   services: parseAsSemicolonArray,
+  serviceId: parseAsString,
 };
 
 export const loadBillsParams = createLoader(billsSearchParams);

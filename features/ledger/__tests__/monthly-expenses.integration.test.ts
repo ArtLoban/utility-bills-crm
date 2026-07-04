@@ -18,6 +18,7 @@ import { monthlyExpensesByService } from "../query";
 let electricityTypeId: TServiceTypeId;
 let gasTypeId: TServiceTypeId;
 let coldWaterTypeId: TServiceTypeId;
+let otherTypeId: TServiceTypeId;
 
 let userId: UserId;
 let otherUserId: UserId;
@@ -27,17 +28,21 @@ let electricityServiceId: TServiceId;
 let gasServiceId: TServiceId;
 let coldWaterServiceId: TServiceId;
 let otherPropertyServiceId: TServiceId;
+// Two `other` services on the main property — must NOT collapse into one series (Slice 4).
+let garageServiceId: TServiceId;
+let storageServiceId: TServiceId;
 
 beforeAll(async () => {
   // --- Look up seeded service types ---
   const sts = await db
     .select({ id: serviceTypes.id, code: serviceTypes.code })
     .from(serviceTypes)
-    .where(inArray(serviceTypes.code, ["electricity", "gas", "cold_water"]));
+    .where(inArray(serviceTypes.code, ["electricity", "gas", "cold_water", "other"]));
 
   electricityTypeId = sts.find((s) => s.code === "electricity")!.id;
   gasTypeId = sts.find((s) => s.code === "gas")!.id;
   coldWaterTypeId = sts.find((s) => s.code === "cold_water")!.id;
+  otherTypeId = sts.find((s) => s.code === "other")!.id;
 
   // --- Users ---
   const insertedUsers = await db
@@ -83,6 +88,8 @@ beforeAll(async () => {
       { propertyId, serviceTypeId: gasTypeId },
       { propertyId, serviceTypeId: coldWaterTypeId },
       { propertyId: otherPropertyId, serviceTypeId: electricityTypeId },
+      { propertyId, serviceTypeId: otherTypeId, name: "Garage" },
+      { propertyId, serviceTypeId: otherTypeId, name: "Storage" },
     ])
     .returning({ id: services.id });
 
@@ -90,6 +97,8 @@ beforeAll(async () => {
   gasServiceId = insertedServices[1]!.id;
   coldWaterServiceId = insertedServices[2]!.id;
   otherPropertyServiceId = insertedServices[3]!.id;
+  garageServiceId = insertedServices[4]!.id;
+  storageServiceId = insertedServices[5]!.id;
 
   // --- Bills for the main user's property ---
   // Electricity: 3 months (Jan–Mar 2025)
@@ -147,6 +156,29 @@ beforeAll(async () => {
       periodMonth: "2025-01-01",
       amount: "999.00",
     },
+    // Two `other` services, isolated in a 2026 range so the 2025-based assertions above
+    // never see them. Garage: Jan+Feb; Storage: Jan only (gap in Feb).
+    {
+      serviceId: garageServiceId,
+      periodStart: "2026-01-01",
+      periodEnd: "2026-01-31",
+      periodMonth: "2026-01-01",
+      amount: "50.00",
+    },
+    {
+      serviceId: garageServiceId,
+      periodStart: "2026-02-01",
+      periodEnd: "2026-02-28",
+      periodMonth: "2026-02-01",
+      amount: "70.00",
+    },
+    {
+      serviceId: storageServiceId,
+      periodStart: "2026-01-01",
+      periodEnd: "2026-01-31",
+      periodMonth: "2026-01-01",
+      amount: "30.00",
+    },
   ]);
 });
 
@@ -185,7 +217,7 @@ describe("monthlyExpensesByService", () => {
       dateTo: "2025-03-01",
     });
 
-    const gas = result.services.find((s) => s.code === "gas");
+    const gas = result.services.find((s) => s.key === "gas");
     expect(gas).toBeDefined();
     expect(gas!.monthlyAmounts).toEqual([200, 250, 0]);
   });
@@ -196,7 +228,7 @@ describe("monthlyExpensesByService", () => {
       dateTo: "2025-03-01",
     });
 
-    const elec = result.services.find((s) => s.code === "electricity");
+    const elec = result.services.find((s) => s.key === "electricity");
     expect(elec).toBeDefined();
     expect(elec!.monthlyAmounts).toEqual([100, 120, 140]);
   });
@@ -209,7 +241,7 @@ describe("monthlyExpensesByService", () => {
       dateTo: "2025-01-01",
     });
 
-    const elec = result.services.find((s) => s.code === "electricity");
+    const elec = result.services.find((s) => s.key === "electricity");
     // Only userId's property's electricity bill (100) — not otherProperty's (999)
     expect(elec?.monthlyAmounts[0]).toBe(100);
   });
@@ -235,7 +267,7 @@ describe("monthlyExpensesByService", () => {
     });
 
     expect(result.services).toHaveLength(1);
-    expect(result.services[0]!.code).toBe("electricity");
+    expect(result.services[0]!.key).toBe("electricity");
   });
 
   it("returns empty services when no bills exist in the given date range", async () => {
@@ -256,7 +288,7 @@ describe("monthlyExpensesByService", () => {
     });
 
     expect(result.months).toEqual(["2025-01-01"]);
-    const elec = result.services.find((s) => s.code === "electricity");
+    const elec = result.services.find((s) => s.key === "electricity");
     expect(elec).toBeDefined();
     expect(elec!.monthlyAmounts).toEqual([100]);
   });
@@ -267,7 +299,7 @@ describe("monthlyExpensesByService", () => {
       dateTo: "2025-01-01",
     });
 
-    const codes = result.services.map((s) => s.code).sort();
+    const codes = result.services.map((s) => s.key).sort();
     expect(codes).toEqual(["cold_water", "electricity", "gas"]);
   });
 
@@ -280,6 +312,32 @@ describe("monthlyExpensesByService", () => {
     // Canonical "UI display order" from service_types.sortOrder:
     //   electricity(10), gas(20), cold_water(30)
     // Alphabetical-by-code would instead yield: cold_water, electricity, gas.
-    expect(result.services.map((s) => s.code)).toEqual(["electricity", "gas", "cold_water"]);
+    expect(result.services.map((s) => s.key)).toEqual(["electricity", "gas", "cold_water"]);
+  });
+
+  it("gives each `other` service its own series instead of collapsing them (Slice 4)", async () => {
+    const result = await monthlyExpensesByService(userId, {
+      dateFrom: "2026-01-01",
+      dateTo: "2026-02-01",
+    });
+
+    // Garage and Storage are both `other` — they must NOT sum into one grey series;
+    // each is its own series keyed by service id.
+    const custom = result.services.filter((s) => s.kind === "custom");
+    expect(custom).toHaveLength(2);
+
+    const garage = result.services.find((s) => s.key === garageServiceId);
+    const storage = result.services.find((s) => s.key === storageServiceId);
+
+    expect(garage).toMatchObject({ kind: "custom", serviceId: garageServiceId, name: "Garage" });
+    expect(garage!.monthlyAmounts).toEqual([50, 70]);
+
+    expect(storage).toMatchObject({ kind: "custom", serviceId: storageServiceId, name: "Storage" });
+    // Storage billed in Jan only — Feb is a gap.
+    expect(storage!.monthlyAmounts).toEqual([30, 0]);
+
+    // Ordered by name within the `other` group: Garage before Storage.
+    const keys = result.services.map((s) => s.key);
+    expect(keys.indexOf(garageServiceId)).toBeLessThan(keys.indexOf(storageServiceId));
   });
 });

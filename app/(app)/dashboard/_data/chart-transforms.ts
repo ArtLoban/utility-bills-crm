@@ -1,26 +1,27 @@
 import type { TMonthlyExpensesAggregate } from "@/features/ledger";
 import { toIsoDate } from "@/lib/format/date";
 
-export type TPieEntry = { code: string; total: number };
+export type TPieEntry = { key: string; total: number };
 export type TPivotRow = Record<string, string | number>;
 
-// Sum each service over the full range. Services with total 0 are excluded
-// (they add nothing to the pie and clutter the legend).
+// Sum each series over the full range. Series with total 0 are excluded
+// (they add nothing to the pie and clutter the legend). Keyed by series identity
+// (`key`): type code for regular types, service id for custom `other` services.
 export const toPieData = (agg: TMonthlyExpensesAggregate): TPieEntry[] =>
   agg.services
     .map((s) => ({
-      code: s.code,
+      key: s.key,
       total: s.monthlyAmounts.reduce((sum, n) => sum + n, 0),
     }))
     .filter((e) => e.total > 0);
 
-// Pivot to one row per month with a key per service code.
+// Pivot to one row per month with a field per series key.
 // Used by both BarChart and LineChart — same row-per-month format.
 export const toBarData = (agg: TMonthlyExpensesAggregate): TPivotRow[] =>
   agg.months.map((month, i) => {
     const row: TPivotRow = { month };
     for (const s of agg.services) {
-      row[s.code] = s.monthlyAmounts[i] ?? 0;
+      row[s.key] = s.monthlyAmounts[i] ?? 0;
     }
     return row;
   });

@@ -122,6 +122,16 @@
     --zone-t3: var(--violet-500);
     --rate-fixed: var(--teal-500);
 
+    /* Domain: categorical palette for custom `other` expense series (Slice 4).
+       Mutually distinct hues so several custom services stay distinguishable in the
+       pie/bar charts; cycled by index. purple/green are unused by any service type. */
+    --series-1: var(--purple-600);
+    --series-2: var(--teal-500);
+    --series-3: var(--pink-500);
+    --series-4: var(--orange-500);
+    --series-5: var(--green-600);
+    --series-6: var(--sky-500);
+
     /* Brand: DevNote. Custom TODO: reuse this where needed! */
     --brand: var(--purple-600);
     --brand-bg: var(--purple-50);

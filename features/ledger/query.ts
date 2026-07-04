@@ -1,4 +1,4 @@
-import { and, asc, desc, eq, gt, gte, inArray, isNull, lt, lte, or, sum } from "drizzle-orm";
+import { and, asc, desc, eq, gt, gte, inArray, isNull, lt, lte, or, sql, sum } from "drizzle-orm";
 
 import { db } from "@/lib/db/client";
 import { toIsoDate } from "@/lib/format/date";
@@ -16,7 +16,14 @@ import { meters } from "@/lib/db/schema/meters";
 import { readings } from "@/lib/db/schema/readings";
 import { serviceByIdForUser } from "@/lib/db/access/services";
 import type { UserId } from "@/lib/db/schema/auth";
-import type { TBalance, TMonthlyExpensesAggregate, TReadingPair } from "./types";
+import { SERVICE_TYPE_CODES, type TServiceTypeCode } from "@/features/services/service-type";
+import type {
+  TBalance,
+  TExpenseSeriesIdentity,
+  TMonthlyExpensesAggregate,
+  TReadingPair,
+  TServiceExpenseRow,
+} from "./types";
 import { computeBalance } from "./core";
 
 // Pure functions: userId is always a parameter when access scoping is needed.
@@ -308,9 +315,22 @@ export const monthlyExpensesByService = async (
       : undefined,
   );
 
+  // Series identity: regular types collapse by code; `other` services split by service id
+  // (Slice 4). The `::text` cast gives both CASE branches a common type (uuid vs text).
+  const seriesKey = sql<string>`case when ${serviceTypes.code} = ${SERVICE_TYPE_CODES.OTHER} then ${services.id}::text else ${serviceTypes.code} end`;
+  const seriesName = sql<
+    string | null
+  >`case when ${serviceTypes.code} = ${SERVICE_TYPE_CODES.OTHER} then ${services.name} else null end`;
+  const seriesServiceId = sql<
+    string | null
+  >`case when ${serviceTypes.code} = ${SERVICE_TYPE_CODES.OTHER} then ${services.id}::text else null end`;
+
   const rows = await db
     .select({
+      key: seriesKey,
       code: serviceTypes.code,
+      name: seriesName,
+      serviceId: seriesServiceId,
       month: bills.periodMonth,
       total: sum(bills.amount),
     })
@@ -327,29 +347,47 @@ export const monthlyExpensesByService = async (
       ),
     )
     .where(conditions)
-    .groupBy(serviceTypes.code, serviceTypes.sortOrder, bills.periodMonth)
-    .orderBy(asc(serviceTypes.sortOrder), asc(bills.periodMonth));
+    // Group/order by SELECT-list ordinals (1=key, 3=name, 5=month) rather than by the
+    // CASE fragments: Drizzle re-parameterizes an inline `sql` on each use, so repeating
+    // the expression in GROUP BY renders different bind slots and Postgres won't match it
+    // to the SELECT ("must appear in GROUP BY"). Ordinals point at the exact select items.
+    .groupBy(sql`1, 2, 3, 4, 5`, serviceTypes.sortOrder)
+    // Catalog order first; within the `other` group (one sortOrder) order by name.
+    .orderBy(asc(serviceTypes.sortOrder), sql`3`, sql`5`);
 
   const months = generateMonthAxis(dateFrom, dateTo);
 
-  // Group by service type code — multiple service instances of the same type
-  // (e.g., electricity across two properties) are summed into one row per type.
-  // Drizzle returns date columns as "YYYY-MM-DD" strings in default (string) mode.
-  const amountByCodeAndMonth = new Map<string, Map<string, number>>();
+  // Accumulate per series key. The query's ORDER BY fixes series order, so the Map's
+  // insertion order carries through to the result. Drizzle returns date columns as
+  // "YYYY-MM-DD" strings in default (string) mode.
+  type TAccum = { identity: TExpenseSeriesIdentity; amountByMonth: Map<string, number> };
+  const byKey = new Map<string, TAccum>();
 
   for (const row of rows) {
-    if (!amountByCodeAndMonth.has(row.code)) {
-      amountByCodeAndMonth.set(row.code, new Map());
+    const { key, code, name, serviceId, month, total } = row;
+    let accum = byKey.get(key);
+    if (!accum) {
+      const identity: TExpenseSeriesIdentity =
+        code === SERVICE_TYPE_CODES.OTHER
+          ? { kind: "custom", serviceId: serviceId as TServiceId, name }
+          : { kind: "type", code: code as TServiceTypeCode };
+      accum = { identity, amountByMonth: new Map() };
+      byKey.set(key, accum);
     }
-    const monthKey = String(row.month).slice(0, 10);
-    const prev = amountByCodeAndMonth.get(row.code)!.get(monthKey) ?? 0;
-    amountByCodeAndMonth.get(row.code)!.set(monthKey, prev + parseFloat(row.total ?? "0"));
+    const monthKey = String(month).slice(0, 10);
+    accum.amountByMonth.set(
+      monthKey,
+      (accum.amountByMonth.get(monthKey) ?? 0) + parseFloat(total ?? "0"),
+    );
   }
 
-  const serviceRows = [...amountByCodeAndMonth.entries()].map(([code, amountByMonth]) => ({
-    code,
-    monthlyAmounts: months.map((m) => amountByMonth.get(m) ?? 0),
-  }));
+  const serviceRows: TServiceExpenseRow[] = [...byKey.entries()].map(
+    ([key, { identity, amountByMonth }]) => ({
+      key,
+      ...identity,
+      monthlyAmounts: months.map((m) => amountByMonth.get(m) ?? 0),
+    }),
+  );
 
   return { months, services: serviceRows };
 };

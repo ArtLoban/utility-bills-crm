@@ -13,10 +13,11 @@ import {
 } from "@/components/ui/select";
 import { useQueryFilters } from "@/lib/hooks/use-query-filters";
 import { resolveServiceTypeLabel } from "@/features/services/service-label";
-import type { TServiceTypeCode } from "@/features/services/service-type";
+import { SERVICE_TYPE_CODES, type TServiceTypeCode } from "@/features/services/service-type";
 import type { TMonthlyExpensesAggregate } from "@/features/ledger";
 import type { TAvailableConsumptionService } from "@/features/meters";
 import { CHART_MODES, DASHBOARD_CHART_PARAMS } from "../../_data/query-params";
+import { buildChartSeries } from "./series";
 import { FilterBar } from "./components/filter-bar";
 import { INITIAL_FILTERS, URL_FIELDS } from "./constants";
 import { ExpensePieChart } from "./expense-pie-chart";
@@ -76,10 +77,16 @@ export const ChartsSection = ({
 
   const periodLabel = `${formatMonthLong(resolvedDateFrom)} – ${formatMonthLong(resolvedDateTo)}`;
 
-  const serviceOptions = aggregate.services.map((s) => ({
-    id: s.code,
-    name: getServiceLabel(s.code),
-  }));
+  // Chart series: regular types stay merged by concept, custom `other` split per service.
+  const series = buildChartSeries(aggregate, tServiceTypes);
+
+  // Filter bar stays type-based (it filters bills by type code): collapse every custom
+  // `other` series back to the single `other` type, deduped, preserving catalog order.
+  const serviceOptions = [
+    ...new Set(
+      aggregate.services.map((s) => (s.kind === "type" ? s.code : SERVICE_TYPE_CODES.OTHER)),
+    ),
+  ].map((code) => ({ id: code, name: getServiceLabel(code) }));
 
   const effectiveServiceCode = chartState.consumptionService ?? consumptionServiceCode;
   const effectiveService = availableConsumptionServices.find(
@@ -143,17 +150,17 @@ export const ChartsSection = ({
       <div className="grid grid-cols-1 gap-4 md:grid-cols-[1fr_1.4fr]">
         <ExpensePieChart
           aggregate={aggregate}
+          series={series}
           dateFrom={resolvedDateFrom}
           dateTo={resolvedDateTo}
           title={t("pie.title")}
           subtitle={periodLabel}
-          getServiceLabel={getServiceLabel}
         />
         <MonthlyBarChart
           aggregate={aggregate}
+          series={series}
           title={t("bar.title")}
           subtitle={t("bar.subtitle")}
-          getServiceLabel={getServiceLabel}
         />
       </div>
 
@@ -168,7 +175,7 @@ export const ChartsSection = ({
         consumptionModeLabel={t("line.mode.consumption")}
         hasConsumptionData={hasConsumptionData}
         servicePickerSlot={servicePickerSlot}
-        moneySlot={<TrendLineChart aggregate={aggregate} getServiceLabel={getServiceLabel} />}
+        moneySlot={<TrendLineChart aggregate={aggregate} series={series} />}
         consumptionSlot={consumptionContent}
       />
     </div>

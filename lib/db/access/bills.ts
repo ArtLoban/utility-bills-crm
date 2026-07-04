@@ -103,6 +103,7 @@ const buildConditions = (userId: UserId, params: TBillsListParams) => {
 
   if (params.propertyId) conds.push(eq(properties.id, params.propertyId as PropertyId));
   if (params.services?.length) conds.push(inArray(serviceTypes.code, params.services));
+  if (params.serviceId) conds.push(eq(services.id, params.serviceId as TServiceId));
   if (params.dateFrom) conds.push(gte(bills.periodMonth, params.dateFrom));
   if (params.dateTo) conds.push(lte(bills.periodMonth, params.dateTo));
 

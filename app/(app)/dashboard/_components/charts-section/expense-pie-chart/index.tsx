@@ -7,51 +7,46 @@ import { Cell, Pie, PieChart } from "recharts";
 import { ChartContainer, ChartTooltip, type ChartConfig } from "@/components/ui/chart";
 import { useFormatMoney } from "@/lib/format/use-format-money";
 import type { TMonthlyExpensesAggregate } from "@/features/ledger";
-import { SERVICE_TYPE_COLORS } from "@/features/services/service-type";
 
 import { toPieData } from "../../../_data/chart-transforms";
 import { ChartTooltipCard } from "../components/chart-tooltip-card";
 import { buildBillsDrillUrl } from "../utils";
+import type { TChartSeries } from "../series";
 import { PieLegend, type TPieLegendItem } from "./components/pie-legend";
 import { Surface } from "@/components/surface";
 
 type TProps = {
   aggregate: TMonthlyExpensesAggregate;
+  series: TChartSeries[];
   dateFrom: string;
   dateTo: string;
   title: string;
   subtitle: string;
-  getServiceLabel: (code: string) => string;
 };
-
-const serviceColor = (code: string): string =>
-  SERVICE_TYPE_COLORS[code as keyof typeof SERVICE_TYPE_COLORS] ?? "var(--muted)";
 
 export const ExpensePieChart = ({
   aggregate,
+  series,
   dateFrom,
   dateTo,
   title,
   subtitle,
-  getServiceLabel,
 }: TProps) => {
   const router = useRouter();
   const t = useTranslations("dashboard.charts");
   const formatMoney = useFormatMoney();
   const pieData = toPieData(aggregate);
+  const seriesByKey = new Map(series.map((s) => [s.key, s]));
 
   const chartConfig: ChartConfig = Object.fromEntries(
-    aggregate.services.map((s) => [
-      s.code,
-      { label: getServiceLabel(s.code), color: serviceColor(s.code) },
-    ]),
+    series.map((s) => [s.key, { label: s.label, color: s.color }]),
   );
 
   const total = pieData.reduce((sum, e) => sum + e.total, 0);
   const legendItems: TPieLegendItem[] = pieData.map((e) => ({
-    code: e.code,
-    label: getServiceLabel(e.code),
-    color: serviceColor(e.code),
+    key: e.key,
+    label: seriesByKey.get(e.key)?.label ?? e.key,
+    color: seriesByKey.get(e.key)?.color ?? "var(--muted-foreground)",
     percent: total > 0 ? Math.round((e.total / total) * 100) : 0,
   }));
 
@@ -82,11 +77,11 @@ export const ExpensePieChart = ({
                     active && payload?.length ? (
                       <ChartTooltipCard
                         rows={payload.map((p) => {
-                          const code = String(p.name);
+                          const key = String(p.name);
                           return {
-                            key: code,
-                            label: getServiceLabel(code),
-                            color: typeof p.color === "string" ? p.color : `var(--color-${code})`,
+                            key,
+                            label: seriesByKey.get(key)?.label ?? key,
+                            color: typeof p.color === "string" ? p.color : `var(--color-${key})`,
                             value: formatMoney(typeof p.value === "number" ? p.value : 0),
                           };
                         })}
@@ -97,7 +92,7 @@ export const ExpensePieChart = ({
                 <Pie
                   data={pieData}
                   dataKey="total"
-                  nameKey="code"
+                  nameKey="key"
                   cx="50%"
                   cy="50%"
                   innerRadius="56%"
@@ -105,12 +100,13 @@ export const ExpensePieChart = ({
                   paddingAngle={2}
                   cursor="pointer"
                   onClick={(entry) => {
-                    const code = (entry as unknown as { code: string }).code;
-                    router.push(buildBillsDrillUrl({ services: [code], dateFrom, dateTo }));
+                    const key = (entry as unknown as { key: string }).key;
+                    const drill = seriesByKey.get(key)?.drill;
+                    if (drill) router.push(buildBillsDrillUrl({ drill, dateFrom, dateTo }));
                   }}
                 >
                   {pieData.map((entry) => (
-                    <Cell key={entry.code} fill={`var(--color-${entry.code})`} />
+                    <Cell key={entry.key} fill={`var(--color-${entry.key})`} />
                   ))}
                 </Pie>
               </PieChart>

@@ -6,11 +6,11 @@ import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 import { ChartContainer, ChartLegend, ChartTooltip, type ChartConfig } from "@/components/ui/chart";
 import { useFormatMoney } from "@/lib/format/use-format-money";
 import type { TMonthlyExpensesAggregate } from "@/features/ledger";
-import { SERVICE_TYPE_COLORS } from "@/features/services/service-type";
 
 import { toLineData } from "../../_data/chart-transforms";
 import { ChartTooltipCard } from "./components/chart-tooltip-card";
 import { LineChartLegend } from "./components/line-chart-legend";
+import type { TChartSeries } from "./series";
 import {
   formatMonthFull,
   formatMonthLabel,
@@ -21,22 +21,17 @@ import {
 
 type TProps = {
   aggregate: TMonthlyExpensesAggregate;
-  getServiceLabel: (code: string) => string;
+  series: TChartSeries[];
 };
 
-const TrendLineChart = ({ aggregate, getServiceLabel }: TProps) => {
+const TrendLineChart = ({ aggregate, series }: TProps) => {
   const t = useTranslations("dashboard.charts");
   const formatMoney = useFormatMoney();
   const lineData = toLineData(aggregate);
+  const labelOf = (key: string): string => series.find((s) => s.key === key)?.label ?? key;
 
   const chartConfig: ChartConfig = Object.fromEntries(
-    aggregate.services.map((s) => [
-      s.code,
-      {
-        label: getServiceLabel(s.code),
-        color: SERVICE_TYPE_COLORS[s.code as keyof typeof SERVICE_TYPE_COLORS] ?? "var(--muted)",
-      },
-    ]),
+    series.map((s) => [s.key, { label: s.label, color: s.color }]),
   );
 
   return (
@@ -69,7 +64,7 @@ const TrendLineChart = ({ aggregate, getServiceLabel }: TProps) => {
             active && payload?.length ? (
               <ChartTooltipCard
                 header={formatMonthFull(String(label))}
-                rows={toTooltipRows(payload, getServiceLabel, formatMoney)}
+                rows={toTooltipRows(payload, labelOf, formatMoney)}
                 total={{ label: t("tooltip.total"), value: formatMoney(sumTooltipValues(payload)) }}
               />
             ) : null
@@ -79,25 +74,25 @@ const TrendLineChart = ({ aggregate, getServiceLabel }: TProps) => {
           align="left"
           content={() => (
             <LineChartLegend
-              items={aggregate.services.map((s) => ({
-                key: s.code,
-                label: getServiceLabel(s.code),
-                color: `var(--color-${s.code})`,
+              items={series.map((s) => ({
+                key: s.key,
+                label: s.label,
+                color: `var(--color-${s.key})`,
               }))}
             />
           )}
         />
-        {aggregate.services.map((s) => (
+        {series.map((s) => (
           <Line
-            key={s.code}
+            key={s.key}
             type="linear"
-            dataKey={s.code}
-            stroke={`var(--color-${s.code})`}
+            dataKey={s.key}
+            stroke={`var(--color-${s.key})`}
             strokeWidth={2}
             dot={{
               r: 2.5,
               fill: "var(--background)",
-              stroke: `var(--color-${s.code})`,
+              stroke: `var(--color-${s.key})`,
               strokeWidth: 1.5,
             }}
             activeDot={{ r: 5 }}

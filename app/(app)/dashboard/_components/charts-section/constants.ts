@@ -17,3 +17,14 @@ export const URL_FIELDS = {
   [DATE_PARAMS.DATE_FROM]: parseAsString,
   [DATE_PARAMS.DATE_TO]: parseAsString,
 };
+
+// Categorical colors for custom `other` series, mirroring --series-N in app/tokens.css.
+// Assigned by index and cycled, so several custom services stay visually distinct.
+export const CUSTOM_SERIES_COLORS = [
+  "var(--series-1)",
+  "var(--series-2)",
+  "var(--series-3)",
+  "var(--series-4)",
+  "var(--series-5)",
+  "var(--series-6)",
+] as const;

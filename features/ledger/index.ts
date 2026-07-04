@@ -1,6 +1,7 @@
 export type {
   TBalance,
   TExpectedAmount,
+  TExpenseSeriesIdentity,
   TMonthlyExpensesAggregate,
   TReadingPair,
   TServiceExpenseRow,

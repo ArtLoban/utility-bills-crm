@@ -2,6 +2,7 @@ import { ROUTES } from "@/lib/routes";
 import { toIsoDate } from "@/lib/format/date";
 
 import type { TTooltipRow } from "./components/chart-tooltip-card";
+import type { TSeriesDrill } from "./series";
 
 // Format "2025-06-01" → "Jun" for X-axis tick labels.
 export const formatMonthLabel = (isoDate: string): string =>
@@ -34,18 +35,18 @@ export const lastDayOfMonth = (isoFirstOfMonth: string): string => {
   return toIsoDate(d);
 };
 
-// Build a bills list URL pre-filtered by service code(s) and date range.
-// Used for drill-down from pie segments and bar stacks (Decision #148).
+// Build a bills list URL pre-filtered by a series' drill target and date range.
+// Used for drill-down from pie segments and bar stacks (Decision #148). A regular type
+// filters by its type code; a custom `other` series filters by its specific service id.
 export const buildBillsDrillUrl = (params: {
-  services: string[];
+  drill: TSeriesDrill;
   dateFrom: string;
   dateTo: string;
 }): string => {
-  const search = new URLSearchParams({
-    services: params.services.join(";"),
-    dateFrom: params.dateFrom,
-    dateTo: params.dateTo,
-  });
+  const { drill, dateFrom, dateTo } = params;
+  const search = new URLSearchParams({ dateFrom, dateTo });
+  if (drill.kind === "type") search.set("services", drill.code);
+  else search.set("serviceId", drill.serviceId);
   return `${ROUTES.bills}?${search.toString()}`;
 };
 

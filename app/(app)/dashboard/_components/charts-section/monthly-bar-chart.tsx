@@ -9,10 +9,10 @@ import { ChartContainer, ChartLegend, ChartTooltip, type ChartConfig } from "@/c
 import { cn } from "@/lib/utils";
 import { useFormatMoney } from "@/lib/format/use-format-money";
 import type { TMonthlyExpensesAggregate } from "@/features/ledger";
-import { SERVICE_TYPE_COLORS } from "@/features/services/service-type";
 
 import { toBarData } from "../../_data/chart-transforms";
 import { ChartTooltipCard } from "./components/chart-tooltip-card";
+import type { TChartSeries } from "./series";
 import {
   buildBillsDrillUrl,
   formatMonthFull,
@@ -26,34 +26,30 @@ import { Surface } from "@/components/surface";
 
 type TProps = {
   aggregate: TMonthlyExpensesAggregate;
+  series: TChartSeries[];
   title: string;
   subtitle: string;
-  getServiceLabel: (code: string) => string;
 };
 
-export const MonthlyBarChart = ({ aggregate, title, subtitle, getServiceLabel }: TProps) => {
+export const MonthlyBarChart = ({ aggregate, series, title, subtitle }: TProps) => {
   const router = useRouter();
   const t = useTranslations("dashboard.charts");
   const formatMoney = useFormatMoney();
   const [hiddenSeries, setHiddenSeries] = useState<Set<string>>(new Set());
 
   const barData = toBarData(aggregate);
+  const seriesByKey = new Map(series.map((s) => [s.key, s]));
+  const labelOf = (key: string): string => seriesByKey.get(key)?.label ?? key;
 
   const chartConfig: ChartConfig = Object.fromEntries(
-    aggregate.services.map((s) => [
-      s.code,
-      {
-        label: getServiceLabel(s.code),
-        color: SERVICE_TYPE_COLORS[s.code as keyof typeof SERVICE_TYPE_COLORS] ?? "var(--muted)",
-      },
-    ]),
+    series.map((s) => [s.key, { label: s.label, color: s.color }]),
   );
 
-  const toggleSeries = (code: string) => {
+  const toggleSeries = (key: string) => {
     setHiddenSeries((prev) => {
       const next = new Set(prev);
-      if (next.has(code)) next.delete(code);
-      else next.add(code);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
       return next;
     });
   };
@@ -94,7 +90,7 @@ export const MonthlyBarChart = ({ aggregate, title, subtitle, getServiceLabel }:
               active && payload?.length ? (
                 <ChartTooltipCard
                   header={formatMonthFull(String(label))}
-                  rows={toTooltipRows(payload, getServiceLabel, formatMoney)}
+                  rows={toTooltipRows(payload, labelOf, formatMoney)}
                   total={{
                     label: t("tooltip.total"),
                     value: formatMoney(sumTooltipValues(payload)),
@@ -108,13 +104,13 @@ export const MonthlyBarChart = ({ aggregate, title, subtitle, getServiceLabel }:
             content={({ payload }) => (
               <div className="flex flex-wrap items-center gap-2 pt-3">
                 {payload?.map((item) => {
-                  const code = String(item.dataKey);
-                  const hidden = hiddenSeries.has(code);
+                  const key = String(item.dataKey);
+                  const hidden = hiddenSeries.has(key);
                   return (
                     <button
-                      key={code}
+                      key={key}
                       type="button"
-                      onClick={() => toggleSeries(code)}
+                      onClick={() => toggleSeries(key)}
                       className={cn(
                         "hover:bg-muted flex cursor-pointer items-center gap-1.5 rounded px-1.5 py-0.5 text-xs transition-colors",
                         hidden && "text-muted-foreground line-through",
@@ -124,27 +120,27 @@ export const MonthlyBarChart = ({ aggregate, title, subtitle, getServiceLabel }:
                         className="h-2 w-2 shrink-0 rounded-[2px]"
                         style={{ backgroundColor: hidden ? "var(--border)" : item.color }}
                       />
-                      {getServiceLabel(code)}
+                      {labelOf(key)}
                     </button>
                   );
                 })}
               </div>
             )}
           />
-          {aggregate.services.map((s) => (
+          {series.map((s) => (
             <Bar
-              key={s.code}
-              dataKey={s.code}
+              key={s.key}
+              dataKey={s.key}
               stackId="a"
-              fill={`var(--color-${s.code})`}
-              hide={hiddenSeries.has(s.code)}
+              fill={`var(--color-${s.key})`}
+              hide={hiddenSeries.has(s.key)}
               radius={[0, 0, 0, 0]}
               cursor="pointer"
               onClick={(data) => {
                 const month = String((data as unknown as Record<string, unknown>).month);
                 router.push(
                   buildBillsDrillUrl({
-                    services: [s.code],
+                    drill: s.drill,
                     dateFrom: month,
                     dateTo: lastDayOfMonth(month),
                   }),
