@@ -25,6 +25,7 @@ export const SERVICE_TYPE_CODES = {
   INTERNET: "internet",
   INTERCOM: "intercom",
   HOA_FEES: "hoa_fees",
+  OTHER: "other",
 } as const;
 
 export type TServiceTypeCode = (typeof SERVICE_TYPE_CODES)[keyof typeof SERVICE_TYPE_CODES];
@@ -46,6 +47,7 @@ export const SERVICE_TYPE_COLORS: Record<TServiceTypeCode, string> = {
   [SERVICE_TYPE_CODES.INTERNET]: "var(--service-internet)",
   [SERVICE_TYPE_CODES.INTERCOM]: "var(--service-intercom)",
   [SERVICE_TYPE_CODES.HOA_FEES]: "var(--service-hoa-fees)",
+  [SERVICE_TYPE_CODES.OTHER]: "var(--muted-foreground)",
 };
 
 export const SERVICE_TYPE_ICONS: Record<TServiceTypeCode, LucideIcon> = {
@@ -60,6 +62,7 @@ export const SERVICE_TYPE_ICONS: Record<TServiceTypeCode, LucideIcon> = {
   [SERVICE_TYPE_CODES.INTERNET]: Globe,
   [SERVICE_TYPE_CODES.INTERCOM]: Phone,
   [SERVICE_TYPE_CODES.HOA_FEES]: Wallet,
+  [SERVICE_TYPE_CODES.OTHER]: Layers,
 };
 
 const FALLBACK_COLOR = "var(--muted-foreground)";

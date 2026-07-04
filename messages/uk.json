@@ -1060,7 +1060,8 @@
       "garbage_collection": "Вивіз сміття",
       "internet": "Інтернет",
       "intercom": "Домофон",
-      "hoa_fees": "Внески ОСББ"
+      "hoa_fees": "Внески ОСББ",
+      "other": "Інше"
     },
     "detail": {
       "balance": {

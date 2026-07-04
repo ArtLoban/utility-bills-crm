@@ -31,4 +31,5 @@ export const SERVICE_TYPE_LABELS: Record<TServiceTypeCode, string> = {
   [SERVICE_TYPE_CODES.INTERNET]: "Internet",
   [SERVICE_TYPE_CODES.INTERCOM]: "Intercom",
   [SERVICE_TYPE_CODES.HOA_FEES]: "HOA fees",
+  [SERVICE_TYPE_CODES.OTHER]: "Other",
 };

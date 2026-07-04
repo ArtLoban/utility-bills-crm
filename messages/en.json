@@ -1210,7 +1210,8 @@
       "garbage_collection": "Garbage collection",
       "internet": "Internet",
       "intercom": "Intercom",
-      "hoa_fees": "HOA fees"
+      "hoa_fees": "HOA fees",
+      "other": "Other"
     },
     "detail": {
       "balance": {

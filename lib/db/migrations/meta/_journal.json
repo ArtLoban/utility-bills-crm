@@ -169,6 +169,13 @@
       "when": 1781535954512,
       "tag": "0023_neat_valkyrie",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1783153837616,
+      "tag": "0024_nebulous_tarantula",
+      "breakpoints": true
     }
   ]
 }

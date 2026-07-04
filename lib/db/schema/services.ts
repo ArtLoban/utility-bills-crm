@@ -1,5 +1,4 @@
-import { sql } from "drizzle-orm";
-import { index, pgTable, text, uniqueIndex, uuid } from "drizzle-orm/pg-core";
+import { index, pgTable, text, uuid } from "drizzle-orm/pg-core";
 
 import { type PropertyId, properties } from "./properties";
 import { type TServiceTypeId, serviceTypes } from "./service-types";
@@ -24,16 +23,16 @@ export const services = pgTable(
       .notNull()
       .$type<TServiceTypeId>()
       .references(() => serviceTypes.id, { onDelete: "restrict" }),
+    // Optional custom label. NULL means "no custom name" — display falls back to the
+    // service type label. Intentionally NOT unique: duplicate names are legitimate.
+    name: text("name"),
     notes: text("notes"),
     ...timestamps(),
     ...softDelete(),
   },
   (t) => [
-    // Partial index: one active service per (property, serviceType).
-    // Same pattern as property_access: soft-deleted rows don't block re-adding the same service.
-    uniqueIndex("services_property_service_type_unique_idx")
-      .on(t.propertyId, t.serviceTypeId)
-      .where(sql`${t.deletedAt} IS NULL`),
+    // No uniqueness on (property, serviceType): multiple active services of the same
+    // type per property are permitted (the service model is now dynamic).
     index("services_property_id_idx").on(t.propertyId),
     index("services_deleted_at_idx").on(t.deletedAt),
   ],
