@@ -7,6 +7,7 @@ import { TARIFF_LIMITS } from "@/features/tariffs/schema";
 
 export const ServiceSetupFormField = {
   SERVICE_TYPE_ID: "serviceTypeId",
+  NAME: "name",
   SERVICE_NOTES: "serviceNotes",
   PROVIDER_ID: "providerId",
   CONTRACT_VALID_FROM: "contractValidFrom",
@@ -35,6 +36,7 @@ const rateField = z.string().trim();
 export const serviceSetupFormSchema = z
   .object({
     serviceTypeId: z.string().min(1, "validation.serviceTypeId.required"),
+    name: z.string().trim().max(SERVICE_LIMITS.name, "validation.name.tooLong"),
     serviceNotes: optionalNotes(SERVICE_LIMITS.notes),
     providerId: z.string().min(1, "validation.providerId.required"),
     contractValidFrom: z.string().min(1, "validation.contractValidFrom.required"),

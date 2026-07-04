@@ -66,9 +66,10 @@ export const FormSelectField = <T extends FieldValues, E extends TSelectableEnti
               {placeholder}
             </SelectItem>
           ) : null}
-          {options.map(({ id, name: optionLabel }) => (
+          {options.map(({ id, name: optionLabel, secondary }) => (
             <SelectItem key={id} value={id}>
               {optionLabel}
+              {secondary ? <span className="text-muted-foreground">{secondary}</span> : null}
             </SelectItem>
           ))}
         </SelectContent>

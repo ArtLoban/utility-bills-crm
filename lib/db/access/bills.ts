@@ -7,6 +7,9 @@ import { services } from "@/lib/db/schema/services";
 import type { TServiceId } from "@/lib/db/schema/services";
 import { serviceTypes } from "@/lib/db/schema/service-types";
 import type { TServiceTypeUnit } from "@/lib/db/schema/service-types";
+import { contracts } from "@/lib/db/schema/contracts";
+import { providers } from "@/lib/db/schema/providers";
+import { accountNumbers } from "@/lib/db/schema/account-numbers";
 import { properties, propertyAccess } from "@/lib/db/schema/properties";
 import type { PropertyId, TPropertyRole, TPropertyType } from "@/lib/db/schema/properties";
 import type { UserId } from "@/lib/db/schema/auth";
@@ -46,6 +49,9 @@ export type TServiceOption = {
   id: TServiceId;
   typeCode: TServiceTypeCode;
   typeUnit: TServiceTypeUnit | null;
+  name: string | null;
+  providerName: string | null;
+  accountNumber: string | null;
 };
 
 // --- Shared select shape ---
@@ -232,8 +238,11 @@ export const servicesForBillForm = async (
     .select({
       propertyId: properties.id,
       serviceId: services.id,
+      serviceName: services.name,
       serviceTypeCode: serviceTypes.code,
       serviceTypeUnit: serviceTypes.unit,
+      providerName: providers.name,
+      accountNumber: accountNumbers.value,
     })
     .from(services)
     .innerJoin(properties, eq(services.propertyId, properties.id))
@@ -246,6 +255,25 @@ export const servicesForBillForm = async (
       ),
     )
     .innerJoin(serviceTypes, eq(services.serviceTypeId, serviceTypes.id))
+    // Current contract (validTo IS NULL) → its provider, and the contract's current
+    // account number. All LEFT joins: a service may have no active contract/account yet.
+    .leftJoin(
+      contracts,
+      and(
+        eq(contracts.serviceId, services.id),
+        isNull(contracts.validTo),
+        isNull(contracts.deletedAt),
+      ),
+    )
+    .leftJoin(providers, eq(providers.id, contracts.providerId))
+    .leftJoin(
+      accountNumbers,
+      and(
+        eq(accountNumbers.contractId, contracts.id),
+        isNull(accountNumbers.validTo),
+        isNull(accountNumbers.deletedAt),
+      ),
+    )
     .where(and(isNull(services.deletedAt), isNull(properties.deletedAt)))
     .orderBy(asc(properties.name), asc(serviceTypes.sortOrder));
 
@@ -256,6 +284,9 @@ export const servicesForBillForm = async (
       id: row.serviceId,
       typeCode: row.serviceTypeCode as TServiceTypeCode,
       typeUnit: row.serviceTypeUnit,
+      name: row.serviceName,
+      providerName: row.providerName,
+      accountNumber: row.accountNumber,
     };
     if (existing) {
       existing.push(option);

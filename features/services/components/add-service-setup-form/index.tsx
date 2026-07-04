@@ -4,7 +4,11 @@ import { useTranslations } from "next-intl";
 
 import { Form } from "@/components/ui/form";
 import { FormContainer } from "@/components/form-container";
-import { getServiceTypeVisuals, type TServiceTypeCode } from "@/features/services/service-type";
+import {
+  getServiceTypeVisuals,
+  SERVICE_TYPE_CODES,
+  type TServiceTypeCode,
+} from "@/features/services/service-type";
 import { ROUTES } from "@/lib/routes";
 import type { TProps } from "./types";
 import { useAddServiceSetup } from "./hooks/use-add-service-setup";
@@ -68,6 +72,7 @@ export const AddServiceSetupForm = ({
               control={control}
               serviceTypes={serviceTypes}
               existingTypeIds={existingTypeIds}
+              nameRequired={selectedType?.code === SERVICE_TYPE_CODES.OTHER}
             />
           </FormSection>
 

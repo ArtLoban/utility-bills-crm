@@ -8,6 +8,7 @@ export const buildActionInput = (
 ): TCreateServiceWithSetupInput => {
   const {
     serviceTypeId,
+    name,
     serviceNotes,
     providerId,
     contractValidFrom,
@@ -25,6 +26,7 @@ export const buildActionInput = (
   const base: TCreateServiceWithSetupInput = {
     propertyId,
     serviceTypeId,
+    name: name || undefined,
     serviceNotes: serviceNotes || undefined,
     providerId,
     contractValidFrom,

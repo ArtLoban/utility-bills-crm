@@ -5,8 +5,16 @@ import { METER_LIMITS } from "@/features/meters/schema";
 import { TARIFF_LIMITS } from "@/features/tariffs/schema";
 
 export const SERVICE_LIMITS = {
+  name: 100,
   notes: 1000,
 } as const;
+
+const optionalName = z
+  .string()
+  .trim()
+  .max(SERVICE_LIMITS.name, "validation.name.tooLong")
+  .optional()
+  .or(z.literal(""));
 
 export const createServiceSchema = z.object({
   propertyId: z.string().uuid(),
@@ -20,6 +28,7 @@ export const createServiceSchema = z.object({
 });
 
 export const editServiceSchema = z.object({
+  name: optionalName,
   notes: z
     .string()
     .trim()
@@ -42,6 +51,9 @@ export const createServiceWithSetupSchema = z
     // Service
     propertyId: z.string().uuid(),
     serviceTypeId: z.string().uuid(),
+    // Custom label. Required for the `other` type — enforced in the action (business
+    // logic), where the resolved type code is available; the schema stays type-agnostic.
+    name: optionalName,
     serviceNotes: z
       .string()
       .trim()

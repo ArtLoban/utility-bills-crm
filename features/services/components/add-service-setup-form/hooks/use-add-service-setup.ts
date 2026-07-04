@@ -12,6 +12,7 @@ import { ERROR_CODES } from "@/lib/errors";
 import { ROUTES } from "@/lib/routes";
 import type { PropertyId } from "@/lib/db/schema/properties";
 import type { TServiceType } from "@/lib/db/schema/service-types";
+import { SERVICE_TYPE_CODES } from "@/features/services/service-type";
 import { ServiceMeterField, ServiceSetupFormField, serviceSetupFormSchema } from "../schema";
 import { buildDefaultValues } from "../utils/build-default-values";
 import { buildActionInput } from "../utils/build-action-input";
@@ -59,11 +60,25 @@ export const useAddServiceSetup = ({ propertyId, serviceTypes }: TParams) => {
     return t("error.generic");
   };
 
+  const setNameRequiredError = () =>
+    form.setError(ServiceSetupFormField.NAME, {
+      message: t("validation.name.requiredForOther"),
+    });
+
   const onSubmit = form.handleSubmit(async (values) => {
+    if (selectedType?.code === SERVICE_TYPE_CODES.OTHER && !values.name.trim()) {
+      setNameRequiredError();
+      return;
+    }
+
     const result = await createServiceWithSetup(buildActionInput(values, propertyId));
 
     if (!result.ok) {
       if (result.error.code === ERROR_CODES.VALIDATION) {
+        if (result.error.message === "validation.name.requiredForOther") {
+          setNameRequiredError();
+          return;
+        }
         form.setError("root", { message: resolveFormError(result.error.message) });
         return;
       }

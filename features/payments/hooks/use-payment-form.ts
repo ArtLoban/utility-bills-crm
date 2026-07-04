@@ -6,6 +6,7 @@ import { toast } from "sonner";
 
 import { useZodForm } from "@/lib/forms/use-zod-form";
 import { resolveServiceTypeLabel } from "@/features/services/service-label";
+import { buildServicePickerOptions } from "@/features/services/build-service-picker-options";
 import { getServiceBalanceAction } from "@/features/ledger/actions";
 import { useActionErrorHandler } from "@/lib/hooks/use-action-error-handler";
 import { ERROR_CODES } from "@/lib/errors";
@@ -48,10 +49,10 @@ export const usePaymentForm = ({
   const property = form.watch(PaymentFormField.PROPERTY);
   const serviceId = form.watch(PaymentFormField.SERVICE_ID);
 
-  const availableServices = (serviceOptions[property as PropertyId] ?? []).map((service) => ({
-    id: service.id,
-    name: resolveServiceTypeLabel(service.typeCode, tServiceTypes),
-  }));
+  const availableServices = buildServicePickerOptions(
+    serviceOptions[property as PropertyId] ?? [],
+    tServiceTypes,
+  );
 
   const [debt, setDebt] = useState<{ key: TServiceId; value: TBalance } | null>(null);
 

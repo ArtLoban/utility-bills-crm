@@ -7,6 +7,7 @@ import { EditServiceFormContent } from "@/features/services";
 import { resolveServiceLabelServer } from "@/features/services/service-label.server";
 import { PageContainer } from "@/components/page-container";
 import { ROUTES } from "@/lib/routes";
+import type { TServiceTypeCode } from "@/features/services/service-type";
 import { PROPERTY_ROLES, type PropertyId } from "@/lib/db/schema/properties";
 import type { TServiceId } from "@/lib/db/schema/services";
 
@@ -20,7 +21,7 @@ export default async function EditServicePage({ params }: TProps) {
   const [propertyResult, serviceResult, t, tNav] = await Promise.all([
     getPropertyDetail(id as PropertyId),
     getServiceDetail(sid as TServiceId),
-    getTranslations("services.editNotes"),
+    getTranslations("services.editService"),
     getTranslations("nav"),
   ]);
 
@@ -45,7 +46,9 @@ export default async function EditServicePage({ params }: TProps) {
       <EditServiceFormContent
         propertyId={property.id}
         serviceId={service.id}
+        initialName={service.name}
         initialNotes={service.notes}
+        serviceTypeCode={serviceType.code as TServiceTypeCode}
       />
     </PageContainer>
   );

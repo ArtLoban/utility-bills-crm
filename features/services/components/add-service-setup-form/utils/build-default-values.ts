@@ -2,6 +2,7 @@ import { type TServiceSetupForm } from "../schema";
 
 export const buildDefaultValues = (): TServiceSetupForm => ({
   serviceTypeId: "",
+  name: "",
   serviceNotes: "",
   providerId: "",
   contractValidFrom: "",

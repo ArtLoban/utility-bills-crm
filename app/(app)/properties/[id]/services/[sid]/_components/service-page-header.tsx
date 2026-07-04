@@ -66,7 +66,7 @@ export const ServicePageHeader = async ({
 
         {role !== PROPERTY_ROLES.VIEWER && (
           <div className="flex items-center justify-end gap-2">
-            <LinkButton href={editHref} icon={Pencil} text={t("editNotes")} size="default" />
+            <LinkButton href={editHref} icon={Pencil} text={t("editService")} size="default" />
             {extraActions}
           </div>
         )}

@@ -12,6 +12,7 @@ export const insertServiceInternal = async (
   data: {
     propertyId: PropertyId;
     serviceTypeId: TServiceTypeId;
+    name?: string | null;
     notes?: string | null;
   },
 ): Promise<TService> => {
@@ -20,6 +21,7 @@ export const insertServiceInternal = async (
     .values({
       propertyId: data.propertyId,
       serviceTypeId: data.serviceTypeId,
+      name: data.name ?? null,
       notes: data.notes ?? null,
     })
     .returning();

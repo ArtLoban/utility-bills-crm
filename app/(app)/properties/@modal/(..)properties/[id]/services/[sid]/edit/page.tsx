@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 
 import { getServiceDetail } from "@/app/(app)/properties/[id]/services/[sid]/_data/queries";
 import { EditServiceModal } from "@/features/services";
+import type { TServiceTypeCode } from "@/features/services/service-type";
 import { PROPERTY_ROLES } from "@/lib/db/schema/properties";
 import type { TServiceId } from "@/lib/db/schema/services";
 
@@ -15,7 +16,14 @@ export default async function InterceptedEditServicePage({ params }: TProps) {
 
   if (!result.ok || result.value.role === PROPERTY_ROLES.VIEWER) notFound();
 
+  const { service, serviceType } = result.value;
+
   return (
-    <EditServiceModal serviceId={sid as TServiceId} initialNotes={result.value.service.notes} />
+    <EditServiceModal
+      serviceId={sid as TServiceId}
+      initialName={service.name}
+      initialNotes={service.notes}
+      serviceTypeCode={serviceType.code as TServiceTypeCode}
+    />
   );
 }

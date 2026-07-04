@@ -1362,7 +1362,7 @@
         "fixedRate": "Fixed: {amount} ₴/mo"
       },
       "header": {
-        "editNotes": "Edit notes",
+        "editService": "Edit service",
         "delete": {
           "menu": "Delete service",
           "title": "Delete service",
@@ -1386,18 +1386,29 @@
         "payment": "Payment · {period}"
       }
     },
-    "editNotes": {
-      "title": "Edit notes",
-      "meta": "Update the notes for this service.",
-      "label": "Notes",
-      "placeholder": "Any notes about this service…",
-      "submit": "Save notes",
+    "editService": {
+      "title": "Edit service",
+      "meta": "Update this service’s name and notes.",
+      "name": {
+        "label": "Name",
+        "placeholder": "e.g. Apartment insurance",
+        "hint": "Optional — a custom label to tell services apart"
+      },
+      "notes": {
+        "label": "Notes",
+        "placeholder": "Any notes about this service…"
+      },
+      "submit": "Save changes",
       "cancel": "Cancel",
       "formError": "Something went wrong. Please try again.",
       "toast": {
-        "saved": "Notes saved."
+        "saved": "Changes saved."
       },
       "validation": {
+        "name": {
+          "tooLong": "Name is too long (max 100 characters)",
+          "requiredForOther": "Name is required for a custom service"
+        },
         "notes": {
           "tooLong": "Notes are too long (max 1000 characters)"
         }
@@ -1474,6 +1485,11 @@
         },
         "zoneCount": {
           "label": "Number of zones"
+        },
+        "name": {
+          "label": "Name",
+          "placeholder": "e.g. Apartment insurance",
+          "hint": "Optional — a custom label to tell services apart"
         }
       },
       "zoneLabels": {
@@ -1534,7 +1550,11 @@
           "tooLong": "Notes are too long (max 1000 characters)"
         },
         "rateOrFixedRequired": "Enter a rate or a fixed amount",
-        "rateAndFixedMutuallyExclusive": "Enter either a rate or a fixed amount, not both"
+        "rateAndFixedMutuallyExclusive": "Enter either a rate or a fixed amount, not both",
+        "name": {
+          "tooLong": "Name is too long (max 100 characters)",
+          "requiredForOther": "Name is required for a custom service"
+        }
       },
       "hint": {
         "singleZone": "Billed at a single rate. Add a meter below to bill by day/night or three zones.",

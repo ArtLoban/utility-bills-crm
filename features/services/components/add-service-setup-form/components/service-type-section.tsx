@@ -4,8 +4,13 @@ import { useTranslations } from "next-intl";
 import type { Control } from "react-hook-form";
 
 import { FormField, FormItem, FormMessage } from "@/components/ui/form";
+import { FormTextField } from "@/components/form/form-text-field";
 import { FormTextareaField } from "@/components/form/form-textarea-field";
-import { getServiceTypeVisuals, type TServiceTypeCode } from "@/features/services/service-type";
+import {
+  getServiceTypeVisuals,
+  SERVICE_TYPE_CODES,
+  type TServiceTypeCode,
+} from "@/features/services/service-type";
 import { resolveServiceTypeLabel } from "@/features/services/service-label";
 import type { TServiceType } from "@/lib/db/schema/service-types";
 import { SERVICE_LIMITS } from "@/features/services/schema";
@@ -18,9 +23,15 @@ type TProps = {
   control: Control<TServiceSetupForm>;
   serviceTypes: TServiceType[];
   existingTypeIds: TServiceType["id"][];
+  nameRequired: boolean;
 };
 
-export const ServiceTypeSection = ({ control, serviceTypes, existingTypeIds }: TProps) => {
+export const ServiceTypeSection = ({
+  control,
+  serviceTypes,
+  existingTypeIds,
+  nameRequired,
+}: TProps) => {
   const t = useTranslations("services");
   const tTypes = useTranslations("services.types");
 
@@ -41,7 +52,7 @@ export const ServiceTypeSection = ({ control, serviceTypes, existingTypeIds }: T
       measurementLabel: getMeasurementLabel(serviceType),
       color,
       Icon,
-      isDisabled: existingSet.has(serviceType.id),
+      isDisabled: existingSet.has(serviceType.id) && serviceType.code !== SERVICE_TYPE_CODES.OTHER,
     };
   });
 
@@ -62,6 +73,16 @@ export const ServiceTypeSection = ({ control, serviceTypes, existingTypeIds }: T
             <FormMessage />
           </FormItem>
         )}
+      />
+
+      <FormTextField
+        control={control}
+        name={ServiceSetupFormField.NAME}
+        label={t("serviceForm.fields.name.label")}
+        placeholder={t("serviceForm.fields.name.placeholder")}
+        description={t("serviceForm.fields.name.hint")}
+        maxLength={SERVICE_LIMITS.name}
+        required={nameRequired}
       />
 
       <FormTextareaField

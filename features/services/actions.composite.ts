@@ -15,6 +15,7 @@ import { requirePropertyRole } from "@/lib/db/access/properties";
 import { providerByIdForUser } from "@/lib/db/access/providers";
 import { appError, err, ok } from "@/lib/errors";
 import type { Result, TAppError } from "@/lib/errors";
+import { SERVICE_TYPE_CODES } from "./service-type";
 import { insertServiceInternal } from "./lib";
 import { insertContractInternal } from "@/features/contracts/lib";
 import { insertTariffInternal } from "@/features/tariffs/lib";
@@ -97,6 +98,7 @@ export const createServiceWithSetup = async (
   // Fetch service type for tariff shape and zone compatibility validation.
   const stRows = await db
     .select({
+      code: serviceTypes.code,
       measurementType: serviceTypes.measurementType,
       supportsZones: serviceTypes.supportsZones,
     })
@@ -106,6 +108,13 @@ export const createServiceWithSetup = async (
 
   if (stRows.length === 0) return err(appError.notFound("serviceType", serviceTypeId));
   const serviceType = stRows[0]!;
+
+  // Business rule: an `other` service must carry a custom name — it exists precisely to be
+  // a named custom line. Enforced here (not as a DB constraint) where the type code is known.
+  const name = parsed.data.name?.trim() || null;
+  if (serviceType.code === SERVICE_TYPE_CODES.OTHER && !name) {
+    return err(appError.validation("validation.name.requiredForOther"));
+  }
 
   const rateT1 = parsed.data.rateT1 || null;
   const rateT2 = parsed.data.rateT2 || null;
@@ -132,6 +141,7 @@ export const createServiceWithSetup = async (
       const newService = await insertServiceInternal(tx, {
         propertyId,
         serviceTypeId,
+        name,
         notes: parsed.data.serviceNotes || null,
       });
 
