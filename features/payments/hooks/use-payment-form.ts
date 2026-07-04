@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
 import { useZodForm } from "@/lib/forms/use-zod-form";
-import { getServiceLabel } from "@/lib/constants/service-colors";
+import { resolveServiceTypeLabel } from "@/features/services/service-label";
 import { getServiceBalanceAction } from "@/features/ledger/actions";
 import { useActionErrorHandler } from "@/lib/hooks/use-action-error-handler";
 import { ERROR_CODES } from "@/lib/errors";
@@ -34,6 +34,7 @@ export const usePaymentForm = ({
   onClose,
 }: TParams) => {
   const t = useTranslations("payments");
+  const tServiceTypes = useTranslations("services.types");
   const handleActionError = useActionErrorHandler({ onClose });
   const isEditMode = payment !== undefined;
 
@@ -49,7 +50,7 @@ export const usePaymentForm = ({
 
   const availableServices = (serviceOptions[property as PropertyId] ?? []).map((service) => ({
     id: service.id,
-    name: getServiceLabel(service.typeCode),
+    name: resolveServiceTypeLabel(service.typeCode, tServiceTypes),
   }));
 
   const [debt, setDebt] = useState<{ key: TServiceId; value: TBalance } | null>(null);
@@ -110,6 +111,8 @@ export const usePaymentForm = ({
     currentDebt,
     resetService,
     lockedPropertyName: payment?.property.name,
-    lockedServiceLabel: payment ? getServiceLabel(payment.serviceTypeCode) : undefined,
+    lockedServiceLabel: payment
+      ? resolveServiceTypeLabel(payment.serviceTypeCode, tServiceTypes)
+      : undefined,
   };
 };

@@ -13,6 +13,7 @@ import { METER_LIMITS, type TCreateMeterFormValues } from "@/features/meters/sch
 import { ZONE_COUNT_OPTIONS } from "@/features/meters/constants";
 import { CreateMeterFormField } from "@/features/meters/types";
 import { type TServiceTypeCode } from "@/features/services/service-type";
+import { resolveServiceTypeLabel } from "@/features/services/service-label";
 import type { TServiceType } from "@/lib/db/schema/service-types";
 
 type TProps = {
@@ -34,7 +35,7 @@ export const AddMeterForm = ({ form, availableServiceTypes, supportsZones }: TPr
 
   const serviceOptions = availableServiceTypes.map((st) => ({
     id: st.id,
-    name: tTypes(st.code as TServiceTypeCode),
+    name: resolveServiceTypeLabel(st.code as TServiceTypeCode, tTypes),
   }));
 
   const zoneOptions = ZONE_COUNT_OPTIONS.map(({ value, labelKey }) => ({

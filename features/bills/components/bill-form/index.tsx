@@ -10,7 +10,8 @@ import { FormMonthField } from "@/components/form/form-month-field";
 import { FormTextField } from "@/components/form/form-text-field";
 import { FormTextareaField } from "@/components/form/form-textarea-field";
 import { currentYearMonth } from "@/components/month-picker/utils";
-import { getServiceLabel } from "@/lib/constants/service-colors";
+import { resolveServiceTypeLabel } from "@/features/services/service-label";
+import type { TServiceTypeCode } from "@/features/services/service-type";
 import { useFormatMoney } from "@/lib/format/use-format-money";
 import type { PropertyId } from "@/lib/db/schema/properties";
 import type { TServiceOption } from "@/lib/db/access/bills";
@@ -28,7 +29,7 @@ type TProps = {
   expectedAmount: TExpectedAmount | null;
   onPropertyChange: () => void;
   lockedPropertyName?: string;
-  lockedServiceCode?: string;
+  lockedServiceCode?: TServiceTypeCode;
 };
 
 export const BillForm = ({
@@ -42,13 +43,14 @@ export const BillForm = ({
   lockedServiceCode,
 }: TProps) => {
   const t = useTranslations("bills.fields");
+  const tServiceTypes = useTranslations("services.types");
   const formatMoney = useFormatMoney();
   const { control, formState } = form;
   const rootError = formState.errors.root?.message;
 
   const serviceSelectOptions = availableServices.map((service) => ({
     id: service.id,
-    name: getServiceLabel(service.typeCode),
+    name: resolveServiceTypeLabel(service.typeCode, tServiceTypes),
   }));
 
   const expectedHint =
@@ -75,7 +77,7 @@ export const BillForm = ({
 
         {isEditMode ? (
           <ReadOnlyField label={t("service.label")}>
-            {lockedServiceCode ? <ServiceChip serviceId={lockedServiceCode} /> : null}
+            {lockedServiceCode ? <ServiceChip code={lockedServiceCode} /> : null}
           </ReadOnlyField>
         ) : (
           <FormSelectField

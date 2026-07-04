@@ -10,6 +10,7 @@ import type { TPropertyRole } from "@/lib/db/schema/properties";
 import type { TService } from "@/lib/db/schema/services";
 import type { TServiceType } from "@/lib/db/schema/service-types";
 import { getServiceTypeVisuals, TServiceTypeCode } from "@/features/services/service-type";
+import { resolveServiceLabelServer } from "@/features/services/service-label.server";
 import { IconBadge } from "@/components/icon-badge";
 
 type TProps = {
@@ -31,12 +32,11 @@ export const ServicePageHeader = async ({
   providerName,
   extraActions,
 }: TProps) => {
-  const [tTypes, t, tNav] = await Promise.all([
-    getTranslations("services.types"),
+  const [t, tNav] = await Promise.all([
     getTranslations("services.detail.header"),
     getTranslations("nav"),
   ]);
-  const name = tTypes(serviceType.code as Parameters<typeof tTypes>[0]);
+  const name = await resolveServiceLabelServer(service, serviceType);
   const { color, Icon } = getServiceTypeVisuals(serviceType.code as TServiceTypeCode);
   const editHref = `${ROUTES.properties}/${propertyId}/services/${service.id}/edit`;
 

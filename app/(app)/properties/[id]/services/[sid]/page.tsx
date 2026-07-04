@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
 import { notFound } from "next/navigation";
-import { getTranslations } from "next-intl/server";
 
 import { getPropertyDetail } from "@/app/(app)/properties/[id]/_data/queries";
 import { getServiceDetail } from "./_data/queries";
@@ -14,6 +13,7 @@ import { RemindersTab } from "./_components/tabs/reminders-tab";
 import { SERVICE_TABS } from "./_components/constants";
 import { resolveServiceTab } from "./_utils/resolve-tab";
 import { PageShell } from "@/components/page-shell";
+import { resolveServiceLabelServer } from "@/features/services/service-label.server";
 import { assertNever } from "@/lib/assert-never";
 import { PROPERTY_ROLES } from "@/lib/db/schema/properties";
 import type { PropertyId } from "@/lib/db/schema/properties";
@@ -51,8 +51,7 @@ export default async function ServicePage({ params, searchParams }: TProps) {
   const activeTab = resolveServiceTab(tab, role);
   const canEdit = role !== PROPERTY_ROLES.VIEWER;
 
-  const tTypes = await getTranslations("services.types");
-  const serviceName = tTypes(serviceType.code as Parameters<typeof tTypes>[0]);
+  const serviceName = await resolveServiceLabelServer(service, serviceType);
 
   const renderActiveTab = (): ReactNode => {
     switch (activeTab) {

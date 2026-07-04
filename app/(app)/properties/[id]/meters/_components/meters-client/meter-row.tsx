@@ -10,6 +10,7 @@ import { ROUTES } from "@/lib/routes";
 import type { TMeter } from "@/lib/db/schema/meters";
 import type { TServiceType } from "@/lib/db/schema/service-types";
 import { getServiceTypeVisuals, TServiceTypeCode } from "@/features/services/service-type";
+import { resolveServiceTypeLabel } from "@/features/services/service-label";
 
 type TProps = {
   meter: TMeter;
@@ -27,7 +28,7 @@ export const MeterRow = ({ meter, serviceType, propertyId, canMutate }: TProps) 
 
   const { color, Icon } = getServiceTypeVisuals(serviceType.code as TServiceTypeCode);
   const isHistorical = meter.validTo !== null;
-  const serviceName = tTypes(serviceType.code as TServiceTypeCode);
+  const serviceName = resolveServiceTypeLabel(serviceType.code as TServiceTypeCode, tTypes);
   const meterHref = `${ROUTES.properties}/${propertyId}/meters/${meter.id}`;
 
   return (

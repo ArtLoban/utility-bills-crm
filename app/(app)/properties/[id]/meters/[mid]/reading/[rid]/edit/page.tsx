@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { getPropertyDetail } from "@/app/(app)/properties/[id]/_data/queries";
 import { getMeterDetail, getPreviousReading, getReading } from "../../../_data/queries";
 import { ReadingFormContent } from "@/features/readings";
+import { resolveServiceTypeLabelServer } from "@/features/services/service-label.server";
 import { PageContainer } from "@/components/page-container";
 import { ROUTES } from "@/lib/routes";
 import { PROPERTY_ROLES, type PropertyId } from "@/lib/db/schema/properties";
@@ -19,13 +20,12 @@ export default async function EditReadingPage({ params }: TProps) {
   const propertyId = id as PropertyId;
   const meterId = mid as MeterId;
 
-  const [propertyResult, meterResult, readingResult, t, tNav, tTypes] = await Promise.all([
+  const [propertyResult, meterResult, readingResult, t, tNav] = await Promise.all([
     getPropertyDetail(propertyId),
     getMeterDetail(meterId),
     getReading(rid as ReadingId),
     getTranslations("readings.form"),
     getTranslations("nav"),
-    getTranslations("services.types"),
   ]);
 
   if (!propertyResult.ok || !meterResult.ok || !readingResult.ok) notFound();
@@ -40,7 +40,7 @@ export default async function EditReadingPage({ params }: TProps) {
   const lastReading = await getPreviousReading(meterId, new Date(reading.readAt));
 
   const title = t("title.edit");
-  const serviceName = tTypes(serviceType.code as Parameters<typeof tTypes>[0]);
+  const serviceName = await resolveServiceTypeLabelServer(serviceType);
 
   return (
     <PageContainer

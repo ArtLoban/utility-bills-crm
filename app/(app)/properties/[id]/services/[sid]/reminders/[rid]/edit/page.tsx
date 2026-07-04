@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { getPropertyDetail } from "@/app/(app)/properties/[id]/_data/queries";
 import { PageContainer } from "@/components/page-container";
 import { ReminderFormContent } from "@/features/notifications";
+import { resolveServiceLabelServer } from "@/features/services/service-label.server";
 import { ROUTES } from "@/lib/routes";
 import { PROPERTY_ROLES } from "@/lib/db/schema/properties";
 import type { PropertyId } from "@/lib/db/schema/properties";
@@ -32,10 +33,10 @@ export default async function EditReminderPage({ params }: TProps) {
   if (!reminder) notFound();
 
   const property = propertyResult.value;
-  const { serviceType } = serviceResult.value;
+  const { service, serviceType } = serviceResult.value;
   const t = await getTranslations("reminders");
   const tProperties = await getTranslations("properties");
-  const tServiceTypes = await getTranslations("services.types");
+  const serviceName = await resolveServiceLabelServer(service, serviceType);
 
   return (
     <PageContainer
@@ -44,7 +45,7 @@ export default async function EditReminderPage({ params }: TProps) {
         { label: tProperties("list.title"), href: ROUTES.properties },
         { label: property.name, href: `${ROUTES.properties}/${id}` },
         {
-          label: tServiceTypes(serviceType.code as Parameters<typeof tServiceTypes>[0]),
+          label: serviceName,
           href: `${ROUTES.properties}/${id}/services/${sid}`,
         },
         { label: t("modal.edit.title") },

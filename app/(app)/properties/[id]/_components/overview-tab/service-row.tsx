@@ -11,6 +11,7 @@ import {
   METERED_SERVICE_CODES,
   TServiceTypeCode,
 } from "@/features/services/service-type";
+import { useServiceLabel } from "@/features/services/hooks/use-service-label";
 import { formatBalance } from "@/features/ledger";
 import type { TBalance } from "@/features/ledger/types";
 import { DISPLAY_DATE_FORMAT } from "@/lib/format/date";
@@ -34,13 +35,13 @@ const ServiceRow = ({
   balance,
   lastReadingAt,
 }: TProps) => {
-  const tType = useTranslations("services.types");
   const tRow = useTranslations("properties.detail.row");
+  const resolveLabel = useServiceLabel();
   const locale = useLocale();
 
   const code = serviceType.code as TServiceTypeCode;
   const { color, Icon } = getServiceTypeVisuals(code);
-  const name = tType(code as Parameters<typeof tType>[0]);
+  const name = resolveLabel({ name: service.name, code });
 
   const readingPart = METERED_SERVICE_CODES.has(code)
     ? lastReadingAt

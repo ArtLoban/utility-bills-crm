@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { getPropertyDetail } from "@/app/(app)/properties/[id]/_data/queries";
 import { getServiceDetail } from "../_data/queries";
 import { EditServiceFormContent } from "@/features/services";
+import { resolveServiceLabelServer } from "@/features/services/service-label.server";
 import { PageContainer } from "@/components/page-container";
 import { ROUTES } from "@/lib/routes";
 import { PROPERTY_ROLES, type PropertyId } from "@/lib/db/schema/properties";
@@ -16,12 +17,11 @@ type TProps = {
 export default async function EditServicePage({ params }: TProps) {
   const { id, sid } = await params;
 
-  const [propertyResult, serviceResult, t, tNav, tTypes] = await Promise.all([
+  const [propertyResult, serviceResult, t, tNav] = await Promise.all([
     getPropertyDetail(id as PropertyId),
     getServiceDetail(sid as TServiceId),
     getTranslations("services.editNotes"),
     getTranslations("nav"),
-    getTranslations("services.types"),
   ]);
 
   if (!propertyResult.ok) notFound();
@@ -29,7 +29,7 @@ export default async function EditServicePage({ params }: TProps) {
 
   const property = propertyResult.value;
   const { service, serviceType } = serviceResult.value;
-  const serviceName = tTypes(serviceType.code as Parameters<typeof tTypes>[0]);
+  const serviceName = await resolveServiceLabelServer(service, serviceType);
 
   return (
     <PageContainer

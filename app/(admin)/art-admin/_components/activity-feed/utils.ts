@@ -1,20 +1,20 @@
 import { ACTIVITY_KINDS, type TActivityItem } from "@/features/admin-dashboard";
 import type { TServiceTypeCode } from "@/features/services/service-type";
-
-import { SERVICE_TYPE_LABELS } from "./constants";
+import {
+  resolveServiceTypeLabel,
+  type TServiceTypeTranslator,
+} from "@/features/services/service-label";
 
 type TActivityLine = {
   label: string;
   detail: string;
 };
 
-const getServiceTypeLabel = (code: string | null): string => {
-  if (!code) return "";
-  return SERVICE_TYPE_LABELS[code as TServiceTypeCode] ?? code;
-};
+const getServiceTypeLabel = (code: string | null, t: TServiceTypeTranslator): string =>
+  code ? resolveServiceTypeLabel(code as TServiceTypeCode, t) : "";
 
-export const getActivityLine = (item: TActivityItem): TActivityLine => {
-  const svc = getServiceTypeLabel(item.serviceTypeCode);
+export const getActivityLine = (item: TActivityItem, t: TServiceTypeTranslator): TActivityLine => {
+  const svc = getServiceTypeLabel(item.serviceTypeCode, t);
   const name = item.name ?? "";
 
   switch (item.kind) {

@@ -6,6 +6,7 @@ import type { Control } from "react-hook-form";
 import { FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { FormTextareaField } from "@/components/form/form-textarea-field";
 import { getServiceTypeVisuals, type TServiceTypeCode } from "@/features/services/service-type";
+import { resolveServiceTypeLabel } from "@/features/services/service-label";
 import type { TServiceType } from "@/lib/db/schema/service-types";
 import { SERVICE_LIMITS } from "@/features/services/schema";
 import { ServiceSetupFormField } from "../schema";
@@ -21,6 +22,7 @@ type TProps = {
 
 export const ServiceTypeSection = ({ control, serviceTypes, existingTypeIds }: TProps) => {
   const t = useTranslations("services");
+  const tTypes = useTranslations("services.types");
 
   const getMeasurementLabel = (serviceType: TServiceType): string => {
     if (serviceType.measurementType === "fixed") return t("serviceForm.measurement.fixed");
@@ -35,7 +37,7 @@ export const ServiceTypeSection = ({ control, serviceTypes, existingTypeIds }: T
 
     return {
       id: serviceType.id,
-      label: t(`types.${serviceType.code as TServiceTypeCode}`),
+      label: resolveServiceTypeLabel(serviceType.code as TServiceTypeCode, tTypes),
       measurementLabel: getMeasurementLabel(serviceType),
       color,
       Icon,

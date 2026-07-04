@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 
 import { getServiceTypeVisuals, type TServiceTypeCode } from "@/features/services/service-type";
+import { resolveServiceTypeLabel } from "@/features/services/service-label";
 import type { TMeter } from "@/lib/db/schema/meters";
 import type { TServiceType } from "@/lib/db/schema/service-types";
 
@@ -17,7 +18,7 @@ export const MeterContext = ({ meter, serviceType, propertyName }: TProps) => {
   const tTypes = useTranslations("services.types");
   const { color, Icon } = getServiceTypeVisuals(serviceType.code as TServiceTypeCode);
 
-  const typeName = tTypes(serviceType.code as Parameters<typeof tTypes>[0]);
+  const typeName = resolveServiceTypeLabel(serviceType.code as TServiceTypeCode, tTypes);
 
   return (
     <div className="bg-muted flex items-center gap-3 rounded-lg px-3.5 py-3">

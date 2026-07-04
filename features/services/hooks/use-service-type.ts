@@ -4,6 +4,7 @@ import {
   type TServiceTypeCode,
   type TServiceTypeVisuals,
 } from "@/features/services/service-type";
+import { resolveServiceTypeLabel } from "@/features/services/service-label";
 
 type TServiceTypeMeta = TServiceTypeVisuals & { label: string };
 
@@ -11,7 +12,7 @@ export const useServiceTypeMetaFactory = () => {
   const t = useTranslations("services.types");
 
   return (type: TServiceTypeCode): TServiceTypeMeta => ({
-    label: t.has(type) ? t(type) : type,
+    label: resolveServiceTypeLabel(type, t),
     ...getServiceTypeVisuals(type),
   });
 };

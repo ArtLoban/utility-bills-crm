@@ -12,6 +12,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useQueryFilters } from "@/lib/hooks/use-query-filters";
+import { resolveServiceTypeLabel } from "@/features/services/service-label";
+import type { TServiceTypeCode } from "@/features/services/service-type";
 import type { TMonthlyExpensesAggregate } from "@/features/ledger";
 import type { TAvailableConsumptionService } from "@/features/meters";
 import { CHART_MODES, DASHBOARD_CHART_PARAMS } from "../../_data/query-params";
@@ -70,7 +72,7 @@ export const ChartsSection = ({
   const hasConsumptionData = availableConsumptionServices.length > 0;
 
   const getServiceLabel = (code: string): string =>
-    tServiceTypes(code as Parameters<typeof tServiceTypes>[0]);
+    resolveServiceTypeLabel(code as TServiceTypeCode, tServiceTypes);
 
   const periodLabel = `${formatMonthLong(resolvedDateFrom)} – ${formatMonthLong(resolvedDateTo)}`;
 
@@ -111,7 +113,7 @@ export const ChartsSection = ({
         <SelectContent align="end">
           {availableConsumptionServices.map((s) => (
             <SelectItem key={s.code} value={s.code}>
-              {tServiceTypes(s.code as Parameters<typeof tServiceTypes>[0])}
+              {getServiceLabel(s.code)}
             </SelectItem>
           ))}
         </SelectContent>

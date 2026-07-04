@@ -7,7 +7,7 @@ import { softDeletePayment, TPaymentGlobalRow } from "@/features/payments";
 import type { TPropertyOption } from "@/features/properties";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { useActionErrorHandler } from "@/lib/hooks/use-action-error-handler";
-import { getServiceLabel } from "@/lib/constants/service-colors";
+import { resolveServiceTypeLabel } from "@/features/services/service-label";
 import { PaymentsTableContext } from "../context";
 
 type TProps = {
@@ -17,6 +17,7 @@ type TProps = {
 
 export const PaymentsTableActions = ({ children, properties }: TProps) => {
   const t = useTranslations("payments");
+  const tServiceTypes = useTranslations("services.types");
   const [rowToDelete, setRowToDelete] = useState<TPaymentGlobalRow | null>(null);
   const [isPending, startTransition] = useTransition();
   const handleActionError = useActionErrorHandler({ onClose: () => setRowToDelete(null) });
@@ -43,7 +44,9 @@ export const PaymentsTableActions = ({ children, properties }: TProps) => {
         title={t("list.delete.confirm.title")}
         icon={Trash2}
         description={t.rich("list.delete.confirm.description", {
-          service: rowToDelete ? getServiceLabel(rowToDelete.serviceTypeCode) : "",
+          service: rowToDelete
+            ? resolveServiceTypeLabel(rowToDelete.serviceTypeCode, tServiceTypes)
+            : "",
           property: rowToDelete?.property.name ?? "",
           b: (chunks) => <strong>{chunks}</strong>,
         })}

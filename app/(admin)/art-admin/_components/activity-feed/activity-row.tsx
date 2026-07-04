@@ -2,6 +2,7 @@ import { cn } from "@/lib/utils";
 import { formatDisplayDate } from "@/lib/format/date";
 import { IconBadge } from "@/components/icon-badge";
 import type { TActivityItem } from "@/features/admin-dashboard";
+import type { TServiceTypeTranslator } from "@/features/services/service-label";
 
 import { ACTIVITY_KIND_VISUALS } from "./constants";
 import { getActivityLine } from "./utils";
@@ -9,11 +10,12 @@ import { getActivityLine } from "./utils";
 type TProps = {
   item: TActivityItem;
   isLast: boolean;
+  t: TServiceTypeTranslator;
 };
 
-export const ActivityRow = ({ item, isLast }: TProps) => {
+export const ActivityRow = ({ item, isLast, t }: TProps) => {
   const { icon: Icon, color } = ACTIVITY_KIND_VISUALS[item.kind];
-  const { label, detail } = getActivityLine(item);
+  const { label, detail } = getActivityLine(item, t);
 
   return (
     <div

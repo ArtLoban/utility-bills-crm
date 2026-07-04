@@ -6,6 +6,7 @@ import { formatDisplayDate } from "@/lib/format/date";
 import type { TMeter } from "@/lib/db/schema/meters";
 import type { TServiceType } from "@/lib/db/schema/service-types";
 import { getServiceTypeVisuals, TServiceTypeCode } from "@/features/services/service-type";
+import { resolveServiceTypeLabelServer } from "@/features/services/service-label.server";
 
 type TProps = {
   meter: TMeter;
@@ -14,13 +15,10 @@ type TProps = {
 };
 
 export const DetailsCard = async ({ meter, serviceType, propertyName }: TProps) => {
-  const [t, tTypes] = await Promise.all([
-    getTranslations("meters.detail.details"),
-    getTranslations("services.types"),
-  ]);
+  const t = await getTranslations("meters.detail.details");
 
   const { color, Icon } = getServiceTypeVisuals(serviceType.code as TServiceTypeCode);
-  const serviceName = tTypes(serviceType.code as Parameters<typeof tTypes>[0]);
+  const serviceName = await resolveServiceTypeLabelServer(serviceType);
 
   const zonesLabel = ((): string => {
     switch (meter.zoneCount) {

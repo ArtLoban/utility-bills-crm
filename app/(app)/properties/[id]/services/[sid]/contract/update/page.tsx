@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { getPropertyDetail } from "@/app/(app)/properties/[id]/_data/queries";
 import { getServiceDetail } from "../../_data/queries";
 import { UpdateContractFormContent } from "@/features/contracts";
+import { resolveServiceLabelServer } from "@/features/services/service-label.server";
 import { PageContainer } from "@/components/page-container";
 import { ROUTES } from "@/lib/routes";
 import { PROPERTY_ROLES, type PropertyId } from "@/lib/db/schema/properties";
@@ -18,21 +19,20 @@ export default async function UpdateContractPage({ params }: TProps) {
   const propertyId = id as PropertyId;
   const serviceId = sid as TServiceId;
 
-  const [propertyResult, serviceResult, t, tNav, tTypes] = await Promise.all([
+  const [propertyResult, serviceResult, t, tNav] = await Promise.all([
     getPropertyDetail(propertyId),
     getServiceDetail(serviceId),
     getTranslations("services.detail.updateContract"),
     getTranslations("nav"),
-    getTranslations("services.types"),
   ]);
 
   if (!propertyResult.ok) notFound();
   if (!serviceResult.ok || serviceResult.value.role === PROPERTY_ROLES.VIEWER) notFound();
 
-  const { serviceType, currentContract } = serviceResult.value;
+  const { service, serviceType, currentContract } = serviceResult.value;
   if (!currentContract) notFound();
 
-  const serviceName = tTypes(serviceType.code as Parameters<typeof tTypes>[0]);
+  const serviceName = await resolveServiceLabelServer(service, serviceType);
   const title = t("title");
 
   return (

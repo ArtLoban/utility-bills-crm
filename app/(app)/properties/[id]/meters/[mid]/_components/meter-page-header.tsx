@@ -9,6 +9,7 @@ import { formatDisplayDate } from "@/lib/format/date";
 import type { TMeter } from "@/lib/db/schema/meters";
 import type { TServiceType } from "@/lib/db/schema/service-types";
 import { getServiceTypeVisuals, TServiceTypeCode } from "@/features/services/service-type";
+import { resolveServiceTypeLabelServer } from "@/features/services/service-label.server";
 import { ReplaceMeterButton } from "./replace-meter-button";
 import { OverflowMenu } from "./overflow-menu";
 
@@ -27,16 +28,10 @@ export const MeterPageHeader = async ({
   propertyName,
   canMutate,
 }: TProps) => {
-  const [tNav, t, tTypes] = await Promise.all([
-    getTranslations("nav"),
-    getTranslations("meters.detail"),
-    getTranslations("services.types"),
-  ]);
+  const [tNav, t] = await Promise.all([getTranslations("nav"), getTranslations("meters.detail")]);
 
   const { color, Icon } = getServiceTypeVisuals(serviceType.code as TServiceTypeCode);
-  const meterTitle = t("title", {
-    type: tTypes(serviceType.code as Parameters<typeof tTypes>[0]),
-  });
+  const meterTitle = t("title", { type: await resolveServiceTypeLabelServer(serviceType) });
   const isHistorical = meter.validTo !== null;
 
   return (

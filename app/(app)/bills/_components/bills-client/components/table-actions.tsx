@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { Trash2 } from "lucide-react";
 
 import { softDeleteBill } from "@/features/bills/actions";
-import { getServiceLabel } from "@/lib/constants/service-colors";
+import { resolveServiceTypeLabel } from "@/features/services/service-label";
 import type { TBillGlobalRow } from "@/lib/db/access/bills";
 import type { TPropertyOption } from "@/features/properties";
 import { ConfirmDialog } from "@/components/confirm-dialog";
@@ -20,6 +20,7 @@ type TProps = {
 
 export const BillsTableActions = ({ children, properties }: TProps) => {
   const t = useTranslations("bills");
+  const tServiceTypes = useTranslations("services.types");
   const [rowToDelete, setRowToDelete] = useState<TBillGlobalRow | null>(null);
   const [isPending, startTransition] = useTransition();
   const handleActionError = useActionErrorHandler({ onClose: () => setRowToDelete(null) });
@@ -47,7 +48,9 @@ export const BillsTableActions = ({ children, properties }: TProps) => {
         title={t("list.delete.confirm.title")}
         icon={Trash2}
         description={t.rich("list.delete.confirm.description", {
-          service: rowToDelete ? getServiceLabel(rowToDelete.serviceTypeCode) : "",
+          service: rowToDelete
+            ? resolveServiceTypeLabel(rowToDelete.serviceTypeCode, tServiceTypes)
+            : "",
           property: rowToDelete?.property.name ?? "",
           b: (chunks) => <strong>{chunks}</strong>,
         })}

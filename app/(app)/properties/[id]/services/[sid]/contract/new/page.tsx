@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { getPropertyDetail } from "@/app/(app)/properties/[id]/_data/queries";
 import { getServiceDetail, getProvidersForContractPage } from "../../_data/queries";
 import { CreateContractFormContent } from "@/features/contracts";
+import { resolveServiceLabelServer } from "@/features/services/service-label.server";
 import { PageContainer } from "@/components/page-container";
 import { ROUTES } from "@/lib/routes";
 import { PROPERTY_ROLES, type PropertyId } from "@/lib/db/schema/properties";
@@ -18,20 +19,19 @@ export default async function NewContractPage({ params }: TProps) {
   const propertyId = id as PropertyId;
   const serviceId = sid as TServiceId;
 
-  const [propertyResult, serviceResult, providers, t, tNav, tTypes] = await Promise.all([
+  const [propertyResult, serviceResult, providers, t, tNav] = await Promise.all([
     getPropertyDetail(propertyId),
     getServiceDetail(serviceId),
     getProvidersForContractPage(),
     getTranslations("contracts"),
     getTranslations("nav"),
-    getTranslations("services.types"),
   ]);
 
   if (!propertyResult.ok) notFound();
   if (!serviceResult.ok || serviceResult.value.role === PROPERTY_ROLES.VIEWER) notFound();
 
-  const { serviceType } = serviceResult.value;
-  const serviceName = tTypes(serviceType.code as Parameters<typeof tTypes>[0]);
+  const { service, serviceType } = serviceResult.value;
+  const serviceName = await resolveServiceLabelServer(service, serviceType);
   const title = t("modal.add.title");
 
   return (

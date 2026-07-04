@@ -1,3 +1,5 @@
+import { getTranslations } from "next-intl/server";
+
 import type { TActivityItem } from "@/features/admin-dashboard";
 import { ActivityRow } from "./activity-row";
 import { Surface } from "@/components/surface";
@@ -6,7 +8,9 @@ type TProps = {
   items: TActivityItem[];
 };
 
-export const ActivityFeed = ({ items }: TProps) => {
+export const ActivityFeed = async ({ items }: TProps) => {
+  const t = await getTranslations("services.types");
+
   return (
     <section>
       <div className="mb-4 flex items-baseline gap-2.5">
@@ -20,7 +24,7 @@ export const ActivityFeed = ({ items }: TProps) => {
           </div>
         ) : (
           items.map((item, i) => (
-            <ActivityRow key={item.id} item={item} isLast={i === items.length - 1} />
+            <ActivityRow key={item.id} item={item} isLast={i === items.length - 1} t={t} />
           ))
         )}
       </Surface>
