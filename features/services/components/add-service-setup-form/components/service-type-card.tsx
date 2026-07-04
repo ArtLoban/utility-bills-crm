@@ -11,7 +11,7 @@ type TProps = {
   Icon: LucideIcon;
   color: string;
   isSelected: boolean;
-  isDisabled: boolean;
+  isAdded: boolean;
   addedBadgeLabel: string;
   tabIndex: number;
   onSelect: () => void;
@@ -25,7 +25,7 @@ export const ServiceTypeCard = ({
   Icon,
   color,
   isSelected,
-  isDisabled,
+  isAdded,
   addedBadgeLabel,
   tabIndex,
   onSelect,
@@ -37,22 +37,16 @@ export const ServiceTypeCard = ({
     type="button"
     role="radio"
     aria-checked={isSelected}
-    aria-disabled={isDisabled || undefined}
-    tabIndex={isDisabled ? -1 : tabIndex}
+    tabIndex={tabIndex}
     data-selected={isSelected || undefined}
-    onClick={isDisabled ? undefined : onSelect}
-    onKeyDown={isDisabled ? undefined : onKeyDown}
+    onClick={onSelect}
+    onKeyDown={onKeyDown}
     style={
       isSelected
         ? { borderColor: color, background: `color-mix(in srgb, ${color} 8%, transparent)` }
         : undefined
     }
-    className={cn(
-      "focus-visible:ring-ring/50 relative flex items-center gap-3 rounded-lg border p-3.5 text-left transition-[color,border-color,background-color] duration-150 outline-none focus-visible:ring-2",
-      isDisabled
-        ? "bg-muted cursor-not-allowed opacity-50"
-        : "bg-card not-data-[selected]:border-border not-data-[selected]:hover:bg-muted cursor-pointer",
-    )}
+    className="focus-visible:ring-ring/50 bg-card not-data-[selected]:border-border not-data-[selected]:hover:bg-muted relative flex cursor-pointer items-center gap-3 rounded-lg border p-3.5 text-left transition-[color,border-color,background-color] duration-150 outline-none focus-visible:ring-2"
   >
     <div
       className={cn(
@@ -91,7 +85,7 @@ export const ServiceTypeCard = ({
       </div>
     ) : null}
 
-    {isDisabled ? (
+    {isAdded ? (
       <span className="bg-muted-foreground text-background ring-background absolute -top-2 -right-2 rounded-full px-2 py-px text-xs font-semibold ring-2">
         {addedBadgeLabel}
       </span>

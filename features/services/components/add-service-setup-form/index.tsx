@@ -36,8 +36,10 @@ export const AddServiceSetupForm = ({
     selectedType,
     isMetered,
     effectiveZoneCount,
+    duplicateTypeLabel,
+    dismissDuplicateWarning,
     onSubmit,
-  } = useAddServiceSetup({ propertyId, serviceTypes });
+  } = useAddServiceSetup({ propertyId, serviceTypes, existingTypeIds });
 
   const { control } = form;
   const rootError = form.formState.errors.root?.message;
@@ -73,6 +75,8 @@ export const AddServiceSetupForm = ({
               serviceTypes={serviceTypes}
               existingTypeIds={existingTypeIds}
               nameRequired={selectedType?.code === SERVICE_TYPE_CODES.OTHER}
+              duplicateTypeLabel={duplicateTypeLabel}
+              onDismissDuplicateWarning={dismissDuplicateWarning}
             />
           </FormSection>
 

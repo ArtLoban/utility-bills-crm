@@ -1517,13 +1517,16 @@
       "badge": {
         "added": "Added"
       },
+      "warning": {
+        "duplicateType": "This property already has a {type} service. Adding another creates a separate line — e.g. water supply and drainage are often paid separately.",
+        "dismiss": "Dismiss"
+      },
       "submit": "Create service",
       "toast": {
         "created": "Service created."
       },
       "error": {
         "title": "Couldn't create service",
-        "alreadyExists": "A service of this type is already active for this property.",
         "overlap": "The dates overlap with an existing entry.",
         "generic": "Something went wrong. Please try again."
       },

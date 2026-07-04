@@ -32,7 +32,6 @@ const hasPgCode = (error: unknown, code: string): boolean => {
 };
 
 const isExclusionViolation = (error: unknown): boolean => hasPgCode(error, "23P01");
-const isUniqueViolation = (error: unknown): boolean => hasPgCode(error, "23505");
 
 // Validate that the tariff shape matches the service type's measurement type.
 const validateTariffShape = (
@@ -184,9 +183,6 @@ export const createServiceWithSetup = async (
   } catch (error) {
     if (isExclusionViolation(error)) {
       return err(appError.validation("validation.overlap"));
-    }
-    if (isUniqueViolation(error)) {
-      return err(appError.validation("A service of this type is already active for this property"));
     }
     throw error;
   }

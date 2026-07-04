@@ -6,6 +6,7 @@ import type { Control } from "react-hook-form";
 import { FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { FormTextField } from "@/components/form/form-text-field";
 import { FormTextareaField } from "@/components/form/form-textarea-field";
+import { InfoBanner } from "@/components/info-banner";
 import {
   getServiceTypeVisuals,
   SERVICE_TYPE_CODES,
@@ -24,6 +25,8 @@ type TProps = {
   serviceTypes: TServiceType[];
   existingTypeIds: TServiceType["id"][];
   nameRequired: boolean;
+  duplicateTypeLabel: string | null;
+  onDismissDuplicateWarning: () => void;
 };
 
 export const ServiceTypeSection = ({
@@ -31,6 +34,8 @@ export const ServiceTypeSection = ({
   serviceTypes,
   existingTypeIds,
   nameRequired,
+  duplicateTypeLabel,
+  onDismissDuplicateWarning,
 }: TProps) => {
   const t = useTranslations("services");
   const tTypes = useTranslations("services.types");
@@ -52,7 +57,7 @@ export const ServiceTypeSection = ({
       measurementLabel: getMeasurementLabel(serviceType),
       color,
       Icon,
-      isDisabled: existingSet.has(serviceType.id) && serviceType.code !== SERVICE_TYPE_CODES.OTHER,
+      isAdded: existingSet.has(serviceType.id) && serviceType.code !== SERVICE_TYPE_CODES.OTHER,
     };
   });
 
@@ -74,6 +79,14 @@ export const ServiceTypeSection = ({
           </FormItem>
         )}
       />
+
+      {duplicateTypeLabel ? (
+        <InfoBanner
+          text={t("serviceForm.warning.duplicateType", { type: duplicateTypeLabel })}
+          onDismiss={onDismissDuplicateWarning}
+          dismissLabel={t("serviceForm.warning.dismiss")}
+        />
+      ) : null}
 
       <FormTextField
         control={control}

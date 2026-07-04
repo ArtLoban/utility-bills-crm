@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
@@ -11,8 +11,9 @@ import { useActionErrorHandler } from "@/lib/hooks/use-action-error-handler";
 import { ERROR_CODES } from "@/lib/errors";
 import { ROUTES } from "@/lib/routes";
 import type { PropertyId } from "@/lib/db/schema/properties";
-import type { TServiceType } from "@/lib/db/schema/service-types";
-import { SERVICE_TYPE_CODES } from "@/features/services/service-type";
+import type { TServiceType, TServiceTypeId } from "@/lib/db/schema/service-types";
+import { SERVICE_TYPE_CODES, type TServiceTypeCode } from "@/features/services/service-type";
+import { resolveServiceTypeLabel } from "@/features/services/service-label";
 import { ServiceMeterField, ServiceSetupFormField, serviceSetupFormSchema } from "../schema";
 import { buildDefaultValues } from "../utils/build-default-values";
 import { buildActionInput } from "../utils/build-action-input";
@@ -20,10 +21,12 @@ import { buildActionInput } from "../utils/build-action-input";
 type TParams = {
   propertyId: PropertyId;
   serviceTypes: TServiceType[];
+  existingTypeIds: TServiceTypeId[];
 };
 
-export const useAddServiceSetup = ({ propertyId, serviceTypes }: TParams) => {
+export const useAddServiceSetup = ({ propertyId, serviceTypes, existingTypeIds }: TParams) => {
   const t = useTranslations("services.serviceForm");
+  const tTypes = useTranslations("services.types");
   const router = useRouter();
   const handleActionError = useActionErrorHandler({ onClose: () => router.back() });
 
@@ -44,6 +47,22 @@ export const useAddServiceSetup = ({ propertyId, serviceTypes }: TParams) => {
     isMetered && meterEngaged && meterZoneCount ? meterZoneCount : 1;
   const canSave = selectedType !== null;
 
+  const [dismissedTypeId, setDismissedTypeId] = useState<TServiceTypeId | null>(null);
+
+  const duplicateType =
+    selectedType &&
+    selectedType.code !== SERVICE_TYPE_CODES.OTHER &&
+    existingTypeIds.includes(selectedType.id) &&
+    dismissedTypeId !== selectedType.id
+      ? selectedType
+      : null;
+
+  const duplicateTypeLabel = duplicateType
+    ? resolveServiceTypeLabel(duplicateType.code as TServiceTypeCode, tTypes)
+    : null;
+
+  const dismissDuplicateWarning = () => setDismissedTypeId(selectedType?.id ?? null);
+
   const setMeterEngaged = (engaged: boolean) =>
     form.setValue(ServiceSetupFormField.METER_ENGAGED, engaged, { shouldValidate: true });
 
@@ -54,7 +73,6 @@ export const useAddServiceSetup = ({ propertyId, serviceTypes }: TParams) => {
   }, [isMetered, meterEngaged, form]);
 
   const resolveFormError = (message: string): string => {
-    if (message.includes("already active")) return t("error.alreadyExists");
     if (message === "validation.overlap") return t("error.overlap");
 
     return t("error.generic");
@@ -99,6 +117,8 @@ export const useAddServiceSetup = ({ propertyId, serviceTypes }: TParams) => {
     selectedType,
     isMetered,
     effectiveZoneCount,
+    duplicateTypeLabel,
+    dismissDuplicateWarning,
     onSubmit,
   };
 };

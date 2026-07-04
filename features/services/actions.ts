@@ -42,27 +42,13 @@ export const createService = async (
   const guard = await requirePropertyRole(userId, propertyId, PROPERTY_ROLES.EDITOR);
   if (!guard.ok) return guard;
 
-  try {
-    const [newService] = await db
-      .insert(services)
-      .values({ propertyId, serviceTypeId, notes })
-      .returning();
+  const [newService] = await db
+    .insert(services)
+    .values({ propertyId, serviceTypeId, notes })
+    .returning();
 
-    revalidatePath(`/properties/${propertyId}`);
-    return ok(newService!);
-  } catch (error) {
-    // Partial unique index (propertyId, serviceTypeId) WHERE deletedAt IS NULL violated:
-    // an active service of this type already exists on this property.
-    if (
-      typeof error === "object" &&
-      error !== null &&
-      "code" in error &&
-      (error as { code: unknown }).code === "23505"
-    ) {
-      return err(appError.validation("A service of this type is already active for this property"));
-    }
-    throw error;
-  }
+  revalidatePath(`/properties/${propertyId}`);
+  return ok(newService!);
 };
 
 export const editService = async (

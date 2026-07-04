@@ -17,5 +17,5 @@ export type TServiceTypeOption = {
   measurementLabel: string;
   color: string;
   Icon: LucideIcon;
-  isDisabled: boolean;
+  isAdded: boolean;
 };

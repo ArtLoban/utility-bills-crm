@@ -23,19 +23,13 @@ export const ServiceTypeSelector = ({
 }: TProps) => {
   const cardsRef = useRef<(HTMLButtonElement | null)[]>([]);
 
-  const enabledIndexes = options.flatMap((option, index) => (option.isDisabled ? [] : [index]));
-  const selectedIndex = options.findIndex((option) => option.id === value && !option.isDisabled);
-  const tabbableIndex = selectedIndex === -1 ? (enabledIndexes[0] ?? -1) : selectedIndex;
+  const selectedIndex = options.findIndex((option) => option.id === value);
+  const tabbableIndex = selectedIndex === -1 ? 0 : selectedIndex;
 
   const moveTo = (fromIndex: number, direction: 1 | -1) => {
-    if (enabledIndexes.length === 0) return;
+    if (options.length === 0) return;
 
-    const currentPos = enabledIndexes.indexOf(fromIndex);
-    const basePos = currentPos === -1 ? 0 : currentPos;
-    const nextPos = (basePos + direction + enabledIndexes.length) % enabledIndexes.length;
-    const nextIndex = enabledIndexes[nextPos];
-    if (nextIndex === undefined) return;
-
+    const nextIndex = (fromIndex + direction + options.length) % options.length;
     const nextOption = options[nextIndex];
     if (!nextOption) return;
 
@@ -75,7 +69,7 @@ export const ServiceTypeSelector = ({
           Icon={option.Icon}
           color={option.color}
           isSelected={value === option.id}
-          isDisabled={option.isDisabled}
+          isAdded={option.isAdded}
           addedBadgeLabel={addedBadgeLabel}
           tabIndex={index === tabbableIndex ? 0 : -1}
           onSelect={() => onChange(option.id)}
