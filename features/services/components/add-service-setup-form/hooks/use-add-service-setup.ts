@@ -72,12 +72,6 @@ export const useAddServiceSetup = ({ propertyId, serviceTypes, existingTypeIds }
     }
   }, [isMetered, meterEngaged, form]);
 
-  const resolveFormError = (message: string): string => {
-    if (message === "validation.overlap") return t("error.overlap");
-
-    return t("error.generic");
-  };
-
   const setNameRequiredError = () =>
     form.setError(ServiceSetupFormField.NAME, {
       message: t("validation.name.requiredForOther"),
@@ -97,7 +91,7 @@ export const useAddServiceSetup = ({ propertyId, serviceTypes, existingTypeIds }
           setNameRequiredError();
           return;
         }
-        form.setError("root", { message: resolveFormError(result.error.message) });
+        form.setError("root", { message: t("error.generic") });
         return;
       }
       handleActionError(result.error);

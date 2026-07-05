@@ -509,17 +509,13 @@
       "notes": {
         "tooLong": "Note is too long"
       },
-      "create": {
-        "overlap": "An active meter for this service already exists in the selected period."
-      },
       "zone": {
         "serviceTypeNotFound": "Service type not found",
         "unsupported": "This service type does not support multiple zones"
       },
       "replace": {
         "alreadyClosed": "This meter has already been replaced or closed.",
-        "dateBeforeStart": "The replacement date must be after the meter's start date.",
-        "overlap": "An active meter for this service already exists in the selected period."
+        "dateBeforeStart": "The replacement date must be after the meter's start date."
       },
       "serviceIds": {
         "required": "Select at least one service this meter feeds",
@@ -1535,7 +1531,6 @@
       },
       "error": {
         "title": "Couldn't create service",
-        "overlap": "The dates overlap with an existing entry.",
         "generic": "Something went wrong. Please try again."
       },
       "validation": {

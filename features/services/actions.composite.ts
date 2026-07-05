@@ -23,16 +23,6 @@ import { insertMeterInternal, insertMeterServiceLinks } from "@/features/meters/
 import { createServiceWithSetupSchema } from "./schema";
 import type { TCreateServiceWithSetupInput } from "./schema";
 
-// Drizzle 0.45+ wraps pg errors in DrizzleQueryError — the original pg error lands in .cause.
-// Check both the error itself (older Drizzle / raw pg) and its cause (newer Drizzle wrapper).
-const hasPgCode = (error: unknown, code: string): boolean => {
-  const check = (e: unknown): boolean =>
-    typeof e === "object" && e !== null && "code" in e && (e as { code: unknown }).code === code;
-  return check(error) || check((error as { cause?: unknown }).cause);
-};
-
-const isExclusionViolation = (error: unknown): boolean => hasPgCode(error, "23P01");
-
 // Validate that the tariff shape matches the service type's measurement type.
 const validateTariffShape = (
   measurementType: string,
@@ -135,57 +125,50 @@ export const createServiceWithSetup = async (
     }
   }
 
-  try {
-    const service = await db.transaction(async (tx) => {
-      const newService = await insertServiceInternal(tx, {
-        propertyId,
-        serviceTypeId,
-        name,
-        notes: parsed.data.serviceNotes || null,
-      });
-
-      const contract = await insertContractInternal(tx, {
-        serviceId: newService.id,
-        providerId,
-        validFrom: contractValidFrom,
-        notes: parsed.data.contractNotes || null,
-      });
-
-      await insertTariffInternal(tx, {
-        contractId: contract.id,
-        rateT1,
-        rateT2,
-        rateT3,
-        fixedAmount,
-        validFrom: tariffValidFrom,
-        notes: parsed.data.tariffNotes || null,
-      });
-
-      if (parsed.data.meter) {
-        const { zoneCount, serialNumber, installedAt, meterValidFrom, meterNotes } =
-          parsed.data.meter;
-        const meter = await insertMeterInternal(tx, {
-          propertyId,
-          serviceTypeId,
-          serialNumber: serialNumber || null,
-          zoneCount,
-          installedAt: installedAt ? new Date(installedAt) : null,
-          validFrom: new Date(meterValidFrom),
-          notes: meterNotes || null,
-        });
-        // The meter is created for this very service — link them explicitly (Slice B2).
-        await insertMeterServiceLinks(tx, meter.id, [newService.id]);
-      }
-
-      return newService;
+  const service = await db.transaction(async (tx) => {
+    const newService = await insertServiceInternal(tx, {
+      propertyId,
+      serviceTypeId,
+      name,
+      notes: parsed.data.serviceNotes || null,
     });
 
-    revalidatePath(`/properties/${propertyId}`);
-    return ok(service);
-  } catch (error) {
-    if (isExclusionViolation(error)) {
-      return err(appError.validation("validation.overlap"));
+    const contract = await insertContractInternal(tx, {
+      serviceId: newService.id,
+      providerId,
+      validFrom: contractValidFrom,
+      notes: parsed.data.contractNotes || null,
+    });
+
+    await insertTariffInternal(tx, {
+      contractId: contract.id,
+      rateT1,
+      rateT2,
+      rateT3,
+      fixedAmount,
+      validFrom: tariffValidFrom,
+      notes: parsed.data.tariffNotes || null,
+    });
+
+    if (parsed.data.meter) {
+      const { zoneCount, serialNumber, installedAt, meterValidFrom, meterNotes } =
+        parsed.data.meter;
+      const meter = await insertMeterInternal(tx, {
+        propertyId,
+        serviceTypeId,
+        serialNumber: serialNumber || null,
+        zoneCount,
+        installedAt: installedAt ? new Date(installedAt) : null,
+        validFrom: new Date(meterValidFrom),
+        notes: meterNotes || null,
+      });
+      // The meter is created for this very service — link them explicitly (Slice B2).
+      await insertMeterServiceLinks(tx, meter.id, [newService.id]);
     }
-    throw error;
-  }
+
+    return newService;
+  });
+
+  revalidatePath(`/properties/${propertyId}`);
+  return ok(service);
 };

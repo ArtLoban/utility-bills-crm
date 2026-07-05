@@ -24,13 +24,6 @@ import { insertMeterInternal, insertMeterServiceLinks } from "./lib";
 import { createMeterSchema, replaceMeterSchema, updateMeterSchema } from "./schema";
 import type { TCreateMeterInput, TReplaceMeterInput, TUpdateMeterInput } from "./schema";
 
-// PostgreSQL error code 23P01 = exclusion_violation.
-const isExclusionViolation = (error: unknown): boolean =>
-  typeof error === "object" &&
-  error !== null &&
-  "code" in error &&
-  (error as { code: unknown }).code === "23P01";
-
 // Fetches the serviceType and validates that zoneCount is compatible with supportsZones.
 const checkZoneCompatibility = async (
   serviceTypeId: TServiceTypeId,
@@ -100,30 +93,23 @@ export const createMeter = async (input: TCreateMeterInput): Promise<Result<TMet
   const validFrom = new Date(parsed.data.validFrom);
   const installedAt = parsed.data.installedAt ? new Date(parsed.data.installedAt) : null;
 
-  try {
-    const meter = await db.transaction(async (tx) => {
-      const created = await insertMeterInternal(tx, {
-        propertyId,
-        serviceTypeId,
-        serialNumber: parsed.data.serialNumber || null,
-        zoneCount: parsed.data.zoneCount,
-        installedAt,
-        validFrom,
-        notes: parsed.data.notes || null,
-      });
-      await insertMeterServiceLinks(tx, created.id, parsed.data.serviceIds as TServiceId[]);
-      return created;
+  const meter = await db.transaction(async (tx) => {
+    const created = await insertMeterInternal(tx, {
+      propertyId,
+      serviceTypeId,
+      serialNumber: parsed.data.serialNumber || null,
+      zoneCount: parsed.data.zoneCount,
+      installedAt,
+      validFrom,
+      notes: parsed.data.notes || null,
     });
+    await insertMeterServiceLinks(tx, created.id, parsed.data.serviceIds as TServiceId[]);
+    return created;
+  });
 
-    revalidatePath(`/properties/${propertyId}/meters`);
-    revalidatePath(ROUTES.meters);
-    return ok(meter);
-  } catch (error) {
-    if (isExclusionViolation(error)) {
-      return err(appError.validation("validation.create.overlap"));
-    }
-    throw error;
-  }
+  revalidatePath(`/properties/${propertyId}/meters`);
+  revalidatePath(ROUTES.meters);
+  return ok(meter);
 };
 
 export const updateMeter = async (
@@ -208,49 +194,42 @@ export const replaceMeter = async (
 
   const installedAt = parsed.data.installedAt ? new Date(parsed.data.installedAt) : null;
 
-  try {
-    const newMeter = await db.transaction(async (tx) => {
-      // Close the current meter at replacementDate.
-      await tx
-        .update(meters)
-        .set({ validTo: replacementDate })
-        .where(and(eq(meters.id, currentMeterId), isNull(meters.deletedAt)));
+  const newMeter = await db.transaction(async (tx) => {
+    // Close the current meter at replacementDate.
+    await tx
+      .update(meters)
+      .set({ validTo: replacementDate })
+      .where(and(eq(meters.id, currentMeterId), isNull(meters.deletedAt)));
 
-      // Open the new meter starting at the same instant — half-open intervals meet without gap.
-      const created = await insertMeterInternal(tx, {
-        propertyId: currentMeter.propertyId,
-        serviceTypeId: currentMeter.serviceTypeId,
-        serialNumber: parsed.data.serialNumber || null,
-        zoneCount: parsed.data.zoneCount,
-        installedAt,
-        validFrom: replacementDate,
-        notes: parsed.data.notes || null,
-      });
-
-      // Inherit the closed meter's service links so attribution continuity is preserved.
-      const inheritedLinks = await tx
-        .select({ serviceId: meterServices.serviceId })
-        .from(meterServices)
-        .where(and(eq(meterServices.meterId, currentMeterId), isNull(meterServices.deletedAt)));
-      await insertMeterServiceLinks(
-        tx,
-        created.id,
-        inheritedLinks.map((l) => l.serviceId),
-      );
-
-      return created;
+    // Open the new meter starting at the same instant — half-open intervals meet without gap.
+    const created = await insertMeterInternal(tx, {
+      propertyId: currentMeter.propertyId,
+      serviceTypeId: currentMeter.serviceTypeId,
+      serialNumber: parsed.data.serialNumber || null,
+      zoneCount: parsed.data.zoneCount,
+      installedAt,
+      validFrom: replacementDate,
+      notes: parsed.data.notes || null,
     });
 
-    revalidatePath(`/properties/${currentMeter.propertyId}/meters`);
-    revalidatePath(`/properties/${currentMeter.propertyId}/meters/${currentMeterId}`);
-    revalidatePath(ROUTES.meters);
-    return ok(newMeter);
-  } catch (error) {
-    if (isExclusionViolation(error)) {
-      return err(appError.validation("validation.replace.overlap"));
-    }
-    throw error;
-  }
+    // Inherit the closed meter's service links so attribution continuity is preserved.
+    const inheritedLinks = await tx
+      .select({ serviceId: meterServices.serviceId })
+      .from(meterServices)
+      .where(and(eq(meterServices.meterId, currentMeterId), isNull(meterServices.deletedAt)));
+    await insertMeterServiceLinks(
+      tx,
+      created.id,
+      inheritedLinks.map((l) => l.serviceId),
+    );
+
+    return created;
+  });
+
+  revalidatePath(`/properties/${currentMeter.propertyId}/meters`);
+  revalidatePath(`/properties/${currentMeter.propertyId}/meters/${currentMeterId}`);
+  revalidatePath(ROUTES.meters);
+  return ok(newMeter);
 };
 
 export const softDeleteMeter = async (meterId: MeterId): Promise<Result<void, TAppError>> => {
