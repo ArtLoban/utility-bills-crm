@@ -13,8 +13,10 @@ import { contracts } from "@/lib/db/schema/contracts";
 import { tariffs } from "@/lib/db/schema/tariffs";
 import type { TTariff } from "@/lib/db/schema/tariffs";
 import { meters } from "@/lib/db/schema/meters";
+import type { MeterId } from "@/lib/db/schema/meters";
 import { meterServices } from "@/lib/db/schema/meter-services";
 import { readings } from "@/lib/db/schema/readings";
+import type { TReading } from "@/lib/db/schema/readings";
 import { serviceByIdForUser } from "@/lib/db/access/services";
 import type { UserId } from "@/lib/db/schema/auth";
 import { SERVICE_TYPE_CODES, type TServiceTypeCode } from "@/features/services/service-type";
@@ -215,21 +217,25 @@ export const tariffForServicePeriod = async (
   return rows[0]?.tariff ?? null;
 };
 
-// Returns the last two readings for the active meter that feeds this service,
-// both with readAt <= periodEnd. curr = most recent, prev = the one before it.
-// Used to compute metered consumption for the expected-amount hint.
+// Returns one reading pair (curr = most recent ≤ periodEnd, prev = the one before it) for every
+// active meter that feeds this service. Used to compute the metered expected-amount hint across
+// all of a service's meters, consistent with how monthlyConsumptionByService sums their deltas.
 //
-// The meter is resolved through the explicit meter↔service link (Slice B3), not by shared
-// service type: when a property has more than one meter of a type, this picks the one actually
-// linked to *this* service instead of an arbitrary same-type meter. If a service happens to be
-// fed by several active meters, the most recently installed one is used (the hint is advisory).
+// Meters are resolved through the explicit meter↔service link (Slice B3), not by shared service
+// type. A meter with fewer than two readings yields a pair with a null slot (the caller skips it).
 // No access check — only called from within access-controlled server actions.
-export const readingsForPeriod = async (
+export const readingPairsForPeriod = async (
   serviceId: TServiceId,
   periodEnd: string, // "YYYY-MM-DD"
-): Promise<TReadingPair> => {
-  const meterRows = await db
-    .select({ meterId: meters.id })
+): Promise<TReadingPair[]> => {
+  // readAt < start of (periodEnd + 1 day) ≡ readAt ≤ end of periodEnd (any time on that day)
+  const dayAfter = new Date(periodEnd + "T00:00:00Z");
+  dayAfter.setUTCDate(dayAfter.getUTCDate() + 1);
+
+  // Every active linked meter joined to its readings up to periodEnd, most recent first — one
+  // batched query; the two newest readings per meter form that meter's pair.
+  const rows = await db
+    .select({ reading: readings })
     .from(meters)
     .innerJoin(
       meterServices,
@@ -239,33 +245,30 @@ export const readingsForPeriod = async (
         isNull(meterServices.deletedAt),
       ),
     )
-    .where(and(isNull(meters.validTo), isNull(meters.deletedAt)))
-    .orderBy(desc(meters.validFrom))
-    .limit(1);
-
-  if (!meterRows[0]) return { curr: null, prev: null };
-
-  // readAt < start of (periodEnd + 1 day) ≡ readAt ≤ end of periodEnd (any time on that day)
-  const dayAfter = new Date(periodEnd + "T00:00:00Z");
-  dayAfter.setUTCDate(dayAfter.getUTCDate() + 1);
-
-  const readingRows = await db
-    .select()
-    .from(readings)
-    .where(
+    .innerJoin(
+      readings,
       and(
-        eq(readings.meterId, meterRows[0].meterId),
+        eq(readings.meterId, meters.id),
         lt(readings.readAt, dayAfter),
         isNull(readings.deletedAt),
       ),
     )
-    .orderBy(desc(readings.readAt))
-    .limit(2);
+    .where(and(isNull(meters.validTo), isNull(meters.deletedAt)))
+    .orderBy(asc(meters.id), desc(readings.readAt));
 
-  return {
-    curr: readingRows[0] ?? null,
-    prev: readingRows[1] ?? null,
-  };
+  const topTwoByMeter = new Map<MeterId, TReading[]>();
+  for (const { reading } of rows) {
+    const list = topTwoByMeter.get(reading.meterId) ?? [];
+    if (list.length < 2) {
+      list.push(reading);
+      topTwoByMeter.set(reading.meterId, list);
+    }
+  }
+
+  return [...topTwoByMeter.values()].map(([curr, prev]) => ({
+    curr: curr ?? null,
+    prev: prev ?? null,
+  }));
 };
 
 // Returns the ordered list of first-of-month "YYYY-MM-DD" strings covering

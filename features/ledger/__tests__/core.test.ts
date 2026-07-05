@@ -177,15 +177,22 @@ describe("computeExpectedMetered", () => {
   const tariffT1Only = makeTariff({ rateT1: "4.3200" });
   const tariffT1T2 = makeTariff({ rateT1: "4.3200", rateT2: "2.1600" });
 
-  it("returns cannot-compute when curr reading is missing", () => {
-    expect(computeExpectedMetered(tariffT1Only, { curr: null, prev: makeReading() })).toEqual({
+  it("returns cannot-compute when no pair has both readings (curr missing)", () => {
+    expect(computeExpectedMetered(tariffT1Only, [{ curr: null, prev: makeReading() }])).toEqual({
       kind: "cannot-compute",
       reason: "no-reading",
     });
   });
 
-  it("returns cannot-compute when prev reading is missing", () => {
-    expect(computeExpectedMetered(tariffT1Only, { curr: makeReading(), prev: null })).toEqual({
+  it("returns cannot-compute when no pair has both readings (prev missing)", () => {
+    expect(computeExpectedMetered(tariffT1Only, [{ curr: makeReading(), prev: null }])).toEqual({
+      kind: "cannot-compute",
+      reason: "no-reading",
+    });
+  });
+
+  it("returns cannot-compute for an empty set of meters", () => {
+    expect(computeExpectedMetered(tariffT1Only, [])).toEqual({
       kind: "cannot-compute",
       reason: "no-reading",
     });
@@ -194,17 +201,40 @@ describe("computeExpectedMetered", () => {
   it("returns cannot-compute when tariff has no rateT1", () => {
     const tariffNoRate = makeTariff({ rateT1: null });
     expect(
-      computeExpectedMetered(tariffNoRate, {
-        curr: makeReading(),
-        prev: makeReading({ valueT1: "900.000" }),
-      }),
+      computeExpectedMetered(tariffNoRate, [
+        { curr: makeReading(), prev: makeReading({ valueT1: "900.000" }) },
+      ]),
     ).toEqual({ kind: "cannot-compute", reason: "no-tariff" });
   });
 
   it("computes single-zone consumption correctly", () => {
     const prev = makeReading({ valueT1: "900.000" });
     const curr = makeReading({ valueT1: "1000.000" }); // consumption = 100 kWh
-    const result = computeExpectedMetered(tariffT1Only, { curr, prev });
+    const result = computeExpectedMetered(tariffT1Only, [{ curr, prev }]);
+    expect(result).toEqual({ kind: "computed", amount: 100 * 4.32 });
+  });
+
+  it("sums consumption across every meter feeding the service", () => {
+    const meterA = {
+      prev: makeReading({ valueT1: "900.000" }),
+      curr: makeReading({ valueT1: "1000.000" }),
+    }; // 100 kWh
+    const meterB = {
+      prev: makeReading({ valueT1: "500.000" }),
+      curr: makeReading({ valueT1: "530.000" }),
+    }; // 30 kWh
+    const result = computeExpectedMetered(tariffT1Only, [meterA, meterB]);
+    // (100 + 30) × 4.32 — both meters count, not just one
+    expect(result).toEqual({ kind: "computed", amount: 130 * 4.32 });
+  });
+
+  it("skips meters with fewer than two readings while still counting the rest", () => {
+    const complete = {
+      prev: makeReading({ valueT1: "900.000" }),
+      curr: makeReading({ valueT1: "1000.000" }),
+    }; // 100 kWh
+    const singleReading = { prev: null, curr: makeReading({ valueT1: "42.000" }) };
+    const result = computeExpectedMetered(tariffT1Only, [complete, singleReading]);
     expect(result).toEqual({ kind: "computed", amount: 100 * 4.32 });
   });
 
@@ -212,17 +242,33 @@ describe("computeExpectedMetered", () => {
     const prev = makeReading({ valueT1: "900.000", valueT2: "200.000" });
     const curr = makeReading({ valueT1: "1000.000", valueT2: "250.000" });
     // T1: 100 × 4.32 = 432, T2: 50 × 2.16 = 108 → total = 540
-    const result = computeExpectedMetered(tariffT1T2, { curr, prev });
+    const result = computeExpectedMetered(tariffT1T2, [{ curr, prev }]);
     expect(result.kind).toBe("computed");
     if (result.kind === "computed") {
       expect(result.amount).toBeCloseTo(540, 5);
     }
   });
 
+  it("mixes zone shapes across meters (a 2-zone and a 1-zone meter) under a two-zone tariff", () => {
+    const twoZone = {
+      prev: makeReading({ valueT1: "900.000", valueT2: "200.000" }),
+      curr: makeReading({ valueT1: "1000.000", valueT2: "250.000" }),
+    }; // 100 × 4.32 + 50 × 2.16 = 540
+    const oneZone = {
+      prev: makeReading({ valueT1: "10.000", valueT2: null }),
+      curr: makeReading({ valueT1: "20.000", valueT2: null }),
+    }; // 10 × 4.32 = 43.2 (no T2)
+    const result = computeExpectedMetered(tariffT1T2, [twoZone, oneZone]);
+    expect(result.kind).toBe("computed");
+    if (result.kind === "computed") {
+      expect(result.amount).toBeCloseTo(540 + 43.2, 5);
+    }
+  });
+
   it("falls back to T1 only when T2 reading values are null (single-zone meter, two-zone tariff)", () => {
     const prev = makeReading({ valueT1: "900.000", valueT2: null });
     const curr = makeReading({ valueT1: "1000.000", valueT2: null });
-    const result = computeExpectedMetered(tariffT1T2, { curr, prev });
+    const result = computeExpectedMetered(tariffT1T2, [{ curr, prev }]);
     // Only T1 counts when valueT2 is null
     expect(result).toEqual({ kind: "computed", amount: 100 * 4.32 });
   });

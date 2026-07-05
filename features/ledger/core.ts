@@ -1,3 +1,4 @@
+import type { TReading } from "@/lib/db/schema/readings";
 import type { TTariff } from "@/lib/db/schema/tariffs";
 import type { TBalance, TExpectedAmount, TReadingPair } from "./types";
 
@@ -24,24 +25,31 @@ export const computeExpectedFixed = (tariff: TTariff): TExpectedAmount => {
   return { kind: "computed", amount: parseFloat(tariff.fixedAmount) };
 };
 
+// Expected metered amount across every meter feeding the service (one reading pair per meter).
+// Rates are linear, so summing each meter's consumption × rate equals rate × total consumption —
+// the hint stays consistent with monthlyConsumptionByService, which likewise sums per-meter deltas.
+// A pair contributes only when it has both readings; a meter with fewer than two readings is skipped.
 export const computeExpectedMetered = (
   tariff: TTariff,
-  readings: TReadingPair,
+  readingPairs: TReadingPair[],
 ): TExpectedAmount => {
-  if (!readings.curr || !readings.prev) return { kind: "cannot-compute", reason: "no-reading" };
+  const usable = readingPairs.filter(
+    (pair): pair is { curr: TReading; prev: TReading } => pair.curr !== null && pair.prev !== null,
+  );
+  if (usable.length === 0) return { kind: "cannot-compute", reason: "no-reading" };
   if (!tariff.rateT1) return { kind: "cannot-compute", reason: "no-tariff" };
 
-  const consumptionT1 = parseFloat(readings.curr.valueT1) - parseFloat(readings.prev.valueT1);
-  let amount = consumptionT1 * parseFloat(tariff.rateT1);
+  let amount = 0;
+  for (const { curr, prev } of usable) {
+    amount += (parseFloat(curr.valueT1) - parseFloat(prev.valueT1)) * parseFloat(tariff.rateT1);
 
-  if (tariff.rateT2 !== null && readings.curr.valueT2 !== null && readings.prev.valueT2 !== null) {
-    const consumptionT2 = parseFloat(readings.curr.valueT2) - parseFloat(readings.prev.valueT2);
-    amount += consumptionT2 * parseFloat(tariff.rateT2);
-  }
+    if (tariff.rateT2 !== null && curr.valueT2 !== null && prev.valueT2 !== null) {
+      amount += (parseFloat(curr.valueT2) - parseFloat(prev.valueT2)) * parseFloat(tariff.rateT2);
+    }
 
-  if (tariff.rateT3 !== null && readings.curr.valueT3 !== null && readings.prev.valueT3 !== null) {
-    const consumptionT3 = parseFloat(readings.curr.valueT3) - parseFloat(readings.prev.valueT3);
-    amount += consumptionT3 * parseFloat(tariff.rateT3);
+    if (tariff.rateT3 !== null && curr.valueT3 !== null && prev.valueT3 !== null) {
+      amount += (parseFloat(curr.valueT3) - parseFloat(prev.valueT3)) * parseFloat(tariff.rateT3);
+    }
   }
 
   return { kind: "computed", amount };

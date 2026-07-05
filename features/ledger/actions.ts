@@ -5,7 +5,7 @@ import { serviceByIdForUser } from "@/lib/db/access/services";
 import type { TServiceId } from "@/lib/db/schema/services";
 import type { TBalance, TExpectedAmount } from "./types";
 import { computeExpectedFixed, computeExpectedMetered } from "./core";
-import { balanceForService, readingsForPeriod, tariffForServicePeriod } from "./query";
+import { balanceForService, readingPairsForPeriod, tariffForServicePeriod } from "./query";
 
 // month = "YYYY-MM" → last day of that month as "YYYY-MM-DD"
 const lastDayOfMonth = (month: string): string => {
@@ -44,6 +44,6 @@ export const getExpectedAmountHintAction = async (
     return computeExpectedFixed(tariff);
   }
 
-  const readingPair = await readingsForPeriod(serviceId as TServiceId, periodEnd);
-  return computeExpectedMetered(tariff, readingPair);
+  const readingPairs = await readingPairsForPeriod(serviceId as TServiceId, periodEnd);
+  return computeExpectedMetered(tariff, readingPairs);
 };
