@@ -155,7 +155,7 @@ Key relationships:
 - **User ↔ Property** is many-to-many via `property_access` with roles.
 - **Service** is the hub of the CRM domain — it links a Property to a ServiceType, and owns Contracts, Bills, Payments.
 - **Contract** is the aggregate that groups Provider + temporal Tariffs/AccountNumbers/PaymentDetails.
-- **Meter** belongs to Property (physical device) and carries a ServiceType. It links to Services many-to-many via `meter_services` — one meter may feed several service lines (e.g. water supply + drainage), one service may be fed by several meters. Legacy by-type matching still works and is being migrated onto this explicit link.
+- **Meter** belongs to Property (physical device) and carries a ServiceType. It links to Services many-to-many via `meter_services` — one meter may feed several service lines (e.g. water supply + drainage), one service may be fed by several meters. Consumption volume, the expected-amount hint, and reading-attention all resolve through this explicit link; the former "match a meter to a service by shared service type" approach has been removed (tranche B).
 - **Reading** is owned by Meter. Not directly tied to Service (attribution flows through the meter).
 - **Bill** and **Payment** are independent ledger entries. No FK between them.
 
@@ -356,19 +356,22 @@ Fixed catalog of utility service types.
 
 **Translations:** stored in i18n files (next-intl), keyed by `code`, e.g., `t(`services.${serviceType.code}`)`.
 
+**The `other` type.** The seeded catalog includes a catch-all `other` type (added in migration 0024): `measurementType = 'fixed'`, `unit = NULL`, `supportsZones = false`, and a high `sortOrder` (1000) so it lists last. It has no meaningful built-in label — a service of this type must supply a custom `services.name`, enforced at the application level (not by a DB constraint).
+
 ### `services`
 
 A specific service instance attached to a property.
 
-| Column          | Type          | Null | Default             | Notes                                       |
-| --------------- | ------------- | ---- | ------------------- | ------------------------------------------- |
-| `id`            | `uuid`        | NO   | `gen_random_uuid()` | Branded `ServiceId`.                        |
-| `propertyId`    | `uuid`        | NO   | —                   | FK → `properties.id` ON DELETE CASCADE.     |
-| `serviceTypeId` | `uuid`        | NO   | —                   | FK → `service_types.id` ON DELETE RESTRICT. |
-| `notes`         | `text`        | YES  | —                   |                                             |
-| `createdAt`     | `timestamptz` | NO   | `now()`             |                                             |
-| `updatedAt`     | `timestamptz` | NO   | `now()`             |                                             |
-| `deletedAt`     | `timestamptz` | YES  | —                   |                                             |
+| Column          | Type          | Null | Default             | Notes                                                                                                                                                                            |
+| --------------- | ------------- | ---- | ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`            | `uuid`        | NO   | `gen_random_uuid()` | Branded `ServiceId`.                                                                                                                                                             |
+| `propertyId`    | `uuid`        | NO   | —                   | FK → `properties.id` ON DELETE CASCADE.                                                                                                                                          |
+| `serviceTypeId` | `uuid`        | NO   | —                   | FK → `service_types.id` ON DELETE RESTRICT.                                                                                                                                      |
+| `name`          | `text`        | YES  | —                   | Optional custom label. NULL → display falls back to the service-type label. Not unique (duplicate names are legitimate). Required at the application level for the `other` type. |
+| `notes`         | `text`        | YES  | —                   |                                                                                                                                                                                  |
+| `createdAt`     | `timestamptz` | NO   | `now()`             |                                                                                                                                                                                  |
+| `updatedAt`     | `timestamptz` | NO   | `now()`             |                                                                                                                                                                                  |
+| `deletedAt`     | `timestamptz` | YES  | —                   |                                                                                                                                                                                  |
 
 **Indexes:**
 
@@ -467,7 +470,7 @@ Pricing rates within a contract.
 **Check constraints:**
 
 - `valid_to IS NULL OR valid_to > valid_from`
-- `(rate_t1 IS NOT NULL AND fixed_amount IS NULL) OR (rate_t1 IS NULL AND rate_t2 IS NULL AND rate_t3 IS NULL AND fixed_amount IS NOT NULL)` — metered XOR fixed.
+- `(rate_t1 IS NOT NULL AND fixed_amount IS NULL) OR (fixed_amount IS NOT NULL AND rate_t1 IS NULL)` — metered XOR fixed. The CHECK guards only `rate_t1` against `fixed_amount`; `rate_t2`/`rate_t3` are not part of it — their being NULL for a fixed tariff is an application-level guarantee, not enforced by this constraint.
 - `rate_t1 IS NULL OR rate_t1 > 0`
 - `rate_t2 IS NULL OR rate_t2 > 0`
 - `rate_t3 IS NULL OR rate_t3 > 0`
@@ -565,7 +568,7 @@ Physical meters at a property. Belong to Property, not Service.
 
 ### `meter_services`
 
-Explicit many-to-many link between meters and services (Slice B1). Replaces implicit "match by shared service type": a meter may feed several services, a service may be fed by several meters. Introduced inert — backfilled to reproduce today's by-type associations; consumers migrate onto it in later slices.
+Explicit many-to-many link between meters and services (Slice B1). Replaces implicit "match by shared service type": a meter may feed several services, a service may be fed by several meters. Introduced inert in Slice B1 and backfilled to reproduce the prior by-type associations; every consumer (consumption attribution, expected-amount hint, reading-attention) now resolves through it and the by-type fallback has been removed (tranche B complete).
 
 | Column      | Type          | Null | Default             | Notes                                 |
 | ----------- | ------------- | ---- | ------------------- | ------------------------------------- |
@@ -598,7 +601,7 @@ Meter readings.
 | `valueT2`   | `numeric(12,3)` | YES  | —                   | Zone 2. NULL for single-zone meters.    |
 | `valueT3`   | `numeric(12,3)` | YES  | —                   | Zone 3.                                 |
 | `notes`     | `text`          | YES  | —                   |                                         |
-| `createdBy` | `uuid`          | NO   | —                   | FK → `users.id` ON DELETE SET NULL.     |
+| `createdBy` | `uuid`          | YES  | —                   | FK → `users.id` ON DELETE SET NULL.     |
 | `createdAt` | `timestamptz`   | NO   | `now()`             |                                         |
 | `updatedAt` | `timestamptz`   | NO   | `now()`             |                                         |
 | `deletedAt` | `timestamptz`   | YES  | —                   |                                         |
@@ -641,7 +644,7 @@ Charges for a period (quittance).
 | `periodMonth` | `date`          | NO   | —                   | First day of the month of attribution. |
 | `amount`      | `numeric(12,2)` | NO   | —                   | Amount due from the bill. UAH in MVP.  |
 | `notes`       | `text`          | YES  | —                   |                                        |
-| `createdBy`   | `uuid`          | NO   | —                   | FK → `users.id` ON DELETE SET NULL.    |
+| `createdBy`   | `uuid`          | YES  | —                   | FK → `users.id` ON DELETE SET NULL.    |
 | `createdAt`   | `timestamptz`   | NO   | `now()`             |                                        |
 | `updatedAt`   | `timestamptz`   | NO   | `now()`             |                                        |
 | `deletedAt`   | `timestamptz`   | YES  | —                   |                                        |
@@ -675,7 +678,7 @@ Payments.
 | `paidAt`    | `date`          | NO   | —                   | Payment date.                         |
 | `amount`    | `numeric(12,2)` | NO   | —                   | Amount paid. UAH in MVP.              |
 | `notes`     | `text`          | YES  | —                   |                                       |
-| `createdBy` | `uuid`          | NO   | —                   | FK → `users.id` ON DELETE SET NULL.   |
+| `createdBy` | `uuid`          | YES  | —                   | FK → `users.id` ON DELETE SET NULL.   |
 | `createdAt` | `timestamptz`   | NO   | `now()`             |                                       |
 | `updatedAt` | `timestamptz`   | NO   | `now()`             |                                       |
 | `deletedAt` | `timestamptz`   | YES  | —                   |                                       |
@@ -720,7 +723,7 @@ Constraints that are not expressible at the database level (require cross-table 
 
 - **Tariff shape matches ServiceType's measurement type:**
   - `measurementType = 'metered'` → tariff uses `rateT1` (required), `rateT2`/`rateT3` optional per zone count. `fixedAmount` must be NULL.
-  - `measurementType = 'fixed'` → tariff uses `fixedAmount` (required). All `rateT*` must be NULL.
+  - `measurementType = 'fixed'` → tariff uses `fixedAmount` (required). `rateT*` are NULL — the application keeps all three empty, though the DB CHECK only forces `rateT1` NULL (see the tariffs constraint above).
 - **Meter zone count consistent with ServiceType:** if `supportsZones = false`, `zoneCount` must be 1.
 - **Reading zone values consistent with Meter:** `valueT2` non-null iff `zoneCount >= 2`; `valueT3` non-null iff `zoneCount = 3`.
 

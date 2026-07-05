@@ -185,7 +185,7 @@ updatedAt           timestamptz NOT NULL DEFAULT now()
 
 **No `deletedAt`.** Retirement via `isActive = false`.
 
-**Seed (11 types):** `electricity`, `gas`, `cold_water`, `hot_water`, `gas_delivery`, `heating`, `building_maintenance`, `garbage_collection`, `internet`, `intercom`, `hoa_fees`.
+**Seed (12 types):** `electricity`, `gas`, `cold_water`, `hot_water`, `gas_delivery`, `heating`, `building_maintenance`, `garbage_collection`, `internet`, `intercom`, `hoa_fees`, `other`. The `other` type (added in migration 0024) is a fixed, non-metered catch-all (`unit = NULL`, `supportsZones = false`, `sortOrder = 1000`); a service of this type must supply a custom `services.name`, enforced at the application level.
 
 ---
 
@@ -195,6 +195,7 @@ updatedAt           timestamptz NOT NULL DEFAULT now()
 id               uuid PK
 propertyId       uuid NOT NULL → properties(id) CASCADE
 serviceTypeId    uuid NOT NULL → service_types(id) RESTRICT
+name             text?                            -- optional custom label; required (app-level) for `other`
 notes            text?
 createdAt        timestamptz NOT NULL DEFAULT now()
 updatedAt        timestamptz NOT NULL DEFAULT now()
@@ -203,7 +204,7 @@ deletedAt        timestamptz?
 
 **Indexes:**
 
-- UNIQUE partial `(propertyId, serviceTypeId) WHERE deletedAt IS NULL`
+- No uniqueness on `(propertyId, serviceTypeId)` — multiple active services of one type per property are allowed (unique index dropped in migration 0024)
 - index `propertyId`, `deletedAt`
 
 ---
@@ -276,7 +277,7 @@ deletedAt      timestamptz?
 
 **Checks:**
 
-- `(rateT1 IS NOT NULL AND fixedAmount IS NULL) OR (rateT1 IS NULL AND rateT2 IS NULL AND rateT3 IS NULL AND fixedAmount IS NOT NULL)`
+- `(rateT1 IS NOT NULL AND fixedAmount IS NULL) OR (fixedAmount IS NOT NULL AND rateT1 IS NULL)` — CHECK guards only `rateT1` vs `fixedAmount`; `rateT2`/`rateT3` being NULL for a fixed tariff is an application-level guarantee, not part of the constraint
 - rates > 0, fixedAmount >= 0
 
 **Exclusion constraint:** same pattern as contracts, per `contractId`.
@@ -354,7 +355,7 @@ deletedAt        timestamptz?
 
 ### `meter_services`
 
-Explicit many-to-many link Meter↔Service (Slice B1). Backfilled to match today's by-type associations.
+Explicit many-to-many link Meter↔Service (Slice B1). Backfilled from the prior by-type associations; consumption, the expected-amount hint, and reading-attention now resolve through it — by-type matching removed (tranche B).
 
 ```
 id           uuid PK
@@ -379,7 +380,7 @@ valueT1      numeric(12,3) NOT NULL
 valueT2      numeric(12,3)?
 valueT3      numeric(12,3)?
 notes        text?
-createdBy    uuid NOT NULL → users(id) SET NULL
+createdBy    uuid? → users(id) SET NULL
 createdAt    timestamptz NOT NULL DEFAULT now()
 updatedAt    timestamptz NOT NULL DEFAULT now()
 deletedAt    timestamptz?
@@ -405,7 +406,7 @@ periodEnd      date NOT NULL
 periodMonth    date NOT NULL                    -- first day of the attribution month
 amount         numeric(12,2) NOT NULL           -- UAH
 notes          text?
-createdBy      uuid NOT NULL → users(id) SET NULL
+createdBy      uuid? → users(id) SET NULL
 createdAt      timestamptz NOT NULL DEFAULT now()
 updatedAt      timestamptz NOT NULL DEFAULT now()
 deletedAt      timestamptz?
@@ -432,7 +433,7 @@ serviceId    uuid NOT NULL → services(id) CASCADE
 paidAt       date NOT NULL
 amount       numeric(12,2) NOT NULL              -- UAH
 notes        text?
-createdBy    uuid NOT NULL → users(id) SET NULL
+createdBy    uuid? → users(id) SET NULL
 createdAt    timestamptz NOT NULL DEFAULT now()
 updatedAt    timestamptz NOT NULL DEFAULT now()
 deletedAt    timestamptz?
