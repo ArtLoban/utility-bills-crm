@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/select";
 import { useQueryFilters } from "@/lib/hooks/use-query-filters";
 import { resolveServiceTypeLabel } from "@/features/services/service-label";
-import { SERVICE_TYPE_CODES, type TServiceTypeCode } from "@/features/services/service-type";
+import type { TServiceTypeCode } from "@/features/services/service-type";
 import type { TMonthlyExpensesAggregate } from "@/features/ledger";
 import type { TAvailableConsumptionService } from "@/features/meters";
 import { CHART_MODES, DASHBOARD_CHART_PARAMS } from "../../_data/query-params";
@@ -33,6 +33,7 @@ type TProps = {
   properties: TPropertyOption[];
   resolvedDateFrom: string;
   resolvedDateTo: string;
+  serviceTypeCodes: TServiceTypeCode[];
   availableConsumptionServices: TAvailableConsumptionService[];
   // Server-resolved default (first available service or URL param) — used to initialise picker
   consumptionServiceCode: string | null;
@@ -45,6 +46,7 @@ export const ChartsSection = ({
   properties,
   resolvedDateFrom,
   resolvedDateTo,
+  serviceTypeCodes,
   availableConsumptionServices,
   consumptionServiceCode,
   consumptionLineChartSlot,
@@ -80,13 +82,10 @@ export const ChartsSection = ({
   // Chart series: regular types stay merged by concept, custom `other` split per service.
   const series = buildChartSeries(aggregate, tServiceTypes);
 
-  // Filter bar stays type-based (it filters bills by type code): collapse every custom
-  // `other` series back to the single `other` type, deduped, preserving catalog order.
-  const serviceOptions = [
-    ...new Set(
-      aggregate.services.map((s) => (s.kind === "type" ? s.code : SERVICE_TYPE_CODES.OTHER)),
-    ),
-  ].map((code) => ({ id: code, name: getServiceLabel(code) }));
+  const serviceOptions = serviceTypeCodes.map((code) => ({
+    id: code,
+    name: getServiceLabel(code),
+  }));
 
   const effectiveServiceCode = chartState.consumptionService ?? consumptionServiceCode;
   const effectiveService = availableConsumptionServices.find(

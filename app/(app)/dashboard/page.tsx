@@ -13,6 +13,7 @@ import {
   monthlyExpensesByService,
 } from "@/features/ledger";
 import { availableConsumptionServiceTypes } from "@/features/meters";
+import { serviceTypeCodesForUser } from "@/features/services/query";
 import { missingCurrentMonthReadings } from "./_data/reads";
 import { loadDashboardChartParams } from "./_data/query-params";
 import { resolveDefaultDateRange } from "./_data/chart-transforms";
@@ -45,19 +46,28 @@ export default async function DashboardPage({
   const resolvedDateTo = chartParams.dateTo ?? defaultRange.dateTo;
 
   // Round 1: parallel — all queries need only userId (plus resolved date range for charts)
-  const [accessible, serviceIds, missingReadings, aggregate, availableConsumptionServices] =
-    await Promise.all([
-      accessibleProperties(userId),
-      serviceIdsForUser(userId),
-      missingCurrentMonthReadings(userId),
-      monthlyExpensesByService(userId, {
-        dateFrom: resolvedDateFrom,
-        dateTo: resolvedDateTo,
-        propertyId: chartParams.propertyId,
-        serviceTypeCodes: chartParams.services ? [chartParams.services] : null,
-      }),
-      availableConsumptionServiceTypes(userId, { propertyId: chartParams.propertyId }),
-    ]);
+  const [
+    accessible,
+    serviceIds,
+    missingReadings,
+    aggregate,
+    availableConsumptionServices,
+    serviceTypeCodes,
+  ] = await Promise.all([
+    accessibleProperties(userId),
+    serviceIdsForUser(userId),
+    missingCurrentMonthReadings(userId),
+    monthlyExpensesByService(userId, {
+      dateFrom: resolvedDateFrom,
+      dateTo: resolvedDateTo,
+      propertyId: chartParams.propertyId,
+      serviceTypeCodes: chartParams.services ? [chartParams.services] : null,
+    }),
+    availableConsumptionServiceTypes(userId, { propertyId: chartParams.propertyId }),
+    // Filter options: the user's service types (property-scoped), NOT narrowed by the
+    // selected service — so choosing one service never collapses the dropdown.
+    serviceTypeCodesForUser(userId, { propertyId: chartParams.propertyId }),
+  ]);
 
   if (accessible.length === 0) {
     return (
@@ -153,6 +163,7 @@ export default async function DashboardPage({
           properties={properties}
           resolvedDateFrom={resolvedDateFrom}
           resolvedDateTo={resolvedDateTo}
+          serviceTypeCodes={serviceTypeCodes}
           availableConsumptionServices={availableConsumptionServices}
           consumptionServiceCode={consumptionServiceCode}
           consumptionLineChartSlot={consumptionLineChartSlot}
