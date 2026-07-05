@@ -28,17 +28,17 @@
     --purple-950: oklch(0.18 0.04 292);
 
     /* Service palette — oklch conversions of original hex values; verify visually before shipping */
-    --amber-500: oklch(0.77 0.17 70); /* was #f59e0b (electricity) */
-    --red-500: oklch(0.64 0.23 27); /* was #ef4444 (gas) */
-    --blue-500: oklch(0.62 0.2 252); /* was #3b82f6 (cold water) */
-    --pink-500: oklch(0.68 0.22 350); /* was #ec4899 (hot water) */
-    --violet-500: oklch(0.61 0.23 295); /* was #8b5cf6 (heating) */
-    --teal-500: oklch(0.7 0.13 185); /* was #14b8a6 (internet) */
-    --orange-500: oklch(0.7 0.19 47); /* was #f97316 (gas delivery) */
-    --slate-500: oklch(0.55 0.04 257); /* was #64748b (building maintenance) */
-    --gray-500: oklch(0.55 0.02 286); /* was #6b7280 (garbage collection) */
-    --sky-500: oklch(0.69 0.15 233); /* was #0ea5e9 (intercom) */
-    --lime-500: oklch(0.77 0.2 131); /* was #84cc16 (hoa fees) */
+    --amber-500: oklch(0.77 0.17 70);
+    --red-500: oklch(0.64 0.23 27);
+    --blue-500: oklch(0.62 0.2 252);
+    --pink-500: oklch(0.68 0.22 350);
+    --violet-500: oklch(0.61 0.23 295);
+    --teal-500: oklch(0.7 0.13 185);
+    --orange-500: oklch(0.7 0.19 47);
+    --slate-500: oklch(0.55 0.04 257);
+    --sage-500: oklch(0.57 0.055 155);
+    --sky-500: oklch(0.69 0.15 233);
+    --lime-500: oklch(0.77 0.2 131);
 
     /* Neutrals */
     --neutral-0: oklch(1 0 0);
@@ -112,7 +112,7 @@
     --service-internet: var(--teal-500);
     --service-gas-delivery: var(--orange-500);
     --service-building-maintenance: var(--slate-500);
-    --service-garbage-collection: var(--gray-500);
+    --service-garbage-collection: var(--sage-500);
     --service-intercom: var(--sky-500);
     --service-hoa-fees: var(--lime-500);
 

@@ -5,6 +5,7 @@ import {
   Globe,
   Phone,
   Layers,
+  Tags,
   Thermometer,
   Trash2,
   Truck,
@@ -62,7 +63,7 @@ export const SERVICE_TYPE_ICONS: Record<TServiceTypeCode, LucideIcon> = {
   [SERVICE_TYPE_CODES.INTERNET]: Globe,
   [SERVICE_TYPE_CODES.INTERCOM]: Phone,
   [SERVICE_TYPE_CODES.HOA_FEES]: Wallet,
-  [SERVICE_TYPE_CODES.OTHER]: Layers,
+  [SERVICE_TYPE_CODES.OTHER]: Tags,
 };
 
 const FALLBACK_COLOR = "var(--muted-foreground)";
