@@ -1,49 +1,50 @@
-import { and, eq, isNull, sql } from "drizzle-orm";
+import { and, eq, exists, isNull, sql } from "drizzle-orm";
 
 import { db } from "@/lib/db/client";
 import { properties, propertyAccess } from "@/lib/db/schema/properties";
 import { services } from "@/lib/db/schema/services";
-import type { TServiceId } from "@/lib/db/schema/services";
 import { serviceTypes } from "@/lib/db/schema/service-types";
 import { meters } from "@/lib/db/schema/meters";
+import type { MeterId } from "@/lib/db/schema/meters";
 import { readings } from "@/lib/db/schema/readings";
 import type { UserId } from "@/lib/db/schema/auth";
 
 export type TMissingReading = {
-  serviceId: TServiceId;
+  meterId: MeterId;
   serviceTypeCode: string;
   propertyName: string;
 };
 
-// Returns metered services accessible to the user that have an active meter (validTo IS NULL)
-// but no reading for the current calendar month.
+// TODO: remember - comments lie!
+// Returns active metered meters accessible to the user that lack a reading for the current
+// calendar month — the units of a "missing reading" alert, since a reading is recorded against
+// a meter (bound to property + service type), not against a single service.
+// Anchored on meters (one row per meter): the meter's service type must be metered and still have
+// at least one active service on the property. This EXISTS semi-join replaces a plain services
+// join so multiple services of the same type on a property no longer fan the row out (a property
+// may now hold several active services per type — see services schema / migration 0024).
 // "Active meter" = validTo IS NULL AND deletedAt IS NULL.
 // "Current month" = calendar month of now() at query-execution time (UTC).
 // Anti-join pattern: LEFT JOIN readings on current-month condition, keep rows where no match.
 export const missingCurrentMonthReadings = async (userId: UserId): Promise<TMissingReading[]> => {
   const rows = await db
     .select({
-      serviceId: services.id,
+      meterId: meters.id,
       serviceTypeCode: serviceTypes.code,
       propertyName: properties.name,
     })
-    .from(propertyAccess)
-    .innerJoin(
-      properties,
-      and(eq(propertyAccess.propertyId, properties.id), isNull(properties.deletedAt)),
-    )
-    .innerJoin(services, and(eq(services.propertyId, properties.id), isNull(services.deletedAt)))
+    .from(meters)
     .innerJoin(
       serviceTypes,
-      and(eq(services.serviceTypeId, serviceTypes.id), eq(serviceTypes.measurementType, "metered")),
+      and(eq(serviceTypes.id, meters.serviceTypeId), eq(serviceTypes.measurementType, "metered")),
     )
+    .innerJoin(properties, and(eq(properties.id, meters.propertyId), isNull(properties.deletedAt)))
     .innerJoin(
-      meters,
+      propertyAccess,
       and(
-        eq(meters.propertyId, properties.id),
-        eq(meters.serviceTypeId, services.serviceTypeId),
-        isNull(meters.validTo),
-        isNull(meters.deletedAt),
+        eq(propertyAccess.propertyId, meters.propertyId),
+        eq(propertyAccess.userId, userId),
+        isNull(propertyAccess.deletedAt),
       ),
     )
     .leftJoin(
@@ -55,11 +56,27 @@ export const missingCurrentMonthReadings = async (userId: UserId): Promise<TMiss
       ),
     )
     .where(
-      and(eq(propertyAccess.userId, userId), isNull(propertyAccess.deletedAt), isNull(readings.id)),
+      and(
+        isNull(meters.validTo),
+        isNull(meters.deletedAt),
+        isNull(readings.id),
+        exists(
+          db
+            .select({ one: sql`1` })
+            .from(services)
+            .where(
+              and(
+                eq(services.propertyId, meters.propertyId),
+                eq(services.serviceTypeId, meters.serviceTypeId),
+                isNull(services.deletedAt),
+              ),
+            ),
+        ),
+      ),
     );
 
   return rows.map((r) => ({
-    serviceId: r.serviceId,
+    meterId: r.meterId,
     serviceTypeCode: r.serviceTypeCode,
     propertyName: r.propertyName,
   }));
