@@ -19,7 +19,7 @@ import { SERVICE_TYPE_CODES } from "./service-type";
 import { insertServiceInternal } from "./lib";
 import { insertContractInternal } from "@/features/contracts/lib";
 import { insertTariffInternal } from "@/features/tariffs/lib";
-import { insertMeterInternal } from "@/features/meters/lib";
+import { insertMeterInternal, insertMeterServiceLinks } from "@/features/meters/lib";
 import { createServiceWithSetupSchema } from "./schema";
 import type { TCreateServiceWithSetupInput } from "./schema";
 
@@ -164,7 +164,7 @@ export const createServiceWithSetup = async (
       if (parsed.data.meter) {
         const { zoneCount, serialNumber, installedAt, meterValidFrom, meterNotes } =
           parsed.data.meter;
-        await insertMeterInternal(tx, {
+        const meter = await insertMeterInternal(tx, {
           propertyId,
           serviceTypeId,
           serialNumber: serialNumber || null,
@@ -173,6 +173,8 @@ export const createServiceWithSetup = async (
           validFrom: new Date(meterValidFrom),
           notes: meterNotes || null,
         });
+        // The meter is created for this very service — link them explicitly (Slice B2).
+        await insertMeterServiceLinks(tx, meter.id, [newService.id]);
       }
 
       return newService;

@@ -11,6 +11,7 @@ import type { TServiceType } from "@/lib/db/schema/service-types";
 import { propertyByIdForUser } from "@/lib/db/access/properties";
 import { NotFoundError, ok } from "@/lib/errors";
 import type { Result, TAppError } from "@/lib/errors";
+import type { TEligibleMeterService } from "@/features/meters/types";
 
 export type TPropertyMeterRow = {
   meter: TMeter;
@@ -35,8 +36,9 @@ export const getPropertyMeters = async (
   return ok(rows);
 };
 
-// Service types where the property has a service but no active meter yet.
-// Used to populate the service type dropdown in the Add Meter modal.
+// Metered service types the property has at least one service for — the types a new meter may
+// carry. As of Slice B2 this no longer excludes types that already have an active meter: multiple
+// active meters of one type are allowed, so a second meter of an existing type must be creatable.
 export const getAvailableServiceTypesForMeter = async (
   propertyId: PropertyId,
 ): Promise<TServiceType[]> => {
@@ -45,24 +47,47 @@ export const getAvailableServiceTypesForMeter = async (
   const access = await propertyByIdForUser(userId, propertyId);
   if (!access.ok) return [];
 
-  // All service types this property has a service for.
-  const withService = await db
-    .select({ serviceType: serviceTypes })
+  const rows = await db
+    .selectDistinct({ serviceType: serviceTypes })
     .from(services)
     .innerJoin(serviceTypes, eq(services.serviceTypeId, serviceTypes.id))
-    .where(and(eq(services.propertyId, propertyId), isNull(services.deletedAt)));
-
-  if (withService.length === 0) return [];
-
-  // Active meters already covering some service types.
-  const activeMeterRows = await db
-    .select({ serviceTypeId: meters.serviceTypeId })
-    .from(meters)
     .where(
-      and(eq(meters.propertyId, propertyId), isNull(meters.validTo), isNull(meters.deletedAt)),
-    );
+      and(
+        eq(services.propertyId, propertyId),
+        eq(serviceTypes.measurementType, "metered"),
+        isNull(services.deletedAt),
+      ),
+    )
+    .orderBy(serviceTypes.sortOrder);
 
-  const coveredIds = new Set(activeMeterRows.map((r) => r.serviceTypeId));
+  return rows.map((r) => r.serviceType);
+};
 
-  return withService.map((r) => r.serviceType).filter((st) => !coveredIds.has(st.id));
+// The specific metered service lines a new meter may feed (Slice B2). The Add Meter form filters
+// these by the chosen service type; a meter's linked services must share its type.
+export const getEligibleServicesForMeter = async (
+  propertyId: PropertyId,
+): Promise<TEligibleMeterService[]> => {
+  const userId = await requireUser();
+
+  const access = await propertyByIdForUser(userId, propertyId);
+  if (!access.ok) return [];
+
+  return db
+    .select({
+      id: services.id,
+      serviceTypeId: services.serviceTypeId,
+      code: serviceTypes.code,
+      name: services.name,
+    })
+    .from(services)
+    .innerJoin(serviceTypes, eq(services.serviceTypeId, serviceTypes.id))
+    .where(
+      and(
+        eq(services.propertyId, propertyId),
+        eq(serviceTypes.measurementType, "metered"),
+        isNull(services.deletedAt),
+      ),
+    )
+    .orderBy(serviceTypes.sortOrder, services.createdAt);
 };

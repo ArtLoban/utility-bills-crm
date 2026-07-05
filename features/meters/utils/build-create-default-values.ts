@@ -3,6 +3,7 @@ import { CreateMeterFormField } from "../types";
 
 export const buildCreateDefaultValues = (): TCreateMeterFormValues => ({
   [CreateMeterFormField.SERVICE_TYPE_ID]: "",
+  [CreateMeterFormField.SERVICE_IDS]: [],
   [CreateMeterFormField.SERIAL_NUMBER]: "",
   [CreateMeterFormField.ZONE_COUNT]: "1",
   [CreateMeterFormField.INSTALLED_AT]: "",

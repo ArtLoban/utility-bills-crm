@@ -1,4 +1,6 @@
 import { TDataTableParams } from "@/components/data-table/types";
+import type { TServiceId } from "@/lib/db/schema/services";
+import type { TServiceTypeId } from "@/lib/db/schema/service-types";
 
 // --- Replace-meter form field names (single source for RHF names + defaults) ---
 
@@ -14,12 +16,22 @@ export const ReplaceMeterFormField = {
 
 export const CreateMeterFormField = {
   SERVICE_TYPE_ID: "serviceTypeId",
+  SERVICE_IDS: "serviceIds",
   SERIAL_NUMBER: "serialNumber",
   ZONE_COUNT: "zoneCount",
   INSTALLED_AT: "installedAt",
   VALID_FROM: "validFrom",
   NOTES: "notes",
 } as const;
+
+// A metered service line a meter may feed (Slice B2). The Add Meter form filters these by the
+// chosen service type; a meter's linked services must share its type.
+export type TEligibleMeterService = {
+  id: TServiceId;
+  serviceTypeId: TServiceTypeId;
+  code: string;
+  name: string | null;
+};
 
 // --- Sort allow-list ---
 

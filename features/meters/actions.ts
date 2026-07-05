@@ -1,15 +1,18 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { and, eq, isNull } from "drizzle-orm";
+import { and, eq, inArray, isNull } from "drizzle-orm";
 
 import { requireMutableUser } from "@/lib/auth/guards";
 import { db } from "@/lib/db/client";
 import { meters } from "@/lib/db/schema/meters";
 import type { MeterId, TMeter } from "@/lib/db/schema/meters";
+import { meterServices } from "@/lib/db/schema/meter-services";
 import { readings } from "@/lib/db/schema/readings";
 import { PROPERTY_ROLES } from "@/lib/db/schema/properties";
 import type { PropertyId } from "@/lib/db/schema/properties";
+import { services } from "@/lib/db/schema/services";
+import type { TServiceId } from "@/lib/db/schema/services";
 import type { TServiceTypeId } from "@/lib/db/schema/service-types";
 import { serviceTypes } from "@/lib/db/schema/service-types";
 import { meterByIdForUser } from "@/lib/db/access/meters";
@@ -17,7 +20,7 @@ import { requirePropertyRole } from "@/lib/db/access/properties";
 import { appError, err, ok } from "@/lib/errors";
 import type { Result, TAppError } from "@/lib/errors";
 import { ROUTES } from "@/lib/routes";
-import { insertMeterInternal } from "./lib";
+import { insertMeterInternal, insertMeterServiceLinks } from "./lib";
 import { createMeterSchema, replaceMeterSchema, updateMeterSchema } from "./schema";
 import type { TCreateMeterInput, TReplaceMeterInput, TUpdateMeterInput } from "./schema";
 
@@ -46,6 +49,33 @@ const checkZoneCompatibility = async (
   return null;
 };
 
+// Validates that every selected service belongs to the property, shares the meter's service type,
+// and that type is metered (only metered services are meter-eligible, Slice B2). A single query
+// covers all conditions; a count mismatch means at least one id failed one of them.
+const checkMeterServices = async (
+  propertyId: PropertyId,
+  serviceTypeId: TServiceTypeId,
+  serviceIds: string[],
+): Promise<TAppError | null> => {
+  const uniqueIds = [...new Set(serviceIds)] as TServiceId[];
+  const rows = await db
+    .select({ id: services.id })
+    .from(services)
+    .innerJoin(serviceTypes, eq(serviceTypes.id, services.serviceTypeId))
+    .where(
+      and(
+        inArray(services.id, uniqueIds),
+        eq(services.propertyId, propertyId),
+        eq(services.serviceTypeId, serviceTypeId),
+        eq(serviceTypes.measurementType, "metered"),
+        isNull(services.deletedAt),
+      ),
+    );
+
+  if (rows.length !== uniqueIds.length) return appError.validation("validation.serviceIds.invalid");
+  return null;
+};
+
 export const createMeter = async (input: TCreateMeterInput): Promise<Result<TMeter, TAppError>> => {
   const parsed = createMeterSchema.safeParse(input);
   if (!parsed.success) {
@@ -64,12 +94,15 @@ export const createMeter = async (input: TCreateMeterInput): Promise<Result<TMet
   const zoneError = await checkZoneCompatibility(serviceTypeId, parsed.data.zoneCount);
   if (zoneError) return err(zoneError);
 
+  const serviceError = await checkMeterServices(propertyId, serviceTypeId, parsed.data.serviceIds);
+  if (serviceError) return err(serviceError);
+
   const validFrom = new Date(parsed.data.validFrom);
   const installedAt = parsed.data.installedAt ? new Date(parsed.data.installedAt) : null;
 
   try {
-    const meter = await db.transaction(async (tx) =>
-      insertMeterInternal(tx, {
+    const meter = await db.transaction(async (tx) => {
+      const created = await insertMeterInternal(tx, {
         propertyId,
         serviceTypeId,
         serialNumber: parsed.data.serialNumber || null,
@@ -77,8 +110,10 @@ export const createMeter = async (input: TCreateMeterInput): Promise<Result<TMet
         installedAt,
         validFrom,
         notes: parsed.data.notes || null,
-      }),
-    );
+      });
+      await insertMeterServiceLinks(tx, created.id, parsed.data.serviceIds as TServiceId[]);
+      return created;
+    });
 
     revalidatePath(`/properties/${propertyId}/meters`);
     revalidatePath(ROUTES.meters);
@@ -182,7 +217,7 @@ export const replaceMeter = async (
         .where(and(eq(meters.id, currentMeterId), isNull(meters.deletedAt)));
 
       // Open the new meter starting at the same instant — half-open intervals meet without gap.
-      return insertMeterInternal(tx, {
+      const created = await insertMeterInternal(tx, {
         propertyId: currentMeter.propertyId,
         serviceTypeId: currentMeter.serviceTypeId,
         serialNumber: parsed.data.serialNumber || null,
@@ -191,6 +226,19 @@ export const replaceMeter = async (
         validFrom: replacementDate,
         notes: parsed.data.notes || null,
       });
+
+      // Inherit the closed meter's service links so attribution continuity is preserved.
+      const inheritedLinks = await tx
+        .select({ serviceId: meterServices.serviceId })
+        .from(meterServices)
+        .where(and(eq(meterServices.meterId, currentMeterId), isNull(meterServices.deletedAt)));
+      await insertMeterServiceLinks(
+        tx,
+        created.id,
+        inheritedLinks.map((l) => l.serviceId),
+      );
+
+      return created;
     });
 
     revalidatePath(`/properties/${currentMeter.propertyId}/meters`);

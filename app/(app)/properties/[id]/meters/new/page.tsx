@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 
 import { getPropertyDetail } from "@/app/(app)/properties/[id]/_data/queries";
-import { getAvailableServiceTypesForMeter } from "../_data/queries";
+import { getAvailableServiceTypesForMeter, getEligibleServicesForMeter } from "../_data/queries";
 import { AddMeterFormContent } from "@/features/meters";
 import { PageContainer } from "@/components/page-container";
 import { ROUTES } from "@/lib/routes";
@@ -16,9 +16,10 @@ export default async function AddMeterPage({ params }: TProps) {
   const { id } = await params;
   const propertyId = id as PropertyId;
 
-  const [propertyResult, availableServiceTypes, t, tNav] = await Promise.all([
+  const [propertyResult, availableServiceTypes, eligibleServices, t, tNav] = await Promise.all([
     getPropertyDetail(propertyId),
     getAvailableServiceTypesForMeter(propertyId),
+    getEligibleServicesForMeter(propertyId),
     getTranslations("meters.addForm"),
     getTranslations("nav"),
   ]);
@@ -38,7 +39,11 @@ export default async function AddMeterPage({ params }: TProps) {
       ]}
       meta={<span className="text-muted-foreground text-sm">{t("description")}</span>}
     >
-      <AddMeterFormContent propertyId={id} availableServiceTypes={availableServiceTypes} />
+      <AddMeterFormContent
+        propertyId={id}
+        availableServiceTypes={availableServiceTypes}
+        eligibleServices={eligibleServices}
+      />
     </PageContainer>
   );
 }

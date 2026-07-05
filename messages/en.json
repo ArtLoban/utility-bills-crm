@@ -450,12 +450,12 @@
     "addForm": {
       "title": "Add meter",
       "description": "Register a new meter for a service on this property.",
-      "empty": "All services on this property already have an active meter.",
+      "empty": "This property has no metered service yet. Add a metered service first.",
       "fields": {
         "serviceType": {
           "label": "Service type",
           "placeholder": "Select service",
-          "hint": "Only services without an active meter are shown."
+          "hint": "The meter's type — determines zones and unit of measure."
         },
         "serialNumber": {
           "label": "Serial number",
@@ -474,6 +474,10 @@
         "notes": {
           "label": "Notes",
           "placeholder": "Where it's located, anything worth remembering…"
+        },
+        "services": {
+          "label": "Services fed by this meter",
+          "hint": "Which service lines this meter serves. Preselected to every service of the chosen type."
         }
       },
       "actions": {
@@ -516,6 +520,10 @@
         "alreadyClosed": "This meter has already been replaced or closed.",
         "dateBeforeStart": "The replacement date must be after the meter's start date.",
         "overlap": "An active meter for this service already exists in the selected period."
+      },
+      "serviceIds": {
+        "required": "Select at least one service this meter feeds",
+        "invalid": "Invalid service selection"
       }
     }
   },

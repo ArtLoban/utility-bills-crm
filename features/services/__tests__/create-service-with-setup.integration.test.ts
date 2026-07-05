@@ -14,6 +14,7 @@ import { services } from "@/lib/db/schema/services";
 import { contracts } from "@/lib/db/schema/contracts";
 import { tariffs } from "@/lib/db/schema/tariffs";
 import { meters } from "@/lib/db/schema/meters";
+import { meterServices } from "@/lib/db/schema/meter-services";
 import { ERROR_CODES } from "@/lib/errors";
 import { auth } from "@/lib/auth";
 import { createServiceWithSetup } from "../actions.composite";
@@ -242,13 +243,13 @@ describe("createServiceWithSetup", () => {
     expect(meterRows).toHaveLength(0);
   });
 
-  it("rollback — meter exclusion violation leaves no orphan service, contract, or tariff", async () => {
+  it("allows a second meter of an already-metered type and links it to the new service", async () => {
     vi.mocked(auth).mockResolvedValue({ user: { id: testUserId } } as unknown as Awaited<
       ReturnType<typeof auth>
     >);
 
-    // Pre-insert a meter that will cause an exclusion violation when the composite action
-    // tries to insert another meter for the same property+serviceType+time range.
+    // A pre-existing active meter of the same type no longer blocks creating another — Slice B1
+    // removed the temporal exclusion constraint, and multiple meters per type are now allowed.
     await db.insert(meters).values({
       propertyId: testPropertyId,
       serviceTypeId: testMeteredServiceTypeId,
@@ -261,26 +262,34 @@ describe("createServiceWithSetup", () => {
       makeInput({
         meter: {
           zoneCount: 1,
-          // Overlaps with the pre-inserted meter's [2020-01-01, ∞) range
           meterValidFrom: "2020-01-01T00:00:00Z",
         },
       }),
     );
 
-    // Action must fail with a validation error
-    expect(result.ok).toBe(false);
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
 
-    // Transaction must have rolled back — no orphan service for this property+serviceType
-    const orphanServices = await db
-      .select()
-      .from(services)
+    // Two active meters of the type now coexist on the property.
+    const activeMeters = await db
+      .select({ id: meters.id })
+      .from(meters)
       .where(
         and(
-          eq(services.propertyId, testPropertyId),
-          eq(services.serviceTypeId, testMeteredServiceTypeId),
+          eq(meters.propertyId, testPropertyId),
+          eq(meters.serviceTypeId, testMeteredServiceTypeId),
+          isNull(meters.validTo),
+          isNull(meters.deletedAt),
         ),
       );
-    expect(orphanServices).toHaveLength(0);
+    expect(activeMeters).toHaveLength(2);
+
+    // The newly created meter is explicitly linked to the newly created service (Slice B2).
+    const links = await db
+      .select({ serviceId: meterServices.serviceId })
+      .from(meterServices)
+      .where(eq(meterServices.serviceId, result.value.id));
+    expect(links).toHaveLength(1);
   });
 
   it("permission denial — viewer receives NotFoundError, nothing is created", async () => {

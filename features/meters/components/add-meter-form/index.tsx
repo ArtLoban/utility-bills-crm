@@ -12,17 +12,26 @@ import { FormTextareaField } from "@/components/form/form-textarea-field";
 import { METER_LIMITS, type TCreateMeterFormValues } from "@/features/meters/schema";
 import { ZONE_COUNT_OPTIONS } from "@/features/meters/constants";
 import { CreateMeterFormField } from "@/features/meters/types";
+import type { TEligibleMeterService } from "@/features/meters/types";
 import { type TServiceTypeCode } from "@/features/services/service-type";
-import { resolveServiceTypeLabel } from "@/features/services/service-label";
+import { resolveServiceLabel, resolveServiceTypeLabel } from "@/features/services/service-label";
 import type { TServiceType } from "@/lib/db/schema/service-types";
+
+import { ServiceSelectField } from "./components/service-select-field";
 
 type TProps = {
   form: UseFormReturn<TCreateMeterFormValues>;
   availableServiceTypes: TServiceType[];
+  servicesOfType: TEligibleMeterService[];
   supportsZones: boolean;
 };
 
-export const AddMeterForm = ({ form, availableServiceTypes, supportsZones }: TProps) => {
+export const AddMeterForm = ({
+  form,
+  availableServiceTypes,
+  servicesOfType,
+  supportsZones,
+}: TProps) => {
   const t = useTranslations("meters.addForm");
   const tTypes = useTranslations("services.types");
   const tZone = useTranslations("meters.detail.details.zoneCount");
@@ -36,6 +45,11 @@ export const AddMeterForm = ({ form, availableServiceTypes, supportsZones }: TPr
   const serviceOptions = availableServiceTypes.map((st) => ({
     id: st.id,
     name: resolveServiceTypeLabel(st.code as TServiceTypeCode, tTypes),
+  }));
+
+  const serviceLineOptions = servicesOfType.map((s) => ({
+    id: s.id,
+    label: resolveServiceLabel({ name: s.name, code: s.code as TServiceTypeCode }, tTypes),
   }));
 
   const zoneOptions = ZONE_COUNT_OPTIONS.map(({ value, labelKey }) => ({
@@ -55,6 +69,15 @@ export const AddMeterForm = ({ form, availableServiceTypes, supportsZones }: TPr
           options={serviceOptions}
           required
         />
+
+        {serviceLineOptions.length > 0 ? (
+          <ServiceSelectField
+            control={control}
+            label={t("fields.services.label")}
+            description={t("fields.services.hint")}
+            options={serviceLineOptions}
+          />
+        ) : null}
 
         <FormTextField
           control={control}

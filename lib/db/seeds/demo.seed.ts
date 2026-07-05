@@ -24,6 +24,7 @@ import { accountNumbers } from "../schema/account-numbers";
 import { paymentDetails } from "../schema/payment-details";
 import { meters } from "../schema/meters";
 import type { MeterId } from "../schema/meters";
+import { meterServices } from "../schema/meter-services";
 import { readings } from "../schema/readings";
 import { bills } from "../schema/bills";
 import { payments } from "../schema/payments";
@@ -125,6 +126,7 @@ const svcInsert = async (
 const meterInsert = async (
   tx: TTx,
   propertyId: PropertyId,
+  serviceId: TServiceId,
   serviceTypeId: TServiceTypeId,
   zoneCount: 1 | 2,
   validFrom: Date,
@@ -134,6 +136,9 @@ const meterInsert = async (
     .values({ propertyId, serviceTypeId, zoneCount, validFrom })
     .returning({ id: meters.id });
   if (!row) throw new Error("meterInsert: no row returned");
+  // Explicit meter↔service link (Slice B2): each seeded meter feeds its same-type service,
+  // matching what the live backfill produced on the existing database.
+  await tx.insert(meterServices).values({ meterId: row.id, serviceId });
   return row.id;
 };
 
@@ -397,10 +402,31 @@ const main = async (): Promise<void> => {
       const aptMaintSvc = await svcInsert(tx, aptProp.id, st("building_maintenance").id);
       const aptNetSvc = await svcInsert(tx, aptProp.id, st("internet").id);
 
-      const aptElecMeter = await meterInsert(tx, aptProp.id, st("electricity").id, 2, START_DATE);
-      const aptColdMeter = await meterInsert(tx, aptProp.id, st("cold_water").id, 1, START_DATE);
-      const aptHotMeter = await meterInsert(tx, aptProp.id, st("hot_water").id, 1, START_DATE);
-      const aptGasMeter = await meterInsert(tx, aptProp.id, st("gas").id, 1, START_DATE);
+      const aptElecMeter = await meterInsert(
+        tx,
+        aptProp.id,
+        aptElecSvc,
+        st("electricity").id,
+        2,
+        START_DATE,
+      );
+      const aptColdMeter = await meterInsert(
+        tx,
+        aptProp.id,
+        aptColdSvc,
+        st("cold_water").id,
+        1,
+        START_DATE,
+      );
+      const aptHotMeter = await meterInsert(
+        tx,
+        aptProp.id,
+        aptHotSvc,
+        st("hot_water").id,
+        1,
+        START_DATE,
+      );
+      const aptGasMeter = await meterInsert(tx, aptProp.id, aptGasSvc, st("gas").id, 1, START_DATE);
 
       // Apartment electricity: 1 contract, 2 tariff records
       const aptElecC = await contractInsert(tx, aptElecSvc, pId("YASNO"), START_DATE, null);
@@ -531,14 +557,23 @@ const main = async (): Promise<void> => {
       const houseElecMeter = await meterInsert(
         tx,
         houseProp.id,
+        houseElecSvc,
         st("electricity").id,
         1,
         START_DATE,
       );
-      const houseGasMeter = await meterInsert(tx, houseProp.id, st("gas").id, 1, START_DATE);
+      const houseGasMeter = await meterInsert(
+        tx,
+        houseProp.id,
+        houseGasSvc,
+        st("gas").id,
+        1,
+        START_DATE,
+      );
       const houseColdMeter = await meterInsert(
         tx,
         houseProp.id,
+        houseColdSvc,
         st("cold_water").id,
         1,
         START_DATE,
@@ -640,6 +675,7 @@ const main = async (): Promise<void> => {
       const cottageElecMeter = await meterInsert(
         tx,
         cottageProp.id,
+        cottageElecSvc,
         st("electricity").id,
         1,
         START_DATE,

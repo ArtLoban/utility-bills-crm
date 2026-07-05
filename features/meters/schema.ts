@@ -13,6 +13,11 @@ const zoneCountSchema = z.union([z.literal(1), z.literal(2), z.literal(3)]).defa
 export const createMeterSchema = z.object({
   propertyId: z.string().uuid("validation.propertyId.invalid"),
   serviceTypeId: z.string().uuid("validation.serviceTypeId.invalid"),
+  // The specific service line(s) this meter feeds (Slice B2). At least one; the action validates
+  // they belong to the property and share the meter's (metered) service type.
+  serviceIds: z
+    .array(z.string().uuid("validation.serviceIds.invalid"))
+    .min(1, "validation.serviceIds.required"),
   serialNumber: z
     .string()
     .trim()
@@ -92,6 +97,7 @@ export type TReplaceMeterFormValues = z.infer<typeof replaceMeterFormSchema>;
 // of the form (the user picks it); propertyId comes from the route, not the form.
 export const createMeterFormSchema = z.object({
   serviceTypeId: z.string().min(1, "validation.serviceTypeId.required"),
+  serviceIds: z.array(z.string()).min(1, "validation.serviceIds.required"),
   serialNumber: z.string().max(METER_LIMITS.serialNumber, "validation.serialNumber.tooLong"),
   zoneCount: z.enum(ZONE_COUNT_VALUES),
   installedAt: z.string(),
