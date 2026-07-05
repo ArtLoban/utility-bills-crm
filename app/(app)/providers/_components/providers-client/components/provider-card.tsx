@@ -13,9 +13,6 @@ import { cn } from "@/lib/utils";
 import type { TProviderWithUsage } from "@/app/(app)/providers/_data/queries";
 import { useProvidersList } from "../context";
 
-// ── Monogram color palette ────────────────────────────────────────────────────
-// Maps provider IDs (UUIDs) to one of 6 semantic CSS variable colors.
-// Same djb2-variant hash as getAvatarColor in components/app-nav/utils/avatar-color.ts.
 const MONOGRAM_PALETTE = [
   "var(--amber-500)",
   "var(--red-500)",
@@ -34,8 +31,6 @@ const hashString = (s: string): number => {
 const getMonogramColor = (id: string): string =>
   MONOGRAM_PALETTE[hashString(id) % MONOGRAM_PALETTE.length]!;
 
-// ─────────────────────────────────────────────────────────────────────────────
-
 type TProps = {
   provider: TProviderWithUsage;
 };
@@ -51,22 +46,23 @@ export const ProviderCard = ({ provider }: TProps) => {
   const canDelete = provider.usageCount === 0;
   const color = getMonogramColor(provider.id);
 
-  // Detect whether the note text exceeds 3 lines after first render.
-  // The check runs once on mount; notes content doesn't change while the card is mounted.
   useEffect(() => {
     const el = noteRef.current;
     if (!el) return;
+
     const id = requestAnimationFrame(() => {
       setOverflows(el.scrollHeight > el.clientHeight + 2);
     });
+
     return () => cancelAnimationFrame(id);
   }, []);
 
+  // devnote: TODO: добавить вывод поля когда этот провайдер был создан
   return (
     <Surface className="flex items-start gap-4 px-5 py-4">
       {/* Monogram */}
       <div
-        className="flex size-11 shrink-0 items-center justify-center rounded-xl text-[17px] leading-none font-semibold tracking-[-0.3px] select-none"
+        className="flex size-11 shrink-0 items-center justify-center rounded-xl text-[17px] leading-none font-semibold select-none"
         style={{ color, background: `color-mix(in oklch, ${color} 13%, transparent)` }}
         aria-hidden="true"
       >
