@@ -12,6 +12,7 @@ export * from "./account-numbers";
 export * from "./payment-details";
 export * from "./meters";
 export * from "./readings";
+export * from "./meter-services";
 export * from "./bills";
 export * from "./payments";
 export * from "./notifications";

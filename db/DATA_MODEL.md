@@ -155,8 +155,8 @@ Key relationships:
 - **User ↔ Property** is many-to-many via `property_access` with roles.
 - **Service** is the hub of the CRM domain — it links a Property to a ServiceType, and owns Contracts, Bills, Payments.
 - **Contract** is the aggregate that groups Provider + temporal Tariffs/AccountNumbers/PaymentDetails.
-- **Meter** belongs to Property (physical device) but is linked to ServiceType for semantic matching with Services.
-- **Reading** is owned by Meter. Not directly tied to Service.
+- **Meter** belongs to Property (physical device) and carries a ServiceType. It links to Services many-to-many via `meter_services` — one meter may feed several service lines (e.g. water supply + drainage), one service may be fed by several meters. Legacy by-type matching still works and is being migrated onto this explicit link.
+- **Reading** is owned by Meter. Not directly tied to Service (attribution flows through the meter).
 - **Bill** and **Payment** are independent ledger entries. No FK between them.
 
 ---
@@ -372,7 +372,7 @@ A specific service instance attached to a property.
 
 **Indexes:**
 
-- UNIQUE partial index `(propertyId, serviceTypeId) WHERE deleted_at IS NULL` — one active service per type per property.
+- No uniqueness on `(propertyId, serviceTypeId)` — multiple active services of one type per property are allowed (the former unique index was dropped in migration 0024).
 - Index `propertyId`.
 - Index `deletedAt`.
 
@@ -559,9 +559,31 @@ Physical meters at a property. Belong to Property, not Service.
 - `valid_to IS NULL OR valid_to > valid_from`
 - `removed_at IS NULL OR installed_at IS NULL OR removed_at > installed_at`
 
-**Exclusion constraint:** no two active meters for the same `(propertyId, serviceTypeId)` can overlap in time.
+**Exclusion constraint:** removed in migration 0025 (Slice B1). Previously `meters_no_overlap_excl` prevented two active meters for the same `(propertyId, serviceTypeId)` from overlapping in time; multiple active meters of one type per property are now permitted. Meter↔Service association is explicit via `meter_services` (below).
 
 **Cross-table invariant (application-enforced):** if the related `service_type.supportsZones = false`, then `zoneCount` must be `1`.
+
+### `meter_services`
+
+Explicit many-to-many link between meters and services (Slice B1). Replaces implicit "match by shared service type": a meter may feed several services, a service may be fed by several meters. Introduced inert — backfilled to reproduce today's by-type associations; consumers migrate onto it in later slices.
+
+| Column      | Type          | Null | Default             | Notes                                 |
+| ----------- | ------------- | ---- | ------------------- | ------------------------------------- |
+| `id`        | `uuid`        | NO   | `gen_random_uuid()` | Branded `MeterServiceId`.             |
+| `meterId`   | `uuid`        | NO   | —                   | FK → `meters.id` ON DELETE CASCADE.   |
+| `serviceId` | `uuid`        | NO   | —                   | FK → `services.id` ON DELETE CASCADE. |
+| `createdAt` | `timestamptz` | NO   | `now()`             |                                       |
+| `updatedAt` | `timestamptz` | NO   | `now()`             |                                       |
+| `deletedAt` | `timestamptz` | YES  | —                   |                                       |
+
+**Indexes:**
+
+- UNIQUE partial index `(meterId, serviceId) WHERE deleted_at IS NULL` — one active link per pair.
+- Index `meterId`.
+- Index `serviceId`.
+- Index `deletedAt`.
+
+No temporal interval: time is carried by the meter's own `[validFrom, validTo)`; the link is a plain association, soft-deleted when it ends (same convention as `property_access`).
 
 ### `readings`
 

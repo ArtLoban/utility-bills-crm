@@ -176,6 +176,13 @@
       "when": 1783153837616,
       "tag": "0024_nebulous_tarantula",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1783255848236,
+      "tag": "0025_mixed_shiver_man",
+      "breakpoints": true
     }
   ]
 }

@@ -346,17 +346,26 @@ deletedAt        timestamptz?
 - `zoneCount IN (1, 2, 3)`
 - `removedAt > installedAt` when both present
 
-**Exclusion constraint:**
-
-```sql
-EXCLUDE USING gist (
-  property_id WITH =,
-  service_type_id WITH =,
-  tstzrange(valid_from, valid_to, '[)') WITH &&
-) WHERE (deleted_at IS NULL)
-```
+**Exclusion constraint:** removed in migration 0025 (Slice B1). Previously `meters_no_overlap_excl` = `EXCLUDE USING gist (property_id WITH =, service_type_id WITH =, tstzrange(valid_from, valid_to, '[)') WITH &&) WHERE (deleted_at IS NULL)`. Multiple active meters of one type per property are now allowed; Meter↔Service is explicit via `meter_services`.
 
 **Indexes:** `(propertyId, serviceTypeId, validFrom)`, `deletedAt`.
+
+---
+
+### `meter_services`
+
+Explicit many-to-many link Meter↔Service (Slice B1). Backfilled to match today's by-type associations.
+
+```
+id           uuid PK
+meterId      uuid NOT NULL → meters(id) CASCADE
+serviceId    uuid NOT NULL → services(id) CASCADE
+createdAt    timestamptz NOT NULL DEFAULT now()
+updatedAt    timestamptz NOT NULL DEFAULT now()
+deletedAt    timestamptz?
+```
+
+**Indexes:** UNIQUE partial `(meterId, serviceId) WHERE deleted_at IS NULL`, `meterId`, `serviceId`, `deletedAt`.
 
 ---
 
