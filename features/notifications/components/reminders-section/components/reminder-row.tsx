@@ -9,6 +9,7 @@ import type { TServiceId } from "@/lib/db/schema/services";
 import { describeReminderAnchor } from "../../../anchor-label";
 import type { TReminderListItem } from "../../../query";
 import { DeleteReminderAction } from "./delete-reminder-action";
+import { Button } from "@/components/ui/button";
 
 type TProps = {
   reminder: TReminderListItem;
@@ -39,13 +40,11 @@ export const ReminderRow = async ({ reminder, propertyId, serviceId }: TProps) =
       </div>
 
       <div className="flex shrink-0 items-center gap-1.5">
-        <Link
-          href={editHref}
-          aria-label={t("row.edit")}
-          className="border-border text-muted-foreground hover:bg-muted hover:text-foreground flex size-8 items-center justify-center rounded-md border transition-colors"
-        >
-          <Pencil size={14} />
-        </Link>
+        <Button variant="outline" size="icon" aria-label={t("row.edit")} asChild>
+          <Link href={editHref}>
+            <Pencil />
+          </Link>
+        </Button>
         <DeleteReminderAction reminderId={reminder.id} />
       </div>
     </li>

@@ -11,6 +11,7 @@ import { useActionErrorHandler } from "@/lib/hooks/use-action-error-handler";
 import type { ReminderId } from "@/lib/db/schema/notifications";
 
 import { deleteReminder } from "../../../actions";
+import { Button } from "@/components/ui/button";
 
 type TProps = {
   reminderId: ReminderId;
@@ -41,15 +42,16 @@ export const DeleteReminderAction = ({ reminderId }: TProps) => {
 
   return (
     <>
-      <button
-        type="button"
+      <Button
         onClick={() => setOpen(true)}
+        variant="outline"
+        size="icon"
+        className="hover:border-destructive/30 hover:bg-destructive/10 hover:text-destructive rounded-md"
         aria-label={t("row.delete")}
-        className="border-border text-muted-foreground hover:border-destructive/30 hover:bg-destructive/10 hover:text-destructive flex size-8 cursor-pointer items-center justify-center rounded-md border transition-colors"
       >
-        <Trash2 size={14} />
-      </button>
-
+        <Trash2 />
+      </Button>
+      {/* devnote TODO: FIx this shit! ConfirmDialog - в каждом row!!! Использовать контекст! */}
       <ConfirmDialog
         open={open}
         onOpenChange={setOpen}
