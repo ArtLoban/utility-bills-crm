@@ -6,7 +6,7 @@ import { getTranslations } from "next-intl/server";
 import { requireUser } from "@/lib/auth/guards";
 import { assertNever } from "@/lib/assert-never";
 import { servicesByPropertyId } from "@/lib/db/access/services";
-import { lastReadingDatesByServiceType } from "@/lib/db/access/readings";
+import { lastReadingDatesByService } from "@/lib/db/access/readings";
 import { balancesForServices } from "@/features/ledger";
 import type { TBalance } from "@/features/ledger";
 import { propertyMembers, SharingTab } from "@/features/sharing";
@@ -59,9 +59,9 @@ export default async function PropertyPage({ params, searchParams }: TProps) {
       const servicesResult = await servicesByPropertyId(userId, propertyId);
       const services = servicesResult.ok ? servicesResult.value : [];
       const serviceIds = services.map((s) => s.service.id as TServiceId);
-      const [serviceBalances, lastReadingByServiceType] = await Promise.all([
+      const [serviceBalances, lastReadingByService] = await Promise.all([
         serviceIds.length > 0 ? balancesForServices(serviceIds) : new Map<TServiceId, TBalance>(),
-        lastReadingDatesByServiceType(propertyId),
+        lastReadingDatesByService(propertyId),
       ]);
 
       tabContent = (
@@ -70,7 +70,7 @@ export default async function PropertyPage({ params, searchParams }: TProps) {
           role={property.role}
           propertyId={id}
           serviceBalances={serviceBalances}
-          lastReadingByServiceType={lastReadingByServiceType}
+          lastReadingByService={lastReadingByService}
         />
       );
       break;

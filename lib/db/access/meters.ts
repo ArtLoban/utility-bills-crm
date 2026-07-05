@@ -3,14 +3,17 @@ import { and, asc, count, countDistinct, desc, eq, inArray, isNotNull, isNull } 
 import { db } from "@/lib/db/client";
 import { meters } from "@/lib/db/schema/meters";
 import type { MeterId, TMeter } from "@/lib/db/schema/meters";
+import { meterServices } from "@/lib/db/schema/meter-services";
 import { properties, propertyAccess } from "@/lib/db/schema/properties";
 import type { PropertyId, TPropertyRole, TPropertyType } from "@/lib/db/schema/properties";
 import { serviceTypes } from "@/lib/db/schema/service-types";
-import type { TServiceTypeId, TServiceType } from "@/lib/db/schema/service-types";
+import type { TServiceType } from "@/lib/db/schema/service-types";
+import type { TServiceId } from "@/lib/db/schema/services";
 import type { TServiceTypeCode } from "@/features/services/service-type";
 import type { TReading } from "@/lib/db/schema/readings";
 import type { UserId } from "@/lib/db/schema/auth";
 import { propertyByIdForUser } from "./properties";
+import { serviceByIdForUser } from "./services";
 import { lastReadingsByMeterIds } from "./readings";
 import { appError, err, ok } from "@/lib/errors";
 import type { Result, TAppError } from "@/lib/errors";
@@ -56,28 +59,33 @@ export const metersByPropertyId = async (
   return ok(rows);
 };
 
-export const currentMeterForServiceType = async (
+// The active meter that feeds a service, resolved through the explicit meter↔service link
+// (Slice B3) rather than by shared service type — so a property with several meters of a type
+// returns the one actually linked to *this* service. If several active meters are linked to the
+// service, the most recently installed one is returned. null when no active meter is linked.
+export const currentMeterForService = async (
   userId: UserId,
-  propertyId: PropertyId,
-  serviceTypeId: TServiceTypeId,
+  serviceId: TServiceId,
 ): Promise<Result<TMeter | null, TAppError>> => {
-  const access = await propertyByIdForUser(userId, propertyId);
+  const access = await serviceByIdForUser(userId, serviceId);
   if (!access.ok) return access;
 
   const rows = await db
-    .select()
+    .select({ meter: meters })
     .from(meters)
-    .where(
+    .innerJoin(
+      meterServices,
       and(
-        eq(meters.propertyId, propertyId),
-        eq(meters.serviceTypeId, serviceTypeId),
-        isNull(meters.validTo),
-        isNull(meters.deletedAt),
+        eq(meterServices.meterId, meters.id),
+        eq(meterServices.serviceId, serviceId),
+        isNull(meterServices.deletedAt),
       ),
     )
+    .where(and(isNull(meters.validTo), isNull(meters.deletedAt)))
+    .orderBy(desc(meters.validFrom))
     .limit(1);
 
-  return ok(rows[0] ?? null);
+  return ok(rows[0]?.meter ?? null);
 };
 
 export const meterByIdForUser = async (

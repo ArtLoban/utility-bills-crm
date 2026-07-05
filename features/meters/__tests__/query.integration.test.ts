@@ -11,6 +11,7 @@ import { serviceTypes } from "@/lib/db/schema/service-types";
 import type { TServiceTypeId } from "@/lib/db/schema/service-types";
 import { meters } from "@/lib/db/schema/meters";
 import type { MeterId } from "@/lib/db/schema/meters";
+import { meterServices } from "@/lib/db/schema/meter-services";
 import { readings } from "@/lib/db/schema/readings";
 
 import { availableConsumptionServiceTypes, monthlyConsumptionByService } from "../query";
@@ -76,12 +77,27 @@ beforeAll(async () => {
     },
   ]);
 
-  // --- Services (needed to satisfy the services → meters FK path) ---
-  await db.insert(services).values([
-    { propertyId, serviceTypeId: electricityTypeId },
-    { propertyId, serviceTypeId: gasTypeId },
-    { propertyId: otherPropertyId, serviceTypeId: electricityTypeId },
-  ]);
+  // --- Services (consumption is attributed through the meter↔service link, Slice B3) ---
+  const mainServices = await db
+    .insert(services)
+    .values([
+      { propertyId, serviceTypeId: electricityTypeId },
+      { propertyId, serviceTypeId: gasTypeId },
+      { propertyId: otherPropertyId, serviceTypeId: electricityTypeId },
+    ])
+    .returning({
+      id: services.id,
+      propertyId: services.propertyId,
+      serviceTypeId: services.serviceTypeId,
+    });
+
+  const elecSvcMain = mainServices.find(
+    (s) => s.propertyId === propertyId && s.serviceTypeId === electricityTypeId,
+  )!.id;
+  const gasSvcMain = mainServices.find(
+    (s) => s.propertyId === propertyId && s.serviceTypeId === gasTypeId,
+  )!.id;
+  const elecSvcOther = mainServices.find((s) => s.propertyId === otherPropertyId)!.id;
 
   // --- Meters ---
   const insertedMeters = await db
@@ -119,9 +135,15 @@ beforeAll(async () => {
     .returning({ id: meters.id });
 
   elecMeter1Z = insertedMeters[0]!.id;
-  // Gas meter ID not captured — only needed for availableConsumptionServiceTypes assertions,
-  // which verify its service type appears; the meter itself is cleaned up via property cascade.
+  const gasMeter = insertedMeters[1]!.id;
   otherPropMeter = insertedMeters[2]!.id;
+
+  // Link each meter to the service it feeds (Slice B3 attribution).
+  await db.insert(meterServices).values([
+    { meterId: elecMeter1Z, serviceId: elecSvcMain },
+    { meterId: gasMeter, serviceId: gasSvcMain },
+    { meterId: otherPropMeter, serviceId: elecSvcOther },
+  ]);
 
   // --- 2-zone meter: add a third property for this test ---
   const [twoZoneProp] = await db
@@ -136,9 +158,10 @@ beforeAll(async () => {
     .values([
       { propertyId: twoZonePropId, userId, propertyRole: PROPERTY_ROLES.OWNER, grantedBy: userId },
     ]);
-  await db
+  const [svc2z] = await db
     .insert(services)
-    .values([{ propertyId: twoZonePropId, serviceTypeId: electricityTypeId }]);
+    .values([{ propertyId: twoZonePropId, serviceTypeId: electricityTypeId }])
+    .returning({ id: services.id });
 
   const [m2z] = await db
     .insert(meters)
@@ -154,6 +177,7 @@ beforeAll(async () => {
     .returning({ id: meters.id });
 
   elecMeter2Z = m2z!.id;
+  await db.insert(meterServices).values({ meterId: elecMeter2Z, serviceId: svc2z!.id });
 
   // --- 4th property for the meter replacement test ---
   const [replaceProp] = await db
@@ -168,9 +192,10 @@ beforeAll(async () => {
     .values([
       { propertyId: replacePropId, userId, propertyRole: PROPERTY_ROLES.OWNER, grantedBy: userId },
     ]);
-  await db
+  const [svcReplace] = await db
     .insert(services)
-    .values([{ propertyId: replacePropId, serviceTypeId: electricityTypeId }]);
+    .values([{ propertyId: replacePropId, serviceTypeId: electricityTypeId }])
+    .returning({ id: services.id });
 
   const replacedMeters = await db
     .insert(meters)
@@ -197,6 +222,13 @@ beforeAll(async () => {
 
   replacedMeter = replacedMeters[0]!.id;
   newMeter = replacedMeters[1]!.id;
+
+  // Both the closed and the replacement meter feed the same service (replacement inherits the
+  // link in production — Slice B2); the aggregate must sum deltas across both.
+  await db.insert(meterServices).values([
+    { meterId: replacedMeter, serviceId: svcReplace!.id },
+    { meterId: newMeter, serviceId: svcReplace!.id },
+  ]);
 
   // Store twoZonePropId for cleanup
   (globalThis as Record<string, unknown>).__meterQueryTwoZonePropId = twoZonePropId;
@@ -447,5 +479,120 @@ describe("monthlyConsumptionByService — meter replacement", () => {
     // Feb: old meter delta (130-100=30) + new meter reading Feb 20 has no prev within Feb (first for new meter) → 30
     // Mar: new meter delta (45-5=40) → 40
     expect(result.zones[0]!.monthlyConsumption).toEqual([0, 30, 40]);
+  });
+});
+
+describe("monthlyConsumptionByService — link-based attribution (Slice B3)", () => {
+  let sepPropId: PropertyId; // two meters, two services of one concept
+  let sharedPropId: PropertyId; // one meter feeding two services of one concept
+
+  beforeAll(async () => {
+    const props = await db
+      .insert(properties)
+      .values([
+        { name: "B3 Separate Meters Property", type: "apartment" },
+        { name: "B3 Shared Meter Property", type: "apartment" },
+      ])
+      .returning({ id: properties.id });
+    sepPropId = props[0]!.id;
+    sharedPropId = props[1]!.id;
+
+    await db.insert(propertyAccess).values([
+      { propertyId: sepPropId, userId, propertyRole: PROPERTY_ROLES.OWNER, grantedBy: userId },
+      { propertyId: sharedPropId, userId, propertyRole: PROPERTY_ROLES.OWNER, grantedBy: userId },
+    ]);
+
+    // Separate: two electricity services, two electricity meters, one link each.
+    const sepSvcs = await db
+      .insert(services)
+      .values([
+        { propertyId: sepPropId, serviceTypeId: electricityTypeId, name: "Main" },
+        { propertyId: sepPropId, serviceTypeId: electricityTypeId, name: "Studio" },
+      ])
+      .returning({ id: services.id });
+    const sepMeters = await db
+      .insert(meters)
+      .values([
+        {
+          propertyId: sepPropId,
+          serviceTypeId: electricityTypeId,
+          zoneCount: 1,
+          validFrom: new Date("2025-01-01T00:00:00Z"),
+          serialNumber: "B3-SEP-A",
+        },
+        {
+          propertyId: sepPropId,
+          serviceTypeId: electricityTypeId,
+          zoneCount: 1,
+          validFrom: new Date("2025-01-01T00:00:00Z"),
+          serialNumber: "B3-SEP-B",
+        },
+      ])
+      .returning({ id: meters.id });
+    await db.insert(meterServices).values([
+      { meterId: sepMeters[0]!.id, serviceId: sepSvcs[0]!.id },
+      { meterId: sepMeters[1]!.id, serviceId: sepSvcs[1]!.id },
+    ]);
+    await db.insert(readings).values([
+      r1(sepMeters[0]!.id, "2025-01-15T10:00:00Z", 1000),
+      r1(sepMeters[0]!.id, "2025-02-15T10:00:00Z", 1050), // +50
+      r1(sepMeters[1]!.id, "2025-01-15T10:00:00Z", 2000),
+      r1(sepMeters[1]!.id, "2025-02-15T10:00:00Z", 2200), // +200
+    ]);
+
+    // Shared: one electricity meter feeding two electricity services (two links).
+    const sharedSvcs = await db
+      .insert(services)
+      .values([
+        { propertyId: sharedPropId, serviceTypeId: electricityTypeId, name: "Flat" },
+        { propertyId: sharedPropId, serviceTypeId: electricityTypeId, name: "Garage" },
+      ])
+      .returning({ id: services.id });
+    const [sharedMeter] = await db
+      .insert(meters)
+      .values([
+        {
+          propertyId: sharedPropId,
+          serviceTypeId: electricityTypeId,
+          zoneCount: 1,
+          validFrom: new Date("2025-01-01T00:00:00Z"),
+          serialNumber: "B3-SHARED",
+        },
+      ])
+      .returning({ id: meters.id });
+    await db.insert(meterServices).values([
+      { meterId: sharedMeter!.id, serviceId: sharedSvcs[0]!.id },
+      { meterId: sharedMeter!.id, serviceId: sharedSvcs[1]!.id },
+    ]);
+    await db.insert(readings).values([
+      r1(sharedMeter!.id, "2025-01-15T10:00:00Z", 500),
+      r1(sharedMeter!.id, "2025-02-15T10:00:00Z", 580), // +80
+    ]);
+  });
+
+  afterAll(async () => {
+    await db.delete(properties).where(inArray(properties.id, [sepPropId, sharedPropId]));
+  });
+
+  it("sums both meters when two feed two different services of one concept", async () => {
+    const result = await monthlyConsumptionByService(userId, {
+      serviceTypeCode: "electricity",
+      dateFrom: "2025-01-01",
+      dateTo: "2025-02-01",
+      propertyId: sepPropId,
+    });
+    // Feb: meter A (+50) + meter B (+200), each counted once = 250
+    expect(result.zones[0]!.monthlyConsumption).toEqual([0, 250]);
+  });
+
+  it("counts a meter feeding two services of one concept only once (no double count)", async () => {
+    const result = await monthlyConsumptionByService(userId, {
+      serviceTypeCode: "electricity",
+      dateFrom: "2025-01-01",
+      dateTo: "2025-02-01",
+      propertyId: sharedPropId,
+    });
+    // Feb: single meter delta +80 — NOT 160 (would double if joined per link instead of EXISTS)
+    expect(result.zones[0]!.monthlyConsumption).toEqual([0, 80]);
   });
 });

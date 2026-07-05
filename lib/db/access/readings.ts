@@ -5,8 +5,10 @@ import { readings } from "@/lib/db/schema/readings";
 import type { ReadingId, TReading } from "@/lib/db/schema/readings";
 import { meters } from "@/lib/db/schema/meters";
 import type { MeterId } from "@/lib/db/schema/meters";
+import { meterServices } from "@/lib/db/schema/meter-services";
+import { services } from "@/lib/db/schema/services";
+import type { TServiceId } from "@/lib/db/schema/services";
 import type { PropertyId } from "@/lib/db/schema/properties";
-import type { TServiceTypeId } from "@/lib/db/schema/service-types";
 import type { UserId } from "@/lib/db/schema/auth";
 import { meterByIdForUser } from "./meters";
 import { appError, err, ok } from "@/lib/errors";
@@ -193,28 +195,39 @@ export const lastReadingsByMeterIds = async (
   return map;
 };
 
-// Latest reading date per service type for one property, in a single grouped query.
-// A meter belongs to (propertyId, serviceTypeId) — not to a service directly — so the
-// "last reading" of a service is the most recent reading across that property's meters of
-// the same service type. No access check: the caller has already verified property access.
-export const lastReadingDatesByServiceType = async (
+// Latest reading date per service for one property, in a single grouped query.
+// A service's "last reading" is the most recent reading across the meters explicitly linked to
+// it (Slice B3) — resolved through meter_services, not by shared service type, so two services of
+// the same type fed by different meters no longer collapse to one shared date. No access check:
+// the caller has already verified property access.
+export const lastReadingDatesByService = async (
   propertyId: PropertyId,
-): Promise<Map<TServiceTypeId, Date>> => {
+): Promise<Map<TServiceId, Date>> => {
   const rows = await db
     .select({
-      serviceTypeId: meters.serviceTypeId,
+      serviceId: meterServices.serviceId,
       lastReadAt: max(readings.readAt),
     })
     .from(readings)
-    .innerJoin(meters, eq(readings.meterId, meters.id))
-    .where(
-      and(eq(meters.propertyId, propertyId), isNull(meters.deletedAt), isNull(readings.deletedAt)),
+    .innerJoin(meters, and(eq(readings.meterId, meters.id), isNull(meters.deletedAt)))
+    .innerJoin(
+      meterServices,
+      and(eq(meterServices.meterId, meters.id), isNull(meterServices.deletedAt)),
     )
-    .groupBy(meters.serviceTypeId);
+    .innerJoin(
+      services,
+      and(
+        eq(services.id, meterServices.serviceId),
+        eq(services.propertyId, propertyId),
+        isNull(services.deletedAt),
+      ),
+    )
+    .where(isNull(readings.deletedAt))
+    .groupBy(meterServices.serviceId);
 
-  const map = new Map<TServiceTypeId, Date>();
-  for (const { serviceTypeId, lastReadAt } of rows) {
-    if (lastReadAt) map.set(serviceTypeId, lastReadAt);
+  const map = new Map<TServiceId, Date>();
+  for (const { serviceId, lastReadAt } of rows) {
+    if (lastReadAt) map.set(serviceId, lastReadAt);
   }
 
   return map;

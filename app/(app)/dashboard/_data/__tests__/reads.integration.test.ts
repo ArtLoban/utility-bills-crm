@@ -11,6 +11,7 @@ import { serviceTypes } from "@/lib/db/schema/service-types";
 import type { TServiceTypeId } from "@/lib/db/schema/service-types";
 import { meters } from "@/lib/db/schema/meters";
 import type { MeterId } from "@/lib/db/schema/meters";
+import { meterServices } from "@/lib/db/schema/meter-services";
 import { readings } from "@/lib/db/schema/readings";
 
 import { missingCurrentMonthReadings } from "../reads";
@@ -74,11 +75,17 @@ beforeAll(async () => {
 
   // The regression: two active services of the SAME type on one property. Before the fix the
   // services→meters join fanned the single meter out into one row per service.
-  await db.insert(services).values([
-    { propertyId: missingPropertyId, serviceTypeId: electricityTypeId, name: "Main flat" },
-    { propertyId: missingPropertyId, serviceTypeId: electricityTypeId, name: "Studio" },
-    { propertyId: hasReadingPropertyId, serviceTypeId: electricityTypeId },
-  ]);
+  const insertedServices = await db
+    .insert(services)
+    .values([
+      { propertyId: missingPropertyId, serviceTypeId: electricityTypeId, name: "Main flat" },
+      { propertyId: missingPropertyId, serviceTypeId: electricityTypeId, name: "Studio" },
+      { propertyId: hasReadingPropertyId, serviceTypeId: electricityTypeId },
+    ])
+    .returning({ id: services.id, propertyId: services.propertyId });
+
+  const missingSvcIds = insertedServices.filter((s) => s.propertyId === missingPropertyId);
+  const hasReadingSvcId = insertedServices.find((s) => s.propertyId === hasReadingPropertyId)!.id;
 
   const insertedMeters = await db
     .insert(meters)
@@ -102,6 +109,14 @@ beforeAll(async () => {
 
   missingMeterId = insertedMeters[0]!.id;
   hasReadingMeterId = insertedMeters[1]!.id;
+
+  // Attribution is now by the explicit link (Slice B3). The missing meter feeds BOTH same-type
+  // services — an even stronger fan-out check: two links must still yield a single alert row.
+  await db.insert(meterServices).values([
+    { meterId: missingMeterId, serviceId: missingSvcIds[0]!.id },
+    { meterId: missingMeterId, serviceId: missingSvcIds[1]!.id },
+    { meterId: hasReadingMeterId, serviceId: hasReadingSvcId },
+  ]);
 
   // Positive control: this meter already has a reading this month → it must NOT be flagged.
   await db.insert(readings).values({

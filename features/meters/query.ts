@@ -1,11 +1,14 @@
-import { and, asc, eq, isNull, lte } from "drizzle-orm";
+import { and, asc, eq, exists, isNull, lte, sql } from "drizzle-orm";
+import { alias } from "drizzle-orm/pg-core";
 
 import { db } from "@/lib/db/client";
 import { toIsoDate } from "@/lib/format/date";
 import type { UserId } from "@/lib/db/schema/auth";
 import { meters } from "@/lib/db/schema/meters";
 import type { MeterId } from "@/lib/db/schema/meters";
+import { meterServices } from "@/lib/db/schema/meter-services";
 import { readings } from "@/lib/db/schema/readings";
+import { services } from "@/lib/db/schema/services";
 import { serviceTypes } from "@/lib/db/schema/service-types";
 import { properties, propertyAccess } from "@/lib/db/schema/properties";
 import type { PropertyId } from "@/lib/db/schema/properties";
@@ -90,13 +93,20 @@ export const availableConsumptionServiceTypes = async (
   return rows.filter((r) => r.unit !== null).map((r) => ({ code: r.code, unit: r.unit! }));
 };
 
-// Monthly consumption aggregation for a single metered service type across all
-// accessible meters. Access-scoped via propertyAccess. Single batched query, no N+1.
+// Monthly consumption aggregation for a single metered concept (service-type code)
+// across all accessible meters. Access-scoped via propertyAccess. Single batched query.
 //
-// Algorithm: fetch all readings for matching meters up to end-of-dateTo (no lower
-// bound — we need the reading before dateFrom to compute the first month's delta).
-// In JS: compute consecutive deltas per meter, assign each delta to the month of the
-// later reading, skip deltas before dateFrom, sum across all meters per month.
+// Attribution runs through the explicit meter↔service link (Slice B3): a meter contributes
+// only if it has an active `meter_services` link to a non-deleted service of this concept —
+// no longer the implicit "same service type" match. The link is applied as an EXISTS
+// semi-join, NOT a join to meter_services: joining would multiply a meter's readings by its
+// link count and double the delta. Distinctness is the concept-level double-count guard —
+// one meter feeding several services of the concept still counts exactly once.
+//
+// Algorithm: fetch all readings for contributing meters up to end-of-dateTo (no lower bound —
+// we need the reading before dateFrom to compute the first month's delta). In JS: compute
+// consecutive deltas per meter, assign each delta to the month of the later reading, skip
+// deltas before dateFrom, sum across all meters per month.
 export const monthlyConsumptionByService = async (
   userId: UserId,
   params: {
@@ -111,6 +121,10 @@ export const monthlyConsumptionByService = async (
   // Upper bound: first instant of the month after dateTo (exclusive)
   const [toYear, toMonth] = params.dateTo.slice(0, 7).split("-").map(Number);
   const upperBound = new Date(Date.UTC(toYear!, toMonth!, 1)); // toMonth is 1-based → +0 = next month
+
+  // The concept is matched against the LINKED service's type, not the meter's own — aliased so
+  // it doesn't collide with the outer serviceTypes join (which only supplies unit / metered).
+  const linkedServiceTypes = alias(serviceTypes, "linked_service_types");
 
   const rows = await db
     .select({
@@ -135,12 +149,29 @@ export const monthlyConsumptionByService = async (
     )
     .where(
       and(
-        eq(serviceTypes.code, params.serviceTypeCode),
         eq(serviceTypes.measurementType, "metered"),
         isNull(meters.deletedAt),
         isNull(readings.deletedAt),
         lte(readings.readAt, upperBound),
         params.propertyId ? eq(meters.propertyId, params.propertyId as PropertyId) : undefined,
+        // Contributes iff the meter feeds a non-deleted service of this concept via an active link.
+        exists(
+          db
+            .select({ one: sql`1` })
+            .from(meterServices)
+            .innerJoin(
+              services,
+              and(eq(services.id, meterServices.serviceId), isNull(services.deletedAt)),
+            )
+            .innerJoin(linkedServiceTypes, eq(linkedServiceTypes.id, services.serviceTypeId))
+            .where(
+              and(
+                eq(meterServices.meterId, meters.id),
+                isNull(meterServices.deletedAt),
+                eq(linkedServiceTypes.code, params.serviceTypeCode),
+              ),
+            ),
+        ),
       ),
     )
     .orderBy(asc(readings.meterId), asc(readings.readAt));

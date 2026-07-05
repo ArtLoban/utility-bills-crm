@@ -13,6 +13,7 @@ import { contracts } from "@/lib/db/schema/contracts";
 import { tariffs } from "@/lib/db/schema/tariffs";
 import type { TTariff } from "@/lib/db/schema/tariffs";
 import { meters } from "@/lib/db/schema/meters";
+import { meterServices } from "@/lib/db/schema/meter-services";
 import { readings } from "@/lib/db/schema/readings";
 import { serviceByIdForUser } from "@/lib/db/access/services";
 import type { UserId } from "@/lib/db/schema/auth";
@@ -214,35 +215,32 @@ export const tariffForServicePeriod = async (
   return rows[0]?.tariff ?? null;
 };
 
-// Returns the last two readings for the active meter associated with a service,
+// Returns the last two readings for the active meter that feeds this service,
 // both with readAt <= periodEnd. curr = most recent, prev = the one before it.
 // Used to compute metered consumption for the expected-amount hint.
+//
+// The meter is resolved through the explicit meter↔service link (Slice B3), not by shared
+// service type: when a property has more than one meter of a type, this picks the one actually
+// linked to *this* service instead of an arbitrary same-type meter. If a service happens to be
+// fed by several active meters, the most recently installed one is used (the hint is advisory).
 // No access check — only called from within access-controlled server actions.
 export const readingsForPeriod = async (
   serviceId: TServiceId,
   periodEnd: string, // "YYYY-MM-DD"
 ): Promise<TReadingPair> => {
-  const serviceRows = await db
-    .select({ propertyId: services.propertyId, serviceTypeId: services.serviceTypeId })
-    .from(services)
-    .where(and(eq(services.id, serviceId), isNull(services.deletedAt)))
-    .limit(1);
-
-  if (!serviceRows[0]) return { curr: null, prev: null };
-
-  const { propertyId, serviceTypeId } = serviceRows[0];
-
   const meterRows = await db
-    .select()
+    .select({ meterId: meters.id })
     .from(meters)
-    .where(
+    .innerJoin(
+      meterServices,
       and(
-        eq(meters.propertyId, propertyId),
-        eq(meters.serviceTypeId, serviceTypeId),
-        isNull(meters.validTo),
-        isNull(meters.deletedAt),
+        eq(meterServices.meterId, meters.id),
+        eq(meterServices.serviceId, serviceId),
+        isNull(meterServices.deletedAt),
       ),
     )
+    .where(and(isNull(meters.validTo), isNull(meters.deletedAt)))
+    .orderBy(desc(meters.validFrom))
     .limit(1);
 
   if (!meterRows[0]) return { curr: null, prev: null };
@@ -256,7 +254,7 @@ export const readingsForPeriod = async (
     .from(readings)
     .where(
       and(
-        eq(readings.meterId, meterRows[0].id),
+        eq(readings.meterId, meterRows[0].meterId),
         lt(readings.readAt, dayAfter),
         isNull(readings.deletedAt),
       ),

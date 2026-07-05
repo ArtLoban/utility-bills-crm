@@ -6,7 +6,6 @@ import type { TServiceListItem } from "@/lib/db/access/services";
 import { PROPERTY_ROLES } from "@/lib/db/schema/properties";
 import type { TPropertyRole } from "@/lib/db/schema/properties";
 import type { TServiceId } from "@/lib/db/schema/services";
-import type { TServiceTypeId } from "@/lib/db/schema/service-types";
 import type { TBalance } from "@/features/ledger/types";
 import { ServiceRow } from "./service-row";
 
@@ -15,7 +14,7 @@ type TProps = {
   role: TPropertyRole;
   propertyId: string;
   serviceBalances: Map<TServiceId, TBalance>;
-  lastReadingByServiceType: Map<TServiceTypeId, Date>;
+  lastReadingByService: Map<TServiceId, Date>;
 };
 
 const OverviewTab = ({
@@ -23,7 +22,7 @@ const OverviewTab = ({
   role,
   propertyId,
   serviceBalances,
-  lastReadingByServiceType,
+  lastReadingByService,
 }: TProps) => {
   const t = useTranslations("properties.detail");
   const canEdit = role !== PROPERTY_ROLES.VIEWER;
@@ -88,7 +87,7 @@ const OverviewTab = ({
             propertyId={propertyId}
             isLast={index === services.length - 1}
             balance={serviceBalances.get(service.id) ?? null}
-            lastReadingAt={lastReadingByServiceType.get(service.serviceTypeId) ?? null}
+            lastReadingAt={lastReadingByService.get(service.id) ?? null}
           />
         ))}
       </div>
