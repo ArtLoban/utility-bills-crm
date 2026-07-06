@@ -30,6 +30,16 @@ import { bills } from "../schema/bills";
 import { payments } from "../schema/payments";
 import { DEMO_EMAIL, FAMILY_DEMO_EMAIL } from "@/lib/auth/constants";
 import { toIsoDate } from "@/lib/format/date";
+import {
+  SEED_SERIES,
+  SEED_TARIFF_RATES,
+  HEATING_RATE_PER_GCAL,
+  HEATING_NOMINAL_AMOUNT,
+  COTTAGE_BILL_THRESHOLD,
+  monthlyConsumption,
+  heatingGcal,
+  type TSeedSeries,
+} from "./generation";
 
 // ---------------------------------------------------------------------------
 // DB setup — module level so TTx can be derived via typeof db
@@ -75,36 +85,13 @@ const round3 = (n: number): string => n.toFixed(3);
 const now = new Date();
 const CURRENT_MONTH = firstOfMonth(now);
 const START_DATE = firstOfMonth(addMonths(CURRENT_MONTH, -24));
-const CHANGE_DATE = firstOfMonth(addMonths(START_DATE, 12));
+// The internet provider switch (Lanet → Kyivstar) happens mid-window. This is the only genuine
+// mid-window step that remains; the fake mass tariff change on this date was removed.
+const INTERNET_SWITCH_DATE = firstOfMonth(addMonths(START_DATE, 12));
 const MONTHS: Date[] = Array.from({ length: 24 }, (_, i) => addMonths(START_DATE, i));
 
-// ---------------------------------------------------------------------------
-// Seasonal model
-// ---------------------------------------------------------------------------
-
-const YOY_DRIFT = 0.04;
-
-const monthIndex = (d: Date): number => d.getUTCMonth();
-
-// consumption[i] = base × factor[monthIndex] × (1 + yoyDrift × year)
-const genConsumption = (base: number, factors: readonly number[], monthDates: Date[]): number[] =>
-  monthDates.map((d, i) => {
-    const year = Math.floor(i / 12);
-    return base * factors[monthIndex(d)]! * (1 + YOY_DRIFT * year);
-  });
-
-const ELEC_FACTOR = [1.1, 1.1, 1.0, 0.9, 0.85, 0.8, 0.8, 0.85, 0.9, 1.0, 1.1, 1.15] as const;
-const GAS_HOUSE_FACTOR = [2.8, 2.5, 2.0, 1.2, 0.3, 0.1, 0.1, 0.1, 0.5, 1.3, 2.3, 2.8] as const;
-const GAS_APT_FACTOR = [1.1, 1.1, 1.0, 1.0, 0.95, 0.9, 0.9, 0.95, 1.0, 1.0, 1.1, 1.1] as const;
-const WATER_FACTOR = [0.9, 0.9, 1.0, 1.0, 1.1, 1.15, 1.15, 1.1, 1.0, 0.95, 0.9, 0.9] as const;
-const COTTAGE_ELEC_FACTOR = [
-  0.05, 0.05, 0.1, 0.5, 0.9, 1.0, 1.0, 0.9, 0.6, 0.2, 0.05, 0.05,
-] as const;
-
-const isHeatingSeason = (d: Date): boolean => {
-  const m = monthIndex(d);
-  return m >= 9 || m <= 2;
-};
+// The seasonal/consumption generation core lives in ./generation (pure, calendar-keyed,
+// deterministic). This file only orchestrates structure + insertion.
 
 // ---------------------------------------------------------------------------
 // Transaction-scoped helpers
@@ -224,10 +211,9 @@ type TSeedMeteredOpts = {
   tx: TTx;
   serviceId: TServiceId;
   meterId: MeterId;
-  base: number;
-  factors: readonly number[];
+  series: TSeedSeries;
   startCum: number;
-  rateFixed: number;
+  rate: number;
   primaryId: UserId;
 };
 
@@ -235,24 +221,23 @@ const seedMetered = async ({
   tx,
   serviceId,
   meterId,
-  base,
-  factors,
+  series,
   startCum,
-  rateFixed,
+  rate,
   primaryId,
 }: TSeedMeteredOpts): Promise<void> => {
-  const deltas = genConsumption(base, factors, MONTHS);
   let cum = startCum;
   for (let i = 0; i < 24; i++) {
     const month = MONTHS[i]!;
-    cum += deltas[i]!;
+    const delta = monthlyConsumption(series, month.getUTCFullYear(), month.getUTCMonth());
+    cum += delta;
     await tx.insert(readings).values({
       meterId,
       readAt: reading28(month),
       valueT1: round3(cum),
       createdBy: primaryId,
     });
-    const amount = round2(deltas[i]! * rateFixed);
+    const amount = round2(delta * rate);
     await billInsert(tx, serviceId, month, amount, primaryId);
     await paymentInsert(tx, serviceId, pay5next(month), amount, primaryId);
   }
@@ -430,8 +415,16 @@ const main = async (): Promise<void> => {
 
       // Apartment electricity: 1 contract, 2 tariff records
       const aptElecC = await contractInsert(tx, aptElecSvc, pId("YASNO"), START_DATE, null);
-      await tariffInsert(tx, aptElecC, { rateT1: "4.32", rateT2: "2.16" }, START_DATE, CHANGE_DATE);
-      await tariffInsert(tx, aptElecC, { rateT1: "4.68", rateT2: "2.34" }, CHANGE_DATE, null);
+      await tariffInsert(
+        tx,
+        aptElecC,
+        {
+          rateT1: String(SEED_TARIFF_RATES.ELECTRICITY_DAY),
+          rateT2: String(SEED_TARIFF_RATES.ELECTRICITY_NIGHT),
+        },
+        START_DATE,
+        null,
+      );
       await acctInsert(tx, aptElecC, "560-0001-2024", START_DATE, null);
       await pdInsert(
         tx,
@@ -442,7 +435,13 @@ const main = async (): Promise<void> => {
       );
 
       const aptColdC = await contractInsert(tx, aptColdSvc, pId("Kyivvodokanal"), START_DATE, null);
-      await tariffInsert(tx, aptColdC, { rateT1: "16.00" }, START_DATE, null);
+      await tariffInsert(
+        tx,
+        aptColdC,
+        { rateT1: String(SEED_TARIFF_RATES.COLD_WATER) },
+        START_DATE,
+        null,
+      );
       await acctInsert(tx, aptColdC, "KVK-2024-0045", START_DATE, null);
       await pdInsert(
         tx,
@@ -453,7 +452,13 @@ const main = async (): Promise<void> => {
       );
 
       const aptHotC = await contractInsert(tx, aptHotSvc, pId("Kyivvodokanal"), START_DATE, null);
-      await tariffInsert(tx, aptHotC, { rateT1: "95.00" }, START_DATE, null);
+      await tariffInsert(
+        tx,
+        aptHotC,
+        { rateT1: String(SEED_TARIFF_RATES.HOT_WATER) },
+        START_DATE,
+        null,
+      );
       await acctInsert(tx, aptHotC, "KVK-2024-0046", START_DATE, null);
       await pdInsert(
         tx,
@@ -470,7 +475,13 @@ const main = async (): Promise<void> => {
         START_DATE,
         null,
       );
-      await tariffInsert(tx, aptGasC, { rateT1: "8.00" }, START_DATE, null);
+      await tariffInsert(
+        tx,
+        aptGasC,
+        { rateT1: String(SEED_TARIFF_RATES.GAS_SUPPLY) },
+        START_DATE,
+        null,
+      );
       await acctInsert(tx, aptGasC, "NFT-APT-0007", START_DATE, null);
       await pdInsert(
         tx,
@@ -487,7 +498,7 @@ const main = async (): Promise<void> => {
         START_DATE,
         null,
       );
-      await tariffInsert(tx, aptHeatC, { fixedAmount: "2200.00" }, START_DATE, null);
+      await tariffInsert(tx, aptHeatC, { fixedAmount: HEATING_NOMINAL_AMOUNT }, START_DATE, null);
       await acctInsert(tx, aptHeatC, "KTE-2024-0099", START_DATE, null);
       await pdInsert(
         tx,
@@ -515,15 +526,39 @@ const main = async (): Promise<void> => {
       );
 
       // Apartment internet: provider change = 2 contracts
-      const aptNetCA = await contractInsert(tx, aptNetSvc, pId("Lanet"), START_DATE, CHANGE_DATE);
-      await tariffInsert(tx, aptNetCA, { fixedAmount: "299.00" }, START_DATE, CHANGE_DATE);
-      await acctInsert(tx, aptNetCA, "LN-2024-78301", START_DATE, CHANGE_DATE);
-      await pdInsert(tx, aptNetCA, "lk.lanet.ua — account LN-2024-78301", START_DATE, CHANGE_DATE);
+      const aptNetCA = await contractInsert(
+        tx,
+        aptNetSvc,
+        pId("Lanet"),
+        START_DATE,
+        INTERNET_SWITCH_DATE,
+      );
+      await tariffInsert(tx, aptNetCA, { fixedAmount: "299.00" }, START_DATE, INTERNET_SWITCH_DATE);
+      await acctInsert(tx, aptNetCA, "LN-2024-78301", START_DATE, INTERNET_SWITCH_DATE);
+      await pdInsert(
+        tx,
+        aptNetCA,
+        "lk.lanet.ua — account LN-2024-78301",
+        START_DATE,
+        INTERNET_SWITCH_DATE,
+      );
 
-      const aptNetCB = await contractInsert(tx, aptNetSvc, pId("Kyivstar Home"), CHANGE_DATE, null);
-      await tariffInsert(tx, aptNetCB, { fixedAmount: "349.00" }, CHANGE_DATE, null);
-      await acctInsert(tx, aptNetCB, "KS-HOME-44129", CHANGE_DATE, null);
-      await pdInsert(tx, aptNetCB, "kyivstar.ua — contract KS-HOME-44129", CHANGE_DATE, null);
+      const aptNetCB = await contractInsert(
+        tx,
+        aptNetSvc,
+        pId("Kyivstar Home"),
+        INTERNET_SWITCH_DATE,
+        null,
+      );
+      await tariffInsert(tx, aptNetCB, { fixedAmount: "349.00" }, INTERNET_SWITCH_DATE, null);
+      await acctInsert(tx, aptNetCB, "KS-HOME-44129", INTERNET_SWITCH_DATE, null);
+      await pdInsert(
+        tx,
+        aptNetCB,
+        "kyivstar.ua — contract KS-HOME-44129",
+        INTERNET_SWITCH_DATE,
+        null,
+      );
 
       console.log("Apartment structure done.");
 
@@ -580,7 +615,13 @@ const main = async (): Promise<void> => {
       );
 
       const houseElecC = await contractInsert(tx, houseElecSvc, pId("YASNO"), START_DATE, null);
-      await tariffInsert(tx, houseElecC, { rateT1: "4.32" }, START_DATE, null);
+      await tariffInsert(
+        tx,
+        houseElecC,
+        { rateT1: String(SEED_TARIFF_RATES.ELECTRICITY_DAY) },
+        START_DATE,
+        null,
+      );
       await acctInsert(tx, houseElecC, "560-0002-2024", START_DATE, null);
       await pdInsert(
         tx,
@@ -590,7 +631,6 @@ const main = async (): Promise<void> => {
         null,
       );
 
-      // House gas: tariff change at CHANGE_DATE
       const houseGasC = await contractInsert(
         tx,
         houseGasSvc,
@@ -598,8 +638,13 @@ const main = async (): Promise<void> => {
         START_DATE,
         null,
       );
-      await tariffInsert(tx, houseGasC, { rateT1: "7.96" }, START_DATE, CHANGE_DATE);
-      await tariffInsert(tx, houseGasC, { rateT1: "8.56" }, CHANGE_DATE, null);
+      await tariffInsert(
+        tx,
+        houseGasC,
+        { rateT1: String(SEED_TARIFF_RATES.GAS_SUPPLY) },
+        START_DATE,
+        null,
+      );
       await acctInsert(tx, houseGasC, "NFT-HSE-0012", START_DATE, null);
       await pdInsert(
         tx,
@@ -616,7 +661,13 @@ const main = async (): Promise<void> => {
         START_DATE,
         null,
       );
-      await tariffInsert(tx, houseColdC, { rateT1: "16.00" }, START_DATE, null);
+      await tariffInsert(
+        tx,
+        houseColdC,
+        { rateT1: String(SEED_TARIFF_RATES.COLD_WATER) },
+        START_DATE,
+        null,
+      );
       await acctInsert(tx, houseColdC, "KVK-2024-0077", START_DATE, null);
       await pdInsert(
         tx,
@@ -682,7 +733,13 @@ const main = async (): Promise<void> => {
       );
 
       const cottageElecC = await contractInsert(tx, cottageElecSvc, pId("YASNO"), START_DATE, null);
-      await tariffInsert(tx, cottageElecC, { rateT1: "4.32" }, START_DATE, null);
+      await tariffInsert(
+        tx,
+        cottageElecC,
+        { rateT1: String(SEED_TARIFF_RATES.ELECTRICITY_DAY) },
+        START_DATE,
+        null,
+      );
       await acctInsert(tx, cottageElecC, "560-0003-2024", START_DATE, null);
       await pdInsert(
         tx,
@@ -700,14 +757,16 @@ const main = async (): Promise<void> => {
 
       // --- Apartment electricity (2-zone) — DEBT: no payments for last 2 months ---
       {
-        const t1Deltas = genConsumption(130, ELEC_FACTOR, MONTHS);
-        const t2Deltas = genConsumption(60, ELEC_FACTOR, MONTHS);
         let cumT1 = 1000;
         let cumT2 = 600;
         for (let i = 0; i < 24; i++) {
           const month = MONTHS[i]!;
-          cumT1 += t1Deltas[i]!;
-          cumT2 += t2Deltas[i]!;
+          const year = month.getUTCFullYear();
+          const m = month.getUTCMonth();
+          const deltaT1 = monthlyConsumption(SEED_SERIES.APT_ELECTRICITY_DAY, year, m);
+          const deltaT2 = monthlyConsumption(SEED_SERIES.APT_ELECTRICITY_NIGHT, year, m);
+          cumT1 += deltaT1;
+          cumT2 += deltaT2;
           await tx.insert(readings).values({
             meterId: aptElecMeter,
             readAt: reading28(month),
@@ -715,13 +774,14 @@ const main = async (): Promise<void> => {
             valueT2: round3(cumT2),
             createdBy: primaryId,
           });
-          const rate = month < CHANGE_DATE ? 4.32 : 4.68;
-          const rateT2 = month < CHANGE_DATE ? 2.16 : 2.34;
-          const amount = t1Deltas[i]! * rate + t2Deltas[i]! * rateT2;
-          await billInsert(tx, aptElecSvc, month, round2(amount), primaryId);
+          const amount = round2(
+            deltaT1 * SEED_TARIFF_RATES.ELECTRICITY_DAY +
+              deltaT2 * SEED_TARIFF_RATES.ELECTRICITY_NIGHT,
+          );
+          await billInsert(tx, aptElecSvc, month, amount, primaryId);
           // Debt: months 22 and 23 have no payment
           if (i <= 21) {
-            await paymentInsert(tx, aptElecSvc, pay5next(month), round2(amount), primaryId);
+            await paymentInsert(tx, aptElecSvc, pay5next(month), amount, primaryId);
           }
         }
       }
@@ -730,39 +790,39 @@ const main = async (): Promise<void> => {
         tx,
         serviceId: aptColdSvc,
         meterId: aptColdMeter,
-        base: 5,
-        factors: WATER_FACTOR,
+        series: SEED_SERIES.APT_COLD_WATER,
         startCum: 100,
-        rateFixed: 16.0,
+        rate: SEED_TARIFF_RATES.COLD_WATER,
         primaryId,
       });
       await seedMetered({
         tx,
         serviceId: aptHotSvc,
         meterId: aptHotMeter,
-        base: 2.5,
-        factors: WATER_FACTOR,
+        series: SEED_SERIES.APT_HOT_WATER,
         startCum: 50,
-        rateFixed: 95.0,
+        rate: SEED_TARIFF_RATES.HOT_WATER,
         primaryId,
       });
       await seedMetered({
         tx,
         serviceId: aptGasSvc,
         meterId: aptGasMeter,
-        base: 8,
-        factors: GAS_APT_FACTOR,
+        series: SEED_SERIES.APT_GAS,
         startCum: 200,
-        rateFixed: 8.0,
+        rate: SEED_TARIFF_RATES.GAS_SUPPLY,
         primaryId,
       });
 
-      // Apartment heating (fixed, heating season only)
+      // Apartment heating: fixed-type service, but the amount = Gcal × rate varies by month
+      // (shoulder months low, Dec–Feb peaks) and is zero outside the heating season.
       for (let i = 0; i < 24; i++) {
         const month = MONTHS[i]!;
-        if (!isHeatingSeason(month)) continue;
-        await billInsert(tx, aptHeatSvc, month, "2200.00", primaryId);
-        await paymentInsert(tx, aptHeatSvc, pay5next(month), "2200.00", primaryId);
+        const gcal = heatingGcal(month.getUTCFullYear(), month.getUTCMonth());
+        if (gcal === 0) continue;
+        const amount = round2(gcal * HEATING_RATE_PER_GCAL);
+        await billInsert(tx, aptHeatSvc, month, amount, primaryId);
+        await paymentInsert(tx, aptHeatSvc, pay5next(month), amount, primaryId);
       }
 
       // Apartment building maintenance (fixed, every month)
@@ -775,7 +835,7 @@ const main = async (): Promise<void> => {
       // Apartment internet (fixed, two providers)
       for (let i = 0; i < 24; i++) {
         const month = MONTHS[i]!;
-        const amount = month < CHANGE_DATE ? "299.00" : "349.00";
+        const amount = month < INTERNET_SWITCH_DATE ? "299.00" : "349.00";
         await billInsert(tx, aptNetSvc, month, amount, primaryId);
         await paymentInsert(tx, aptNetSvc, pay5next(month), amount, primaryId);
       }
@@ -786,28 +846,30 @@ const main = async (): Promise<void> => {
         tx,
         serviceId: houseElecSvc,
         meterId: houseElecMeter,
-        base: 160,
-        factors: ELEC_FACTOR,
+        series: SEED_SERIES.HOUSE_ELECTRICITY,
         startCum: 2000,
-        rateFixed: 4.32,
+        rate: SEED_TARIFF_RATES.ELECTRICITY_DAY,
         primaryId,
       });
 
       // --- House gas (strong winter peak) — OVERPAYMENT ---
       {
-        const deltas = genConsumption(55, GAS_HOUSE_FACTOR, MONTHS);
         let cum = 500;
         for (let i = 0; i < 24; i++) {
           const month = MONTHS[i]!;
-          cum += deltas[i]!;
+          const delta = monthlyConsumption(
+            SEED_SERIES.HOUSE_GAS,
+            month.getUTCFullYear(),
+            month.getUTCMonth(),
+          );
+          cum += delta;
           await tx.insert(readings).values({
             meterId: houseGasMeter,
             readAt: reading28(month),
             valueT1: round3(cum),
             createdBy: primaryId,
           });
-          const rate = month < CHANGE_DATE ? 7.96 : 8.56;
-          const amount = round2(deltas[i]! * rate);
+          const amount = round2(delta * SEED_TARIFF_RATES.GAS_SUPPLY);
           await billInsert(tx, houseGasSvc, month, amount, primaryId);
           await paymentInsert(tx, houseGasSvc, pay5next(month), amount, primaryId);
           // Extra lump-sum advance at month 6 → overpayment
@@ -821,10 +883,9 @@ const main = async (): Promise<void> => {
         tx,
         serviceId: houseColdSvc,
         meterId: houseColdMeter,
-        base: 4,
-        factors: WATER_FACTOR,
+        series: SEED_SERIES.HOUSE_COLD_WATER,
         startCum: 80,
-        rateFixed: 16.0,
+        rate: SEED_TARIFF_RATES.COLD_WATER,
         primaryId,
       });
 
@@ -846,11 +907,14 @@ const main = async (): Promise<void> => {
 
       // --- Cottage electricity (seasonal) ---
       {
-        const deltas = genConsumption(40, COTTAGE_ELEC_FACTOR, MONTHS);
         let cum = 300;
         for (let i = 0; i < 24; i++) {
           const month = MONTHS[i]!;
-          const delta = deltas[i]!;
+          const delta = monthlyConsumption(
+            SEED_SERIES.COTTAGE_ELECTRICITY,
+            month.getUTCFullYear(),
+            month.getUTCMonth(),
+          );
           cum += delta;
           await tx.insert(readings).values({
             meterId: cottageElecMeter,
@@ -858,8 +922,8 @@ const main = async (): Promise<void> => {
             valueT1: round3(cum),
             createdBy: primaryId,
           });
-          if (delta > 5) {
-            const amount = round2(delta * 4.32);
+          if (delta > COTTAGE_BILL_THRESHOLD) {
+            const amount = round2(delta * SEED_TARIFF_RATES.ELECTRICITY_DAY);
             await billInsert(tx, cottageElecSvc, month, amount, primaryId);
             await paymentInsert(tx, cottageElecSvc, pay5next(month), amount, primaryId);
           }
