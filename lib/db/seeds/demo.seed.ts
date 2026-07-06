@@ -161,6 +161,33 @@ const fixedAmountForMonth = (steps: TFixedStep[], month: Date): string => {
   return amount;
 };
 
+// The month index that carries the single "re-read" reading note (house gas — an ordinary
+// mid-window correction, just to show the field is used).
+const READING_RECHECK_INDEX = 8;
+
+// ---------------------------------------------------------------------------
+// Slice-4 enrichment — the human "voice" for the slice-3 events (natural Ukrainian). Each note
+// lands on the exact bill / payment / contract / reading row the event created (see the calendar
+// above); routine rows stay unannotated on purpose — real people don't comment every receipt.
+// ---------------------------------------------------------------------------
+
+const SEED_NOTES = {
+  ELEC_DEBT_BILL: "Рахунок не сплачено — тимчасові фінансові труднощі, погасимо найближчим часом.",
+  ELEC_PARTIAL_PAY: "Сплачено частково — решту суми внесемо разом із наступним платежем.",
+  HEAT_PARTIAL_PAY: "Великий рахунок за пік опалення — цього місяця сплачено лише частину.",
+  HEAT_CATCHUP_PAY: "Доплата за попередній місяць опалення (залишок великого рахунку).",
+  GAS_ADVANCE_PAY: "Аванс на опалювальний сезон — покриває найближчі зимові рахунки.",
+  LATE_INTERNET: "Сплачено із запізненням — був у відрядженні.",
+  LATE_COTTAGE: "Сплачено пізніше — сезонний виїзд, дістався до квитанції не одразу.",
+  LATE_GARBAGE: "Оплата затрималася — не встигли до кінцевого терміну.",
+  LATE_GAS_DELIVERY: "Сплачено із запізненням — квитанція загубилася.",
+  GARBAGE_CONTRACT_OLD: "Договір закрито — перехід на іншого підрядника з вивезення відходів.",
+  GARBAGE_CONTRACT_NEW: "Новий підрядник із вивезення ТПВ, власний рахунок і тариф.",
+  GAS_DELIVERY_CONTRACT:
+    "Тариф на доставку переглядається щороку 1 січня (регульований перерахунок потужності).",
+  READING_RECHECK: "Переоблік — показання уточнено за фактом.",
+} as const;
+
 // ---------------------------------------------------------------------------
 // Transaction-scoped helpers
 // ---------------------------------------------------------------------------
@@ -169,31 +196,59 @@ const svcInsert = async (
   tx: TTx,
   propertyId: PropertyId,
   serviceTypeId: TServiceTypeId,
-  // Custom label — mandatory for `other`-type services, omitted (→ NULL) otherwise.
-  name?: string,
+  // name: custom label — mandatory for `other`-type services, omitted (→ NULL) otherwise.
+  opts: { name?: string; notes?: string } = {},
 ): Promise<TServiceId> => {
   const [row] = await tx
     .insert(services)
-    .values({ propertyId, serviceTypeId, name })
+    .values({ propertyId, serviceTypeId, name: opts.name, notes: opts.notes })
     .returning({ id: services.id });
   if (!row) throw new Error("svcInsert: no row returned");
   return row.id;
 };
 
-const meterInsert = async (
-  tx: TTx,
-  propertyId: PropertyId,
-  serviceId: TServiceId,
-  serviceTypeId: TServiceTypeId,
-  zoneCount: 1 | 2,
-  validFrom: Date,
+type TMeterInsertOpts = {
+  tx: TTx;
+  propertyId: PropertyId;
+  serviceId: TServiceId;
+  serviceTypeId: TServiceTypeId;
+  zoneCount: 1 | 2;
+  validFrom: Date;
   // Set for a meter that was later replaced (closes its temporal interval + records removal).
-  validTo: Date | null = null,
-  removedAt: Date | null = null,
-): Promise<MeterId> => {
+  validTo?: Date | null;
+  removedAt?: Date | null;
+  serialNumber?: string;
+  // Physical install date (informational); at/before the window start for original meters.
+  installedAt?: Date;
+  notes?: string;
+};
+
+const meterInsert = async ({
+  tx,
+  propertyId,
+  serviceId,
+  serviceTypeId,
+  zoneCount,
+  validFrom,
+  validTo = null,
+  removedAt = null,
+  serialNumber,
+  installedAt,
+  notes,
+}: TMeterInsertOpts): Promise<MeterId> => {
   const [row] = await tx
     .insert(meters)
-    .values({ propertyId, serviceTypeId, zoneCount, validFrom, validTo, removedAt })
+    .values({
+      propertyId,
+      serviceTypeId,
+      zoneCount,
+      validFrom,
+      validTo,
+      removedAt,
+      serialNumber,
+      installedAt,
+      notes,
+    })
     .returning({ id: meters.id });
   if (!row) throw new Error("meterInsert: no row returned");
   // Explicit meter↔service link (Slice B2): each seeded meter feeds its same-type service,
@@ -208,10 +263,11 @@ const contractInsert = async (
   providerId: ProviderId,
   validFrom: Date,
   validTo: Date | null,
+  notes?: string,
 ): Promise<TContractId> => {
   const [row] = await tx
     .insert(contracts)
-    .values({ serviceId, providerId, validFrom, validTo })
+    .values({ serviceId, providerId, validFrom, validTo, notes })
     .returning({ id: contracts.id });
   if (!row) throw new Error("contractInsert: no row returned");
   return row.id;
@@ -284,6 +340,7 @@ const billInsert = async (
   month: Date,
   amount: string,
   createdBy: UserId,
+  notes?: string,
 ): Promise<void> => {
   const periodStart = toIsoDate(firstOfMonth(month));
   const periodEnd = toIsoDate(lastOfMonth(month));
@@ -294,6 +351,7 @@ const billInsert = async (
     periodMonth: periodStart,
     amount,
     createdBy,
+    notes,
   });
 };
 
@@ -303,8 +361,11 @@ const paymentInsert = async (
   paidAt: Date,
   amount: string,
   createdBy: UserId,
+  notes?: string,
 ): Promise<void> => {
-  await tx.insert(payments).values({ serviceId, paidAt: toIsoDate(paidAt), amount, createdBy });
+  await tx
+    .insert(payments)
+    .values({ serviceId, paidAt: toIsoDate(paidAt), amount, createdBy, notes });
 };
 
 type TSeedMeteredOpts = {
@@ -427,21 +488,95 @@ const main = async (): Promise<void> => {
       // -----------------------------------------------------------------------
       // Providers
       // -----------------------------------------------------------------------
+      // Reference data (website / phone / notes-with-ЄДРПОУ). Real-named suppliers use their
+      // genuine public sites; contact numbers and registration codes are plausible-format demo
+      // values (this is fixture data, not a live registry mirror).
       const insertedProviders = await tx
         .insert(providers)
         .values([
-          { name: "YASNO", ownerId: primaryId },
-          { name: "Naftogaz Ukraine", ownerId: primaryId },
-          { name: "Kyivvodokanal", ownerId: primaryId },
-          { name: "Kyivteploenergo", ownerId: primaryId },
-          { name: "Khreshchatyk HOA", ownerId: primaryId },
-          { name: "GRM-Service", ownerId: primaryId },
-          { name: "Clean City LLC", ownerId: primaryId },
-          { name: "Lanet", ownerId: primaryId },
-          { name: "Kyivstar Home", ownerId: primaryId },
-          { name: "Kyiv Intercom Service", ownerId: primaryId },
-          { name: "Avtomobilist Garage Co-op", ownerId: primaryId },
-          { name: "EcoWaste Kyiv", ownerId: primaryId },
+          {
+            name: "YASNO",
+            website: "yasno.com.ua",
+            phone: "0 800 210 105",
+            notes: "Постачальник електроенергії (група ДТЕК). ЄДРПОУ 42206647.",
+            ownerId: primaryId,
+          },
+          {
+            name: "Naftogaz Ukraine",
+            website: "gas.ua",
+            phone: "0 800 301 570",
+            notes: "Постачальник природного газу населенню. ЄДРПОУ 39374020.",
+            ownerId: primaryId,
+          },
+          {
+            name: "Kyivvodokanal",
+            website: "vodokanal.kiev.ua",
+            phone: "(044) 247-70-00",
+            notes: "Водопостачання та водовідведення міста Києва. ЄДРПОУ 03327664.",
+            ownerId: primaryId,
+          },
+          {
+            name: "Kyivteploenergo",
+            website: "kte.kyivcity.gov.ua",
+            phone: "(044) 200-22-00",
+            notes: "Централізоване опалення та гаряче водопостачання. ЄДРПОУ 40538421.",
+            ownerId: primaryId,
+          },
+          {
+            name: "Khreshchatyk HOA",
+            phone: "(044) 278-33-12",
+            notes:
+              "ОСББ будинку на Хрещатику — утримання будинку та прибудинкової території. ЄДРПОУ 41002233.",
+            ownerId: primaryId,
+          },
+          {
+            name: "GRM-Service",
+            website: "gazmerezhi.com.ua",
+            phone: "0 800 302 104",
+            notes: "Оператор газорозподільної системи (доставка газу). ЄДРПОУ 30019801.",
+            ownerId: primaryId,
+          },
+          {
+            name: "Clean City LLC",
+            website: "cleancity.com.ua",
+            phone: "(044) 351-22-40",
+            notes: "Вивезення побутових відходів. ЄДРПОУ 43112090.",
+            ownerId: primaryId,
+          },
+          {
+            name: "Lanet",
+            website: "lanet.ua",
+            phone: "(044) 590-11-90",
+            notes: "Домашній інтернет-провайдер. ЄДРПОУ 38095180.",
+            ownerId: primaryId,
+          },
+          {
+            name: "Kyivstar Home",
+            website: "kyivstar.ua",
+            phone: "0 800 300 460",
+            notes: "Домашній інтернет (Київстар). ЄДРПОУ 21673832.",
+            ownerId: primaryId,
+          },
+          {
+            name: "Kyiv Intercom Service",
+            website: "domofon.kyiv.ua",
+            phone: "(044) 383-55-10",
+            notes: "Обслуговування домофонів. ЄДРПОУ 39887421.",
+            ownerId: primaryId,
+          },
+          {
+            name: "Avtomobilist Garage Co-op",
+            phone: "(067) 204-18-77",
+            notes: "Гаражний кооператив «Автомобіліст» — оренда місць. ЄДРПОУ 22778100.",
+            ownerId: primaryId,
+          },
+          {
+            name: "EcoWaste Kyiv",
+            website: "ecowaste.kyiv.ua",
+            phone: "(044) 502-19-63",
+            notes: "Вивезення та сортування побутових відходів. ЄДРПОУ 44561230.",
+            ownerId: primaryId,
+          },
         ])
         .returning({ id: providers.id, name: providers.name });
 
@@ -463,6 +598,7 @@ const main = async (): Promise<void> => {
           name: "Apartment on Khreshchatyk",
           type: "apartment",
           address: "22 Khreshchatyk St, Apt 5, Kyiv",
+          notes: "≈50 м², 4-й поверх, 2 мешканці.",
         })
         .returning({ id: properties.id });
 
@@ -482,62 +618,89 @@ const main = async (): Promise<void> => {
         grantedBy: primaryId,
       });
 
-      const aptElecSvc = await svcInsert(tx, aptProp.id, st("electricity").id);
+      const aptElecSvc = await svcInsert(tx, aptProp.id, st("electricity").id, {
+        notes: "Двозонний облік: нічний тариф діє 23:00–07:00.",
+      });
       const aptColdSvc = await svcInsert(tx, aptProp.id, st("cold_water").id);
       const aptHotSvc = await svcInsert(tx, aptProp.id, st("hot_water").id);
       const aptGasSvc = await svcInsert(tx, aptProp.id, st("gas").id);
       const aptHeatSvc = await svcInsert(tx, aptProp.id, st("heating").id);
       const aptMaintSvc = await svcInsert(tx, aptProp.id, st("building_maintenance").id);
       const aptNetSvc = await svcInsert(tx, aptProp.id, st("internet").id);
-      const aptIntercomSvc = await svcInsert(tx, aptProp.id, st("intercom").id);
+      const aptIntercomSvc = await svcInsert(tx, aptProp.id, st("intercom").id, {
+        notes: "Оплата раз на квартал — одним платежем за три місяці.",
+      });
 
-      const aptElecMeter = await meterInsert(
+      const aptElecMeter = await meterInsert({
         tx,
-        aptProp.id,
-        aptElecSvc,
-        st("electricity").id,
-        2,
-        START_DATE,
-      );
+        propertyId: aptProp.id,
+        serviceId: aptElecSvc,
+        serviceTypeId: st("electricity").id,
+        zoneCount: 2,
+        validFrom: START_DATE,
+        serialNumber: "НІК 2102-02.М2Т №1904-217634",
+        installedAt: new Date(Date.UTC(2021, 2, 15)),
+      });
       // Two cold-water meters (kitchen + bathroom riser) both linked to the single cold_water
       // service — the Tranche B multi-meter showcase. Consumption aggregates over unique meters.
       // The kitchen riser is replaced mid-window: the original meter is closed at the swap date
       // (validTo + removedAt), a new meter takes over from the same date (see readings below).
-      const aptColdMeterKitchenOld = await meterInsert(
+      const aptColdMeterKitchenOld = await meterInsert({
         tx,
-        aptProp.id,
-        aptColdSvc,
-        st("cold_water").id,
-        1,
-        START_DATE,
-        KITCHEN_SWAP_DATE,
-        KITCHEN_SWAP_DATE,
-      );
-      const aptColdMeterKitchenNew = await meterInsert(
+        propertyId: aptProp.id,
+        serviceId: aptColdSvc,
+        serviceTypeId: st("cold_water").id,
+        zoneCount: 1,
+        validFrom: START_DATE,
+        validTo: KITCHEN_SWAP_DATE,
+        removedAt: KITCHEN_SWAP_DATE,
+        serialNumber: "Novator ЛК-15 №18-224417",
+        installedAt: new Date(Date.UTC(2018, 4, 20)),
+        notes: "Кухонний стояк. Демонтовано під час заміни — кінцеві показання зафіксовано.",
+      });
+      const aptColdMeterKitchenNew = await meterInsert({
         tx,
-        aptProp.id,
-        aptColdSvc,
-        st("cold_water").id,
-        1,
-        KITCHEN_SWAP_DATE,
-      );
-      const aptColdMeterBath = await meterInsert(
+        propertyId: aptProp.id,
+        serviceId: aptColdSvc,
+        serviceTypeId: st("cold_water").id,
+        zoneCount: 1,
+        validFrom: KITCHEN_SWAP_DATE,
+        serialNumber: "Novator ЛК-15 №25-556002",
+        installedAt: KITCHEN_SWAP_DATE,
+        notes: "Кухонний стояк. Встановлено на заміну попереднього лічильника; повірка до 2031.",
+      });
+      const aptColdMeterBath = await meterInsert({
         tx,
-        aptProp.id,
-        aptColdSvc,
-        st("cold_water").id,
-        1,
-        START_DATE,
-      );
-      const aptHotMeter = await meterInsert(
+        propertyId: aptProp.id,
+        serviceId: aptColdSvc,
+        serviceTypeId: st("cold_water").id,
+        zoneCount: 1,
+        validFrom: START_DATE,
+        serialNumber: "Novator ЛК-15 №18-224418",
+        installedAt: new Date(Date.UTC(2018, 4, 20)),
+        notes: "Санвузол.",
+      });
+      const aptHotMeter = await meterInsert({
         tx,
-        aptProp.id,
-        aptHotSvc,
-        st("hot_water").id,
-        1,
-        START_DATE,
-      );
-      const aptGasMeter = await meterInsert(tx, aptProp.id, aptGasSvc, st("gas").id, 1, START_DATE);
+        propertyId: aptProp.id,
+        serviceId: aptHotSvc,
+        serviceTypeId: st("hot_water").id,
+        zoneCount: 1,
+        validFrom: START_DATE,
+        serialNumber: "Novator ЛК-15Г №19-773310",
+        installedAt: new Date(Date.UTC(2019, 7, 3)),
+      });
+      const aptGasMeter = await meterInsert({
+        tx,
+        propertyId: aptProp.id,
+        serviceId: aptGasSvc,
+        serviceTypeId: st("gas").id,
+        zoneCount: 1,
+        validFrom: START_DATE,
+        serialNumber: "САМГАЗ G4 РЛ №21-004512",
+        installedAt: new Date(Date.UTC(2021, 0, 18)),
+        notes: "Повірка до 2029.",
+      });
 
       // Apartment electricity: 1 contract, 2 tariff records
       const aptElecC = await contractInsert(tx, aptElecSvc, pId("YASNO"), START_DATE, null);
@@ -715,6 +878,7 @@ const main = async (): Promise<void> => {
           name: "Country house",
           type: "house",
           address: "14 Sadova St, Petrivske village",
+          notes: "≈120 м², постійне проживання, 3 мешканці. Автономне опалення (газовий котел).",
         })
         .returning({ id: properties.id });
 
@@ -733,30 +897,37 @@ const main = async (): Promise<void> => {
       const houseGarbSvc = await svcInsert(tx, houseProp.id, st("garbage_collection").id);
       const houseGasDelSvc = await svcInsert(tx, houseProp.id, st("gas_delivery").id);
 
-      const houseElecMeter = await meterInsert(
+      const houseElecMeter = await meterInsert({
         tx,
-        houseProp.id,
-        houseElecSvc,
-        st("electricity").id,
-        1,
-        START_DATE,
-      );
-      const houseGasMeter = await meterInsert(
+        propertyId: houseProp.id,
+        serviceId: houseElecSvc,
+        serviceTypeId: st("electricity").id,
+        zoneCount: 1,
+        validFrom: START_DATE,
+        serialNumber: "НІК 2104-02.Е2Т №20-118830",
+        installedAt: new Date(Date.UTC(2020, 9, 10)),
+      });
+      const houseGasMeter = await meterInsert({
         tx,
-        houseProp.id,
-        houseGasSvc,
-        st("gas").id,
-        1,
-        START_DATE,
-      );
-      const houseColdMeter = await meterInsert(
+        propertyId: houseProp.id,
+        serviceId: houseGasSvc,
+        serviceTypeId: st("gas").id,
+        zoneCount: 1,
+        validFrom: START_DATE,
+        serialNumber: "Metrix UG-G4 №19-556201",
+        installedAt: new Date(Date.UTC(2019, 10, 22)),
+        notes: "Повірка до 2027.",
+      });
+      const houseColdMeter = await meterInsert({
         tx,
-        houseProp.id,
-        houseColdSvc,
-        st("cold_water").id,
-        1,
-        START_DATE,
-      );
+        propertyId: houseProp.id,
+        serviceId: houseColdSvc,
+        serviceTypeId: st("cold_water").id,
+        zoneCount: 1,
+        validFrom: START_DATE,
+        serialNumber: "Novator ЛК-20 №20-330145",
+        installedAt: new Date(Date.UTC(2020, 5, 6)),
+      });
 
       const houseElecC = await contractInsert(tx, houseElecSvc, pId("YASNO"), START_DATE, null);
       await tariffInsert(
@@ -828,6 +999,7 @@ const main = async (): Promise<void> => {
         pId("Clean City LLC"),
         START_DATE,
         GARBAGE_SWITCH_DATE,
+        SEED_NOTES.GARBAGE_CONTRACT_OLD,
       );
       await tariffInsert(
         tx,
@@ -851,6 +1023,7 @@ const main = async (): Promise<void> => {
         pId("EcoWaste Kyiv"),
         GARBAGE_SWITCH_DATE,
         null,
+        SEED_NOTES.GARBAGE_CONTRACT_NEW,
       );
       await tariffInsert(
         tx,
@@ -874,6 +1047,7 @@ const main = async (): Promise<void> => {
         pId("GRM-Service"),
         START_DATE,
         null,
+        SEED_NOTES.GAS_DELIVERY_CONTRACT,
       );
       await seedFixedTariffSteps(tx, houseGasDelC, GAS_DELIVERY_TARIFF_STEPS);
       await acctInsert(tx, houseGasDelC, "GRM-2024-0055", START_DATE, null);
@@ -890,6 +1064,7 @@ const main = async (): Promise<void> => {
           name: "Summer cottage",
           type: "cottage",
           address: "Boryspil district, Kyiv region",
+          notes: "Сезонне використання (травень–вересень). Взимку — лише охоронне освітлення.",
         })
         .returning({ id: properties.id });
 
@@ -903,14 +1078,16 @@ const main = async (): Promise<void> => {
       });
 
       const cottageElecSvc = await svcInsert(tx, cottageProp.id, st("electricity").id);
-      const cottageElecMeter = await meterInsert(
+      const cottageElecMeter = await meterInsert({
         tx,
-        cottageProp.id,
-        cottageElecSvc,
-        st("electricity").id,
-        1,
-        START_DATE,
-      );
+        propertyId: cottageProp.id,
+        serviceId: cottageElecSvc,
+        serviceTypeId: st("electricity").id,
+        zoneCount: 1,
+        validFrom: START_DATE,
+        serialNumber: "НІК 2100 №17-009981",
+        installedAt: new Date(Date.UTC(2017, 3, 12)),
+      });
 
       const cottageElecC = await contractInsert(tx, cottageElecSvc, pId("YASNO"), START_DATE, null);
       await tariffInsert(
@@ -958,13 +1135,21 @@ const main = async (): Promise<void> => {
             deltaT1 * SEED_TARIFF_RATES.ELECTRICITY_DAY +
               deltaT2 * SEED_TARIFF_RATES.ELECTRICITY_NIGHT,
           );
-          await billInsert(tx, aptElecSvc, month, amount, primaryId);
+          const billNote = i > ELEC_PARTIAL_INDEX ? SEED_NOTES.ELEC_DEBT_BILL : undefined;
+          await billInsert(tx, aptElecSvc, month, amount, primaryId, billNote);
           // Rolling debt: last two months unpaid, the one before them paid only in part.
           if (i < ELEC_PARTIAL_INDEX) {
             await paymentInsert(tx, aptElecSvc, pay5next(month), amount, primaryId);
           } else if (i === ELEC_PARTIAL_INDEX) {
             const partial = round2(parseFloat(amount) * ELEC_PARTIAL_RATIO);
-            await paymentInsert(tx, aptElecSvc, pay5next(month), partial, primaryId);
+            await paymentInsert(
+              tx,
+              aptElecSvc,
+              pay5next(month),
+              partial,
+              primaryId,
+              SEED_NOTES.ELEC_PARTIAL_PAY,
+            );
           }
           // i > ELEC_PARTIAL_INDEX → no payment (the deliberate debt at M)
         }
@@ -1063,12 +1248,20 @@ const main = async (): Promise<void> => {
               pay5next(month),
               round2(amount * HEAT_PARTIAL_RATIO),
               primaryId,
+              SEED_NOTES.HEAT_PARTIAL_PAY,
             );
             heatCarry = amount * (1 - HEAT_PARTIAL_RATIO);
           } else {
             await paymentInsert(tx, aptHeatSvc, pay5next(month), round2(amount), primaryId);
             if (heatCarry > 0) {
-              await paymentInsert(tx, aptHeatSvc, pay5next(month), round2(heatCarry), primaryId);
+              await paymentInsert(
+                tx,
+                aptHeatSvc,
+                pay5next(month),
+                round2(heatCarry),
+                primaryId,
+                SEED_NOTES.HEAT_CATCHUP_PAY,
+              );
               heatCarry = 0;
             }
           }
@@ -1089,7 +1282,8 @@ const main = async (): Promise<void> => {
         const amount = month < INTERNET_SWITCH_DATE ? "299.00" : "349.00";
         await billInsert(tx, aptNetSvc, month, amount, primaryId);
         const paidAt = i === INTERNET_LATE_INDEX ? payLate(month) : pay5next(month);
-        await paymentInsert(tx, aptNetSvc, paidAt, amount, primaryId);
+        const payNote = i === INTERNET_LATE_INDEX ? SEED_NOTES.LATE_INTERNET : undefined;
+        await paymentInsert(tx, aptNetSvc, paidAt, amount, primaryId, payNote);
       }
 
       // Apartment intercom (bills monthly, but settled quarterly — a lump every three months)
@@ -1130,6 +1324,7 @@ const main = async (): Promise<void> => {
             readAt: reading28(month),
             valueT1: round3(cum),
             createdBy: primaryId,
+            notes: i === READING_RECHECK_INDEX ? SEED_NOTES.READING_RECHECK : undefined,
           });
           const amount = round2(delta * SEED_TARIFF_RATES.GAS_SUPPLY);
           await billInsert(tx, houseGasSvc, month, amount, primaryId);
@@ -1138,7 +1333,14 @@ const main = async (): Promise<void> => {
           if (GAS_ADVANCE_COVERED_INDEXES.has(i)) continue;
           await paymentInsert(tx, houseGasSvc, pay5next(month), amount, primaryId);
           if (i === GAS_ADVANCE_INDEX) {
-            await paymentInsert(tx, houseGasSvc, pay5next(month), GAS_ADVANCE_AMOUNT, primaryId);
+            await paymentInsert(
+              tx,
+              houseGasSvc,
+              pay5next(month),
+              GAS_ADVANCE_AMOUNT,
+              primaryId,
+              SEED_NOTES.GAS_ADVANCE_PAY,
+            );
           }
         }
       }
@@ -1159,7 +1361,8 @@ const main = async (): Promise<void> => {
         const amount = month < GARBAGE_SWITCH_DATE ? GARBAGE_RATE_BEFORE : GARBAGE_RATE_AFTER;
         await billInsert(tx, houseGarbSvc, month, amount, primaryId);
         const paidAt = i === GARBAGE_LATE_INDEX ? payLate(month) : pay5next(month);
-        await paymentInsert(tx, houseGarbSvc, paidAt, amount, primaryId);
+        const payNote = i === GARBAGE_LATE_INDEX ? SEED_NOTES.LATE_GARBAGE : undefined;
+        await paymentInsert(tx, houseGarbSvc, paidAt, amount, primaryId, payNote);
       }
 
       // House gas delivery (fixed; regulated annual steps, one late payment)
@@ -1168,7 +1371,8 @@ const main = async (): Promise<void> => {
         const amount = fixedAmountForMonth(GAS_DELIVERY_TARIFF_STEPS, month);
         await billInsert(tx, houseGasDelSvc, month, amount, primaryId);
         const paidAt = i === GAS_DELIVERY_LATE_INDEX ? payLate(month) : pay5next(month);
-        await paymentInsert(tx, houseGasDelSvc, paidAt, amount, primaryId);
+        const payNote = i === GAS_DELIVERY_LATE_INDEX ? SEED_NOTES.LATE_GAS_DELIVERY : undefined;
+        await paymentInsert(tx, houseGasDelSvc, paidAt, amount, primaryId, payNote);
       }
 
       console.log("House readings/bills/payments done.");
@@ -1194,7 +1398,8 @@ const main = async (): Promise<void> => {
             const amount = round2(delta * SEED_TARIFF_RATES.ELECTRICITY_DAY);
             await billInsert(tx, cottageElecSvc, month, amount, primaryId);
             const paidAt = i === COTTAGE_LATE_INDEX ? payLate(month) : pay5next(month);
-            await paymentInsert(tx, cottageElecSvc, paidAt, amount, primaryId);
+            const payNote = i === COTTAGE_LATE_INDEX ? SEED_NOTES.LATE_COTTAGE : undefined;
+            await paymentInsert(tx, cottageElecSvc, paidAt, amount, primaryId, payNote);
           }
         }
       }
@@ -1210,6 +1415,7 @@ const main = async (): Promise<void> => {
           name: "Garage",
           type: PROPERTY_TYPES.OTHER,
           address: "Avtomobilist Garage Co-op, Row 4 No. 12, Kyiv",
+          notes: "Гаражний кооператив, лише оренда місця — без комунальних платежів.",
         })
         .returning({ id: properties.id });
 
@@ -1223,12 +1429,10 @@ const main = async (): Promise<void> => {
       });
 
       // Single `other`-type service: fixed amount, no meter/rate/readings, custom name required.
-      const garageRentSvc = await svcInsert(
-        tx,
-        garageProp.id,
-        st("other").id,
-        "Оренда гаражного місця",
-      );
+      const garageRentSvc = await svcInsert(tx, garageProp.id, st("other").id, {
+        name: "Оренда гаражного місця",
+        notes: "Фіксована щомісячна оренда місця в кооперативі.",
+      });
 
       const garageRentC = await contractInsert(
         tx,
