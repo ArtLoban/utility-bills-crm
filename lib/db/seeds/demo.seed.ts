@@ -94,6 +94,74 @@ const MONTHS: Date[] = Array.from({ length: 24 }, (_, i) => addMonths(START_DATE
 // deterministic). This file only orchestrates structure + insertion.
 
 // ---------------------------------------------------------------------------
+// Slice-3 event calendar — the sparse, hand-curated events that make the account read as
+// lived-in. Positions are window-relative (M = MONTHS[23], the last month); the regulated
+// tariff steps use absolute calendar dates (real Kyiv history), clamped into the window below.
+// ---------------------------------------------------------------------------
+
+// 1. Apartment electricity — rolling debt: the two months after ELEC_PARTIAL_INDEX are unpaid,
+// and ELEC_PARTIAL_INDEX itself is paid only in part.
+const ELEC_PARTIAL_INDEX = 21;
+const ELEC_PARTIAL_RATIO = 0.5;
+
+// 2. Apartment heating — partial payment in a deep-winter peak, remainder caught up next month.
+const HEAT_PARTIAL_INDEX = 18; // Jan in the current window
+const HEAT_PARTIAL_RATIO = 0.55;
+
+// 3. House gas — a single non-round advance in December that then draws down over Jan/Feb.
+const GAS_ADVANCE_INDEX = 17; // Dec: pay the month in full + this lump
+const GAS_ADVANCE_AMOUNT = "5280.00";
+const GAS_ADVANCE_COVERED_INDEXES: ReadonlySet<number> = new Set([18, 19]); // Jan, Feb — no own payment
+
+// 4. Late payments — paid in full, ~3 weeks late, spread across services and the window.
+const LATE_PAY_DAY = 22; // day of the month AFTER the period (vs the usual 5th)
+const INTERNET_LATE_INDEX = 5;
+const COTTAGE_LATE_INDEX = 10;
+const GARBAGE_LATE_INDEX = 14;
+const GAS_DELIVERY_LATE_INDEX = 20;
+
+// 5. Intercom — one lump every three months settles three monthly bills.
+const INTERCOM_MONTHLY_RATE = 40;
+const INTERCOM_QUARTER_MONTHS = 3;
+
+// 6. Apartment kitchen cold-water meter replaced ~8 months before M; new meter opens next.
+const KITCHEN_SWAP_INDEX = 16; // the new meter is active from this month onward
+const KITCHEN_SWAP_DATE = MONTHS[KITCHEN_SWAP_INDEX]!;
+
+// 7. House garbage — one provider switch mid-window (new contract, account, small rate rise).
+const GARBAGE_SWITCH_INDEX = 12;
+const GARBAGE_SWITCH_DATE = MONTHS[GARBAGE_SWITCH_INDEX]!;
+const GARBAGE_RATE_BEFORE = "145.00";
+const GARBAGE_RATE_AFTER = "160.00";
+
+// 8. Off-cycle fixed-tariff steps, each on its own date (nothing choreographed to one date).
+const GAS_DELIVERY_TARIFF_STEPS: TFixedStep[] = [
+  { from: START_DATE, amount: "190.00" },
+  { from: new Date(Date.UTC(2025, 0, 1)), amount: "205.00" }, // regulated annual step 01.01.2025
+  { from: new Date(Date.UTC(2026, 0, 1)), amount: "220.00" }, // regulated annual step 01.01.2026
+];
+const MAINT_TARIFF_STEPS: TFixedStep[] = [
+  { from: START_DATE, amount: "750.00" },
+  { from: new Date(Date.UTC(2025, 8, 1)), amount: "795.00" }, // managing-company indexation 01.09.2025
+];
+const GARAGE_RENT_TARIFF_STEPS: TFixedStep[] = [
+  { from: START_DATE, amount: "1800.00" },
+  { from: new Date(Date.UTC(2026, 0, 1)), amount: "1900.00" }, // rent rise 01.01.2026
+];
+
+// A payment landing late — same period, roughly three weeks after the usual date.
+const payLate = (month: Date): Date =>
+  new Date(Date.UTC(month.getUTCFullYear(), month.getUTCMonth() + 1, LATE_PAY_DAY));
+
+// A piecewise-constant fixed tariff: the amount in force for a given bill month.
+type TFixedStep = { from: Date; amount: string };
+const fixedAmountForMonth = (steps: TFixedStep[], month: Date): string => {
+  let amount = steps[0]!.amount;
+  for (const step of steps) if (step.from <= month) amount = step.amount;
+  return amount;
+};
+
+// ---------------------------------------------------------------------------
 // Transaction-scoped helpers
 // ---------------------------------------------------------------------------
 
@@ -119,10 +187,13 @@ const meterInsert = async (
   serviceTypeId: TServiceTypeId,
   zoneCount: 1 | 2,
   validFrom: Date,
+  // Set for a meter that was later replaced (closes its temporal interval + records removal).
+  validTo: Date | null = null,
+  removedAt: Date | null = null,
 ): Promise<MeterId> => {
   const [row] = await tx
     .insert(meters)
-    .values({ propertyId, serviceTypeId, zoneCount, validFrom })
+    .values({ propertyId, serviceTypeId, zoneCount, validFrom, validTo, removedAt })
     .returning({ id: meters.id });
   if (!row) throw new Error("meterInsert: no row returned");
   // Explicit meter↔service link (Slice B2): each seeded meter feeds its same-type service,
@@ -158,6 +229,33 @@ const tariffInsert = async (
   validTo: Date | null,
 ): Promise<void> => {
   await tx.insert(tariffs).values({ contractId, ...values, validFrom, validTo });
+};
+
+// Insert a piecewise-constant fixed tariff history for one contract from a list of steps. Steps
+// starting before the window are clamped to START_DATE and collapsed (the latest amount wins), so
+// a shifted run date never produces an inverted [validFrom, validTo) interval.
+const seedFixedTariffSteps = async (
+  tx: TTx,
+  contractId: TContractId,
+  steps: TFixedStep[],
+): Promise<void> => {
+  const segments: TFixedStep[] = [];
+  for (const step of steps) {
+    const from = step.from < START_DATE ? START_DATE : step.from;
+    const last = segments[segments.length - 1];
+    if (last && from <= last.from) last.amount = step.amount;
+    else segments.push({ from, amount: step.amount });
+  }
+  for (let i = 0; i < segments.length; i++) {
+    const validTo = i < segments.length - 1 ? segments[i + 1]!.from : null;
+    await tariffInsert(
+      tx,
+      contractId,
+      { fixedAmount: segments[i]!.amount },
+      segments[i]!.from,
+      validTo,
+    );
+  }
 };
 
 const acctInsert = async (
@@ -343,6 +441,7 @@ const main = async (): Promise<void> => {
           { name: "Kyivstar Home", ownerId: primaryId },
           { name: "Kyiv Intercom Service", ownerId: primaryId },
           { name: "Avtomobilist Garage Co-op", ownerId: primaryId },
+          { name: "EcoWaste Kyiv", ownerId: primaryId },
         ])
         .returning({ id: providers.id, name: providers.name });
 
@@ -402,13 +501,25 @@ const main = async (): Promise<void> => {
       );
       // Two cold-water meters (kitchen + bathroom riser) both linked to the single cold_water
       // service — the Tranche B multi-meter showcase. Consumption aggregates over unique meters.
-      const aptColdMeterKitchen = await meterInsert(
+      // The kitchen riser is replaced mid-window: the original meter is closed at the swap date
+      // (validTo + removedAt), a new meter takes over from the same date (see readings below).
+      const aptColdMeterKitchenOld = await meterInsert(
         tx,
         aptProp.id,
         aptColdSvc,
         st("cold_water").id,
         1,
         START_DATE,
+        KITCHEN_SWAP_DATE,
+        KITCHEN_SWAP_DATE,
+      );
+      const aptColdMeterKitchenNew = await meterInsert(
+        tx,
+        aptProp.id,
+        aptColdSvc,
+        st("cold_water").id,
+        1,
+        KITCHEN_SWAP_DATE,
       );
       const aptColdMeterBath = await meterInsert(
         tx,
@@ -530,7 +641,7 @@ const main = async (): Promise<void> => {
         START_DATE,
         null,
       );
-      await tariffInsert(tx, aptMaintC, { fixedAmount: "750.00" }, START_DATE, null);
+      await seedFixedTariffSteps(tx, aptMaintC, MAINT_TARIFF_STEPS);
       await acctInsert(tx, aptMaintC, "OSBB-0022", START_DATE, null);
       await pdInsert(
         tx,
@@ -710,16 +821,52 @@ const main = async (): Promise<void> => {
         null,
       );
 
-      const houseGarbC = await contractInsert(
+      // House garbage: one provider switch mid-window — old contract closed, new one opened.
+      const houseGarbCA = await contractInsert(
         tx,
         houseGarbSvc,
         pId("Clean City LLC"),
         START_DATE,
+        GARBAGE_SWITCH_DATE,
+      );
+      await tariffInsert(
+        tx,
+        houseGarbCA,
+        { fixedAmount: GARBAGE_RATE_BEFORE },
+        START_DATE,
+        GARBAGE_SWITCH_DATE,
+      );
+      await acctInsert(tx, houseGarbCA, "CM-2024-0331", START_DATE, GARBAGE_SWITCH_DATE);
+      await pdInsert(
+        tx,
+        houseGarbCA,
+        "Invoice CM-2024-0331 — Clean City LLC",
+        START_DATE,
+        GARBAGE_SWITCH_DATE,
+      );
+
+      const houseGarbCB = await contractInsert(
+        tx,
+        houseGarbSvc,
+        pId("EcoWaste Kyiv"),
+        GARBAGE_SWITCH_DATE,
         null,
       );
-      await tariffInsert(tx, houseGarbC, { fixedAmount: "145.00" }, START_DATE, null);
-      await acctInsert(tx, houseGarbC, "CM-2024-0331", START_DATE, null);
-      await pdInsert(tx, houseGarbC, "Invoice CM-2024-0331 — Clean City LLC", START_DATE, null);
+      await tariffInsert(
+        tx,
+        houseGarbCB,
+        { fixedAmount: GARBAGE_RATE_AFTER },
+        GARBAGE_SWITCH_DATE,
+        null,
+      );
+      await acctInsert(tx, houseGarbCB, "EWK-2025-0148", GARBAGE_SWITCH_DATE, null);
+      await pdInsert(
+        tx,
+        houseGarbCB,
+        "EcoWaste Kyiv — invoice EWK-2025-0148",
+        GARBAGE_SWITCH_DATE,
+        null,
+      );
 
       const houseGasDelC = await contractInsert(
         tx,
@@ -728,7 +875,7 @@ const main = async (): Promise<void> => {
         START_DATE,
         null,
       );
-      await tariffInsert(tx, houseGasDelC, { fixedAmount: "190.00" }, START_DATE, null);
+      await seedFixedTariffSteps(tx, houseGasDelC, GAS_DELIVERY_TARIFF_STEPS);
       await acctInsert(tx, houseGasDelC, "GRM-2024-0055", START_DATE, null);
       await pdInsert(tx, houseGasDelC, "GRM-Service — invoice GRM-2024-0055", START_DATE, null);
 
@@ -812,15 +959,21 @@ const main = async (): Promise<void> => {
               deltaT2 * SEED_TARIFF_RATES.ELECTRICITY_NIGHT,
           );
           await billInsert(tx, aptElecSvc, month, amount, primaryId);
-          // Debt: months 22 and 23 have no payment
-          if (i <= 21) {
+          // Rolling debt: last two months unpaid, the one before them paid only in part.
+          if (i < ELEC_PARTIAL_INDEX) {
             await paymentInsert(tx, aptElecSvc, pay5next(month), amount, primaryId);
+          } else if (i === ELEC_PARTIAL_INDEX) {
+            const partial = round2(parseFloat(amount) * ELEC_PARTIAL_RATIO);
+            await paymentInsert(tx, aptElecSvc, pay5next(month), partial, primaryId);
           }
+          // i > ELEC_PARTIAL_INDEX → no payment (the deliberate debt at M)
         }
       }
 
-      // Apartment cold water — two meters feeding one service. Each riser gets its own reading
-      // series; the single monthly bill is the summed volume × rate (aggregated over both meters).
+      // Apartment cold water — two meters feeding one service; the single monthly bill is the
+      // summed volume × rate. The kitchen riser is swapped at KITCHEN_SWAP_INDEX: readings up to
+      // then land on the old meter; the new meter opens with a near-zero installation reading and
+      // carries on, so the concept volume stays continuous across the physical replacement.
       {
         let cumKitchen = 40;
         let cumBath = 60;
@@ -830,20 +983,43 @@ const main = async (): Promise<void> => {
           const m = month.getUTCMonth();
           const deltaKitchen = monthlyConsumption(SEED_SERIES.APT_COLD_WATER_KITCHEN, year, m);
           const deltaBath = monthlyConsumption(SEED_SERIES.APT_COLD_WATER_BATH, year, m);
-          cumKitchen += deltaKitchen;
+
           cumBath += deltaBath;
-          await tx.insert(readings).values({
-            meterId: aptColdMeterKitchen,
-            readAt: reading28(month),
-            valueT1: round3(cumKitchen),
-            createdBy: primaryId,
-          });
           await tx.insert(readings).values({
             meterId: aptColdMeterBath,
             readAt: reading28(month),
             valueT1: round3(cumBath),
             createdBy: primaryId,
           });
+
+          if (i < KITCHEN_SWAP_INDEX) {
+            cumKitchen += deltaKitchen;
+            await tx.insert(readings).values({
+              meterId: aptColdMeterKitchenOld,
+              readAt: reading28(month),
+              valueT1: round3(cumKitchen),
+              createdBy: primaryId,
+            });
+          } else {
+            if (i === KITCHEN_SWAP_INDEX) {
+              // New meter opens near zero; this installation reading anchors the swap month's delta.
+              cumKitchen = 0;
+              await tx.insert(readings).values({
+                meterId: aptColdMeterKitchenNew,
+                readAt: KITCHEN_SWAP_DATE,
+                valueT1: round3(cumKitchen),
+                createdBy: primaryId,
+              });
+            }
+            cumKitchen += deltaKitchen;
+            await tx.insert(readings).values({
+              meterId: aptColdMeterKitchenNew,
+              readAt: reading28(month),
+              valueT1: round3(cumKitchen),
+              createdBy: primaryId,
+            });
+          }
+
           const amount = round2((deltaKitchen + deltaBath) * SEED_TARIFF_RATES.COLD_WATER);
           await billInsert(tx, aptColdSvc, month, amount, primaryId);
           await paymentInsert(tx, aptColdSvc, pay5next(month), amount, primaryId);
@@ -870,36 +1046,60 @@ const main = async (): Promise<void> => {
       });
 
       // Apartment heating: fixed-type service, but the amount = Gcal × rate varies by month
-      // (shoulder months low, Dec–Feb peaks) and is zero outside the heating season.
-      for (let i = 0; i < 24; i++) {
-        const month = MONTHS[i]!;
-        const gcal = heatingGcal(month.getUTCFullYear(), month.getUTCMonth());
-        if (gcal === 0) continue;
-        const amount = round2(gcal * HEATING_RATE_PER_GCAL);
-        await billInsert(tx, aptHeatSvc, month, amount, primaryId);
-        await paymentInsert(tx, aptHeatSvc, pay5next(month), amount, primaryId);
+      // (shoulder months low, Dec–Feb peaks) and is zero outside the heating season. One deep-winter
+      // peak is paid only in part; the remainder is caught up the following heating month.
+      {
+        let heatCarry = 0;
+        for (let i = 0; i < 24; i++) {
+          const month = MONTHS[i]!;
+          const gcal = heatingGcal(month.getUTCFullYear(), month.getUTCMonth());
+          if (gcal === 0) continue;
+          const amount = gcal * HEATING_RATE_PER_GCAL;
+          await billInsert(tx, aptHeatSvc, month, round2(amount), primaryId);
+          if (i === HEAT_PARTIAL_INDEX) {
+            await paymentInsert(
+              tx,
+              aptHeatSvc,
+              pay5next(month),
+              round2(amount * HEAT_PARTIAL_RATIO),
+              primaryId,
+            );
+            heatCarry = amount * (1 - HEAT_PARTIAL_RATIO);
+          } else {
+            await paymentInsert(tx, aptHeatSvc, pay5next(month), round2(amount), primaryId);
+            if (heatCarry > 0) {
+              await paymentInsert(tx, aptHeatSvc, pay5next(month), round2(heatCarry), primaryId);
+              heatCarry = 0;
+            }
+          }
+        }
       }
 
-      // Apartment building maintenance (fixed, every month)
+      // Apartment building maintenance (fixed; one indexation step mid-window)
       for (let i = 0; i < 24; i++) {
         const month = MONTHS[i]!;
-        await billInsert(tx, aptMaintSvc, month, "750.00", primaryId);
-        await paymentInsert(tx, aptMaintSvc, pay5next(month), "750.00", primaryId);
+        const amount = fixedAmountForMonth(MAINT_TARIFF_STEPS, month);
+        await billInsert(tx, aptMaintSvc, month, amount, primaryId);
+        await paymentInsert(tx, aptMaintSvc, pay5next(month), amount, primaryId);
       }
 
-      // Apartment internet (fixed, two providers)
+      // Apartment internet (fixed, two providers; one payment lands late)
       for (let i = 0; i < 24; i++) {
         const month = MONTHS[i]!;
         const amount = month < INTERNET_SWITCH_DATE ? "299.00" : "349.00";
         await billInsert(tx, aptNetSvc, month, amount, primaryId);
-        await paymentInsert(tx, aptNetSvc, pay5next(month), amount, primaryId);
+        const paidAt = i === INTERNET_LATE_INDEX ? payLate(month) : pay5next(month);
+        await paymentInsert(tx, aptNetSvc, paidAt, amount, primaryId);
       }
 
-      // Apartment intercom (fixed, every month; paid in full — the quarterly pattern is slice 3)
+      // Apartment intercom (bills monthly, but settled quarterly — a lump every three months)
       for (let i = 0; i < 24; i++) {
         const month = MONTHS[i]!;
-        await billInsert(tx, aptIntercomSvc, month, "40.00", primaryId);
-        await paymentInsert(tx, aptIntercomSvc, pay5next(month), "40.00", primaryId);
+        await billInsert(tx, aptIntercomSvc, month, round2(INTERCOM_MONTHLY_RATE), primaryId);
+        if ((i + 1) % INTERCOM_QUARTER_MONTHS === 0) {
+          const lump = round2(INTERCOM_MONTHLY_RATE * INTERCOM_QUARTER_MONTHS);
+          await paymentInsert(tx, aptIntercomSvc, pay5next(month), lump, primaryId);
+        }
       }
 
       console.log("Apartment readings/bills/payments done.");
@@ -914,7 +1114,7 @@ const main = async (): Promise<void> => {
         primaryId,
       });
 
-      // --- House gas (strong winter peak) — OVERPAYMENT ---
+      // --- House gas (strong winter peak) — pre-winter advance that draws down ---
       {
         let cum = 500;
         for (let i = 0; i < 24; i++) {
@@ -933,10 +1133,12 @@ const main = async (): Promise<void> => {
           });
           const amount = round2(delta * SEED_TARIFF_RATES.GAS_SUPPLY);
           await billInsert(tx, houseGasSvc, month, amount, primaryId);
+          // The advance month is paid in full plus a lump; the next two winter bills are then
+          // covered by that credit (no separate payment) — the credit visibly draws down.
+          if (GAS_ADVANCE_COVERED_INDEXES.has(i)) continue;
           await paymentInsert(tx, houseGasSvc, pay5next(month), amount, primaryId);
-          // Extra lump-sum advance at month 6 → overpayment
-          if (i === 6) {
-            await paymentInsert(tx, houseGasSvc, pay5next(month), "2500.00", primaryId);
+          if (i === GAS_ADVANCE_INDEX) {
+            await paymentInsert(tx, houseGasSvc, pay5next(month), GAS_ADVANCE_AMOUNT, primaryId);
           }
         }
       }
@@ -951,18 +1153,22 @@ const main = async (): Promise<void> => {
         primaryId,
       });
 
-      // House garbage (fixed)
+      // House garbage (fixed; provider switch mid-window changes the amount, one late payment)
       for (let i = 0; i < 24; i++) {
         const month = MONTHS[i]!;
-        await billInsert(tx, houseGarbSvc, month, "145.00", primaryId);
-        await paymentInsert(tx, houseGarbSvc, pay5next(month), "145.00", primaryId);
+        const amount = month < GARBAGE_SWITCH_DATE ? GARBAGE_RATE_BEFORE : GARBAGE_RATE_AFTER;
+        await billInsert(tx, houseGarbSvc, month, amount, primaryId);
+        const paidAt = i === GARBAGE_LATE_INDEX ? payLate(month) : pay5next(month);
+        await paymentInsert(tx, houseGarbSvc, paidAt, amount, primaryId);
       }
 
-      // House gas delivery (fixed)
+      // House gas delivery (fixed; regulated annual steps, one late payment)
       for (let i = 0; i < 24; i++) {
         const month = MONTHS[i]!;
-        await billInsert(tx, houseGasDelSvc, month, "190.00", primaryId);
-        await paymentInsert(tx, houseGasDelSvc, pay5next(month), "190.00", primaryId);
+        const amount = fixedAmountForMonth(GAS_DELIVERY_TARIFF_STEPS, month);
+        await billInsert(tx, houseGasDelSvc, month, amount, primaryId);
+        const paidAt = i === GAS_DELIVERY_LATE_INDEX ? payLate(month) : pay5next(month);
+        await paymentInsert(tx, houseGasDelSvc, paidAt, amount, primaryId);
       }
 
       console.log("House readings/bills/payments done.");
@@ -987,7 +1193,8 @@ const main = async (): Promise<void> => {
           if (delta > COTTAGE_BILL_THRESHOLD) {
             const amount = round2(delta * SEED_TARIFF_RATES.ELECTRICITY_DAY);
             await billInsert(tx, cottageElecSvc, month, amount, primaryId);
-            await paymentInsert(tx, cottageElecSvc, pay5next(month), amount, primaryId);
+            const paidAt = i === COTTAGE_LATE_INDEX ? payLate(month) : pay5next(month);
+            await paymentInsert(tx, cottageElecSvc, paidAt, amount, primaryId);
           }
         }
       }
@@ -1030,15 +1237,16 @@ const main = async (): Promise<void> => {
         START_DATE,
         null,
       );
-      await tariffInsert(tx, garageRentC, { fixedAmount: "1800.00" }, START_DATE, null);
+      await seedFixedTariffSteps(tx, garageRentC, GARAGE_RENT_TARIFF_STEPS);
       await acctInsert(tx, garageRentC, "GAR-4-12", START_DATE, null);
       await pdInsert(tx, garageRentC, "Avtomobilist Garage Co-op — monthly rent", START_DATE, null);
 
-      // Garage rent (fixed, every month)
+      // Garage rent (fixed; one rent rise mid-contract)
       for (let i = 0; i < 24; i++) {
         const month = MONTHS[i]!;
-        await billInsert(tx, garageRentSvc, month, "1800.00", primaryId);
-        await paymentInsert(tx, garageRentSvc, pay5next(month), "1800.00", primaryId);
+        const amount = fixedAmountForMonth(GARAGE_RENT_TARIFF_STEPS, month);
+        await billInsert(tx, garageRentSvc, month, amount, primaryId);
+        await paymentInsert(tx, garageRentSvc, pay5next(month), amount, primaryId);
       }
 
       console.log("Garage structure + rent done.");
