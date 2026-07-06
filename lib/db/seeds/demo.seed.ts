@@ -9,7 +9,7 @@ import { Pool } from "pg";
 import * as schema from "../schema";
 import { users } from "../schema/auth";
 import type { UserId } from "../schema/auth";
-import { properties, propertyAccess, PROPERTY_ROLES } from "../schema/properties";
+import { properties, propertyAccess, PROPERTY_ROLES, PROPERTY_TYPES } from "../schema/properties";
 import type { PropertyId } from "../schema/properties";
 import { providers } from "../schema/providers";
 import type { ProviderId } from "../schema/providers";
@@ -101,10 +101,12 @@ const svcInsert = async (
   tx: TTx,
   propertyId: PropertyId,
   serviceTypeId: TServiceTypeId,
+  // Custom label — mandatory for `other`-type services, omitted (→ NULL) otherwise.
+  name?: string,
 ): Promise<TServiceId> => {
   const [row] = await tx
     .insert(services)
-    .values({ propertyId, serviceTypeId })
+    .values({ propertyId, serviceTypeId, name })
     .returning({ id: services.id });
   if (!row) throw new Error("svcInsert: no row returned");
   return row.id;
@@ -339,6 +341,8 @@ const main = async (): Promise<void> => {
           { name: "Clean City LLC", ownerId: primaryId },
           { name: "Lanet", ownerId: primaryId },
           { name: "Kyivstar Home", ownerId: primaryId },
+          { name: "Kyiv Intercom Service", ownerId: primaryId },
+          { name: "Avtomobilist Garage Co-op", ownerId: primaryId },
         ])
         .returning({ id: providers.id, name: providers.name });
 
@@ -386,6 +390,7 @@ const main = async (): Promise<void> => {
       const aptHeatSvc = await svcInsert(tx, aptProp.id, st("heating").id);
       const aptMaintSvc = await svcInsert(tx, aptProp.id, st("building_maintenance").id);
       const aptNetSvc = await svcInsert(tx, aptProp.id, st("internet").id);
+      const aptIntercomSvc = await svcInsert(tx, aptProp.id, st("intercom").id);
 
       const aptElecMeter = await meterInsert(
         tx,
@@ -395,7 +400,17 @@ const main = async (): Promise<void> => {
         2,
         START_DATE,
       );
-      const aptColdMeter = await meterInsert(
+      // Two cold-water meters (kitchen + bathroom riser) both linked to the single cold_water
+      // service — the Tranche B multi-meter showcase. Consumption aggregates over unique meters.
+      const aptColdMeterKitchen = await meterInsert(
+        tx,
+        aptProp.id,
+        aptColdSvc,
+        st("cold_water").id,
+        1,
+        START_DATE,
+      );
+      const aptColdMeterBath = await meterInsert(
         tx,
         aptProp.id,
         aptColdSvc,
@@ -557,6 +572,24 @@ const main = async (): Promise<void> => {
         aptNetCB,
         "kyivstar.ua — contract KS-HOME-44129",
         INTERNET_SWITCH_DATE,
+        null,
+      );
+
+      // Apartment intercom: fixed monthly, single flat tariff.
+      const aptIntercomC = await contractInsert(
+        tx,
+        aptIntercomSvc,
+        pId("Kyiv Intercom Service"),
+        START_DATE,
+        null,
+      );
+      await tariffInsert(tx, aptIntercomC, { fixedAmount: "40.00" }, START_DATE, null);
+      await acctInsert(tx, aptIntercomC, "INT-22-5-0034", START_DATE, null);
+      await pdInsert(
+        tx,
+        aptIntercomC,
+        "Kyiv Intercom Service — account INT-22-5-0034",
+        START_DATE,
         null,
       );
 
@@ -786,15 +819,37 @@ const main = async (): Promise<void> => {
         }
       }
 
-      await seedMetered({
-        tx,
-        serviceId: aptColdSvc,
-        meterId: aptColdMeter,
-        series: SEED_SERIES.APT_COLD_WATER,
-        startCum: 100,
-        rate: SEED_TARIFF_RATES.COLD_WATER,
-        primaryId,
-      });
+      // Apartment cold water — two meters feeding one service. Each riser gets its own reading
+      // series; the single monthly bill is the summed volume × rate (aggregated over both meters).
+      {
+        let cumKitchen = 40;
+        let cumBath = 60;
+        for (let i = 0; i < 24; i++) {
+          const month = MONTHS[i]!;
+          const year = month.getUTCFullYear();
+          const m = month.getUTCMonth();
+          const deltaKitchen = monthlyConsumption(SEED_SERIES.APT_COLD_WATER_KITCHEN, year, m);
+          const deltaBath = monthlyConsumption(SEED_SERIES.APT_COLD_WATER_BATH, year, m);
+          cumKitchen += deltaKitchen;
+          cumBath += deltaBath;
+          await tx.insert(readings).values({
+            meterId: aptColdMeterKitchen,
+            readAt: reading28(month),
+            valueT1: round3(cumKitchen),
+            createdBy: primaryId,
+          });
+          await tx.insert(readings).values({
+            meterId: aptColdMeterBath,
+            readAt: reading28(month),
+            valueT1: round3(cumBath),
+            createdBy: primaryId,
+          });
+          const amount = round2((deltaKitchen + deltaBath) * SEED_TARIFF_RATES.COLD_WATER);
+          await billInsert(tx, aptColdSvc, month, amount, primaryId);
+          await paymentInsert(tx, aptColdSvc, pay5next(month), amount, primaryId);
+        }
+      }
+
       await seedMetered({
         tx,
         serviceId: aptHotSvc,
@@ -838,6 +893,13 @@ const main = async (): Promise<void> => {
         const amount = month < INTERNET_SWITCH_DATE ? "299.00" : "349.00";
         await billInsert(tx, aptNetSvc, month, amount, primaryId);
         await paymentInsert(tx, aptNetSvc, pay5next(month), amount, primaryId);
+      }
+
+      // Apartment intercom (fixed, every month; paid in full — the quarterly pattern is slice 3)
+      for (let i = 0; i < 24; i++) {
+        const month = MONTHS[i]!;
+        await billInsert(tx, aptIntercomSvc, month, "40.00", primaryId);
+        await paymentInsert(tx, aptIntercomSvc, pay5next(month), "40.00", primaryId);
       }
 
       console.log("Apartment readings/bills/payments done.");
@@ -931,6 +993,55 @@ const main = async (): Promise<void> => {
       }
 
       console.log("Cottage readings/bills/payments done.");
+
+      // -----------------------------------------------------------------------
+      // Property: Garage (non-residential — the `other` property + `other` service showcase)
+      // -----------------------------------------------------------------------
+      const [garageProp] = await tx
+        .insert(properties)
+        .values({
+          name: "Garage",
+          type: PROPERTY_TYPES.OTHER,
+          address: "Avtomobilist Garage Co-op, Row 4 No. 12, Kyiv",
+        })
+        .returning({ id: properties.id });
+
+      if (!garageProp) throw new Error("Failed to insert garage");
+
+      await tx.insert(propertyAccess).values({
+        propertyId: garageProp.id,
+        userId: primaryId,
+        propertyRole: PROPERTY_ROLES.OWNER,
+        grantedBy: primaryId,
+      });
+
+      // Single `other`-type service: fixed amount, no meter/rate/readings, custom name required.
+      const garageRentSvc = await svcInsert(
+        tx,
+        garageProp.id,
+        st("other").id,
+        "Оренда гаражного місця",
+      );
+
+      const garageRentC = await contractInsert(
+        tx,
+        garageRentSvc,
+        pId("Avtomobilist Garage Co-op"),
+        START_DATE,
+        null,
+      );
+      await tariffInsert(tx, garageRentC, { fixedAmount: "1800.00" }, START_DATE, null);
+      await acctInsert(tx, garageRentC, "GAR-4-12", START_DATE, null);
+      await pdInsert(tx, garageRentC, "Avtomobilist Garage Co-op — monthly rent", START_DATE, null);
+
+      // Garage rent (fixed, every month)
+      for (let i = 0; i < 24; i++) {
+        const month = MONTHS[i]!;
+        await billInsert(tx, garageRentSvc, month, "1800.00", primaryId);
+        await paymentInsert(tx, garageRentSvc, pay5next(month), "1800.00", primaryId);
+      }
+
+      console.log("Garage structure + rent done.");
     });
 
     console.log("\nDemo seed complete.");

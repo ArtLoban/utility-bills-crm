@@ -164,9 +164,11 @@ describe("demo seed: idempotency", () => {
 
     expect(second).toEqual(first);
 
-    // Sanity: the expected dataset shape is present
+    // Sanity: the expected dataset shape is present (apartment, house, cottage, garage)
     expect(first.users).toBe(2);
-    expect(first.properties).toBe(3);
+    expect(first.properties).toBe(4);
+    // 13 base services + apartment intercom + garage `other` rent.
+    expect(first.services).toBe(15);
   }, 120_000);
 });
 

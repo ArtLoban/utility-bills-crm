@@ -18,7 +18,10 @@ export const SEED_SERIES = {
   APT_ELECTRICITY_DAY: "apt:electricity:day",
   APT_ELECTRICITY_NIGHT: "apt:electricity:night",
   APT_GAS: "apt:gas",
-  APT_COLD_WATER: "apt:cold-water",
+  // Apartment cold water is metered by TWO risers feeding one service (Tranche B). The two series
+  // are independent (own jitter) but their baselines sum to the single cold-water concept target.
+  APT_COLD_WATER_KITCHEN: "apt:cold-water:kitchen",
+  APT_COLD_WATER_BATH: "apt:cold-water:bath",
   APT_HOT_WATER: "apt:hot-water",
   HOUSE_ELECTRICITY: "house:electricity",
   HOUSE_GAS: "house:gas",
@@ -61,8 +64,14 @@ const SEED_CONSUMPTION_PROFILES: Record<TSeedSeries, readonly number[]> = {
   [SEED_SERIES.APT_ELECTRICITY_NIGHT]: [94, 91, 82, 71, 65, 62, 62, 65, 71, 82, 91, 97],
   // Apartment gas (cooking) — mild, 7–13 m³.
   [SEED_SERIES.APT_GAS]: [13, 12, 11, 9, 8, 7, 7, 7, 8, 10, 12, 13],
-  // Apartment cold water — flat with a small wobble.
-  [SEED_SERIES.APT_COLD_WATER]: [5.0, 4.8, 5.1, 4.9, 5.2, 5.3, 5.4, 5.2, 5.0, 4.9, 5.0, 5.1],
+  // Apartment cold water, split across two risers. Baselines sum to the single-meter concept
+  // target [5.0, 4.8, 5.1, 4.9, 5.2, 5.3, 5.4, 5.2, 5.0, 4.9, 5.0, 5.1] the service had before.
+  // Kitchen riser — the lighter of the two (~1.5–1.7 m³).
+  [SEED_SERIES.APT_COLD_WATER_KITCHEN]: [
+    1.6, 1.5, 1.6, 1.5, 1.6, 1.7, 1.7, 1.6, 1.6, 1.5, 1.6, 1.6,
+  ],
+  // Bathroom riser — the heavier (~3.3–3.7 m³).
+  [SEED_SERIES.APT_COLD_WATER_BATH]: [3.4, 3.3, 3.5, 3.4, 3.6, 3.6, 3.7, 3.6, 3.4, 3.4, 3.4, 3.5],
   // Apartment hot water — July (idx 6) near-zero: summer maintenance outage.
   [SEED_SERIES.APT_HOT_WATER]: [3.4, 3.3, 3.2, 3.0, 2.8, 2.6, 0.2, 2.6, 2.9, 3.1, 3.3, 3.5],
   // House electricity — higher base, mild winter bump.
