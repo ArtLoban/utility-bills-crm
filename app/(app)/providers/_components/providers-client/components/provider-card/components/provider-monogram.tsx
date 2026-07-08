@@ -10,7 +10,7 @@ export const ProviderMonogram = ({ seed, letter }: TProps) => {
 
   return (
     <div
-      className="flex size-11 shrink-0 items-center justify-center rounded-xl text-lg leading-none font-semibold select-none"
+      className="flex size-9 shrink-0 items-center justify-center rounded-xl text-base leading-none font-semibold select-none sm:size-11 sm:text-lg"
       style={{ color, background: `color-mix(in oklch, ${color} 13%, transparent)` }}
       aria-hidden="true"
     >

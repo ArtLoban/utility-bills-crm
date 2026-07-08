@@ -18,7 +18,7 @@ export const ProviderCard = ({ provider }: TProps) => {
   const { id, name, phone, website, notes, usageCount, createdAt } = provider;
 
   return (
-    <Surface className="flex flex-col gap-3 px-5 py-4">
+    <Surface className="flex flex-col gap-3 p-4 sm:px-5">
       <div className="flex items-start gap-4">
         <ProviderMonogram seed={id} letter={name.charAt(0)} />
         <div className="min-w-0 flex-1">
