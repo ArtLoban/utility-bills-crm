@@ -1107,10 +1107,6 @@
     "meta": {
       "created": "Added {date}"
     },
-    "notes": {
-      "showMore": "Show more",
-      "showLess": "Show less"
-    },
     "delete": {
       "menuItem": "Delete provider",
       "title": "Delete provider",
