@@ -1104,6 +1104,9 @@
       "used": "{count, plural, one {Used by 1 service} other {Used by # services}}",
       "notInUse": "Not in use"
     },
+    "meta": {
+      "created": "Added {date}"
+    },
     "notes": {
       "showMore": "Show more",
       "showLess": "Show less"
