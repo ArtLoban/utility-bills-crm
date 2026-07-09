@@ -37,6 +37,7 @@ export const ReadingsSection = ({
   return (
     <SectionCard
       title={t("title")}
+      description={`${t("count", { count: readingsList.pagination.total })} · ${t("newestFirst")}`}
       actions={
         canMutate ? (
           <LinkButton href={newReadingHref} icon={Plus} text={t("submit")} variant="default" />

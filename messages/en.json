@@ -294,7 +294,9 @@
         }
       },
       "readings": {
-        "title": "Readings",
+        "title": "Meter readings",
+        "count": "{count, plural, one {# reading} other {# readings}}",
+        "newestFirst": "newest first",
         "submit": "Submit reading",
         "submitFirst": "Submit first reading",
         "empty": "No readings yet.",
