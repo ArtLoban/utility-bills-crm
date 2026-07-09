@@ -34,7 +34,7 @@ export const BalanceCard = ({ balance }: TProps) => {
 
   return (
     <SectionCard>
-      <div className="px-6 pt-6 pb-5">
+      <div className="px-4 pt-6 pb-5 sm:px-6">
         <p className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
           {t("eyebrow")}
         </p>
@@ -45,7 +45,7 @@ export const BalanceCard = ({ balance }: TProps) => {
           {amount}
         </p>
         <p className="text-muted-foreground mt-2 text-sm">{subline}</p>
-        <div className="mt-5 flex gap-2">
+        <div className="mt-5 flex flex-wrap gap-2">
           <LinkButton href={ROUTES.bills} icon={Receipt} text={t("viewBills")} />
           <LinkButton href={ROUTES.payments} icon={Wallet} text={t("viewPayments")} />
         </div>

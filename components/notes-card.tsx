@@ -11,7 +11,7 @@ export const NotesCard = async ({ notes }: TProps) => {
 
   return (
     <SectionCard title={t("title")} className="h-full">
-      <div className="px-5 pb-5">
+      <div className="px-4 pb-5 sm:px-5">
         {notes ? (
           <p className="text-foreground mt-4 text-sm leading-relaxed whitespace-pre-wrap">
             {notes}

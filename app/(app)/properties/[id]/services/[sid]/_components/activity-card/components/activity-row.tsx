@@ -27,7 +27,7 @@ export const ActivityRow = ({ item, isLast }: TProps) => {
   return (
     <div
       className={cn(
-        "group hover:bg-muted/50 flex cursor-pointer items-center gap-3.5 px-5 py-3 transition-colors",
+        "group hover:bg-muted/50 flex cursor-pointer items-center gap-3.5 px-4 py-3 transition-colors sm:px-5",
         !isLast && "border-border border-b",
       )}
     >
