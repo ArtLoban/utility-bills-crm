@@ -5,7 +5,7 @@ const PROPERTY_NAME_CLASSES = ["w-48", "w-36", "w-32"] as const;
 
 export const BalanceBlockSkeleton = () => (
   <Surface>
-    <div className="border-b px-6 pt-5 pb-4">
+    <div className="border-b px-4 pt-5 pb-4 md:px-6">
       <Skeleton className="h-3 w-28 rounded" />
       <div className="mt-4 grid grid-cols-2 gap-8">
         {[0, 1].map((i) => (
@@ -18,7 +18,7 @@ export const BalanceBlockSkeleton = () => (
       </div>
     </div>
 
-    <div className="px-6 pt-3.5 pb-4">
+    <div className="px-4 pt-3.5 pb-4 md:px-6">
       <Skeleton className="mb-3.5 h-2.5 w-16" />
       <div className="flex flex-col gap-4">
         {PROPERTY_NAME_CLASSES.map((nameClass, i) => (

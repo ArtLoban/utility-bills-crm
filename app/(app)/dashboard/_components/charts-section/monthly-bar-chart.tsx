@@ -55,7 +55,7 @@ export const MonthlyBarChart = ({ aggregate, series, title, subtitle }: TProps) 
   };
 
   return (
-    <Surface elevation="sm" className="p-5 shadow-xs">
+    <Surface elevation="sm" className="p-4 shadow-xs md:p-5">
       <div className="mb-4">
         <h3 className="text-foreground text-sm font-semibold tracking-tight">{title}</h3>
         <p className="text-muted-foreground mt-0.5 text-xs">{subtitle}</p>
@@ -66,7 +66,7 @@ export const MonthlyBarChart = ({ aggregate, series, title, subtitle }: TProps) 
         className="h-65 w-full"
         initialDimension={{ width: 560, height: 260 }}
       >
-        <BarChart data={barData} margin={{ top: 8, right: 8, left: 0, bottom: 4 }}>
+        <BarChart data={barData} margin={{ top: 8, right: -8, left: -8, bottom: 4 }}>
           <CartesianGrid vertical={false} strokeDasharray="3 3" className="stroke-border" />
           <XAxis
             dataKey="month"

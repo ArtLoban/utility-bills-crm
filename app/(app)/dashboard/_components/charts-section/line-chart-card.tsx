@@ -32,7 +32,7 @@ export const LineChartCard = ({
   moneySlot,
   consumptionSlot,
 }: TProps) => (
-  <Surface elevation="sm" className="p-5 shadow-xs">
+  <Surface elevation="sm" className="p-4 shadow-xs md:p-5">
     <div className="mb-4 flex items-start justify-between gap-3">
       <div>
         <h3 className="text-foreground text-sm font-semibold tracking-tight">{title}</h3>
@@ -40,7 +40,7 @@ export const LineChartCard = ({
       </div>
 
       <div className="flex shrink-0 items-center gap-2">
-        <div className="bg-muted flex items-center gap-0.5 rounded-sm border p-[3px]">
+        <div className="bg-muted flex items-center gap-0.5 rounded-sm border p-1">
           {(
             [
               {

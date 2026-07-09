@@ -33,7 +33,7 @@ export const BalanceBlock = async ({ data }: TProps) => {
 
   return (
     <Surface elevation="sm" className="shadow-xs">
-      <div className="border-b px-6 pt-5 pb-4">
+      <div className="border-b px-4 pt-5 pb-4 md:px-6">
         <div className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
           {t("title")}
         </div>
@@ -64,7 +64,7 @@ export const BalanceBlock = async ({ data }: TProps) => {
       </div>
 
       <div>
-        <div className="text-muted-foreground px-6 pt-3 pb-2 text-xs font-medium tracking-wide uppercase">
+        <div className="text-muted-foreground px-4 pt-3 pb-2 text-xs font-medium tracking-wide uppercase md:px-6">
           {t("byProperty")}
         </div>
 
@@ -78,7 +78,7 @@ export const BalanceBlock = async ({ data }: TProps) => {
                 key={property.id}
                 href={`${ROUTES.properties}/${property.id}`}
                 className={cn(
-                  "hover:bg-muted flex items-center gap-3 px-6 py-3 no-underline transition-colors duration-100",
+                  "hover:bg-muted flex items-center gap-3 px-4 py-3 no-underline transition-colors duration-100 md:px-6",
                   !isLast && "border-border border-b",
                 )}
               >

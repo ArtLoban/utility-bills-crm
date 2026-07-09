@@ -9,7 +9,7 @@ type TProps = {
 };
 
 export const ChartCardSkeleton = ({ titleClass, subClass, chartClass }: TProps) => (
-  <Surface className="p-5">
+  <Surface className="p-4 md:p-5">
     <Skeleton className={cn("h-3.5", titleClass)} />
     <Skeleton className={cn("mt-2 h-3", subClass)} />
     <Skeleton className={cn("mt-4 w-full rounded-lg", chartClass)} />

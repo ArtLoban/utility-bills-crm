@@ -26,7 +26,10 @@ import { MonthlyBarChart } from "./monthly-bar-chart";
 import { TrendLineChart } from "./trend-line-chart";
 import { formatMonthLong } from "./utils";
 
-type TPropertyOption = { id: string; name: string };
+type TPropertyOption = {
+  id: string;
+  name: string;
+};
 
 type TProps = {
   aggregate: TMonthlyExpensesAggregate;
@@ -145,8 +148,7 @@ export const ChartsSection = ({
         />
       </div>
 
-      {/* Top row: Pie + Bar */}
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-[1fr_1.4fr]">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_1.4fr]">
         <ExpensePieChart
           aggregate={aggregate}
           series={series}
@@ -163,7 +165,6 @@ export const ChartsSection = ({
         />
       </div>
 
-      {/* Bottom row: Line chart card with in-card header and mode toggle */}
       <LineChartCard
         title={t("line.title")}
         subtitle={lineChartSubtitle}

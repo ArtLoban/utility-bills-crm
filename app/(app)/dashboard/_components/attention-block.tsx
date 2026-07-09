@@ -22,7 +22,7 @@ export const AttentionBlock = async ({ data }: TProps) => {
   return (
     <Surface
       elevation="sm"
-      className="border-l-warning flex flex-col gap-3 border-l-4 px-6 py-5 shadow-xs"
+      className="border-l-warning flex flex-col gap-3 border-l-4 px-4 py-5 shadow-xs md:px-6"
     >
       <div className="flex items-center gap-2.5">
         <AlertTriangle size={18} className="text-warning" />

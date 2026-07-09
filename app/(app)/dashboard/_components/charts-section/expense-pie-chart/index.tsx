@@ -51,7 +51,7 @@ export const ExpensePieChart = ({
   }));
 
   return (
-    <Surface elevation="sm" className="p-6 shadow-xs">
+    <Surface elevation="sm" className="p-4 shadow-xs md:p-5">
       <div>
         <h3 className="text-foreground text-sm font-semibold tracking-tight">{title}</h3>
         <p className="text-muted-foreground mt-0.5 text-xs">{subtitle}</p>
@@ -62,12 +62,12 @@ export const ExpensePieChart = ({
           <p className="text-muted-foreground text-sm">{t("pie.noData")}</p>
         </div>
       ) : (
-        <div className="mt-5 grid grid-cols-1 items-center gap-6 sm:grid-cols-[minmax(0,200px)_1fr]">
+        <div className="mt-5 grid grid-cols-1 items-center gap-2 sm:grid-cols-[minmax(0,200px)_1fr]">
           <div className="relative mx-auto size-50">
             <ChartContainer
               config={chartConfig}
               className="h-50 w-full"
-              initialDimension={{ width: 200, height: 200 }}
+              initialDimension={{ width: 220, height: 220 }}
             >
               <PieChart>
                 <ChartTooltip
@@ -121,7 +121,6 @@ export const ExpensePieChart = ({
               </span>
             </div>
           </div>
-
           <PieLegend items={legendItems} />
         </div>
       )}

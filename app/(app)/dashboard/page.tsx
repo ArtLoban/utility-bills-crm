@@ -31,6 +31,7 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
+// TODO: Refactor the whole page. It's currently too complex and messy
 export default async function DashboardPage({
   searchParams,
 }: {

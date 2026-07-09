@@ -40,7 +40,7 @@ const TrendLineChart = ({ aggregate, series }: TProps) => {
       className="h-80 w-full"
       initialDimension={{ width: 560, height: 320 }}
     >
-      <LineChart data={lineData} margin={{ top: 8, right: 8, left: 0, bottom: 4 }}>
+      <LineChart data={lineData} margin={{ top: 8, right: 8, left: -4, bottom: 4 }}>
         <CartesianGrid vertical={false} strokeDasharray="3 3" className="stroke-border" />
         <XAxis
           dataKey="month"

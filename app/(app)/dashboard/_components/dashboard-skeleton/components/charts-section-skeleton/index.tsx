@@ -21,7 +21,7 @@ export const ChartsSectionSkeleton = () => (
     </div>
 
     {/* Desktop: pie + bar chart grid */}
-    <div className="hidden gap-4 md:grid md:grid-cols-[1fr_1.4fr]">
+    <div className="hidden gap-4 md:grid lg:grid-cols-[1fr_1.4fr]">
       <PieChartSkeleton />
       <ChartCardSkeleton titleClass="w-36" subClass="w-28" chartClass="h-52" />
     </div>
