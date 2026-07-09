@@ -33,13 +33,13 @@ export const LineChartCard = ({
   consumptionSlot,
 }: TProps) => (
   <Surface elevation="sm" className="p-4 shadow-xs md:p-5">
-    <div className="mb-4 flex items-start justify-between gap-3">
+    <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
       <div>
         <h3 className="text-foreground text-sm font-semibold tracking-tight">{title}</h3>
         <p className="text-muted-foreground mt-0.5 text-xs">{subtitle}</p>
       </div>
 
-      <div className="flex shrink-0 items-center gap-2">
+      <div className="flex shrink-0 flex-wrap items-center justify-end gap-2">
         <div className="bg-muted flex items-center gap-0.5 rounded-sm border p-1">
           {(
             [

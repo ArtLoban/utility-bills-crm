@@ -63,10 +63,10 @@ export const ExpensePieChart = ({
         </div>
       ) : (
         <div className="mt-5 grid grid-cols-1 items-center gap-2 sm:grid-cols-[minmax(0,200px)_1fr]">
-          <div className="relative mx-auto size-50">
+          <div className="relative mx-auto size-64 sm:size-50">
             <ChartContainer
               config={chartConfig}
-              className="h-50 w-full"
+              className="size-full"
               initialDimension={{ width: 220, height: 220 }}
             >
               <PieChart>
