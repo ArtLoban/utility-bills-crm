@@ -9,7 +9,7 @@ type TProps = {
   firstName: string | null;
 };
 
-const DashboardEmptyState = async ({ firstName }: TProps) => {
+export const DashboardEmptyState = async ({ firstName }: TProps) => {
   const t = await getTranslations("dashboard");
 
   return (
@@ -27,5 +27,3 @@ const DashboardEmptyState = async ({ firstName }: TProps) => {
     </div>
   );
 };
-
-export { DashboardEmptyState };

@@ -16,7 +16,7 @@ type TProps = {
   aggregate: TMonthlyConsumptionAggregate;
 };
 
-const ConsumptionChart = ({ aggregate }: TProps) => {
+export const ConsumptionChart = ({ aggregate }: TProps) => {
   const t = useTranslations("dashboard.charts");
   const isMultiZone = aggregate.zones.length > 1;
   const serviceColor =
@@ -132,5 +132,3 @@ const ConsumptionChart = ({ aggregate }: TProps) => {
     </>
   );
 };
-
-export { ConsumptionChart };

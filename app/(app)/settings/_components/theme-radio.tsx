@@ -18,7 +18,7 @@ const OPTIONS: TOption[] = [
   { value: THEMES.SYSTEM, icon: <Monitor className="size-[14px]" /> },
 ];
 
-const ThemeRadio = () => {
+export const ThemeRadio = () => {
   const { theme, setTheme } = useTheme();
   const t = useTranslations("settings.preferences.theme");
   const activeTheme = theme ?? DEFAULT_THEME;
@@ -52,5 +52,3 @@ const ThemeRadio = () => {
     </div>
   );
 };
-
-export { ThemeRadio };

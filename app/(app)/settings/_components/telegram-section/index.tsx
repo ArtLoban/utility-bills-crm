@@ -14,7 +14,7 @@ type TProps = {
   initialLabel: string | null;
 };
 
-const TelegramSection = ({ initialConnected, initialLabel }: TProps) => {
+export const TelegramSection = ({ initialConnected, initialLabel }: TProps) => {
   const t = useTranslations("settings.telegram");
   const { connected, label, deepLink, isStarting, isDisconnecting, connect, disconnect } =
     useTelegramLink({ initialConnected, initialLabel });
@@ -83,5 +83,3 @@ const TelegramSection = ({ initialConnected, initialLabel }: TProps) => {
     </SettingsCard>
   );
 };
-
-export { TelegramSection };

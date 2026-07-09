@@ -37,7 +37,7 @@ const GoogleGIcon = () => (
   </svg>
 );
 
-const AccountSection = ({ email }: TProps) => {
+export const AccountSection = ({ email }: TProps) => {
   const t = useTranslations("settings.account");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -121,5 +121,3 @@ const AccountSection = ({ email }: TProps) => {
     </>
   );
 };
-
-export { AccountSection };

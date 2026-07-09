@@ -26,7 +26,7 @@ type TProps = {
   lastReadingAt: Date | null;
 };
 
-const ServiceRow = ({
+export const ServiceRow = ({
   service,
   serviceType,
   providerName,
@@ -84,5 +84,3 @@ const ServiceRow = ({
     </Link>
   );
 };
-
-export { ServiceRow };

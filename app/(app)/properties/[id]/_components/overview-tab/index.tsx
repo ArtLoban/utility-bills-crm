@@ -19,7 +19,7 @@ type TProps = {
   lastReadingByService: Map<TServiceId, Date>;
 };
 
-const OverviewTab = ({
+export const OverviewTab = ({
   services,
   role,
   propertyId,
@@ -89,5 +89,3 @@ const OverviewTab = ({
     </Card>
   );
 };
-
-export { OverviewTab };

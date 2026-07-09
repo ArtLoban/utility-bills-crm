@@ -13,7 +13,7 @@ type TProps = {
 
 // Async server component — runs the consumption query on-demand when the Suspense
 // boundary in page.tsx resolves. In money mode this component is never rendered.
-const ConsumptionLineChartServer = async ({
+export const ConsumptionLineChartServer = async ({
   userId,
   serviceTypeCode,
   dateFrom,
@@ -29,5 +29,3 @@ const ConsumptionLineChartServer = async ({
 
   return <ConsumptionChart aggregate={aggregate} />;
 };
-
-export { ConsumptionLineChartServer };

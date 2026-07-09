@@ -23,7 +23,7 @@ type TProps = {
   ruLocaleEnabled: boolean;
 };
 
-const PreferencesSection = ({ ruLocaleEnabled }: TProps) => {
+export const PreferencesSection = ({ ruLocaleEnabled }: TProps) => {
   const t = useTranslations("settings.preferences");
   const router = useRouter();
   const currentLocale = useLocale();
@@ -85,5 +85,3 @@ const PreferencesSection = ({ ruLocaleEnabled }: TProps) => {
     </SettingsCard>
   );
 };
-
-export { PreferencesSection };

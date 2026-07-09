@@ -24,7 +24,7 @@ type TProps = {
   series: TChartSeries[];
 };
 
-const TrendLineChart = ({ aggregate, series }: TProps) => {
+export const TrendLineChart = ({ aggregate, series }: TProps) => {
   const t = useTranslations("dashboard.charts");
   const formatMoney = useFormatMoney();
   const lineData = toLineData(aggregate);
@@ -103,5 +103,3 @@ const TrendLineChart = ({ aggregate, series }: TProps) => {
     </div>
   );
 };
-
-export { TrendLineChart };
