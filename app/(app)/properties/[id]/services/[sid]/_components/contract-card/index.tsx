@@ -58,7 +58,7 @@ export const ContractCard = async ({
       title={t("title")}
       description={t("subtitle")}
       actions={
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center justify-end gap-2">
           {canEdit && (
             <LinkButton
               href={`${baseHref}/update`}
@@ -71,7 +71,7 @@ export const ContractCard = async ({
         </div>
       }
     >
-      <div className="p-5">
+      <div className="p-4 sm:p-5">
         <div className="mb-5 flex items-start gap-3">
           <div
             className="flex size-9 shrink-0 items-center justify-center rounded-lg"
