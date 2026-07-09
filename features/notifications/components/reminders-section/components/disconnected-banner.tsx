@@ -8,7 +8,7 @@ export const DisconnectedBanner = async () => {
   const t = await getTranslations("reminders.disconnected");
 
   return (
-    <div className="border-warning/30 bg-warning/10 flex items-center gap-2.5 border-b px-5 py-3">
+    <div className="border-warning/30 bg-warning/10 flex items-center gap-2.5 border-b px-4 py-3 sm:px-5">
       <TriangleAlert size={15} className="text-warning shrink-0" />
       <p className="text-foreground flex-1 text-sm">{t("message")}</p>
       <Link

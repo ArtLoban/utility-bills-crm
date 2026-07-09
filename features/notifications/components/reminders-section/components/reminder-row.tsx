@@ -31,21 +31,23 @@ export const ReminderRow = async ({ reminder, propertyId, serviceId }: TProps) =
   const editHref = `${ROUTES.properties}/${propertyId}/services/${serviceId}/reminders/${reminder.id}/edit`;
 
   return (
-    <li className="border-border flex items-center gap-3.5 border-b px-5 py-3.5 last:border-b-0">
+    <li className="border-border flex items-start gap-3.5 border-b px-4 py-3.5 last:border-b-0 sm:items-center sm:px-5">
       <IconBadge icon={Bell} color="var(--primary)" size="sm" border />
 
-      <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-        <span className="text-foreground text-sm font-semibold tracking-[-0.1px]">{label}</span>
-        <span className="text-muted-foreground text-sm break-words">{reminder.text}</span>
-      </div>
+      <div className="flex min-w-0 flex-1 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
+        <div className="flex min-w-0 flex-col gap-0.5">
+          <span className="text-foreground text-sm font-semibold tracking-[-0.1px]">{label}</span>
+          <span className="text-muted-foreground text-sm break-words">{reminder.text}</span>
+        </div>
 
-      <div className="flex shrink-0 items-center gap-1.5">
-        <Button variant="outline" size="icon" aria-label={t("row.edit")} asChild>
-          <Link href={editHref}>
-            <Pencil />
-          </Link>
-        </Button>
-        <DeleteReminderAction reminderId={reminder.id} />
+        <div className="flex shrink-0 items-center gap-1.5 self-end sm:self-auto">
+          <Button variant="outline" size="icon" aria-label={t("row.edit")} asChild>
+            <Link href={editHref}>
+              <Pencil />
+            </Link>
+          </Button>
+          <DeleteReminderAction reminderId={reminder.id} />
+        </div>
       </div>
     </li>
   );
