@@ -7,6 +7,7 @@ import { PROPERTY_TYPE_ICONS } from "@/features/properties/property-type";
 import { formatBalance } from "@/features/ledger";
 import { IconBadge } from "@/components/icon-badge";
 import { Surface } from "@/components/surface";
+import { ROUTES } from "@/lib/routes";
 
 type TProps = {
   property: TPropertyListItem;
@@ -21,7 +22,7 @@ export const PropertyCard = ({ property }: TProps) => {
 
   return (
     <Surface asChild elevation="hover" className="group block px-4 py-6 md:px-6">
-      <Link href={`/properties/${property.id}`}>
+      <Link href={`${ROUTES.properties}/${property.id}`}>
         <div className="flex items-start gap-3">
           <IconBadge icon={Icon} color="var(--brand)" border />
 

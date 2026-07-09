@@ -1,11 +1,14 @@
 import Link from "next/link";
-import { Home, TreePine, ChevronRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { getTranslations, getLocale } from "next-intl/server";
 
 import { formatMoney } from "@/lib/format/money";
 import { cn } from "@/lib/utils";
 import type { TBalanceData } from "../_data/types";
 import { Surface } from "@/components/surface";
+import { IconBadge } from "@/components/icon-badge";
+import { PROPERTY_TYPE_ICONS } from "@/features/properties/property-type";
+import { ROUTES } from "@/lib/routes";
 
 type TProps = {
   data: TBalanceData;
@@ -30,14 +33,12 @@ export const BalanceBlock = async ({ data }: TProps) => {
 
   return (
     <Surface elevation="sm" className="shadow-xs">
-      {/* Top section — summary KV grid */}
       <div className="border-b px-6 pt-5 pb-4">
         <div className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
           {t("title")}
         </div>
 
         <div className="mt-3.5 grid grid-cols-2 gap-8">
-          {/* Total debt */}
           <div>
             <div className="text-muted-foreground mb-1.5 text-xs">{t("totalDebt")}</div>
             <div className="text-destructive text-2xl leading-none font-semibold tracking-tight tabular-nums md:text-3xl">
@@ -49,7 +50,6 @@ export const BalanceBlock = async ({ data }: TProps) => {
             </div>
           </div>
 
-          {/* Total overpayment */}
           <div>
             <div className="text-muted-foreground mb-1.5 text-xs">{t("totalOverpayment")}</div>
             <div className="text-success text-2xl leading-none font-semibold tracking-tight tabular-nums md:text-3xl">
@@ -63,7 +63,6 @@ export const BalanceBlock = async ({ data }: TProps) => {
         </div>
       </div>
 
-      {/* By property section */}
       <div>
         <div className="text-muted-foreground px-6 pt-3 pb-2 text-xs font-medium tracking-wide uppercase">
           {t("byProperty")}
@@ -71,23 +70,19 @@ export const BalanceBlock = async ({ data }: TProps) => {
 
         <div>
           {byProperty.map((property, i) => {
+            const Icon = PROPERTY_TYPE_ICONS[property.type];
             const isLast = i === byProperty.length - 1;
+
             return (
               <Link
                 key={property.id}
-                href={`/properties/${property.id}`}
+                href={`${ROUTES.properties}/${property.id}`}
                 className={cn(
                   "hover:bg-muted flex items-center gap-3 px-6 py-3 no-underline transition-colors duration-100",
                   !isLast && "border-border border-b",
                 )}
               >
-                <div className="bg-muted flex size-7.5 shrink-0 items-center justify-center rounded-sm">
-                  {property.type === "cottage" ? (
-                    <TreePine size={15} className="text-muted-foreground" />
-                  ) : (
-                    <Home size={15} className="text-muted-foreground" />
-                  )}
-                </div>
+                <IconBadge icon={Icon} color="var(--brand)" size="sm" />
 
                 <div className="text-foreground min-w-0 flex-1 text-sm font-medium">
                   {property.name}
