@@ -16,12 +16,12 @@ export const PageContainer = ({ title, children, actions, meta, breadcrumbs, ban
     <PageShell>
       {breadcrumbs && <Breadcrumbs items={breadcrumbs} />}
       {banner && <div className="mb-6">{banner}</div>}
-      <div className="mb-5 md:mb-7">
-        <div className="flex flex-wrap items-center justify-between gap-2">
+      <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4 md:mb-7">
+        <div className="min-w-0">
           <h1 className="text-2xl font-semibold md:text-3xl">{title}</h1>
-          {actions && <div>{actions}</div>}
+          {meta}
         </div>
-        {meta}
+        {actions && <div className="self-end sm:self-auto">{actions}</div>}
       </div>
       {children}
     </PageShell>
