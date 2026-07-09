@@ -26,17 +26,12 @@ export const TelegramSection = ({ initialConnected, initialLabel }: TProps) => {
     body = (
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
-          <Check className="size-4 text-emerald-600 dark:text-emerald-500" />
-          <span className="text-sm font-medium text-zinc-950 dark:text-zinc-50">
+          <Check className="text-success size-4" />
+          <span className="text-foreground text-sm font-medium">
             {label ? t("connected.statusAs", { label }) : t("connected.status")}
           </span>
         </div>
-        <Button
-          variant="outline"
-          onClick={disconnect}
-          disabled={isDisconnecting}
-          style={{ height: 36 }}
-        >
+        <Button variant="outline" size="lg" onClick={disconnect} disabled={isDisconnecting}>
           {t("connected.disconnect")}
         </Button>
       </div>
@@ -44,31 +39,23 @@ export const TelegramSection = ({ initialConnected, initialLabel }: TProps) => {
   } else if (deepLink) {
     body = (
       <div className="flex flex-col gap-3">
-        <p className="text-sm leading-[1.6] text-zinc-500 dark:text-zinc-400">
-          {t("pending.instruction")}
-        </p>
+        <p className="text-muted-foreground text-sm leading-relaxed">{t("pending.instruction")}</p>
         <div className="flex items-center gap-3">
-          <Button asChild style={{ height: 36 }}>
+          <Button asChild size="lg">
             <a href={deepLink} target="_blank" rel="noopener noreferrer">
               <Send className="size-4" />
               {t("pending.open")}
             </a>
           </Button>
-          <span className="text-sm text-zinc-500 dark:text-zinc-400">{t("pending.waiting")}</span>
+          <span className="text-muted-foreground text-sm">{t("pending.waiting")}</span>
         </div>
       </div>
     );
   } else {
     body = (
       <div className="flex flex-col gap-3">
-        <p className="text-sm leading-[1.6] text-zinc-500 dark:text-zinc-400">
-          {t("notConnected.hint")}
-        </p>
-        <Button
-          onClick={connect}
-          disabled={isStarting}
-          style={{ height: 36, alignSelf: "flex-start" }}
-        >
+        <p className="text-muted-foreground text-sm leading-relaxed">{t("notConnected.hint")}</p>
+        <Button size="lg" onClick={connect} disabled={isStarting} className="self-start">
           <Send className="size-4" />
           {t("notConnected.connect")}
         </Button>

@@ -17,56 +17,35 @@ type TSettingsCardFooterProps = { children: ReactNode };
 type TFieldLabelProps = { children: ReactNode; htmlFor?: string };
 type TFieldHintProps = { children: ReactNode };
 
-const SettingsCard = ({ children, className }: TSettingsCardProps) => (
-  <div
-    className={cn(
-      "overflow-hidden rounded-[10px] border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900",
-      className,
-    )}
-  >
+export const SettingsCard = ({ children, className }: TSettingsCardProps) => (
+  <div className={cn("border-border bg-card overflow-hidden rounded-lg border", className)}>
     {children}
   </div>
 );
 
-const SettingsCardHeader = ({ title, description }: TSettingsCardHeaderProps) => (
-  <div className="border-b border-zinc-200 px-6 py-[22px] dark:border-zinc-800">
-    <div className="text-base font-semibold tracking-tight text-zinc-950 dark:text-zinc-50">
-      {title}
-    </div>
-    {description && (
-      <div className="mt-0.5 text-sm text-zinc-500 dark:text-zinc-400">{description}</div>
-    )}
+export const SettingsCardHeader = ({ title, description }: TSettingsCardHeaderProps) => (
+  <div className="border-border border-b px-4 py-5 sm:px-6">
+    <div className="text-foreground text-base font-semibold tracking-tight">{title}</div>
+    {description && <div className="text-muted-foreground mt-0.5 text-sm">{description}</div>}
   </div>
 );
 
-const SettingsCardBody = ({ children }: TSettingsCardBodyProps) => (
-  <div className="flex flex-col gap-5 p-6">{children}</div>
+export const SettingsCardBody = ({ children }: TSettingsCardBodyProps) => (
+  <div className="flex flex-col gap-5 px-4 py-6 sm:px-6">{children}</div>
 );
 
-const SettingsCardFooter = ({ children }: TSettingsCardFooterProps) => (
-  <div className="flex justify-end border-t border-zinc-200 bg-zinc-50 px-6 py-[14px] dark:border-zinc-800 dark:bg-zinc-950">
+export const SettingsCardFooter = ({ children }: TSettingsCardFooterProps) => (
+  <div className="border-border bg-muted/40 flex justify-end border-t px-4 py-3.5 sm:px-6">
     {children}
   </div>
 );
 
-const FieldLabel = ({ children, htmlFor }: TFieldLabelProps) => (
-  <label
-    htmlFor={htmlFor}
-    className="mb-1.5 block text-sm font-medium text-zinc-950 dark:text-zinc-50"
-  >
+export const FieldLabel = ({ children, htmlFor }: TFieldLabelProps) => (
+  <label htmlFor={htmlFor} className="text-foreground mb-1.5 block text-sm font-medium">
     {children}
   </label>
 );
 
-const FieldHint = ({ children }: TFieldHintProps) => (
-  <p className="mt-[5px] text-xs leading-[1.55] text-zinc-500 dark:text-zinc-400">{children}</p>
+export const FieldHint = ({ children }: TFieldHintProps) => (
+  <p className="text-muted-foreground mt-1 text-xs leading-relaxed">{children}</p>
 );
-
-export {
-  SettingsCard,
-  SettingsCardHeader,
-  SettingsCardBody,
-  SettingsCardFooter,
-  FieldLabel,
-  FieldHint,
-};

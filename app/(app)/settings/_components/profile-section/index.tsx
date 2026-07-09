@@ -6,13 +6,12 @@ import { Loader2 } from "lucide-react";
 
 import { PROFILE_LIMITS } from "@/features/profile";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Form } from "@/components/ui/form";
 import { FormTextField } from "@/components/form/form-text-field";
+import { ReadOnlyField } from "@/components/read-only-field";
 
 import {
   FieldHint,
-  FieldLabel,
   SettingsCard,
   SettingsCardBody,
   SettingsCardFooter,
@@ -43,14 +42,14 @@ export const ProfileSection = ({ name, email, image }: TProps) => {
                 alt={name ?? "Avatar"}
                 width={64}
                 height={64}
-                className="size-16 shrink-0 rounded-full border-2 border-violet-200 dark:border-violet-800"
+                className="border-primary/20 size-16 shrink-0 rounded-full border-2"
               />
             ) : (
-              <div className="flex size-16 shrink-0 items-center justify-center rounded-full border-2 border-violet-200 bg-violet-100 text-2xl font-semibold text-violet-600 dark:border-violet-800 dark:bg-violet-900/30 dark:text-violet-400">
+              <div className="border-primary/20 bg-primary/10 text-primary flex size-16 shrink-0 items-center justify-center rounded-full border-2 text-2xl font-semibold">
                 {initials}
               </div>
             )}
-            <p className="max-w-[340px] text-sm leading-[1.6] text-zinc-500 dark:text-zinc-400">
+            <p className="text-muted-foreground max-w-[340px] text-sm leading-relaxed">
               {t("avatarHint")}
             </p>
           </div>
@@ -64,17 +63,16 @@ export const ProfileSection = ({ name, email, image }: TProps) => {
           />
 
           <div>
-            <FieldLabel>{t("email.label")}</FieldLabel>
-            <Input value={email ?? ""} disabled className="h-9" />
+            <ReadOnlyField label={t("email.label")}>{email ?? "—"}</ReadOnlyField>
             <FieldHint>{t("email.hint")}</FieldHint>
           </div>
         </SettingsCardBody>
         <SettingsCardFooter>
           <Button
             type="button"
+            size="lg"
             disabled={!form.formState.isDirty || isSaving}
             onClick={handleSave}
-            className="h-9"
           >
             {isSaving && <Loader2 className="size-4 animate-spin" />}
             {t("saveButton")}
