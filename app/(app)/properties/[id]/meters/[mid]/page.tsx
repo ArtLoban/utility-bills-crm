@@ -1,17 +1,26 @@
 import type { ReactNode } from "react";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 
 import { getPropertyDetail } from "@/app/(app)/properties/[id]/_data/queries";
 import { PROPERTY_ROLES } from "@/lib/db/schema/properties";
 import type { PropertyId } from "@/lib/db/schema/properties";
 import type { MeterId } from "@/lib/db/schema/meters";
-import { PageShell } from "@/components/page-shell";
+import { PageContainer } from "@/components/page-container";
+import { PageMeta } from "@/components/page-meta";
+import { IconBadge } from "@/components/icon-badge";
+import { Badge } from "@/components/ui/badge";
 import { assertNever } from "@/lib/assert-never";
+import { ROUTES } from "@/lib/routes";
+import { formatDisplayDate } from "@/lib/format/date";
+import { getServiceTypeVisuals, TServiceTypeCode } from "@/features/services/service-type";
+import { resolveServiceTypeLabelServer } from "@/features/services/service-label.server";
 import { getMeterDetail } from "./_data/queries";
-import { MeterPageHeader } from "./_components/meter-page-header";
 import { MeterTabsNav } from "./_components/meter-tabs-nav";
 import { METER_TABS } from "./_components/constants";
+import { ReplaceMeterButton } from "./_components/replace-meter-button";
+import { OverflowMenu } from "./_components/overflow-menu";
 import { OverviewTab } from "./_components/tabs/overview-tab";
 import { ReadingsTab } from "./_components/tabs/readings-tab";
 import { resolveMeterTab } from "./_utils/resolve-tab";
@@ -46,6 +55,14 @@ export default async function MeterPage({ params, searchParams }: TProps) {
   const activeTab = resolveMeterTab(resolvedSearchParams.tab);
   const canMutate = property.role !== PROPERTY_ROLES.VIEWER;
 
+  const { color, Icon } = getServiceTypeVisuals(serviceType.code as TServiceTypeCode);
+  const [tNav, tDetail] = await Promise.all([
+    getTranslations("nav"),
+    getTranslations("meters.detail"),
+  ]);
+  const meterTitle = tDetail("title", { type: await resolveServiceTypeLabelServer(serviceType) });
+  const isHistorical = meter.validTo !== null;
+
   const renderActiveTab = (): ReactNode => {
     switch (activeTab) {
       case METER_TABS.OVERVIEW:
@@ -65,16 +82,47 @@ export default async function MeterPage({ params, searchParams }: TProps) {
   };
 
   return (
-    <PageShell>
-      <MeterPageHeader
-        meter={meter}
-        serviceType={serviceType}
-        propertyId={id}
-        propertyName={property.name}
-        canMutate={canMutate}
-      />
+    <PageContainer
+      breadcrumbs={[
+        { label: tNav("properties"), href: ROUTES.properties },
+        { label: property.name, href: `${ROUTES.properties}/${id}` },
+        { label: meterTitle },
+      ]}
+      leading={<IconBadge icon={Icon} color={color} size="lg" border />}
+      title={
+        <span className="flex items-center gap-3">
+          {meterTitle}
+          {isHistorical && <Badge>{tDetail("badge.historical")}</Badge>}
+        </span>
+      }
+      meta={
+        <PageMeta
+          items={[
+            <span key="zones" style={{ color }}>
+              {tDetail("meta.zones", { count: meter.zoneCount })}
+            </span>,
+            meter.serialNumber ? (
+              <span key="serial" className="font-mono">
+                {tDetail("meta.serial", { value: meter.serialNumber })}
+              </span>
+            ) : null,
+            meter.installedAt
+              ? tDetail("meta.installed", { date: formatDisplayDate(meter.installedAt) })
+              : null,
+          ]}
+        />
+      }
+      actions={
+        canMutate && !isHistorical ? (
+          <div className="flex items-center gap-2">
+            <ReplaceMeterButton propertyId={id} meterId={meter.id} />
+            <OverflowMenu propertyId={id} meterId={meter.id} meterTitle={meterTitle} />
+          </div>
+        ) : undefined
+      }
+    >
       <MeterTabsNav propertyId={id} meterId={meterId} activeTab={activeTab} />
       {renderActiveTab()}
-    </PageShell>
+    </PageContainer>
   );
 }
