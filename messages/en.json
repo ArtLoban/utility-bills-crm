@@ -1669,6 +1669,7 @@
     }
   },
   "settings": {
+    "title": "Settings",
     "profile": {
       "title": "Profile",
       "description": "Your basic information.",
