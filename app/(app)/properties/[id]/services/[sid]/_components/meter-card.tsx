@@ -63,7 +63,7 @@ export const MeterCard = async ({
       title={t("title")}
       description={t("subtitle")}
       actions={
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center justify-end gap-2">
           {action}
           <LinkButton
             href={`${ROUTES.properties}/${propertyId}/meters/${meter.id}`}
@@ -72,7 +72,7 @@ export const MeterCard = async ({
         </div>
       }
     >
-      <div className="px-5 py-4">
+      <div className="px-4 py-4 sm:px-5">
         <KVGrid
           pairs={[
             [
