@@ -24,7 +24,7 @@ export const SectionCard = ({
     {...props}
   >
     {(title || actions) && (
-      <div className="border-border flex flex-col items-start gap-2.5 border-b px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
+      <div className="border-border flex flex-col items-start gap-2.5 border-b px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-3 sm:px-5">
         {title && (
           <div className="flex flex-col gap-0.5">
             <h2 className="text-foreground text-sm font-semibold tracking-[-0.1px]">{title}</h2>

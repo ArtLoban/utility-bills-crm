@@ -53,7 +53,7 @@ export const ServiceRow = ({
   return (
     <Link
       href={`/properties/${propertyId}/services/${service.id}`}
-      className={`group hover:bg-muted flex items-center gap-4 px-6 py-4.5 no-underline transition-colors duration-100 ${!isLast ? "border-border border-b" : ""}`}
+      className={`group hover:bg-muted flex items-center gap-4 px-4 py-4.5 no-underline transition-colors duration-100 sm:px-5 ${!isLast ? "border-border border-b" : ""}`}
     >
       <IconBadge icon={Icon} color={color} />
 

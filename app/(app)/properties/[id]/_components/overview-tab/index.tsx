@@ -2,7 +2,7 @@ import { Lightbulb, Plus } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { LinkButton } from "@/components/link-button";
 import { EmptyStateCard } from "@/components/empty-state-card";
-import { Card } from "@/components/ui/card";
+import { SectionCard } from "@/components/section-card";
 import type { TServiceListItem } from "@/lib/db/access/services";
 import { PROPERTY_ROLES } from "@/lib/db/schema/properties";
 import type { TPropertyRole } from "@/lib/db/schema/properties";
@@ -53,15 +53,12 @@ export const OverviewTab = ({
   }
 
   return (
-    <Card className="gap-0 overflow-hidden rounded-lg p-0">
-      <div className="border-border flex items-center justify-between border-b px-6 py-4.5">
-        <div>
-          <p className="text-foreground text-sm font-semibold">{t("sectionTitle")}</p>
-          <p className="text-muted-foreground mt-0.5 text-xs">
-            {t("services", { count: services.length })} · {t("tapHint")}
-          </p>
-        </div>
-        {canEdit && (
+    <SectionCard
+      className="overflow-hidden"
+      title={t("sectionTitle")}
+      description={`${t("services", { count: services.length })} · ${t("tapHint")}`}
+      actions={
+        canEdit && (
           <LinkButton
             variant="default"
             href={addHref}
@@ -69,23 +66,21 @@ export const OverviewTab = ({
             text={t("actions.addService")}
             size="sm"
           />
-        )}
-      </div>
-
-      <div>
-        {services.map(({ service, serviceType, currentContract }, index) => (
-          <ServiceRow
-            key={service.id}
-            service={service}
-            serviceType={serviceType}
-            providerName={currentContract?.provider.name ?? null}
-            propertyId={propertyId}
-            isLast={index === services.length - 1}
-            balance={serviceBalances.get(service.id) ?? null}
-            lastReadingAt={lastReadingByService.get(service.id) ?? null}
-          />
-        ))}
-      </div>
-    </Card>
+        )
+      }
+    >
+      {services.map(({ service, serviceType, currentContract }, index) => (
+        <ServiceRow
+          key={service.id}
+          service={service}
+          serviceType={serviceType}
+          providerName={currentContract?.provider.name ?? null}
+          propertyId={propertyId}
+          isLast={index === services.length - 1}
+          balance={serviceBalances.get(service.id) ?? null}
+          lastReadingAt={lastReadingByService.get(service.id) ?? null}
+        />
+      ))}
+    </SectionCard>
   );
 };
