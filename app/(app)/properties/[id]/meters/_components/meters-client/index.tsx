@@ -4,12 +4,13 @@ import { useState } from "react";
 import { ChevronDown, ChevronUp, Gauge, Plus } from "lucide-react";
 import { useTranslations } from "next-intl";
 
-import { AddButton } from "@/components/add-button";
 import { Button } from "@/components/ui/button";
 import { EmptyStateCard } from "@/components/empty-state-card";
+import { SectionCard } from "@/components/section-card";
 import { ROUTES } from "@/lib/routes";
 import { PROPERTY_ROLES, type TPropertyRole } from "@/lib/db/schema/properties";
 import type { TPropertyMeterRow } from "../../_data/queries";
+import { ActiveMeterRow } from "./active-meter-row";
 import { MeterRow } from "./meter-row";
 import { LinkButton } from "@/components/link-button";
 
@@ -31,33 +32,52 @@ export const MetersClient = ({ propertyId, meters, role }: TProps) => {
 
   return (
     <>
-      <div className="mb-5 flex items-center justify-between">
-        <h2 className="text-foreground text-xl font-semibold tracking-tight">{t("title")}</h2>
-        {canMutate && (
-          <LinkButton
-            variant="default"
-            href={addHref}
-            icon={Plus}
-            text={t("addButton")}
-            size="sm"
-          />
-        )}
-      </div>
-
       {activeMeters.length === 0 ? (
-        <EmptyStateCard icon={Gauge} title={t("empty.title")} body={t("empty.body")} />
+        <EmptyStateCard
+          icon={Gauge}
+          title={t("empty.title")}
+          body={t("empty.body")}
+          variant="block"
+          cta={
+            canMutate && (
+              <LinkButton
+                href={addHref}
+                icon={Plus}
+                text={t("empty.cta")}
+                variant="default"
+                size="default"
+              />
+            )
+          }
+        />
       ) : (
-        <div className="flex flex-col gap-2">
-          {activeMeters.map((r) => (
-            <MeterRow
+        <SectionCard
+          className="overflow-hidden"
+          title={t("sectionTitle")}
+          description={`${t("count", { count: activeMeters.length })} · ${t("subtitleHint")}`}
+          actions={
+            canMutate && (
+              <LinkButton
+                variant="default"
+                href={addHref}
+                icon={Plus}
+                text={t("addButton")}
+                size="sm"
+              />
+            )
+          }
+        >
+          {activeMeters.map((r, index) => (
+            <ActiveMeterRow
               key={r.meter.id}
               meter={r.meter}
               serviceType={r.serviceType}
               propertyId={propertyId}
               canMutate={canMutate}
+              isLast={index === activeMeters.length - 1}
             />
           ))}
-        </div>
+        </SectionCard>
       )}
 
       {historicalMeters.length > 0 && (

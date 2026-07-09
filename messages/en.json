@@ -245,6 +245,9 @@
   "meters": {
     "propertyTab": {
       "title": "Meters",
+      "sectionTitle": "Meters on this property",
+      "count": "{count, plural, one {# meter} other {# meters}}",
+      "subtitleHint": "tracking readings",
       "addButton": "Add meter",
       "empty": {
         "title": "No meters yet",
@@ -253,7 +256,8 @@
       },
       "history": "{count, plural, one {# replaced meter} other {# replaced meters}}",
       "row": {
-        "replace": "Replace"
+        "replace": "Replace",
+        "open": "Open"
       }
     },
     "detail": {

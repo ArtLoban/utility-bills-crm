@@ -245,6 +245,9 @@
   "meters": {
     "propertyTab": {
       "title": "Счётчики",
+      "sectionTitle": "Счётчики по объекту",
+      "count": "{count, plural, one {# счётчик} few {# счётчика} many {# счётчиков} other {# счётчиков}}",
+      "subtitleHint": "учёт показаний",
       "addButton": "Добавить счётчик",
       "empty": {
         "title": "Счётчиков пока нет",
@@ -253,7 +256,8 @@
       },
       "history": "{count, plural, one {# заменённый счётчик} few {# заменённых счётчика} many {# заменённых счётчиков} other {# заменённых счётчика}}",
       "row": {
-        "replace": "Заменить"
+        "replace": "Заменить",
+        "open": "Открыть"
       }
     },
     "detail": {
