@@ -35,7 +35,7 @@ export const DetailsCard = async ({ meter, serviceType, propertyName }: TProps) 
 
   return (
     <SectionCard title={t("title")}>
-      <div className="px-5 py-4">
+      <div className="px-4 py-4 sm:px-5">
         <KVGrid
           pairs={[
             [

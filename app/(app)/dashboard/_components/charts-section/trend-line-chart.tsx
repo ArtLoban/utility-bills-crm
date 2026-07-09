@@ -9,7 +9,7 @@ import type { TMonthlyExpensesAggregate } from "@/features/ledger";
 
 import { toLineData } from "../../_data/chart-transforms";
 import { ChartTooltipCard } from "./components/chart-tooltip-card";
-import { LineChartLegend } from "./components/line-chart-legend";
+import { LineChartLegend } from "@/components/line-chart-legend";
 import type { TChartSeries } from "./series";
 import {
   formatMonthFull,

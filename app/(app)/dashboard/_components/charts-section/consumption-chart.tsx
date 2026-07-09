@@ -9,7 +9,7 @@ import { SERVICE_TYPE_COLORS, type TServiceTypeCode } from "@/features/services/
 import { ZONE_COLORS_HEX } from "@/lib/constants/zones";
 
 import { ChartTooltipCard } from "./components/chart-tooltip-card";
-import { LineChartLegend } from "./components/line-chart-legend";
+import { LineChartLegend } from "@/components/line-chart-legend";
 import { formatMonthFull, formatMonthLabel, sumTooltipValues, toTooltipRows } from "./utils";
 
 type TProps = {
