@@ -1670,6 +1670,12 @@
   },
   "settings": {
     "title": "Налаштування",
+    "tabs": {
+      "profile": "Профіль",
+      "preferences": "Уподобання",
+      "notifications": "Сповіщення",
+      "account": "Акаунт"
+    },
     "profile": {
       "title": "Профіль",
       "description": "Ваша основна інформація.",

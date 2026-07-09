@@ -1670,6 +1670,12 @@
   },
   "settings": {
     "title": "Settings",
+    "tabs": {
+      "profile": "Profile",
+      "preferences": "Preferences",
+      "notifications": "Notifications",
+      "account": "Account"
+    },
     "profile": {
       "title": "Profile",
       "description": "Your basic information.",
