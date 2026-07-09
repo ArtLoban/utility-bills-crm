@@ -49,7 +49,7 @@ export const ProfileSection = ({ name, email, image }: TProps) => {
                 {initials}
               </div>
             )}
-            <p className="text-muted-foreground max-w-[340px] text-sm leading-relaxed">
+            <p className="text-muted-foreground max-w-xs text-sm leading-relaxed">
               {t("avatarHint")}
             </p>
           </div>
