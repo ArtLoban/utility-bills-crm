@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import Link from "next/link";
 import { AlertTriangle, ChevronRight } from "lucide-react";
 import { getTranslations, getFormatter, getLocale } from "next-intl/server";
@@ -11,6 +12,13 @@ type TProps = {
   data: TAttentionData;
 };
 
+type TAttentionItem = {
+  key: string;
+  message: ReactNode;
+  href: string;
+  linkLabel: string;
+};
+
 export const AttentionBlock = async ({ data }: TProps) => {
   const { totalDebt, debtServicesCount, missingReadingsCount, currentMonth } = data;
 
@@ -18,6 +26,34 @@ export const AttentionBlock = async ({ data }: TProps) => {
   const format = await getFormatter();
   const locale = await getLocale();
   const monthLabel = format.dateTime(currentMonth, { year: "numeric", month: "long" });
+
+  const items: TAttentionItem[] = [];
+
+  if (debtServicesCount > 0) {
+    items.push({
+      key: "debt",
+      message: t.rich("debt", {
+        em: (chunks) => <strong className="text-destructive font-semibold">{chunks}</strong>,
+        amount: formatMoney(totalDebt, locale),
+        count: debtServicesCount,
+      }),
+      href: ROUTES.bills,
+      linkLabel: t("viewDetails"),
+    });
+  }
+
+  if (missingReadingsCount > 0) {
+    items.push({
+      key: "missing",
+      message: t.rich("missingReading", {
+        em: (chunks) => <strong className="font-semibold">{chunks}</strong>,
+        month: monthLabel,
+        count: missingReadingsCount,
+      }),
+      href: ROUTES.meters,
+      linkLabel: t("goToMeters"),
+    });
+  }
 
   return (
     <Surface
@@ -29,48 +65,25 @@ export const AttentionBlock = async ({ data }: TProps) => {
         <h3 className="text-foreground m-0 text-sm font-semibold">{t("title")}</h3>
       </div>
 
-      <ul className="m-0 flex flex-col gap-2 p-0 [list-style:none]">
-        {debtServicesCount > 0 && (
-          <li className="text-foreground flex items-baseline gap-2.5 text-sm">
-            <span className="text-muted-foreground w-2">•</span>
-            <span className="flex-1">
-              {t.rich("debt", {
-                em: (chunks) => (
-                  <strong className="text-destructive font-semibold">{chunks}</strong>
-                ),
-                amount: formatMoney(totalDebt, locale),
-                count: debtServicesCount,
-              })}
-            </span>
+      <ul className="m-0 flex flex-col gap-2.5 p-0 [list-style:none]">
+        {items.map((item) => (
+          <li
+            key={item.key}
+            className="text-foreground flex flex-col gap-1 text-sm sm:flex-row sm:items-baseline sm:gap-2.5"
+          >
+            <div className="flex flex-1 items-baseline gap-2.5">
+              <span className="text-muted-foreground w-2 shrink-0">•</span>
+              <span className="flex-1">{item.message}</span>
+            </div>
             <Link
-              href={ROUTES.bills}
-              className="text-primary inline-flex shrink-0 items-center gap-0.5 text-sm font-medium no-underline"
+              href={item.href}
+              className="text-primary ml-4.5 inline-flex shrink-0 items-center gap-0.5 self-start text-sm font-medium no-underline sm:ml-0 sm:self-auto"
             >
-              {t("viewDetails")}
+              {item.linkLabel}
               <ChevronRight size={14} />
             </Link>
           </li>
-        )}
-
-        {missingReadingsCount > 0 && (
-          <li className="text-foreground flex items-baseline gap-2.5 text-sm">
-            <span className="text-muted-foreground w-2">•</span>
-            <span className="flex-1">
-              {t.rich("missingReading", {
-                em: (chunks) => <strong className="font-semibold">{chunks}</strong>,
-                month: monthLabel,
-                count: missingReadingsCount,
-              })}
-            </span>
-            <Link
-              href={ROUTES.meters}
-              className="text-primary inline-flex shrink-0 items-center gap-0.5 text-sm font-medium no-underline"
-            >
-              {t("goToMeters")}
-              <ChevronRight size={14} />
-            </Link>
-          </li>
-        )}
+        ))}
       </ul>
     </Surface>
   );
