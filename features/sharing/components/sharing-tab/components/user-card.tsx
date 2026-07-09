@@ -4,7 +4,6 @@ import { MoreHorizontal } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { Avatar } from "@/components/avatar";
-import { Surface } from "@/components/surface";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -22,11 +21,19 @@ type TProps = {
   member: TSharedMember;
   propertyId: PropertyId;
   isOwnerView: boolean;
+  isLast: boolean;
   onRemove: (userId: UserId) => void;
   onLeave: () => void;
 };
 
-export const UserCard = ({ member, propertyId, isOwnerView, onRemove, onLeave }: TProps) => {
+export const UserCard = ({
+  member,
+  propertyId,
+  isOwnerView,
+  isLast,
+  onRemove,
+  onLeave,
+}: TProps) => {
   const t = useTranslations("sharing");
 
   const { id, name, email, role, isYou, meta } = member;
@@ -35,48 +42,52 @@ export const UserCard = ({ member, propertyId, isOwnerView, onRemove, onLeave }:
   const showInlineRole = isYou || (isOwnerView && isOwner);
 
   return (
-    <Surface elevation="sm" className="flex flex-row gap-3.5 px-5 py-4">
+    <div
+      className={`flex items-start gap-3.5 px-4 py-4.5 sm:items-center sm:px-5 ${!isLast ? "border-border border-b" : ""}`}
+    >
       <Avatar size={40} seed={id} name={name} />
 
-      <div className="min-w-0 flex-1">
-        <div className="flex flex-row flex-wrap items-center gap-1.5">
-          <span className="text-sm font-semibold tracking-[-0.1px]">{name}</span>
-          {isYou && (
-            <span className="border-border bg-muted text-muted-foreground rounded border px-1.5 py-px text-xs font-medium">
-              {t("youBadge")}
-            </span>
-          )}
-          {showInlineRole && <RoleBadge role={role} />}
+      <div className="flex min-w-0 flex-1 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
+        <div className="min-w-0">
+          <div className="flex flex-row flex-wrap items-center gap-1.5">
+            <span className="text-sm font-semibold tracking-[-0.1px]">{name}</span>
+            {isYou && (
+              <span className="border-border bg-muted text-muted-foreground rounded border px-1.5 py-px text-xs font-medium">
+                {t("youBadge")}
+              </span>
+            )}
+            {showInlineRole && <RoleBadge role={role} />}
+          </div>
+          <div className="text-muted-foreground mt-0.5 text-xs">{email}</div>
+          <div className="text-muted-foreground mt-1 text-xs">{meta}</div>
         </div>
-        <div className="text-muted-foreground mt-0.5 text-xs">{email}</div>
-        <div className="text-muted-foreground mt-1 text-xs">{meta}</div>
-      </div>
 
-      <div className="flex shrink-0 items-center gap-1.5">
-        {!isOwnerView && !isYou && <RoleBadge role={role} />}
-        {canManage && (
-          <>
-            <RoleSelect value={role} userId={id} propertyId={propertyId} />
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon-sm" aria-label={t("actions.menu")}>
-                  <MoreHorizontal />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem variant="destructive" onSelect={() => onRemove(id)}>
-                  {t("actions.removeAccess")}
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </>
-        )}
-        {isYou && (
-          <Button variant="destructive" size="sm" onClick={onLeave}>
-            {t("actions.leave")}
-          </Button>
-        )}
+        <div className="flex shrink-0 items-center gap-1.5 self-end sm:self-auto">
+          {!isOwnerView && !isYou && <RoleBadge role={role} />}
+          {canManage && (
+            <>
+              <RoleSelect value={role} userId={id} propertyId={propertyId} />
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon-sm" aria-label={t("actions.menu")}>
+                    <MoreHorizontal />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem variant="destructive" onSelect={() => onRemove(id)}>
+                    {t("actions.removeAccess")}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </>
+          )}
+          {isYou && (
+            <Button variant="destructive" size="sm" onClick={onLeave}>
+              {t("actions.leave")}
+            </Button>
+          )}
+        </div>
       </div>
-    </Surface>
+    </div>
   );
 };

@@ -3,8 +3,8 @@
 import { Plus } from "lucide-react";
 import { useTranslations } from "next-intl";
 
-import { Button } from "@/components/ui/button";
 import { InfoBanner } from "@/components/info-banner";
+import { SectionCard } from "@/components/section-card";
 import type { TPropertyMember } from "@/features/sharing/query";
 import type { PropertyId } from "@/lib/db/schema/properties";
 import type { UserId } from "@/lib/db/schema/auth";
@@ -39,34 +39,35 @@ export const SharingTab = ({ propertyId, members, currentUserId, propertyName }:
 
   return (
     <div>
-      <div className="mb-4 flex items-center justify-between">
-        <div>
-          <h2 className="m-0 text-lg font-semibold tracking-[-0.2px]">{t("section.title")}</h2>
-          <p className="text-muted-foreground mt-1 mb-0 text-sm">{t("section.subtitle")}</p>
-        </div>
-        {isOwnerView && (
-          <LinkButton
-            variant="default"
-            href={`${ROUTES.properties}/${propertyId}/sharing/invite`}
-            icon={Plus}
-            text={t("actions.invite")}
-            size="sm"
-          />
-        )}
-      </div>
-
-      <div className="mb-5 flex flex-col gap-2.5">
-        {sharedMembers.map((member) => (
+      <SectionCard
+        className="mb-5 overflow-hidden"
+        title={t("section.title")}
+        description={t("section.subtitle")}
+        actions={
+          isOwnerView && (
+            <LinkButton
+              variant="default"
+              href={`${ROUTES.properties}/${propertyId}/sharing/invite`}
+              icon={Plus}
+              text={t("actions.invite")}
+              size="sm"
+            />
+          )
+        }
+      >
+        {sharedMembers.map((member, index) => (
           <UserCard
             key={member.id}
             member={member}
             propertyId={propertyId}
             isOwnerView={isOwnerView}
+            isLast={index === sharedMembers.length - 1}
             onRemove={goToRemove}
             onLeave={requestLeave}
           />
         ))}
-      </div>
+      </SectionCard>
+
       <InfoBanner text={t(isOwnerView ? "banner.ownerInfo" : "banner.readOnly")} />
 
       <LastOwnerDialog
