@@ -16,6 +16,7 @@ export const ReplaceMeterButton = async ({ propertyId, meterId }: TProps) => {
     <LinkButton
       href={`${ROUTES.properties}/${propertyId}/meters/${meterId}/replace`}
       text={t("replace")}
+      size="default"
     />
   );
 };
