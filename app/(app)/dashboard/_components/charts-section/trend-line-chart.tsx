@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 
-import { ChartContainer, ChartLegend, ChartTooltip, type ChartConfig } from "@/components/ui/chart";
+import { ChartContainer, ChartTooltip, type ChartConfig } from "@/components/ui/chart";
 import { useFormatMoney } from "@/lib/format/use-format-money";
 import type { TMonthlyExpensesAggregate } from "@/features/ledger";
 
@@ -35,71 +35,72 @@ const TrendLineChart = ({ aggregate, series }: TProps) => {
   );
 
   return (
-    <ChartContainer
-      config={chartConfig}
-      className="h-80 w-full"
-      initialDimension={{ width: 560, height: 320 }}
-    >
-      <LineChart data={lineData} margin={{ top: 8, right: 8, left: -4, bottom: 4 }}>
-        <CartesianGrid vertical={false} strokeDasharray="3 3" className="stroke-border" />
-        <XAxis
-          dataKey="month"
-          tickLine={false}
-          axisLine={false}
-          tick={{ fontSize: 11.5, fill: "var(--color-muted-foreground)" }}
-          tickFormatter={formatMonthLabel}
-          interval="preserveStartEnd"
-        />
-        <YAxis
-          tickLine={false}
-          axisLine={false}
-          tick={{ fontSize: 11.5, fill: "var(--color-muted-foreground)" }}
-          width={44}
-          tickFormatter={formatUahTick}
-        />
-        <ChartTooltip
-          isAnimationActive={false}
-          wrapperStyle={{ zIndex: 50 }}
-          content={({ active, payload, label }) =>
-            active && payload?.length ? (
-              <ChartTooltipCard
-                header={formatMonthFull(String(label))}
-                rows={toTooltipRows(payload, labelOf, formatMoney)}
-                total={{ label: t("tooltip.total"), value: formatMoney(sumTooltipValues(payload)) }}
-              />
-            ) : null
-          }
-        />
-        <ChartLegend
-          align="left"
-          content={() => (
-            <LineChartLegend
-              items={series.map((s) => ({
-                key: s.key,
-                label: s.label,
-                color: `var(--color-${s.key})`,
-              }))}
-            />
-          )}
-        />
-        {series.map((s) => (
-          <Line
-            key={s.key}
-            type="linear"
-            dataKey={s.key}
-            stroke={`var(--color-${s.key})`}
-            strokeWidth={2}
-            dot={{
-              r: 2.5,
-              fill: "var(--background)",
-              stroke: `var(--color-${s.key})`,
-              strokeWidth: 1.5,
-            }}
-            activeDot={{ r: 5 }}
+    <div>
+      <ChartContainer
+        config={chartConfig}
+        className="h-80 w-full"
+        initialDimension={{ width: 560, height: 320 }}
+      >
+        <LineChart data={lineData} margin={{ top: 8, right: 8, left: -8, bottom: 4 }}>
+          <CartesianGrid vertical={false} strokeDasharray="3 3" className="stroke-border" />
+          <XAxis
+            dataKey="month"
+            tickLine={false}
+            axisLine={false}
+            tick={{ fontSize: 11.5, fill: "var(--color-muted-foreground)" }}
+            tickFormatter={formatMonthLabel}
+            interval="preserveStartEnd"
           />
-        ))}
-      </LineChart>
-    </ChartContainer>
+          <YAxis
+            tickLine={false}
+            axisLine={false}
+            tick={{ fontSize: 11.5, fill: "var(--color-muted-foreground)" }}
+            width={44}
+            tickFormatter={formatUahTick}
+          />
+          <ChartTooltip
+            isAnimationActive={false}
+            wrapperStyle={{ zIndex: 50 }}
+            content={({ active, payload, label }) =>
+              active && payload?.length ? (
+                <ChartTooltipCard
+                  header={formatMonthFull(String(label))}
+                  rows={toTooltipRows(payload, labelOf, formatMoney)}
+                  total={{
+                    label: t("tooltip.total"),
+                    value: formatMoney(sumTooltipValues(payload)),
+                  }}
+                />
+              ) : null
+            }
+          />
+          {series.map((s) => (
+            <Line
+              key={s.key}
+              type="linear"
+              dataKey={s.key}
+              stroke={`var(--color-${s.key})`}
+              strokeWidth={2}
+              dot={{
+                r: 2.5,
+                fill: "var(--background)",
+                stroke: `var(--color-${s.key})`,
+                strokeWidth: 1.5,
+              }}
+              activeDot={{ r: 5 }}
+            />
+          ))}
+        </LineChart>
+      </ChartContainer>
+
+      <LineChartLegend
+        items={series.map((s) => ({
+          key: s.key,
+          label: s.label,
+          color: s.color,
+        }))}
+      />
+    </div>
   );
 };
 

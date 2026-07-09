@@ -5,12 +5,12 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
-import { ChartContainer, ChartLegend, ChartTooltip, type ChartConfig } from "@/components/ui/chart";
-import { cn } from "@/lib/utils";
+import { ChartContainer, ChartTooltip, type ChartConfig } from "@/components/ui/chart";
 import { useFormatMoney } from "@/lib/format/use-format-money";
 import type { TMonthlyExpensesAggregate } from "@/features/ledger";
 
 import { toBarData } from "../../_data/chart-transforms";
+import { BarChartLegend } from "./components/bar-chart-legend";
 import { ChartTooltipCard } from "./components/chart-tooltip-card";
 import type { TChartSeries } from "./series";
 import {
@@ -99,34 +99,6 @@ export const MonthlyBarChart = ({ aggregate, series, title, subtitle }: TProps) 
               ) : null
             }
           />
-          <ChartLegend
-            align="left"
-            content={({ payload }) => (
-              <div className="flex flex-wrap items-center gap-2 pt-3">
-                {payload?.map((item) => {
-                  const key = String(item.dataKey);
-                  const hidden = hiddenSeries.has(key);
-                  return (
-                    <button
-                      key={key}
-                      type="button"
-                      onClick={() => toggleSeries(key)}
-                      className={cn(
-                        "hover:bg-muted flex cursor-pointer items-center gap-1.5 rounded px-1.5 py-0.5 text-xs transition-colors",
-                        hidden && "text-muted-foreground line-through",
-                      )}
-                    >
-                      <span
-                        className="h-2 w-2 shrink-0 rounded-[2px]"
-                        style={{ backgroundColor: hidden ? "var(--border)" : item.color }}
-                      />
-                      {labelOf(key)}
-                    </button>
-                  );
-                })}
-              </div>
-            )}
-          />
           {series.map((s) => (
             <Bar
               key={s.key}
@@ -150,6 +122,12 @@ export const MonthlyBarChart = ({ aggregate, series, title, subtitle }: TProps) 
           ))}
         </BarChart>
       </ChartContainer>
+
+      <BarChartLegend
+        items={series.map((s) => ({ key: s.key, label: s.label, color: s.color }))}
+        hiddenKeys={hiddenSeries}
+        onToggle={toggleSeries}
+      />
     </Surface>
   );
 };
