@@ -1266,9 +1266,6 @@
         "updateContract": "Update contract",
         "rates": {
           "fixed": "Fixed",
-          "t1": "T1 · Day",
-          "t2": "T2 · Night",
-          "t3": "T3 · Peak",
           "perMonth": "₴/mo",
           "perUnit": "₴/{unit}"
         }

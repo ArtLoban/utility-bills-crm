@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 
 import { cn } from "@/lib/utils";
+import { tariffZoneCount, zoneLabelKeys } from "@/lib/constants/zones";
 import type { TContractWithProvider } from "@/lib/db/access/contracts";
 import type { TTariff } from "@/lib/db/schema/tariffs";
 import type { TAccountNumber } from "@/lib/db/schema/account-numbers";
@@ -30,6 +31,7 @@ export const TimelineEntry = ({
 }: TProps) => {
   const { contract, provider } = item;
   const t = useTranslations("services.detail.history");
+  const tZones = useTranslations("zones");
   const isCurrent = contract.validTo === null;
   const present = t("present");
 
@@ -39,12 +41,10 @@ export const TimelineEntry = ({
   const formatTariff = (tariff: TTariff): string => {
     if (tariff.fixedAmount !== null) return t("fixedRate", { amount: tariff.fixedAmount });
 
-    return [
-      `T1: ${tariff.rateT1}`,
-      tariff.rateT2 && `T2: ${tariff.rateT2}`,
-      tariff.rateT3 && `T3: ${tariff.rateT3}`,
-    ]
-      .filter(Boolean)
+    // Per-era zone count from this tariff's own non-null rates (contiguous by DB check).
+    const rateValues = [tariff.rateT1, tariff.rateT2, tariff.rateT3];
+    return zoneLabelKeys(tariffZoneCount(tariff))
+      .map((key, i) => `${tZones(key as Parameters<typeof tZones>[0])}: ${rateValues[i] ?? ""}`)
       .join(" · ");
   };
 

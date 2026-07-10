@@ -53,3 +53,15 @@ export const tariffZoneCount = (tariff: Pick<TTariff, "rateT2" | "rateT3">): TZo
   if (tariff.rateT3 == null) return 2;
   return 3;
 };
+
+// Accessors bridging a raw `number` zone count (e.g. meter.zoneCount) to the typed maps,
+// so call sites never cast. Out-of-range counts fall back to the single-zone entry.
+export const zoneLabelKeys = (zoneCount: number): readonly string[] =>
+  zoneCount === 2 ? ZONE_LABEL_KEYS[2] : zoneCount === 3 ? ZONE_LABEL_KEYS[3] : ZONE_LABEL_KEYS[1];
+
+export const zoneSummaryKey = (zoneCount: number): string =>
+  zoneCount === 2
+    ? ZONE_SUMMARY_KEYS[2]
+    : zoneCount === 3
+      ? ZONE_SUMMARY_KEYS[3]
+      : ZONE_SUMMARY_KEYS[1];

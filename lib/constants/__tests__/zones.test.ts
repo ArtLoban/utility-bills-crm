@@ -3,7 +3,14 @@ import { describe, expect, it } from "vitest";
 import en from "@/messages/en.json";
 import ru from "@/messages/ru.json";
 import uk from "@/messages/uk.json";
-import { ZONE_LABEL_KEYS, ZONE_SHORT_TAGS, ZONE_SUMMARY_KEYS, tariffZoneCount } from "../zones";
+import {
+  ZONE_LABEL_KEYS,
+  ZONE_SHORT_TAGS,
+  ZONE_SUMMARY_KEYS,
+  tariffZoneCount,
+  zoneLabelKeys,
+  zoneSummaryKey,
+} from "../zones";
 
 describe("tariffZoneCount", () => {
   it("returns 1 when only T1 is populated", () => {
@@ -16,6 +23,25 @@ describe("tariffZoneCount", () => {
 
   it("returns 3 when all three zones are populated", () => {
     expect(tariffZoneCount({ rateT2: "1.5", rateT3: "0.8" })).toBe(3);
+  });
+});
+
+describe("zoneLabelKeys / zoneSummaryKey — number → typed maps", () => {
+  it("maps counts 1/2/3 to their label-key arrays", () => {
+    expect(zoneLabelKeys(1)).toEqual(["single"]);
+    expect(zoneLabelKeys(2)).toEqual(["t1Day", "t2Night"]);
+    expect(zoneLabelKeys(3)).toEqual(["t1Peak", "t2Shoulder", "t3OffPeak"]);
+  });
+
+  it("maps counts 1/2/3 to their summary keys", () => {
+    expect(zoneSummaryKey(1)).toBe("summary.single");
+    expect(zoneSummaryKey(2)).toBe("summary.two");
+    expect(zoneSummaryKey(3)).toBe("summary.three");
+  });
+
+  it("falls back to the single-zone entry for out-of-range counts", () => {
+    expect(zoneLabelKeys(0)).toEqual(["single"]);
+    expect(zoneSummaryKey(9)).toBe("summary.single");
   });
 });
 

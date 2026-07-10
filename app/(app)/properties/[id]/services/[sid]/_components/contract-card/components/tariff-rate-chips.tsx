@@ -1,6 +1,12 @@
 import { getTranslations } from "next-intl/server";
 
-import { FIXED_RATE_COLOR_VAR, UNIT_LABELS, ZONE_COLOR_VARS } from "@/lib/constants/zones";
+import {
+  FIXED_RATE_COLOR_VAR,
+  UNIT_LABELS,
+  ZONE_COLOR_VARS,
+  tariffZoneCount,
+  zoneLabelKeys,
+} from "@/lib/constants/zones";
 import type { TTariff } from "@/lib/db/schema/tariffs";
 import type { TServiceTypeUnit } from "@/lib/db/schema/service-types";
 
@@ -9,8 +15,12 @@ type TProps = { tariff: TTariff; serviceUnit: TServiceTypeUnit | null };
 
 export const TariffRateChips = async ({ tariff, serviceUnit }: TProps) => {
   const t = await getTranslations("services.detail.contract.rates");
+  const tZones = await getTranslations("zones");
   const perUnit = t("perUnit", { unit: serviceUnit ? UNIT_LABELS[serviceUnit] : "" });
 
+  // Zone count derives from this tariff's own non-null rates (per-era). Contiguity is
+  // guaranteed by the DB check, so the first `count` rate values are present.
+  const rateValues = [tariff.rateT1, tariff.rateT2, tariff.rateT3];
   const chips: TRateChip[] =
     tariff.fixedAmount !== null
       ? [
@@ -21,26 +31,12 @@ export const TariffRateChips = async ({ tariff, serviceUnit }: TProps) => {
             color: FIXED_RATE_COLOR_VAR,
           },
         ]
-      : [
-          tariff.rateT1 && {
-            label: t("t1"),
-            value: tariff.rateT1,
-            unit: perUnit,
-            color: ZONE_COLOR_VARS[0],
-          },
-          tariff.rateT2 && {
-            label: t("t2"),
-            value: tariff.rateT2,
-            unit: perUnit,
-            color: ZONE_COLOR_VARS[1],
-          },
-          tariff.rateT3 && {
-            label: t("t3"),
-            value: tariff.rateT3,
-            unit: perUnit,
-            color: ZONE_COLOR_VARS[2],
-          },
-        ].filter((chip): chip is TRateChip => Boolean(chip));
+      : zoneLabelKeys(tariffZoneCount(tariff)).map((key, i) => ({
+          label: tZones(key as Parameters<typeof tZones>[0]),
+          value: rateValues[i] ?? "",
+          unit: perUnit,
+          color: ZONE_COLOR_VARS[i] ?? ZONE_COLOR_VARS[0],
+        }));
 
   return (
     <div className="flex flex-wrap gap-2.5">
