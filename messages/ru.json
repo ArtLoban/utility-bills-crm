@@ -324,9 +324,6 @@
       },
       "series": {
         "value": "Значение",
-        "t1": "T1 день",
-        "t2": "T2 ночь",
-        "t3": "T3 пик",
         "withUnit": "{label} ({unit})"
       },
       "consumption": {

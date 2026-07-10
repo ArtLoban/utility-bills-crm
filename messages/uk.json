@@ -324,9 +324,6 @@
       },
       "series": {
         "value": "Значення",
-        "t1": "T1 день",
-        "t2": "T2 ніч",
-        "t3": "T3 пік",
         "withUnit": "{label} ({unit})"
       },
       "consumption": {

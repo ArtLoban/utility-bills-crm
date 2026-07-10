@@ -1,3 +1,4 @@
+import { ZONE_SHORT_TAGS } from "@/lib/constants/zones";
 import type { TReading } from "@/lib/db/schema/readings";
 
 export const formatReadingValue = (value: string | null): string => {
@@ -16,5 +17,10 @@ export const formatReadingZones = (reading: TReading, zoneCount: number): string
 
   if (zoneCount <= 1) return formatReadingValue(reading.valueT1);
 
-  return values.map((value, index) => `T${index + 1}: ${formatReadingValue(value)}`).join(" / ");
+  return values
+    .map((value, index) => {
+      const tag = ZONE_SHORT_TAGS[index] ?? `T${index + 1}`;
+      return `${tag}: ${formatReadingValue(value)}`;
+    })
+    .join(" / ");
 };

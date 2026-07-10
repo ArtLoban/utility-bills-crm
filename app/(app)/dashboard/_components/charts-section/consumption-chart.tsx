@@ -6,7 +6,7 @@ import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 import { ChartContainer, ChartLegend, ChartTooltip, type ChartConfig } from "@/components/ui/chart";
 import type { TMonthlyConsumptionAggregate } from "@/features/meters";
 import { SERVICE_TYPE_COLORS, type TServiceTypeCode } from "@/features/services/service-type";
-import { ZONE_COLORS_HEX } from "@/lib/constants/zones";
+import { ZONE_COLORS_HEX, ZONE_SHORT_TAGS } from "@/lib/constants/zones";
 
 import { ChartTooltipCard } from "./components/chart-tooltip-card";
 import { LineChartLegend } from "@/components/line-chart-legend";
@@ -24,11 +24,11 @@ export const ConsumptionChart = ({ aggregate }: TProps) => {
 
   const chartConfig: ChartConfig = {
     t1: {
-      label: isMultiZone ? "T1" : aggregate.unit,
+      label: isMultiZone ? ZONE_SHORT_TAGS[0] : aggregate.unit,
       color: isMultiZone ? ZONE_COLORS_HEX[0] : serviceColor,
     },
-    t2: { label: "T2", color: ZONE_COLORS_HEX[1] },
-    t3: { label: "T3", color: ZONE_COLORS_HEX[2] },
+    t2: { label: ZONE_SHORT_TAGS[1], color: ZONE_COLORS_HEX[1] },
+    t3: { label: ZONE_SHORT_TAGS[2], color: ZONE_COLORS_HEX[2] },
   };
 
   // Pivot: one row per month, one property per zone

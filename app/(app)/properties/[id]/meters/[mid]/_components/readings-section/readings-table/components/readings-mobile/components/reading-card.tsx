@@ -1,10 +1,8 @@
 "use client";
 
-import { useTranslations } from "next-intl";
-
 import { formatReadingValue } from "@/features/readings/format";
 import { formatDisplayDate } from "@/lib/format/date";
-import { UNIT_LABELS } from "@/lib/constants/zones";
+import { UNIT_LABELS, ZONE_SHORT_TAGS } from "@/lib/constants/zones";
 import type { TMeter } from "@/lib/db/schema/meters";
 import type { TReading } from "@/lib/db/schema/readings";
 import type { TServiceType } from "@/lib/db/schema/service-types";
@@ -25,18 +23,17 @@ type TZoneEntry = {
 };
 
 export const ReadingCard = ({ reading, meter, serviceType, canMutate }: TProps) => {
-  const t = useTranslations("meters.detail");
   const unitLabel = serviceType.unit ? UNIT_LABELS[serviceType.unit] : "";
 
   const zones: TZoneEntry[] =
     meter.zoneCount === 1
       ? [{ label: null, value: reading.valueT1 }]
       : [
-          { label: t("series.t1"), value: reading.valueT1 },
-          { label: t("series.t2"), value: reading.valueT2 },
+          { label: ZONE_SHORT_TAGS[0], value: reading.valueT1 },
+          { label: ZONE_SHORT_TAGS[1], value: reading.valueT2 },
         ];
 
-  if (meter.zoneCount === 3) zones.push({ label: t("series.t3"), value: reading.valueT3 });
+  if (meter.zoneCount === 3) zones.push({ label: ZONE_SHORT_TAGS[2], value: reading.valueT3 });
 
   return (
     <Surface elevation="sm" className="flex items-center gap-2 py-3 pr-2.5 pl-3.5">

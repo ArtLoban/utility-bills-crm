@@ -13,7 +13,7 @@ import {
 import { LineChartLegend } from "@/components/line-chart-legend";
 import { SectionCard } from "@/components/section-card";
 import { SectionCardEmpty } from "@/components/section-card-empty";
-import { UNIT_LABELS, ZONE_COLORS_HEX } from "@/lib/constants/zones";
+import { UNIT_LABELS, ZONE_COLORS_HEX, ZONE_SHORT_TAGS } from "@/lib/constants/zones";
 import type { TReading } from "@/lib/db/schema/readings";
 import type { TMeter } from "@/lib/db/schema/meters";
 import type { TServiceType } from "@/lib/db/schema/service-types";
@@ -54,14 +54,14 @@ export const ConsumptionChart = ({ readings, meter, serviceType }: TProps) => {
   const series: { key: "t1" | "t2" | "t3"; label: string; color: string }[] = [
     {
       key: "t1",
-      label: meter.zoneCount === 1 ? withUnit(t("series.value")) : withUnit(t("series.t1")),
+      label: meter.zoneCount === 1 ? withUnit(t("series.value")) : withUnit(ZONE_SHORT_TAGS[0]),
       color: t1Color,
     },
     ...(meter.zoneCount >= 2
-      ? [{ key: "t2" as const, label: withUnit(t("series.t2")), color: ZONE_COLORS_HEX[1] }]
+      ? [{ key: "t2" as const, label: withUnit(ZONE_SHORT_TAGS[1]), color: ZONE_COLORS_HEX[1] }]
       : []),
     ...(meter.zoneCount === 3
-      ? [{ key: "t3" as const, label: withUnit(t("series.t3")), color: ZONE_COLORS_HEX[2] }]
+      ? [{ key: "t3" as const, label: withUnit(ZONE_SHORT_TAGS[2]), color: ZONE_COLORS_HEX[2] }]
       : []),
   ];
 

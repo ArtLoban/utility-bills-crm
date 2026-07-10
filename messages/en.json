@@ -324,9 +324,6 @@
       },
       "series": {
         "value": "Value",
-        "t1": "T1 day",
-        "t2": "T2 night",
-        "t3": "T3 peak",
         "withUnit": "{label} ({unit})"
       },
       "consumption": {
