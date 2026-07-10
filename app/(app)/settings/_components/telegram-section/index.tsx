@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
 
-import { SettingsCardBody, SettingsCardHeader } from "../settings-card";
+import { SettingsCardBody, SettingsCardHeader } from "../settings-card-parts";
 import { useTelegramLink } from "./hooks/use-telegram-link";
 import { Surface } from "@/components/surface";
 

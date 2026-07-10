@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { LOCALE_CONFIG, getAvailableLocales, type TLocale } from "@/lib/locale/constants";
 import { setLocale, setRuLocaleEnabled } from "@/lib/locale/actions";
 import { Switch } from "@/components/ui/switch";
-import { FieldHint, FieldLabel, SettingsCardBody, SettingsCardHeader } from "./settings-card";
+import { FieldHint, FieldLabel, SettingsCardBody, SettingsCardHeader } from "./settings-card-parts";
 import { PreferenceSelect } from "./preference-select";
 import { Surface } from "@/components/surface";
 

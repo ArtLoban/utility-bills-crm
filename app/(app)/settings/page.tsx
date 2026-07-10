@@ -39,6 +39,7 @@ export default async function SettingsPage({ searchParams }: TProps) {
         return <PreferencesSection ruLocaleEnabled={ruLocaleEnabled} />;
       case SETTINGS_TABS.NOTIFICATIONS: {
         const linkStatus = await telegramLinkStatus(id as UserId);
+
         return (
           <TelegramSection
             initialConnected={linkStatus.connected}

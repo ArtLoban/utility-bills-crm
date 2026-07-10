@@ -15,7 +15,7 @@ import {
   SettingsCardBody,
   SettingsCardFooter,
   SettingsCardHeader,
-} from "../settings-card";
+} from "../settings-card-parts";
 import { useProfileForm } from "./hooks/use-profile-form";
 import { Surface } from "@/components/surface";
 

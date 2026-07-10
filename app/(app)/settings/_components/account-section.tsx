@@ -10,7 +10,7 @@ import { useActionErrorHandler } from "@/lib/hooks/use-action-error-handler";
 import { IconBadge } from "@/components/icon-badge";
 import { Modal } from "@/components/modal";
 
-import { SettingsCardBody, SettingsCardHeader } from "./settings-card";
+import { SettingsCardBody, SettingsCardHeader } from "./settings-card-parts";
 import { GoogleGIcon } from "./google-g-icon";
 import { Surface } from "@/components/surface";
 
