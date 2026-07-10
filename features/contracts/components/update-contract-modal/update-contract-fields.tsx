@@ -16,6 +16,7 @@ import { PaymentDetailsForm } from "./components/payment-details-form";
 
 type TProps = {
   serviceType: TServiceType;
+  zoneCount: number;
   selected: TUpdateMode;
   onSelect: (value: TUpdateMode) => void;
   tariffForm: UseFormReturn<TChangeTariffForm>;
@@ -25,6 +26,7 @@ type TProps = {
 
 export const UpdateContractFields = ({
   serviceType,
+  zoneCount,
   selected,
   onSelect,
   tariffForm,
@@ -42,7 +44,7 @@ export const UpdateContractFields = ({
         label={t("options.tariffLabel")}
         helper={t("options.tariffHelper")}
       >
-        <TariffForm form={tariffForm} serviceType={serviceType} />
+        <TariffForm form={tariffForm} serviceType={serviceType} zoneCount={zoneCount} />
       </RadioOption>
       <RadioOption
         value={UPDATE_MODES.ACCOUNT}

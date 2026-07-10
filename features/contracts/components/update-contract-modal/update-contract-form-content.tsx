@@ -17,6 +17,7 @@ type TProps = {
   contractId: TContractId;
   serviceId: TServiceId;
   serviceType: TServiceType;
+  zoneCount: number;
   propertyId: string;
 };
 
@@ -24,6 +25,7 @@ export const UpdateContractFormContent = ({
   contractId,
   serviceId,
   serviceType,
+  zoneCount,
   propertyId,
 }: TProps) => {
   const t = useTranslations(UPDATE_CONTRACT_NAMESPACE);
@@ -47,6 +49,7 @@ export const UpdateContractFormContent = ({
     >
       <UpdateContractFields
         serviceType={serviceType}
+        zoneCount={zoneCount}
         selected={selected}
         onSelect={setSelected}
         tariffForm={tariff.form}

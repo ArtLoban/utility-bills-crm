@@ -16,10 +16,17 @@ type TProps = {
   contractId: TContractId;
   serviceId: TServiceId;
   serviceType: TServiceType;
+  zoneCount: number;
   propertyId: string;
 };
 
-export const UpdateContractModal = ({ contractId, serviceId, serviceType, propertyId }: TProps) => {
+export const UpdateContractModal = ({
+  contractId,
+  serviceId,
+  serviceType,
+  zoneCount,
+  propertyId,
+}: TProps) => {
   const t = useTranslations(UPDATE_CONTRACT_NAMESPACE);
   const router = useRouter();
   const onClose = () => router.back();
@@ -41,6 +48,7 @@ export const UpdateContractModal = ({ contractId, serviceId, serviceType, proper
     >
       <UpdateContractFields
         serviceType={serviceType}
+        zoneCount={zoneCount}
         selected={selected}
         onSelect={setSelected}
         tariffForm={tariff.form}

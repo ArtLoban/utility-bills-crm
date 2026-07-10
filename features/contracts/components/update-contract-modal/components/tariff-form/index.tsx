@@ -8,38 +8,34 @@ import { FormFields } from "@/components/form/form-fields";
 import { FormDateField } from "@/components/form/form-date-field";
 import { FormTextField } from "@/components/form/form-text-field";
 import { FormTextareaField } from "@/components/form/form-textarea-field";
-import { cn } from "@/lib/utils";
-import { UNIT_LABELS, ZONE_COLOR_VARS } from "@/lib/constants/zones";
+import { TariffRateInputs } from "@/features/tariffs/components/tariff-rate-inputs";
 import { TARIFF_LIMITS, type TChangeTariffForm } from "@/features/tariffs/schema";
 import type { TServiceType } from "@/lib/db/schema/service-types";
 import { UPDATE_CONTRACT_NAMESPACE } from "../../constants";
 import { TariffFormField } from "../../types";
 import { ChangeCallout } from "../change-callout";
-import { RateField } from "./rate-field";
 
 type TProps = {
   form: UseFormReturn<TChangeTariffForm>;
   serviceType: TServiceType;
+  zoneCount: number;
 };
 
-const RATE_FIELDS = [
-  { name: TariffFormField.RATE_T1, color: ZONE_COLOR_VARS[0], labelKey: "fields.t1" },
-  { name: TariffFormField.RATE_T2, color: ZONE_COLOR_VARS[1], labelKey: "fields.t2" },
-  { name: TariffFormField.RATE_T3, color: ZONE_COLOR_VARS[2], labelKey: "fields.t3" },
+const RATE_NAMES = [
+  TariffFormField.RATE_T1,
+  TariffFormField.RATE_T2,
+  TariffFormField.RATE_T3,
 ] as const;
 
-export const TariffForm = ({ form, serviceType }: TProps) => {
+export const TariffForm = ({ form, serviceType, zoneCount }: TProps) => {
   const t = useTranslations(UPDATE_CONTRACT_NAMESPACE);
   const tRates = useTranslations("tariffs");
   const { control, formState } = form;
   const rootError = formState.errors.root?.message;
 
   const changeDate = useWatch({ control, name: TariffFormField.CHANGE_DATE });
-  const { measurementType, unit, supportsZones } = serviceType;
+  const { measurementType, unit } = serviceType;
   const isMetered = measurementType === "metered";
-  const unitLabel = unit ? UNIT_LABELS[unit] : "";
-  const perUnit = tRates("perUnit", { unit: unitLabel });
-  const rates = supportsZones ? RATE_FIELDS : RATE_FIELDS.slice(0, 1);
 
   return (
     <Form {...form}>
@@ -56,23 +52,12 @@ export const TariffForm = ({ form, serviceType }: TProps) => {
             <span className="text-muted-foreground text-sm font-medium">
               {t("fields.newRates")}
             </span>
-            <div
-              className={cn(
-                "grid gap-3",
-                supportsZones ? "grid-cols-1 sm:grid-cols-3" : "grid-cols-1",
-              )}
-            >
-              {rates.map(({ name, color, labelKey }) => (
-                <RateField
-                  key={name}
-                  control={control}
-                  name={name}
-                  color={color}
-                  label={t(labelKey)}
-                  adornment={perUnit}
-                />
-              ))}
-            </div>
+            <TariffRateInputs
+              control={control}
+              names={RATE_NAMES}
+              zoneCount={zoneCount}
+              unit={unit}
+            />
           </div>
         ) : (
           <FormTextField

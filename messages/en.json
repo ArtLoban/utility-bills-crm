@@ -1270,9 +1270,6 @@
         "fields": {
           "effectiveFrom": "Effective from",
           "newRates": "New rates",
-          "t1": "T1 (day)",
-          "t2": "T2 (night)",
-          "t3": "T3 (peak)",
           "monthlyAmount": "Monthly amount",
           "newAccount": "New account number",
           "accountPlaceholder": "e.g. UA21 3006 5000 0002 6007 3300 1",

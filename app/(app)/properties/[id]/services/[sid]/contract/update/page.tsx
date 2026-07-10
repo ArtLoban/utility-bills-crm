@@ -2,8 +2,9 @@ import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 
 import { getPropertyDetail } from "@/app/(app)/properties/[id]/_data/queries";
-import { getServiceDetail } from "../../_data/queries";
+import { getCurrentMeterForService, getServiceDetail } from "../../_data/queries";
 import { UpdateContractFormContent } from "@/features/contracts";
+import { rateZoneCountFor } from "@/features/tariffs/rate-zone-count";
 import { resolveServiceLabelServer } from "@/features/services/service-label.server";
 import { PageContainer } from "@/components/page-container";
 import { ROUTES } from "@/lib/routes";
@@ -19,9 +20,10 @@ export default async function UpdateContractPage({ params }: TProps) {
   const propertyId = id as PropertyId;
   const serviceId = sid as TServiceId;
 
-  const [propertyResult, serviceResult, t, tNav] = await Promise.all([
+  const [propertyResult, serviceResult, meter, t, tNav] = await Promise.all([
     getPropertyDetail(propertyId),
     getServiceDetail(serviceId),
+    getCurrentMeterForService(serviceId),
     getTranslations("services.detail.updateContract"),
     getTranslations("nav"),
   ]);
@@ -31,6 +33,8 @@ export default async function UpdateContractPage({ params }: TProps) {
 
   const { service, serviceType, currentContract } = serviceResult.value;
   if (!currentContract) notFound();
+
+  const zoneCount = rateZoneCountFor(serviceType, meter);
 
   const serviceName = await resolveServiceLabelServer(service, serviceType);
   const title = t("title");
@@ -50,6 +54,7 @@ export default async function UpdateContractPage({ params }: TProps) {
         contractId={currentContract.contract.id}
         serviceId={serviceId}
         serviceType={serviceType}
+        zoneCount={zoneCount}
         propertyId={propertyId}
       />
     </PageContainer>

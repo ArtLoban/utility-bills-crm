@@ -1120,9 +1120,6 @@
         "fields": {
           "effectiveFrom": "Діє з",
           "newRates": "Нові ставки",
-          "t1": "T1 (день)",
-          "t2": "T2 (ніч)",
-          "t3": "T3 (пік)",
           "monthlyAmount": "Щомісячна сума",
           "newAccount": "Новий особовий рахунок",
           "accountPlaceholder": "напр. UA21 3006 5000 0002 6007 3300 1",
