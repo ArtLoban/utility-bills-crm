@@ -14,7 +14,7 @@ type TRateChip = { label: string; value: string; unit: string; color: string };
 type TProps = { tariff: TTariff; serviceUnit: TServiceTypeUnit | null };
 
 export const TariffRateChips = async ({ tariff, serviceUnit }: TProps) => {
-  const t = await getTranslations("services.detail.contract.rates");
+  const t = await getTranslations("tariffs");
   const tZones = await getTranslations("zones");
   const perUnit = t("perUnit", { unit: serviceUnit ? UNIT_LABELS[serviceUnit] : "" });
 

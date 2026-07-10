@@ -1,6 +1,6 @@
 "use client";
 
-import { type ComponentProps, type ReactNode } from "react";
+import { type ComponentProps, type CSSProperties, type ReactNode } from "react";
 import { type FieldValues } from "react-hook-form";
 
 import { FormControl } from "@/components/ui/form";
@@ -28,6 +28,7 @@ type TProps<T extends FieldValues> = TFormFieldBaseProps<T> &
     adornment?: ReactNode;
     labelAccessory?: ReactNode;
     inputClassName?: string;
+    inputStyle?: CSSProperties;
     labelClassName?: string;
   };
 
@@ -41,6 +42,7 @@ export const FormTextField = <T extends FieldValues>({
   adornment,
   labelAccessory,
   inputClassName,
+  inputStyle,
   labelClassName,
   ...inputProps
 }: TProps<T>) => (
@@ -63,13 +65,20 @@ export const FormTextField = <T extends FieldValues>({
               value={field.value ?? ""}
               {...inputProps}
               className={cn("pr-12", inputClassName)}
+              style={inputStyle}
             />
           </FormControl>
           <FieldAdornment>{adornment}</FieldAdornment>
         </div>
       ) : (
         <FormControl aria-required={required || undefined}>
-          <Input {...field} value={field.value ?? ""} {...inputProps} className={inputClassName} />
+          <Input
+            {...field}
+            value={field.value ?? ""}
+            {...inputProps}
+            className={inputClassName}
+            style={inputStyle}
+          />
         </FormControl>
       )
     }

@@ -1092,12 +1092,7 @@
         "empty": "Договор ещё не добавлен.",
         "addContract": "Добавить договор",
         "viewHistory": "История",
-        "updateContract": "Обновить договор",
-        "rates": {
-          "fixed": "Фикс.",
-          "perMonth": "₴/мес",
-          "perUnit": "₴/{unit}"
-        }
+        "updateContract": "Обновить договор"
       },
       "updateContract": {
         "title": "Обновить договор",
@@ -1766,6 +1761,11 @@
     "legal": {
       "agreement": "Выполняя вход, вы соглашаетесь с <terms>Условиями использования</terms> и <privacy>Политикой конфиденциальности</privacy>."
     }
+  },
+  "tariffs": {
+    "fixed": "Фикс.",
+    "perMonth": "₴/мес",
+    "perUnit": "₴/{unit}"
   },
   "zones": {
     "single": "Единый тариф",

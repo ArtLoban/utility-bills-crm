@@ -1242,12 +1242,7 @@
         "empty": "No contract added yet.",
         "addContract": "Add contract",
         "viewHistory": "View history",
-        "updateContract": "Update contract",
-        "rates": {
-          "fixed": "Fixed",
-          "perMonth": "₴/mo",
-          "perUnit": "₴/{unit}"
-        }
+        "updateContract": "Update contract"
       },
       "updateContract": {
         "title": "Update contract",
@@ -1766,6 +1761,11 @@
     "legal": {
       "agreement": "By signing in you agree to the <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>."
     }
+  },
+  "tariffs": {
+    "fixed": "Fixed",
+    "perMonth": "₴/mo",
+    "perUnit": "₴/{unit}"
   },
   "zones": {
     "single": "Single rate",

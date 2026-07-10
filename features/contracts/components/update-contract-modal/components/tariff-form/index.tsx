@@ -30,7 +30,7 @@ const RATE_FIELDS = [
 
 export const TariffForm = ({ form, serviceType }: TProps) => {
   const t = useTranslations(UPDATE_CONTRACT_NAMESPACE);
-  const tRates = useTranslations("services.detail.contract.rates");
+  const tRates = useTranslations("tariffs");
   const { control, formState } = form;
   const rootError = formState.errors.root?.message;
 
