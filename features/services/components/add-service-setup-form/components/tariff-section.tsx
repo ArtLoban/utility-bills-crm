@@ -38,6 +38,10 @@ export const TariffSection = ({ control, selectedType, effectiveZoneCount }: TPr
           name={ServiceSetupFormField.FIXED_AMOUNT}
           label={t("fields.fixedAmount.label")}
           description={t("hint.fixedAmount")}
+          type="number"
+          inputMode="decimal"
+          step="0.01"
+          min="0"
           placeholder={t("fields.fixedAmount.placeholder")}
           adornment="UAH"
         />

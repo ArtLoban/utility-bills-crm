@@ -6,9 +6,21 @@ export const TARIFF_LIMITS = {
 
 // Error message keys are namespaced under the "tariffs" i18n namespace.
 
-// Numeric rate/amount validation: must be a valid positive/non-negative decimal string.
-const rateField = z.string().trim().optional().or(z.literal(""));
-const fixedAmountField = z.string().trim().optional().or(z.literal(""));
+// Numeric rate/amount validation: an empty string is allowed (rateT2/rateT3 are optional and
+// the metered/fixed XOR is enforced separately); a non-empty value must be a valid decimal
+// matching the DB CHECK constraints — rates > 0, fixed amount >= 0.
+// Exported for reuse by the service-setup schemas (client + composite action).
+const numericString = (predicate: (n: number) => boolean, invalidKey: string) =>
+  z
+    .string()
+    .trim()
+    .refine((value) => value === "" || predicate(Number(value)), invalidKey);
+
+export const rateField = numericString((n) => !Number.isNaN(n) && n > 0, "validation.rate.invalid");
+export const fixedAmountField = numericString(
+  (n) => !Number.isNaN(n) && n >= 0,
+  "validation.amount.invalid",
+);
 const notesField = z
   .string()
   .trim()

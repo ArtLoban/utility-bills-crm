@@ -45,6 +45,10 @@ export const RateInputs = ({ control, effectiveZoneCount, supportsZones }: TProp
             key={name}
             control={control}
             name={name}
+            type="number"
+            inputMode="decimal"
+            step="0.0001"
+            min="0"
             placeholder="0.00"
             label={
               isMultiZone

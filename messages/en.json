@@ -1319,6 +1319,12 @@
           "changeDate": {
             "required": "Change date is required"
           },
+          "rate": {
+            "invalid": "Enter a valid rate"
+          },
+          "amount": {
+            "invalid": "Enter a valid amount"
+          },
           "notes": {
             "tooLong": "Notes are too long (max 1000 characters)"
           },
@@ -1559,6 +1565,12 @@
         },
         "notes": {
           "tooLong": "Notes are too long (max 1000 characters)"
+        },
+        "rate": {
+          "invalid": "Enter a valid rate"
+        },
+        "amount": {
+          "invalid": "Enter a valid amount"
         },
         "rateOrFixedRequired": "Enter a rate or a fixed amount",
         "rateAndFixedMutuallyExclusive": "Enter either a rate or a fixed amount, not both",

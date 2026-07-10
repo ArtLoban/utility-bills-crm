@@ -3,7 +3,7 @@ import { z } from "zod";
 import { CONTRACT_LIMITS } from "@/features/contracts/schema";
 import { METER_LIMITS } from "@/features/meters/schema";
 import { SERVICE_LIMITS } from "@/features/services/schema";
-import { TARIFF_LIMITS } from "@/features/tariffs/schema";
+import { TARIFF_LIMITS, fixedAmountField, rateField } from "@/features/tariffs/schema";
 
 export const ServiceSetupFormField = {
   SERVICE_TYPE_ID: "serviceTypeId",
@@ -31,8 +31,6 @@ export const ServiceMeterField = {
 
 const optionalNotes = (max: number) => z.string().trim().max(max, "validation.notes.tooLong");
 
-const rateField = z.string().trim();
-
 export const serviceSetupFormSchema = z
   .object({
     serviceTypeId: z.string().min(1, "validation.serviceTypeId.required"),
@@ -45,7 +43,7 @@ export const serviceSetupFormSchema = z
     rateT1: rateField,
     rateT2: rateField,
     rateT3: rateField,
-    fixedAmount: rateField,
+    fixedAmount: fixedAmountField,
     tariffNotes: optionalNotes(TARIFF_LIMITS.notes),
     meterEngaged: z.boolean(),
     meter: z.object({

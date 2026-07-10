@@ -2,7 +2,7 @@ import { z } from "zod";
 
 import { CONTRACT_LIMITS } from "@/features/contracts/schema";
 import { METER_LIMITS } from "@/features/meters/schema";
-import { TARIFF_LIMITS } from "@/features/tariffs/schema";
+import { TARIFF_LIMITS, fixedAmountField, rateField } from "@/features/tariffs/schema";
 
 export const SERVICE_LIMITS = {
   name: 100,
@@ -44,8 +44,6 @@ export type TEditServiceInput = z.infer<typeof editServiceSchema>;
 // Cross-slice limit imports (CONTRACT_LIMITS, TARIFF_LIMITS, METER_LIMITS) are pragmatic:
 // pure numeric constants, no business logic crossing slice boundaries.
 
-const rateField = z.string().trim().optional().or(z.literal(""));
-
 export const createServiceWithSetupSchema = z
   .object({
     // Service
@@ -73,10 +71,10 @@ export const createServiceWithSetupSchema = z
 
     // Tariff
     tariffValidFrom: z.string().min(1, "validation.tariffValidFrom.required"),
-    rateT1: rateField,
-    rateT2: rateField,
-    rateT3: rateField,
-    fixedAmount: rateField,
+    rateT1: rateField.optional(),
+    rateT2: rateField.optional(),
+    rateT3: rateField.optional(),
+    fixedAmount: fixedAmountField.optional(),
     tariffNotes: z
       .string()
       .trim()
