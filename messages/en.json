@@ -1478,14 +1478,6 @@
           "hint": "Optional — a custom label to tell services apart"
         }
       },
-      "zoneLabels": {
-        "single": "Single rate",
-        "t1Day": "T1 — Day",
-        "t2Night": "T2 — Night",
-        "t1Peak": "T1 — Peak",
-        "t2Shoulder": "T2 — Shoulder",
-        "t3OffPeak": "T3 — Off-peak"
-      },
       "measurement": {
         "metered": "Metered",
         "meteredZones": "Metered · zones",

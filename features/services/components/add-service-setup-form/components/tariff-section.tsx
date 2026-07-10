@@ -31,6 +31,7 @@ export const TariffSection = ({ control, selectedType, effectiveZoneCount }: TPr
           control={control}
           effectiveZoneCount={effectiveZoneCount}
           supportsZones={supportsZones}
+          unit={selectedType?.unit ?? null}
         />
       ) : measurementType === "fixed" ? (
         <FormTextField
