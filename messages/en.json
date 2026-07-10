@@ -1791,6 +1791,19 @@
       "agreement": "By signing in you agree to the <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>."
     }
   },
+  "zones": {
+    "single": "Single rate",
+    "t1Day": "T1 — Day",
+    "t2Night": "T2 — Night",
+    "t1Peak": "T1 — Peak",
+    "t2Shoulder": "T2 — Shoulder",
+    "t3OffPeak": "T3 — Off-peak",
+    "summary": {
+      "single": "Single zone",
+      "two": "2 zones (Day, Night)",
+      "three": "3 zones (Peak, Shoulder, Off-peak)"
+    }
+  },
   "notFound": {
     "title": "Page not found",
     "description": "The page you're looking for doesn't exist or may have been moved.",
