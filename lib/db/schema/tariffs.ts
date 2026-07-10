@@ -51,6 +51,12 @@ export const tariffs = pgTable(
     ),
     // Fixed amount, if present, must be non-negative (zero is a valid fixed tariff).
     check("tariffs_fixed_nonneg_check", sql`${t.fixedAmount} IS NULL OR ${t.fixedAmount} >= 0`),
+    // Populated rate zones must be contiguous from T1: a higher zone may not be set while a
+    // lower one is null. Fixed-amount tariffs have all rates null — allowed by the XOR check.
+    check(
+      "tariffs_zones_contiguous_check",
+      sql`(${t.rateT2} IS NULL OR ${t.rateT1} IS NOT NULL) AND (${t.rateT3} IS NULL OR ${t.rateT2} IS NOT NULL)`,
+    ),
   ],
 );
 

@@ -1,0 +1,1 @@
+ALTER TABLE "tariffs" ADD CONSTRAINT "tariffs_zones_contiguous_check" CHECK (("tariffs"."rate_t2" IS NULL OR "tariffs"."rate_t1" IS NOT NULL) AND ("tariffs"."rate_t3" IS NULL OR "tariffs"."rate_t2" IS NOT NULL));
