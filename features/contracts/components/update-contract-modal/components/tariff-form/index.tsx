@@ -8,6 +8,7 @@ import { FormFields } from "@/components/form/form-fields";
 import { FormDateField } from "@/components/form/form-date-field";
 import { FormTextField } from "@/components/form/form-text-field";
 import { FormTextareaField } from "@/components/form/form-textarea-field";
+import { cn } from "@/lib/utils";
 import { UNIT_LABELS, ZONE_COLOR_VARS } from "@/lib/constants/zones";
 import { TARIFF_LIMITS, type TChangeTariffForm } from "@/features/tariffs/schema";
 import type { TServiceType } from "@/lib/db/schema/service-types";
@@ -55,7 +56,12 @@ export const TariffForm = ({ form, serviceType }: TProps) => {
             <span className="text-muted-foreground text-sm font-medium">
               {t("fields.newRates")}
             </span>
-            <div className="grid grid-cols-2 gap-3">
+            <div
+              className={cn(
+                "grid gap-3",
+                supportsZones ? "grid-cols-1 sm:grid-cols-3" : "grid-cols-1",
+              )}
+            >
               {rates.map(({ name, color, labelKey }) => (
                 <RateField
                   key={name}
