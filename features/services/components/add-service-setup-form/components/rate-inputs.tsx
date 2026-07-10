@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import type { Control } from "react-hook-form";
 
 import { FormTextField } from "@/components/form/form-text-field";
+import { cn } from "@/lib/utils";
 import { ZONE_LABELS } from "../constants";
 import { ServiceSetupFormField } from "../schema";
 import type { TServiceSetupForm } from "../schema";
@@ -13,6 +14,12 @@ const RATE_FIELDS = [
   ServiceSetupFormField.RATE_T2,
   ServiceSetupFormField.RATE_T3,
 ] as const;
+
+const ZONE_GRID_COLS: Record<1 | 2 | 3, string> = {
+  1: "grid-cols-1",
+  2: "grid-cols-1 sm:grid-cols-2",
+  3: "grid-cols-1 sm:grid-cols-3",
+};
 
 type TProps = {
   control: Control<TServiceSetupForm>;
@@ -32,10 +39,7 @@ export const RateInputs = ({ control, effectiveZoneCount, supportsZones }: TProp
       <p className="text-sm font-medium">
         {isMultiZone ? t("fields.rates.label") : t("fields.rate.label")}
       </p>
-      <div
-        className="grid gap-2.5"
-        style={{ gridTemplateColumns: `repeat(${effectiveZoneCount}, 1fr)` }}
-      >
+      <div className={cn("grid gap-2.5", ZONE_GRID_COLS[effectiveZoneCount])}>
         {rateFields.map((name, index) => (
           <FormTextField
             key={name}
