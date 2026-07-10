@@ -277,7 +277,8 @@ deletedAt      timestamptz?
 
 **Checks:**
 
-- `(rateT1 IS NOT NULL AND fixedAmount IS NULL) OR (fixedAmount IS NOT NULL AND rateT1 IS NULL)` — CHECK guards only `rateT1` vs `fixedAmount`; `rateT2`/`rateT3` being NULL for a fixed tariff is an application-level guarantee, not part of the constraint
+- `(rateT1 IS NOT NULL AND fixedAmount IS NULL) OR (fixedAmount IS NOT NULL AND rateT1 IS NULL)` — metered XOR fixed.
+- `tariffs_zones_contiguous_check`: `(rateT2 IS NULL OR rateT1 IS NOT NULL) AND (rateT3 IS NULL OR rateT2 IS NOT NULL)` — populated rate zones are contiguous from T1 (a higher zone cannot be set while a lower one is NULL). Combined with the XOR this also forces `rateT2`/`rateT3` to be NULL for a fixed tariff, so the full zone shape is now DB-enforced (previously an application-level guarantee).
 - rates > 0, fixedAmount >= 0
 
 **Exclusion constraint:** same pattern as contracts, per `contractId`.

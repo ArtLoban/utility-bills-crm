@@ -470,7 +470,8 @@ Pricing rates within a contract.
 **Check constraints:**
 
 - `valid_to IS NULL OR valid_to > valid_from`
-- `(rate_t1 IS NOT NULL AND fixed_amount IS NULL) OR (fixed_amount IS NOT NULL AND rate_t1 IS NULL)` — metered XOR fixed. The CHECK guards only `rate_t1` against `fixed_amount`; `rate_t2`/`rate_t3` are not part of it — their being NULL for a fixed tariff is an application-level guarantee, not enforced by this constraint.
+- `(rate_t1 IS NOT NULL AND fixed_amount IS NULL) OR (fixed_amount IS NOT NULL AND rate_t1 IS NULL)` — metered XOR fixed.
+- `(rate_t2 IS NULL OR rate_t1 IS NOT NULL) AND (rate_t3 IS NULL OR rate_t2 IS NOT NULL)` (`tariffs_zones_contiguous_check`, migration `0026`) — populated rate zones are contiguous from T1: a higher zone cannot be set while a lower one is NULL. Combined with the metered-XOR-fixed check, this also forces `rate_t2`/`rate_t3` to be NULL for a fixed tariff (where `rate_t1` is NULL), so the full zone shape is now enforced at the DB level — previously an application-level guarantee. The zone count of a metered tariff is therefore reliably derivable from its non-null `rate_t1..t3` (`tariffZoneCount` in `lib/constants/zones.ts`).
 - `rate_t1 IS NULL OR rate_t1 > 0`
 - `rate_t2 IS NULL OR rate_t2 > 0`
 - `rate_t3 IS NULL OR rate_t3 > 0`
