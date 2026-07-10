@@ -12,12 +12,12 @@ import { ReadOnlyField } from "@/components/read-only-field";
 
 import {
   FieldHint,
-  SettingsCard,
   SettingsCardBody,
   SettingsCardFooter,
   SettingsCardHeader,
 } from "../settings-card";
 import { useProfileForm } from "./hooks/use-profile-form";
+import { Surface } from "@/components/surface";
 
 type TProps = {
   name: string | null;
@@ -31,7 +31,7 @@ export const ProfileSection = ({ name, email, image }: TProps) => {
   const { form, handleSave, isSaving } = useProfileForm(name ?? "");
 
   return (
-    <SettingsCard>
+    <Surface>
       <SettingsCardHeader title={t("title")} description={t("description")} />
       <Form {...form}>
         <SettingsCardBody>
@@ -79,6 +79,6 @@ export const ProfileSection = ({ name, email, image }: TProps) => {
           </Button>
         </SettingsCardFooter>
       </Form>
-    </SettingsCard>
+    </Surface>
   );
 };

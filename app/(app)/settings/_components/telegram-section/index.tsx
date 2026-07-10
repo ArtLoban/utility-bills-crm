@@ -6,8 +6,9 @@ import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
 
-import { SettingsCard, SettingsCardBody, SettingsCardHeader } from "../settings-card";
+import { SettingsCardBody, SettingsCardHeader } from "../settings-card";
 import { useTelegramLink } from "./hooks/use-telegram-link";
+import { Surface } from "@/components/surface";
 
 type TProps = {
   initialConnected: boolean;
@@ -19,8 +20,6 @@ export const TelegramSection = ({ initialConnected, initialLabel }: TProps) => {
   const { connected, label, deepLink, isStarting, isDisconnecting, connect, disconnect } =
     useTelegramLink({ initialConnected, initialLabel });
 
-  // Three mutually exclusive states; selected with if/else rather than a nested ternary, and kept
-  // inline rather than split into three trivial subcomponents (rules: don't over-extract).
   let body: ReactNode;
   if (connected) {
     body = (
@@ -64,9 +63,9 @@ export const TelegramSection = ({ initialConnected, initialLabel }: TProps) => {
   }
 
   return (
-    <SettingsCard>
+    <Surface>
       <SettingsCardHeader title={t("title")} description={t("description")} />
       <SettingsCardBody>{body}</SettingsCardBody>
-    </SettingsCard>
+    </Surface>
   );
 };

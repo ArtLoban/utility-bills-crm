@@ -1,12 +1,5 @@
 import type { ReactNode } from "react";
 
-import { cn } from "@/lib/utils";
-
-type TSettingsCardProps = {
-  children: ReactNode;
-  className?: string;
-};
-
 type TSettingsCardHeaderProps = {
   title: string;
   description?: string;
@@ -16,12 +9,6 @@ type TSettingsCardBodyProps = { children: ReactNode };
 type TSettingsCardFooterProps = { children: ReactNode };
 type TFieldLabelProps = { children: ReactNode; htmlFor?: string };
 type TFieldHintProps = { children: ReactNode };
-
-export const SettingsCard = ({ children, className }: TSettingsCardProps) => (
-  <div className={cn("border-border bg-card overflow-hidden rounded-lg border", className)}>
-    {children}
-  </div>
-);
 
 export const SettingsCardHeader = ({ title, description }: TSettingsCardHeaderProps) => (
   <div className="border-border border-b px-4 py-5 sm:px-6">

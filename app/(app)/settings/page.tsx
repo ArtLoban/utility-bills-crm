@@ -13,7 +13,7 @@ import { PreferencesSection } from "./_components/preferences-section";
 import { ProfileSection } from "./_components/profile-section";
 import { TelegramSection } from "./_components/telegram-section";
 import { SettingsTabsNav } from "./_components/settings-tabs-nav";
-import { SETTINGS_TABS } from "./_components/constants";
+import { SETTINGS_TABS } from "./constants";
 import { resolveSettingsTab } from "./_utils/resolve-tab";
 
 type TProps = {

@@ -6,7 +6,7 @@ import { TabNav } from "@/components/tab-nav";
 import { TabNavItem } from "@/components/tab-nav/tab-nav-item";
 import { tabNavItemClass } from "@/components/tab-nav/utils";
 import { TAB_PARAM } from "@/components/tab-nav/constants";
-import { SETTINGS_TAB_CONFIG, type TSettingsTab } from "./constants";
+import { SETTINGS_TAB_CONFIG, type TSettingsTab } from "../constants";
 
 type TProps = {
   activeTab: TSettingsTab;

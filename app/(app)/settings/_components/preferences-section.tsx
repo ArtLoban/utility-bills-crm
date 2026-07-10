@@ -6,14 +6,9 @@ import { useRouter } from "next/navigation";
 import { LOCALE_CONFIG, getAvailableLocales, type TLocale } from "@/lib/locale/constants";
 import { setLocale, setRuLocaleEnabled } from "@/lib/locale/actions";
 import { Switch } from "@/components/ui/switch";
-import {
-  FieldHint,
-  FieldLabel,
-  SettingsCard,
-  SettingsCardBody,
-  SettingsCardHeader,
-} from "./settings-card";
+import { FieldHint, FieldLabel, SettingsCardBody, SettingsCardHeader } from "./settings-card";
 import { PreferenceSelect } from "./preference-select";
+import { Surface } from "@/components/surface";
 
 const ThemeRadio = dynamic(() => import("./theme-radio").then((m) => m.ThemeRadio), {
   ssr: false,
@@ -48,7 +43,7 @@ export const PreferencesSection = ({ ruLocaleEnabled }: TProps) => {
   };
 
   return (
-    <SettingsCard>
+    <Surface>
       <SettingsCardHeader title={t("title")} description={t("description")} />
       <SettingsCardBody>
         <div>
@@ -82,6 +77,6 @@ export const PreferencesSection = ({ ruLocaleEnabled }: TProps) => {
           <FieldHint>{t("timezone.hint")}</FieldHint>
         </div>
       </SettingsCardBody>
-    </SettingsCard>
+    </Surface>
   );
 };

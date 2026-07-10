@@ -10,8 +10,9 @@ import { useActionErrorHandler } from "@/lib/hooks/use-action-error-handler";
 import { IconBadge } from "@/components/icon-badge";
 import { Modal } from "@/components/modal";
 
-import { SettingsCard, SettingsCardBody, SettingsCardHeader } from "./settings-card";
+import { SettingsCardBody, SettingsCardHeader } from "./settings-card";
 import { GoogleGIcon } from "./google-g-icon";
+import { Surface } from "@/components/surface";
 
 type TProps = {
   email: string | null;
@@ -35,7 +36,7 @@ export const AccountSection = ({ email }: TProps) => {
 
   return (
     <>
-      <SettingsCard>
+      <Surface>
         <SettingsCardHeader title={t("title")} description={t("description")} />
         <SettingsCardBody>
           <div className="border-border bg-muted/50 flex items-center gap-3 rounded-lg border p-3">
@@ -67,7 +68,7 @@ export const AccountSection = ({ email }: TProps) => {
             </Button>
           </div>
         </SettingsCardBody>
-      </SettingsCard>
+      </Surface>
 
       <Modal
         title={t("signOutEverywhere.dialog.title")}
