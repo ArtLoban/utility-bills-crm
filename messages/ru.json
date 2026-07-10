@@ -23,18 +23,13 @@
         },
         "value": {
           "label": "Значение ({unit})",
-          "labelZone": "Значение {zone} — {suffix} ({unit})",
+          "labelZone": "{label} ({unit})",
           "placeholder": "напр. 12650"
         },
         "notes": {
           "label": "Заметки",
           "placeholder": "Любые замечания по этому показанию…"
         }
-      },
-      "zone": {
-        "day": "день",
-        "night": "ночь",
-        "peak": "пик"
       },
       "unitFallback": "ед.",
       "hint": {
@@ -285,13 +280,7 @@
         "serialNumber": "Серийный номер",
         "zones": "Зоны",
         "installedAt": "Дата установки",
-        "activeSince": "Активен с",
-        "zoneCount": {
-          "single": "Одна зона",
-          "two": "Две зоны (T1 день, T2 ночь)",
-          "three": "Три зоны (T1 пик, T2 полупик, T3 ночь)",
-          "other": "{count} зон"
-        }
+        "activeSince": "Активен с"
       },
       "readings": {
         "title": "Показания счётчика",
@@ -1090,14 +1079,7 @@
         "installedAt": "Установлен",
         "viewDetails": "Подробнее о счётчике",
         "submitReading": "Передать показания",
-        "lastReading": "Последнее показание",
-        "zoneLabel": "T{zone}",
-        "zoneCount": {
-          "single": "Одна зона",
-          "two": "Две зоны (T1/T2)",
-          "three": "Три зоны (T1/T2/T3)",
-          "other": "{count} зон"
-        }
+        "lastReading": "Последнее показание"
       },
       "contract": {
         "title": "Текущий договор",

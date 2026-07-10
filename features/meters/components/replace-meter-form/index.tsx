@@ -12,9 +12,9 @@ import { FormTextareaField } from "@/components/form/form-textarea-field";
 import { toIsoDate } from "@/lib/format/date";
 import { METER_LIMITS, type TReplaceMeterFormValues } from "@/features/meters/schema";
 import { ReplaceMeterFormField } from "@/features/meters/types";
+import { ZONE_COUNT_VALUES, zoneSummaryKey } from "@/lib/constants/zones";
 import type { TMeter } from "@/lib/db/schema/meters";
 
-import { ZONE_COUNT_OPTIONS } from "@/features/meters/constants";
 import { ReplacementInfo } from "./components/replacement-info";
 
 type TProps = {
@@ -25,13 +25,13 @@ type TProps = {
 
 export const ReplaceMeterForm = ({ form, meter, supportsZones }: TProps) => {
   const t = useTranslations("meters.replaceForm");
-  const tZone = useTranslations("meters.detail.details.zoneCount");
+  const tZones = useTranslations("zones");
   const { control, formState } = form;
   const rootError = formState.errors.root?.message;
 
-  const zoneOptions = ZONE_COUNT_OPTIONS.map(({ value, labelKey }) => ({
+  const zoneOptions = ZONE_COUNT_VALUES.map((value) => ({
     id: value,
-    name: tZone(labelKey),
+    name: tZones(zoneSummaryKey(Number(value)) as Parameters<typeof tZones>[0]),
   }));
 
   return (

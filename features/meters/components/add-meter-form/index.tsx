@@ -10,7 +10,7 @@ import { FormTextField } from "@/components/form/form-text-field";
 import { FormSelectField } from "@/components/form/form-select-field";
 import { FormTextareaField } from "@/components/form/form-textarea-field";
 import { METER_LIMITS, type TCreateMeterFormValues } from "@/features/meters/schema";
-import { ZONE_COUNT_OPTIONS } from "@/features/meters/constants";
+import { ZONE_COUNT_VALUES, zoneSummaryKey } from "@/lib/constants/zones";
 import { CreateMeterFormField } from "@/features/meters/types";
 import type { TEligibleMeterService } from "@/features/meters/types";
 import { type TServiceTypeCode } from "@/features/services/service-type";
@@ -34,7 +34,7 @@ export const AddMeterForm = ({
 }: TProps) => {
   const t = useTranslations("meters.addForm");
   const tTypes = useTranslations("services.types");
-  const tZone = useTranslations("meters.detail.details.zoneCount");
+  const tZones = useTranslations("zones");
   const { control, formState } = form;
   const rootError = formState.errors.root?.message;
 
@@ -52,9 +52,9 @@ export const AddMeterForm = ({
     label: resolveServiceLabel({ name: s.name, code: s.code as TServiceTypeCode }, tTypes),
   }));
 
-  const zoneOptions = ZONE_COUNT_OPTIONS.map(({ value, labelKey }) => ({
+  const zoneOptions = ZONE_COUNT_VALUES.map((value) => ({
     id: value,
-    name: tZone(labelKey),
+    name: tZones(zoneSummaryKey(Number(value)) as Parameters<typeof tZones>[0]),
   }));
 
   return (

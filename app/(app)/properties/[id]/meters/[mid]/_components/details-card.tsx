@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { SectionCard } from "@/components/section-card";
 import { KVGrid } from "@/components/kv-grid";
 import { formatDisplayDate } from "@/lib/format/date";
+import { zoneSummaryKey } from "@/lib/constants/zones";
 import type { TMeter } from "@/lib/db/schema/meters";
 import type { TServiceType } from "@/lib/db/schema/service-types";
 import { getServiceTypeVisuals, TServiceTypeCode } from "@/features/services/service-type";
@@ -16,22 +17,12 @@ type TProps = {
 
 export const DetailsCard = async ({ meter, serviceType, propertyName }: TProps) => {
   const t = await getTranslations("meters.detail.details");
+  const tZones = await getTranslations("zones");
 
   const { color, Icon } = getServiceTypeVisuals(serviceType.code as TServiceTypeCode);
   const serviceName = await resolveServiceTypeLabelServer(serviceType);
 
-  const zonesLabel = ((): string => {
-    switch (meter.zoneCount) {
-      case 1:
-        return t("zoneCount.single");
-      case 2:
-        return t("zoneCount.two");
-      case 3:
-        return t("zoneCount.three");
-      default:
-        return t("zoneCount.other", { count: meter.zoneCount });
-    }
-  })();
+  const zonesLabel = tZones(zoneSummaryKey(meter.zoneCount) as Parameters<typeof tZones>[0]);
 
   return (
     <SectionCard title={t("title")}>

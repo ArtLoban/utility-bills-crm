@@ -23,18 +23,13 @@
         },
         "value": {
           "label": "Value ({unit})",
-          "labelZone": "Value {zone} — {suffix} ({unit})",
+          "labelZone": "{label} ({unit})",
           "placeholder": "e.g. 12650"
         },
         "notes": {
           "label": "Notes",
           "placeholder": "Any remarks about this reading…"
         }
-      },
-      "zone": {
-        "day": "day",
-        "night": "night",
-        "peak": "peak"
       },
       "unitFallback": "units",
       "hint": {
@@ -285,13 +280,7 @@
         "serialNumber": "Serial number",
         "zones": "Zones",
         "installedAt": "Installed at",
-        "activeSince": "Active since",
-        "zoneCount": {
-          "single": "Single zone",
-          "two": "Two zones (T1 day, T2 night)",
-          "three": "Three zones (T1 peak, T2 shoulder, T3 off-peak)",
-          "other": "{count} zones"
-        }
+        "activeSince": "Active since"
       },
       "readings": {
         "title": "Meter readings",
@@ -1240,14 +1229,7 @@
         "installedAt": "Installed at",
         "viewDetails": "View meter details",
         "submitReading": "Submit reading",
-        "lastReading": "Last reading",
-        "zoneLabel": "T{zone}",
-        "zoneCount": {
-          "single": "Single zone",
-          "two": "Two zones (T1/T2)",
-          "three": "Three zones (T1/T2/T3)",
-          "other": "{count} zones"
-        }
+        "lastReading": "Last reading"
       },
       "contract": {
         "title": "Current contract",

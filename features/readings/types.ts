@@ -23,9 +23,9 @@ export const ReadingFormField = {
 } as const;
 
 export const READING_ZONES = [
-  { field: ReadingFormField.VALUE_T1, zone: "T1", suffixKey: "day" },
-  { field: ReadingFormField.VALUE_T2, zone: "T2", suffixKey: "night" },
-  { field: ReadingFormField.VALUE_T3, zone: "T3", suffixKey: "peak" },
+  { field: ReadingFormField.VALUE_T1 },
+  { field: ReadingFormField.VALUE_T2 },
+  { field: ReadingFormField.VALUE_T3 },
 ] as const;
 
 export type TReadingZone = (typeof READING_ZONES)[number];

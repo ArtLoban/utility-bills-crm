@@ -23,18 +23,13 @@
         },
         "value": {
           "label": "Значення ({unit})",
-          "labelZone": "Значення {zone} — {suffix} ({unit})",
+          "labelZone": "{label} ({unit})",
           "placeholder": "напр. 12650"
         },
         "notes": {
           "label": "Нотатки",
           "placeholder": "Будь-які примітки щодо цього показника…"
         }
-      },
-      "zone": {
-        "day": "день",
-        "night": "ніч",
-        "peak": "пік"
       },
       "unitFallback": "од.",
       "hint": {
@@ -285,13 +280,7 @@
         "serialNumber": "Серійний номер",
         "zones": "Зони",
         "installedAt": "Дата встановлення",
-        "activeSince": "Активний з",
-        "zoneCount": {
-          "single": "Одна зона",
-          "two": "Дві зони (T1 день, T2 ніч)",
-          "three": "Три зони (T1 пік, T2 напівпік, T3 ніч)",
-          "other": "{count} зон"
-        }
+        "activeSince": "Активний з"
       },
       "readings": {
         "title": "Показання лічильника",
@@ -1090,14 +1079,7 @@
         "installedAt": "Встановлено",
         "viewDetails": "Докладніше про лічильник",
         "submitReading": "Передати показання",
-        "lastReading": "Останнє показання",
-        "zoneLabel": "T{zone}",
-        "zoneCount": {
-          "single": "Одна зона",
-          "two": "Дві зони (T1/T2)",
-          "three": "Три зони (T1/T2/T3)",
-          "other": "{count} зон"
-        }
+        "lastReading": "Останнє показання"
       },
       "contract": {
         "title": "Поточний договір",

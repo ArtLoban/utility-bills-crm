@@ -7,7 +7,7 @@ import { Form } from "@/components/ui/form";
 import { FormFields } from "@/components/form/form-fields";
 import { FormDateField } from "@/components/form/form-date-field";
 import { FormTextareaField } from "@/components/form/form-textarea-field";
-import { UNIT_LABELS } from "@/lib/constants/zones";
+import { UNIT_LABELS, zoneLabelKeys } from "@/lib/constants/zones";
 import { todayIso } from "@/lib/format/date";
 import { READING_LIMITS, type TReadingFormValues } from "@/features/readings/schema";
 import {
@@ -46,6 +46,7 @@ export const ReadingForm = ({
   lastReadingDate,
 }: TProps) => {
   const t = useTranslations("readings.form");
+  const tZones = useTranslations("zones");
   const { control, formState } = form;
   const rootError = formState.errors.root?.message;
 
@@ -54,8 +55,9 @@ export const ReadingForm = ({
   const unitLabel = serviceType.unit ? UNIT_LABELS[serviceType.unit] : t("unitFallback");
   const placeholder = t("fields.value.placeholder");
   const zones = READING_ZONES.slice(0, zoneCount);
+  const labelKeys = zoneLabelKeys(zoneCount);
 
-  const renderZone = (zone: TReadingZone) => (
+  const renderZone = (zone: TReadingZone, index: number) => (
     <ZoneValueField
       key={zone.field}
       control={control}
@@ -64,8 +66,7 @@ export const ReadingForm = ({
         isSingleZone
           ? t("fields.value.label", { unit: unitLabel })
           : t("fields.value.labelZone", {
-              zone: zone.zone,
-              suffix: t(`zone.${zone.suffixKey}`),
+              label: tZones((labelKeys[index] ?? "single") as Parameters<typeof tZones>[0]),
               unit: unitLabel,
             })
       }
@@ -91,7 +92,7 @@ export const ReadingForm = ({
         />
 
         {isSingleZone ? (
-          renderZone(READING_ZONES[0])
+          renderZone(READING_ZONES[0], 0)
         ) : (
           <div className={`grid gap-3 ${GRID_COLS[zoneCount]}`}>{zones.map(renderZone)}</div>
         )}

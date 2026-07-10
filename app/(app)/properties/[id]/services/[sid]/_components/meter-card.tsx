@@ -8,7 +8,12 @@ import { SectionCardEmpty } from "@/components/section-card-empty";
 import { KVGrid } from "@/components/kv-grid";
 import { formatDisplayDate } from "@/lib/format/date";
 import { ROUTES } from "@/lib/routes";
-import { UNIT_LABELS, ZONE_COLOR_VARS } from "@/lib/constants/zones";
+import {
+  UNIT_LABELS,
+  ZONE_COLOR_VARS,
+  ZONE_SHORT_TAGS,
+  zoneSummaryKey,
+} from "@/lib/constants/zones";
 import type { TMeter } from "@/lib/db/schema/meters";
 import type { TReading } from "@/lib/db/schema/readings";
 import type { TServiceType } from "@/lib/db/schema/service-types";
@@ -29,6 +34,7 @@ export const MeterCard = async ({
   action,
 }: TProps) => {
   const t = await getTranslations("services.detail.meter");
+  const tZones = await getTranslations("zones");
 
   if (meter === null) {
     return (
@@ -40,18 +46,7 @@ export const MeterCard = async ({
 
   const locale = await getLocale();
   const formatValue = (value: string) => new Intl.NumberFormat(locale).format(Number(value));
-  const zonesLabel = ((): string => {
-    switch (meter.zoneCount) {
-      case 1:
-        return t("zoneCount.single");
-      case 2:
-        return t("zoneCount.two");
-      case 3:
-        return t("zoneCount.three");
-      default:
-        return t("zoneCount.other", { count: meter.zoneCount });
-    }
-  })();
+  const zonesLabel = tZones(zoneSummaryKey(meter.zoneCount) as Parameters<typeof tZones>[0]);
 
   const unitLabel = serviceType.unit ? UNIT_LABELS[serviceType.unit] : "";
   const readingValues = lastReading
@@ -104,7 +99,7 @@ export const MeterCard = async ({
                   }}
                 >
                   <span className="text-muted-foreground text-xs font-medium">
-                    {t("zoneLabel", { zone: i + 1 })}
+                    {ZONE_SHORT_TAGS[i] ?? `T${i + 1}`}
                   </span>
                   <span className="text-sm font-bold tabular-nums" style={{ color }}>
                     {formatValue(value)}
