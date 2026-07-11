@@ -11,8 +11,8 @@ type TProps = {
 export const PublicLogo = ({ href = ROUTES.home, className }: TProps) => {
   return (
     <Link href={href} className={cn("flex shrink-0 items-center gap-2", className)}>
-      <div className="flex size-5 shrink-0 items-center justify-center rounded bg-violet-600">
-        <Zap className="size-3 text-white" strokeWidth={1.75} />
+      <div className="bg-primary flex size-5 shrink-0 items-center justify-center rounded">
+        <Zap className="text-primary-foreground size-3" strokeWidth={1.75} />
       </div>
       <span className="text-sm font-semibold tracking-tight">UtilityBills CRM</span>
     </Link>

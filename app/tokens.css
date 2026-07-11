@@ -22,10 +22,7 @@
     --purple-650: oklch(
       0.659 0.262 292.7
     ); /* exact dark-mode primary/ring — no standard step matches */
-    --purple-700: oklch(0.42 0.23 292);
-    --purple-800: oklch(0.36 0.18 292);
     --purple-900: oklch(0.25 0.08 292);
-    --purple-950: oklch(0.18 0.04 292);
 
     /* Service palette — oklch conversions of original hex values; verify visually before shipping */
     --amber-500: oklch(0.77 0.17 70);
@@ -86,12 +83,6 @@
     --input: var(--neutral-200);
     --ring: var(--purple-600);
 
-    --chart-1: oklch(0.87 0 0);
-    --chart-2: oklch(0.556 0 0);
-    --chart-3: oklch(0.439 0 0);
-    --chart-4: oklch(0.371 0 0);
-    --chart-5: oklch(0.269 0 0);
-
     --radius: 0.625rem;
 
     --sidebar: var(--neutral-50);
@@ -132,7 +123,7 @@
     --series-5: var(--green-600);
     --series-6: var(--sky-500);
 
-    /* Brand: DevNote. Custom TODO: reuse this where needed! */
+    /* Brand accent — buttons, banners, nav highlights */
     --brand: var(--purple-600);
     --brand-bg: var(--purple-50);
     --brand-border: var(--purple-100);
@@ -211,7 +202,7 @@
     --sidebar-border: oklch(1 0 0 / 10%);
     --sidebar-ring: var(--neutral-500);
 
-    /* Brand: DevNote. Custom */
+    /* Brand accent — dark overrides */
     --brand: var(--purple-400);
     --brand-bg: var(--purple-900);
     --brand-border: var(--purple-600);

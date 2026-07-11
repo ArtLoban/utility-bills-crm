@@ -34,7 +34,8 @@
 **JS-константы ссылаются на переменные, не хранят значения:**
 
 ```ts
-export const SERVICE_COLORS = {
+// features/services/service-type.ts
+export const SERVICE_TYPE_COLORS: Record<TServiceTypeCode, string> = {
   electricity: "var(--service-electricity)",
   gas: "var(--service-gas)",
 } as const;
@@ -63,17 +64,21 @@ style={{ background: `color-mix(in srgb, ${color} 10%, transparent)` }}
 
 ---
 
-## SVG-ограничение
+## SVG и `var()` — работает end-to-end
 
-CSS custom properties резолвятся в CSS-контексте. В SVG presentation attributes — **нет**:
+Ранее считалось, что `var()` не резолвится в SVG presentation attributes, поэтому Recharts якобы
+обязан получать hex. На практике этого ограничения у нас нет: современные браузеры резолвят
+`var()` и в `fill`/`stroke`, и через shadcn-обёртку графика.
 
 ```tsx
-// работает — inline CSS style
-<div style={{ background: "var(--service-electricity)" }} />
+// работает — var() прямо в SVG-атрибуте
+<Line stroke="var(--service-electricity)" />
 
-// сломается — SVG-атрибут, var() не резолвится
-<Bar fill="var(--service-electricity)" />
+// работает — shadcn ChartContainer инжектит --color-<key> из chartConfig,
+// а марки ссылаются на него
+<Line stroke={`var(--color-${key})`} />
 ```
 
-Это системное ограничение SVG, не баг проекта. Из-за него Recharts-компоненты
-продолжают получать hex, а все остальные — CSS переменные или `color-mix()`.
+Доказательство в коде: single-zone consumption-chart прокидывает `var(--service-*)` прямо в
+`stroke` и рендерится корректно. Поэтому hex-зеркала не нужны — сервис-, зон- и series-цвета
+идут в графики как `var(--…)` из единого источника (`tokens.css`), без ручной синхронизации.

@@ -9,15 +9,23 @@ Background and rationale: `.claude/info/color-system.md`
 
 ## Where colors live
 
-| Category                                                  | Location                          | Format                         |
-| --------------------------------------------------------- | --------------------------------- | ------------------------------ |
-| Design system tokens (`primary`, `muted`, `destructive`…) | `app/globals.css :root`           | `oklch(...)` — shadcn standard |
-| Service colors (electricity, gas, water…)                 | `app/globals.css :root`           | hex                            |
-| Component tint tokens (field fill, type cards…)           | `app/globals.css :root`           | hex                            |
-| JS consumers that need hex (Recharts SVG `fill`)          | `lib/constants/service-colors.ts` | hex mirror of CSS vars         |
+All color **values** live in `app/tokens.css`, organized in three layers (see the header
+comment there): Layer 1 primitives → Layer 2 semantic/domain aliases → Layer 3 component-scoped
+(colocated in the component's CSS module). `app/globals.css` holds **no values** — its
+`@theme inline` block only maps existing tokens to Tailwind utilities (`--color-*`).
 
-`SERVICE_COLORS` stays hex intentionally — SVG `fill` attributes don't resolve CSS variables.
-Keep it in sync with `globals.css` manually when changing a service color.
+| Category                                                                                                      | Location                                                                                                  | Format                     |
+| ------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- | -------------------------- |
+| Primitive palette (`--purple-600`, `--neutral-200`, `--amber-500`…)                                           | `app/tokens.css` — Layer 1                                                                                | `oklch(...)`               |
+| Semantic + domain tokens (`--primary`, `--border`, `--service-electricity`, `--zone-t1`, tints, role/avatar…) | `app/tokens.css` — Layer 2                                                                                | `var(--primitive)` aliases |
+| Component-scoped tokens                                                                                       | colocated CSS module (e.g. `mockup.module.css`)                                                           | any                        |
+| Tailwind utility mapping (`bg-primary`, `text-service-gas`…)                                                  | `app/globals.css` — `@theme inline`                                                                       | `var(--token)`             |
+| JS consumers (chart configs, inline styles)                                                                   | `features/services/service-type.ts` (`SERVICE_TYPE_COLORS`), `lib/constants/zones.ts` (`ZONE_COLOR_VARS`) | `var(--…)` — **not** hex   |
+
+JS mirrors hold `var(--…)`, never hex. Recharts works because the shadcn chart wrapper injects
+each config color as a `--color-<key>` custom property, and `var()` resolves in SVG `fill` /
+`stroke` end-to-end (supported in current Chrome/Firefox/Safari). No hex mirror and no manual
+sync are needed — a single source of truth in `tokens.css` covers CSS and JS alike.
 
 ---
 
@@ -25,21 +33,26 @@ Keep it in sync with `globals.css` manually when changing a service color.
 
 **New service type:**
 
-1. Add to `globals.css :root`: `--service-newtype: #hexvalue;`
-2. Add matching hex to `SERVICE_COLORS` in `service-colors.ts`
-3. Add `.dark {}` override if the color needs a dark-mode variant
+1. Add a primitive to `tokens.css` Layer 1 if the hue is new (e.g. `--teal-500: oklch(...)`).
+2. Add the semantic alias to Layer 2: `--service-newtype: var(--teal-500);` (+ a `.dark {}`
+   override there if it needs a dark variant).
+3. Only if you need `bg-/text-service-*` classes — expose the utility in `globals.css`
+   `@theme inline`: `--color-service-newtype: var(--service-newtype);`.
+4. Add the JS entry to `SERVICE_TYPE_COLORS` in `features/services/service-type.ts` as
+   `"var(--service-newtype)"` (never hex).
 
 **New UI state / semantic color:**
 
-1. Check if an existing shadcn token fits (`--destructive`, `--muted-foreground`, `--primary`…)
-2. If not — add a CSS variable to `globals.css :root` with a semantic name
-3. Never hardcode hex in a component file
+1. Check if an existing token fits (`--destructive`, `--muted-foreground`, `--primary`…).
+2. If not — add it to `tokens.css` (a Layer 1 primitive if the hue is new, then a Layer 2
+   semantic alias). Expose it in `globals.css` `@theme inline` only if a Tailwind class is needed.
+3. Never hardcode hex in a component file.
 
 ---
 
 ## Dark mode
 
-Redefine variables in `.dark {}` in `globals.css`. Never pass theme-dependent colors as props
+Redefine variables in `.dark {}` in `app/tokens.css`. Never pass theme-dependent colors as props
 or compute them in component logic — the browser handles it via CSS variables.
 
 ---

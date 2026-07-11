@@ -23,11 +23,6 @@
   --color-sidebar-primary: var(--sidebar-primary);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
@@ -68,7 +63,7 @@
   --color-service-intercom: var(--service-intercom);
   --color-service-hoa-fees: var(--service-hoa-fees);
 
-  /* DevNote. Custom */
+  /* Brand accent utilities — bg-brand, text-brand, border-brand-border */
   --color-brand: var(--brand);
   --color-brand-bg: var(--brand-bg);
   --color-brand-border: var(--brand-border);

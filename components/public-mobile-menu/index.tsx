@@ -26,7 +26,7 @@ export const PublicMobileMenu = ({ user, showAbout, showProject }: TProps) => {
     cn(
       "flex h-11 items-center rounded-lg px-3 text-[14.5px] font-medium transition-colors",
       pathname === href
-        ? "text-foreground underline decoration-violet-600 decoration-2 underline-offset-4"
+        ? "text-foreground decoration-primary underline decoration-2 underline-offset-4"
         : "text-muted-foreground hover:text-foreground",
     );
 

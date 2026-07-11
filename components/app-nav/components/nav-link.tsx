@@ -15,7 +15,7 @@ export const NavLink = ({ href, label, active, onClick }: TProps) => (
     className={cn(
       "text-sm transition-colors",
       active
-        ? "text-foreground underline decoration-violet-600 decoration-2 underline-offset-4"
+        ? "text-foreground decoration-primary underline decoration-2 underline-offset-4"
         : "text-muted-foreground hover:text-foreground",
     )}
   >

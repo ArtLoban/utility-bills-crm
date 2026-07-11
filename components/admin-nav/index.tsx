@@ -45,8 +45,8 @@ export const AdminNav = ({ user }: TProps) => {
       <header className="bg-background/80 sticky top-0 z-50 h-16 border-b backdrop-blur-sm">
         <div className="mx-auto flex h-full max-w-screen-2xl items-center gap-6 px-4 sm:px-6 lg:px-8">
           <Link href={ROUTES.home} className="flex items-center gap-2">
-            <div className="flex size-7 items-center justify-center rounded-[7px] bg-violet-600">
-              <Shield className="size-[15px] text-white" strokeWidth={1.75} />
+            <div className="bg-primary flex size-7 items-center justify-center rounded-[7px]">
+              <Shield className="text-primary-foreground size-[15px]" strokeWidth={1.75} />
             </div>
             <span className="text-md font-bold tracking-[-0.2px]">UtilityBills</span>
           </Link>

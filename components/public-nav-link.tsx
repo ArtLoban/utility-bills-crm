@@ -19,7 +19,7 @@ export const PublicNavLink = ({ href, label }: TProps) => {
       className={cn(
         "rounded-md px-2.5 py-1 text-sm transition-colors",
         active
-          ? "text-foreground underline decoration-violet-600 decoration-2 underline-offset-4"
+          ? "text-foreground decoration-primary underline decoration-2 underline-offset-4"
           : "text-muted-foreground hover:text-foreground",
       )}
     >
