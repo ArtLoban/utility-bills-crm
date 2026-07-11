@@ -1,10 +1,11 @@
 "use client";
 
 import { format, parseISO } from "date-fns";
-import { Calendar } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { Calendar, CalendarDays } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
 
 import { FilterChip } from "@/components/filter-chip";
+import { formatMonthLabel } from "@/components/month-picker/utils";
 import { DISPLAY_DATE_FORMAT } from "@/lib/format/date";
 import { DATE_PARAMS } from "@/lib/types/common";
 import { useServiceTypeMetaFactory } from "@/features/services/hooks/use-service-type";
@@ -23,6 +24,7 @@ const fmtDate = (date: string) => format(parseISO(date), DISPLAY_DATE_FORMAT);
 export const ActiveFilterChips = ({ queryFilters }: TProps) => {
   const { hasActiveFilters, values, form } = queryFilters;
   const t = useTranslations("bills.list.filters");
+  const locale = useLocale();
   const { properties } = useBillsTable();
   const getServiceTypeMeta = useServiceTypeMetaFactory();
 
@@ -30,6 +32,7 @@ export const ActiveFilterChips = ({ queryFilters }: TProps) => {
 
   const propertyId = values[FiltersFormField.PROPERTY_ID];
   const services = values[FiltersFormField.SERVICES];
+  const periodFrom = values[FiltersFormField.PERIOD_FROM];
   const dateFrom = values[DATE_PARAMS.DATE_FROM];
   const dateTo = values[DATE_PARAMS.DATE_TO];
 
@@ -37,6 +40,8 @@ export const ActiveFilterChips = ({ queryFilters }: TProps) => {
   const propertyIcon = property ? PROPERTY_TYPE_ICONS[property.type] : PROPERTY_TYPE_ICONS.other;
 
   const service = services ? getServiceTypeMeta(services as TServiceTypeCode) : undefined;
+
+  const periodLabel = periodFrom ? formatMonthLabel(periodFrom, locale) : null;
 
   const dateRangeLabel =
     dateFrom && dateTo
@@ -72,6 +77,16 @@ export const ActiveFilterChips = ({ queryFilters }: TProps) => {
           onRemove={() => {
             form.setValue(DATE_PARAMS.DATE_FROM, null);
             form.setValue(DATE_PARAMS.DATE_TO, null);
+          }}
+        />
+      )}
+      {periodLabel && (
+        <FilterChip
+          icon={CalendarDays}
+          label={periodLabel}
+          onRemove={() => {
+            form.setValue(FiltersFormField.PERIOD_FROM, null);
+            form.setValue(FiltersFormField.PERIOD_TO, null);
           }}
         />
       )}

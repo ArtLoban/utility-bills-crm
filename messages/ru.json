@@ -863,7 +863,7 @@
   },
   "dataTable": {
     "filters": {
-      "label": "Фильтр",
+      "label": "Фильтры",
       "clear": "Сбросить фильтры"
     },
     "list": {
@@ -1427,6 +1427,8 @@
         "label": "Фильтры",
         "property": "Объект",
         "service": "Услуга",
+        "period": "Период",
+        "selectMonth": "Выберите месяц",
         "allProperties": "Все объекты",
         "allServices": "Все услуги",
         "clear": "Сбросить фильтры",

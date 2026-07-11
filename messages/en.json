@@ -558,6 +558,8 @@
         "label": "Filters",
         "property": "Property",
         "service": "Service",
+        "period": "Period",
+        "selectMonth": "Select month",
         "allProperties": "All properties",
         "allServices": "All services",
         "clear": "Clear filters",
@@ -1013,7 +1015,7 @@
   },
   "dataTable": {
     "filters": {
-      "label": "Filter",
+      "label": "Filters",
       "clear": "Clear filters"
     },
     "list": {

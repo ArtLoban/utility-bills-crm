@@ -7,6 +7,7 @@ import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
 import { ChartContainer, ChartTooltip, type ChartConfig } from "@/components/ui/chart";
 import { useFormatMoney } from "@/lib/format/use-format-money";
+import { isoToYearMonth } from "@/lib/format/date";
 import type { TMonthlyExpensesAggregate } from "@/features/ledger";
 
 import { toBarData } from "../../_data/chart-transforms";
@@ -18,7 +19,6 @@ import {
   formatMonthFull,
   formatMonthLabel,
   formatUahTick,
-  lastDayOfMonth,
   sumTooltipValues,
   toTooltipRows,
 } from "./utils";
@@ -109,13 +109,11 @@ export const MonthlyBarChart = ({ aggregate, series, title, subtitle }: TProps) 
               radius={[0, 0, 0, 0]}
               cursor="pointer"
               onClick={(data) => {
-                const month = String((data as unknown as Record<string, unknown>).month);
+                const month = isoToYearMonth(
+                  String((data as unknown as Record<string, unknown>).month),
+                );
                 router.push(
-                  buildBillsDrillUrl({
-                    drill: s.drill,
-                    dateFrom: month,
-                    dateTo: lastDayOfMonth(month),
-                  }),
+                  buildBillsDrillUrl({ drill: s.drill, periodFrom: month, periodTo: month }),
                 );
               }}
             />

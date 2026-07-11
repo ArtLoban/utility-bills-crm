@@ -4,6 +4,7 @@ import {
   baseListSearchParams,
   dateRangeSearchParams,
   parseAsSemicolonArray,
+  parseAsYYYYMM,
 } from "@/lib/utils/query-parsers";
 import { BILLS_SORT_COLUMNS, TBillSortColumn } from "./types";
 
@@ -16,6 +17,8 @@ export const billsSearchParams = {
   propertyId: parseAsString,
   services: parseAsSemicolonArray,
   serviceId: parseAsString,
+  periodFrom: parseAsYYYYMM,
+  periodTo: parseAsYYYYMM,
 };
 
 export const loadBillsParams = createLoader(billsSearchParams);

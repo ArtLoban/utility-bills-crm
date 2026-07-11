@@ -1,4 +1,5 @@
-import { and, asc, count, desc, eq, gte, inArray, isNull, lte, sum } from "drizzle-orm";
+import { and, asc, count, desc, eq, gte, inArray, isNull, lt, lte, sum } from "drizzle-orm";
+import { addDays, parseISO } from "date-fns";
 
 import { db } from "@/lib/db/client";
 import { bills } from "@/lib/db/schema/bills";
@@ -107,8 +108,16 @@ const buildConditions = (userId: UserId, params: TBillsListParams) => {
   if (params.propertyId) conds.push(eq(properties.id, params.propertyId as PropertyId));
   if (params.services?.length) conds.push(inArray(serviceTypes.code, params.services));
   if (params.serviceId) conds.push(eq(services.id, params.serviceId as TServiceId));
-  if (params.dateFrom) conds.push(gte(bills.periodMonth, params.dateFrom));
-  if (params.dateTo) conds.push(lte(bills.periodMonth, params.dateTo));
+  // dateFrom/dateTo filter the record's creation date (the "Date" column).
+  // createdAt is timestamptz, so take the upper bound exclusively (< dateTo + 1 day)
+  // to include bills created later on the dateTo day itself.
+  if (params.dateFrom) conds.push(gte(bills.createdAt, parseISO(params.dateFrom)));
+  if (params.dateTo) conds.push(lt(bills.createdAt, addDays(parseISO(params.dateTo), 1)));
+
+  // periodFrom/periodTo (YYYY-MM) filter the attribution month. periodMonth is always
+  // the first of the month, so comparing against `${month}-01` is inclusive of that month.
+  if (params.periodFrom) conds.push(gte(bills.periodMonth, `${params.periodFrom}-01`));
+  if (params.periodTo) conds.push(lte(bills.periodMonth, `${params.periodTo}-01`));
 
   return and(...conds);
 };

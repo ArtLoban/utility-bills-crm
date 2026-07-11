@@ -6,6 +6,7 @@ import { Cell, Pie, PieChart } from "recharts";
 
 import { ChartContainer, ChartTooltip, type ChartConfig } from "@/components/ui/chart";
 import { useFormatMoney } from "@/lib/format/use-format-money";
+import { isoToYearMonth } from "@/lib/format/date";
 import type { TMonthlyExpensesAggregate } from "@/features/ledger";
 
 import { toPieData } from "../../../_data/chart-transforms";
@@ -102,7 +103,14 @@ export const ExpensePieChart = ({
                   onClick={(entry) => {
                     const key = (entry as unknown as { key: string }).key;
                     const drill = seriesByKey.get(key)?.drill;
-                    if (drill) router.push(buildBillsDrillUrl({ drill, dateFrom, dateTo }));
+                    if (drill)
+                      router.push(
+                        buildBillsDrillUrl({
+                          drill,
+                          periodFrom: isoToYearMonth(dateFrom),
+                          periodTo: isoToYearMonth(dateTo),
+                        }),
+                      );
                   }}
                 >
                   {pieData.map((entry) => (

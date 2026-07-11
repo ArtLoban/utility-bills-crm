@@ -8,6 +8,7 @@ import { SelectInput } from "@/components/select-input";
 import { useServiceOptions } from "@/features/services/hooks/use-service-options";
 
 import { FiltersFormField, TQueryFilters } from "../../../types";
+import { PeriodFilter } from "../../period-filter";
 import { useBillsTable } from "../../../../../context";
 
 type TProps = {
@@ -23,6 +24,7 @@ export const FilterBar = ({ queryFilters }: TProps) => {
   return (
     <TableFilters hasActiveFilters={hasActiveFilters} onClear={handleClear}>
       <DateRangeFilter form={form} values={values} />
+      <PeriodFilter form={form} value={values[FiltersFormField.PERIOD_FROM]} />
       <SelectInput
         form={form}
         field={FiltersFormField.PROPERTY_ID}

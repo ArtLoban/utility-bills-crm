@@ -1,5 +1,4 @@
 import { ROUTES } from "@/lib/routes";
-import { toIsoDate } from "@/lib/format/date";
 
 import type { TTooltipRow } from "./components/chart-tooltip-card";
 import type { TSeriesDrill } from "./series";
@@ -27,24 +26,17 @@ export const formatMonthLong = (isoDate: string): string =>
     timeZone: "UTC",
   });
 
-// Return the last calendar day of the month given a "YYYY-MM-DD" first-of-month string.
-export const lastDayOfMonth = (isoFirstOfMonth: string): string => {
-  const [year, month] = isoFirstOfMonth.split("-").map(Number) as [number, number];
-  // Day 0 of the next month = last day of the current month.
-  const d = new Date(Date.UTC(year, month, 0)); // month is 1-based here (JS months are 0-based)
-  return toIsoDate(d);
-};
-
-// Build a bills list URL pre-filtered by a series' drill target and date range.
+// Build a bills list URL pre-filtered by a series' drill target and period range.
 // Used for drill-down from pie segments and bar stacks (Decision #148). A regular type
 // filters by its type code; a custom `other` series filters by its specific service id.
+// periodFrom/periodTo are YYYY-MM — the bills list filters them against periodMonth.
 export const buildBillsDrillUrl = (params: {
   drill: TSeriesDrill;
-  dateFrom: string;
-  dateTo: string;
+  periodFrom: string;
+  periodTo: string;
 }): string => {
-  const { drill, dateFrom, dateTo } = params;
-  const search = new URLSearchParams({ dateFrom, dateTo });
+  const { drill, periodFrom, periodTo } = params;
+  const search = new URLSearchParams({ periodFrom, periodTo });
   if (drill.kind === "type") search.set("services", drill.code);
   else search.set("serviceId", drill.serviceId);
   return `${ROUTES.bills}?${search.toString()}`;

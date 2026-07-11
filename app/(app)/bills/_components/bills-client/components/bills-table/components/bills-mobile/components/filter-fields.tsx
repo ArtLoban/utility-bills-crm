@@ -9,6 +9,7 @@ import { useServiceOptions } from "@/features/services/hooks/use-service-options
 import { useBillsTable } from "@/app/(app)/bills/_components/bills-client/context";
 
 import { FiltersFormField, type TQueryFilters } from "../../../types";
+import { PeriodFilter } from "../../period-filter";
 
 type TProps = {
   queryFilters: TQueryFilters;
@@ -40,6 +41,11 @@ export const FilterFields = ({ queryFilters }: TProps) => {
           clearable
         />
         <DateRangeFilter form={form} values={values} orientation="stacked" />
+        <PeriodFilter
+          form={form}
+          value={values[FiltersFormField.PERIOD_FROM]}
+          orientation="stacked"
+        />
       </div>
     </Form>
   );

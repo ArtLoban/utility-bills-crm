@@ -21,6 +21,8 @@ export const BILLS_FILTERS = {
   PROPERTY_ID: "propertyId",
   SERVICES: "services",
   SERVICE_ID: "serviceId",
+  PERIOD_FROM: "periodFrom",
+  PERIOD_TO: "periodTo",
 } as const;
 
 export type TBillsListParams = TDataTableParams &
@@ -28,6 +30,8 @@ export type TBillsListParams = TDataTableParams &
     [BILLS_FILTERS.PROPERTY_ID]?: string | null;
     [BILLS_FILTERS.SERVICES]?: string[] | null;
     [BILLS_FILTERS.SERVICE_ID]?: string | null;
+    [BILLS_FILTERS.PERIOD_FROM]?: string | null;
+    [BILLS_FILTERS.PERIOD_TO]?: string | null;
   };
 
 // --- Bill form fields ---

@@ -1,6 +1,7 @@
+import { capitalize } from "@/lib/utils/capitalize";
+
 const MONTHS_IN_YEAR = 12;
 const LABEL_REFERENCE_YEAR = 2000;
-const YEAR_MONTH_LENGTH = 7; // "YYYY-MM"
 
 // A month value is the ISO "YYYY-MM" string. Zero-padding makes lexicographic
 // string comparison equivalent to chronological comparison, so min/max checks
@@ -22,17 +23,16 @@ export const currentYearMonth = (): string => {
   return toYearMonth(now.getUTCFullYear(), now.getUTCMonth() + 1);
 };
 
-// Any ISO date string ("YYYY-MM-DD…") → its "YYYY-MM" month value.
-export const isoDateToYearMonth = (isoDate: string): string => isoDate.slice(0, YEAR_MONTH_LENGTH);
-
 export const formatMonthLabel = (value: string, locale: string): string => {
   const { year, month } = parseYearMonth(value);
 
-  return new Intl.DateTimeFormat(locale, {
-    month: "long",
-    year: "numeric",
-    timeZone: "UTC",
-  }).format(Date.UTC(year, month - 1, 1));
+  return capitalize(
+    new Intl.DateTimeFormat(locale, {
+      month: "long",
+      year: "numeric",
+      timeZone: "UTC",
+    }).format(Date.UTC(year, month - 1, 1)),
+  );
 };
 
 export const getMonthShortLabels = (locale: string): string[] => {

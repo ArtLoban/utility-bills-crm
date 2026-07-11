@@ -16,6 +16,11 @@ export const parseAsYYYYMMDD = createParser<string>({
   serialize: String,
 });
 
+export const parseAsYYYYMM = createParser<string>({
+  parse: (v) => (/^\d{4}-\d{2}$/.test(v) ? v : null),
+  serialize: String,
+});
+
 export const parseAsSemicolonArray = createParser<string[]>({
   parse: (v) => {
     const parts = v.split(";").filter(Boolean);

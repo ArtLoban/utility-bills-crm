@@ -1,6 +1,7 @@
 import { type DefaultValues } from "react-hook-form";
 
-import { currentYearMonth, isoDateToYearMonth } from "@/components/month-picker/utils";
+import { currentYearMonth } from "@/components/month-picker/utils";
+import { isoToYearMonth } from "@/lib/format/date";
 import { type TBillFormValues } from "@/features/bills/schema";
 import type { TBillGlobalRow } from "@/lib/db/access/bills";
 
@@ -20,7 +21,7 @@ export const buildDefaultValues = (billRow?: TBillGlobalRow): DefaultValues<TBil
   return {
     property: property.id,
     serviceId: bill.serviceId,
-    month: isoDateToYearMonth(bill.periodMonth),
+    month: isoToYearMonth(bill.periodMonth),
     amount: bill.amount,
     notes: bill.notes ?? "",
   };
