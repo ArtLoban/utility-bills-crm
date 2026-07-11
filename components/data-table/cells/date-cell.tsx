@@ -1,6 +1,7 @@
 import { useFormatter } from "next-intl";
 
 import { cn } from "@/lib/utils";
+import { capitalize } from "@/lib/utils/capitalize";
 import { DISPLAY_DATE_FORMAT } from "@/lib/format/date";
 import { format } from "date-fns";
 
@@ -19,7 +20,7 @@ export const DateCell = ({ value, format: fmt = "default", className }: TProps) 
 
   const formatted =
     fmt === "month"
-      ? formatter.dateTime(date, { year: "numeric", month: "long" })
+      ? capitalize(formatter.dateTime(date, { year: "numeric", month: "long" }))
       : format(date, DISPLAY_DATE_FORMAT);
 
   return (

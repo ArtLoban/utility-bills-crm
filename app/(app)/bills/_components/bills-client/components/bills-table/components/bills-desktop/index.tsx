@@ -21,7 +21,8 @@ export const BillsTableDesktop = (props: TProps) => {
   const { hasActiveFilters } = queryFilters;
 
   const t = useTranslations("bills.list");
-  const columns = getBillsColumns(t);
+  const tCommon = useTranslations("common");
+  const columns = getBillsColumns(t, tCommon("notes.title"));
 
   return (
     <div>

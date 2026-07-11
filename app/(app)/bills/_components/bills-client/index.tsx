@@ -21,7 +21,10 @@ export const BillsClient = ({ billsList, properties }: TProps) => {
 
   const t = useTranslations("bills.list");
   const formatMoney = useFormatMoney();
-  const meta = [t("meta.records", { count: pagination.total }), formatMoney(totals.amount)];
+  const meta = [
+    t("meta.records", { count: pagination.total }),
+    `${t("footer.totalBilled")}: ${formatMoney(totals.amount)}`,
+  ];
 
   return (
     <PageContainer

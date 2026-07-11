@@ -1421,7 +1421,7 @@
         "actions": "Действия"
       },
       "footer": {
-        "total": "Итого"
+        "totalBilled": "Итого начислено"
       },
       "filters": {
         "label": "Фильтры",

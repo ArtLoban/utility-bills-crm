@@ -1421,7 +1421,7 @@
         "actions": "Дії"
       },
       "footer": {
-        "total": "Всього"
+        "totalBilled": "Всього нараховано"
       },
       "filters": {
         "label": "Фільтри",

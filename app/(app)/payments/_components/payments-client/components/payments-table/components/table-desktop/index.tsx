@@ -20,7 +20,8 @@ export const PaymentsTableDesktop = (props: TProps) => {
   const { hasActiveFilters } = queryFilters;
 
   const t = useTranslations("payments.list");
-  const columns = getPaymentsColumns(t);
+  const tCommon = useTranslations("common");
+  const columns = getPaymentsColumns(t, tCommon("notes.title"));
 
   return (
     <div>

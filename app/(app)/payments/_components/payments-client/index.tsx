@@ -21,7 +21,10 @@ export const PaymentsClient = ({ paymentsList, properties }: TProps) => {
   const { pagination, totals } = paymentsList;
   const t = useTranslations("payments.list");
   const formatMoney = useFormatMoney();
-  const meta = [t("meta.records", { count: pagination.total }), formatMoney(totals.amount)];
+  const meta = [
+    t("meta.records", { count: pagination.total }),
+    `${t("footer.totalPaid")}: ${formatMoney(totals.amount)}`,
+  ];
 
   return (
     <PageContainer
