@@ -2,6 +2,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { useTranslations } from "next-intl";
 
 import { DateCell } from "@/components/data-table/cells/date-cell";
+import { TextCell } from "@/components/data-table/cells/text-cell";
 import { UNIT_LABELS, ZONE_SHORT_TAGS } from "@/lib/constants/zones";
 import { READINGS_SORT_COLUMNS } from "@/features/readings/types";
 import type { TMeter } from "@/lib/db/schema/meters";
@@ -26,7 +27,7 @@ export const getReadingsColumns = (
 ): ColumnDef<TReading>[] => {
   const unitLabel = serviceType.unit ? UNIT_LABELS[serviceType.unit] : "";
   const withUnit = (label: string) =>
-    unitLabel ? t("series.withUnit", { label, unit: unitLabel }) : label;
+    unitLabel ? t("readings.columns.valueWithUnit", { label, unit: unitLabel }) : label;
 
   const zoneFields: TZoneColumn[] =
     meter.zoneCount === 1
@@ -44,6 +45,7 @@ export const getReadingsColumns = (
       header: withUnit(header),
       enableSorting: false,
       cell: ({ row }) => <ReadingValueCell value={row.original[key]} />,
+      meta: { width: 140 },
     }),
   );
 
@@ -54,6 +56,7 @@ export const getReadingsColumns = (
       header: t("readings.columns.date"),
       cell: ({ row }) => <DateCell value={row.original.readAt} />,
       enableSorting: true,
+      meta: { width: 120 },
     },
     ...valueColumns,
     {
@@ -61,20 +64,16 @@ export const getReadingsColumns = (
       accessorFn: (row) => row.notes,
       header: t("readings.columns.notes"),
       enableSorting: false,
-      cell: ({ row }) => (
-        <span className="text-muted-foreground block max-w-48 truncate">
-          {row.original.notes ?? ""}
-        </span>
-      ),
+      cell: ({ row }) => <TextCell value={row.original.notes} className="max-w-64" />,
     },
     {
       id: "actions",
-      header: "",
+      header: t("readings.columns.actions"),
       enableSorting: false,
       cell: ({ row }) => (
         <ReadingRowActions reading={row.original} meter={meter} canMutate={canMutate} />
       ),
-      meta: { align: "center", width: 64 },
+      meta: { align: "center", width: 100 },
     },
   ];
 };

@@ -304,7 +304,9 @@
         },
         "columns": {
           "date": "Date",
-          "notes": "Notes"
+          "notes": "Notes",
+          "actions": "Actions",
+          "valueWithUnit": "{label}, {unit}"
         },
         "filters": {
           "label": "Filters",

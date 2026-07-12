@@ -304,7 +304,9 @@
         },
         "columns": {
           "date": "Дата",
-          "notes": "Нотатки"
+          "notes": "Нотатки",
+          "actions": "Дії",
+          "valueWithUnit": "{label}, {unit}"
         },
         "filters": {
           "label": "Фільтри",

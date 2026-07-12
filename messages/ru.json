@@ -304,7 +304,9 @@
         },
         "columns": {
           "date": "Дата",
-          "notes": "Заметки"
+          "notes": "Заметки",
+          "actions": "Действия",
+          "valueWithUnit": "{label}, {unit}"
         },
         "filters": {
           "label": "Фильтры",
