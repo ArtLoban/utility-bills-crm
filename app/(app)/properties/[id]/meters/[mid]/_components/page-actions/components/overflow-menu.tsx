@@ -2,17 +2,12 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { MoreHorizontal, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { ActionsMenu } from "@/components/actions-menu";
+import type { TAction } from "@/components/actions-menu/types";
 import { Modal } from "@/components/modal";
 import { IconBadge } from "@/components/icon-badge";
 import { softDeleteMeter } from "@/features/meters/actions";
@@ -47,24 +42,19 @@ export const OverflowMenu = ({ propertyId, meterId, meterTitle }: TProps) => {
     }
   };
 
+  const items: TAction[] = [
+    {
+      kind: "item",
+      label: t("remove.menu"),
+      icon: <Trash2 size={14} />,
+      destructive: true,
+      onSelect: () => setConfirmOpen(true),
+    },
+  ];
+
   return (
     <>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="outline" size="icon" aria-label={t("actions.menu")}>
-            <MoreHorizontal className="size-4" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuItem
-            className="text-destructive focus:text-destructive"
-            onSelect={() => setConfirmOpen(true)}
-          >
-            <Trash2 size={14} />
-            {t("remove.menu")}
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <ActionsMenu triggerVariant="outline" items={items} />
 
       <Modal
         title={t("remove.title")}

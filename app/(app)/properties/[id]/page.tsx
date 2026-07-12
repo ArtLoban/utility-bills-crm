@@ -18,7 +18,7 @@ import { resolveTab } from "./_utils/resolve-tab";
 import { PageContainer } from "@/components/page-container";
 import { ROUTES } from "@/lib/routes";
 import { PropertyMeta } from "./_components/property-meta";
-import { PropertyActions } from "./_components/property-actions";
+import { PageActions } from "./_components/page-actions";
 import { getPropertyMeters } from "./meters/_data/queries";
 import { MetersClient } from "./meters/_components/meters-client";
 import type { PropertyId } from "@/lib/db/schema/properties";
@@ -109,7 +109,7 @@ export default async function PropertyPage({ params, searchParams }: TProps) {
         { label: tNav("properties"), href: ROUTES.properties },
         { label: property.name },
       ]}
-      actions={<PropertyActions property={property} />}
+      actions={<PageActions property={property} />}
       meta={<PropertyMeta property={property} />}
     >
       <PropertyTabsNav propertyId={id} activeTab={activeTab} />

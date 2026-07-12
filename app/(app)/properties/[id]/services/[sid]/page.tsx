@@ -1,12 +1,11 @@
 import type { ReactNode } from "react";
 import { notFound } from "next/navigation";
-import { Pencil } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 
 import { getPropertyDetail } from "@/app/(app)/properties/[id]/_data/queries";
 import { getServiceDetail } from "./_data/queries";
 import { ServiceTabsNav } from "./_components/service-tabs-nav";
-import { DeleteServiceAction } from "./_components/delete-service-action";
+import { PageActions } from "./_components/page-actions";
 import { OverviewTab } from "./_components/tabs/overview-tab";
 import { ContractTab } from "./_components/tabs/contract-tab";
 import { MeterTab } from "./_components/tabs/meter-tab";
@@ -16,7 +15,6 @@ import { resolveServiceTab } from "./_utils/resolve-tab";
 import { PageContainer } from "@/components/page-container";
 import { PageMeta } from "@/components/page-meta";
 import { IconBadge } from "@/components/icon-badge";
-import { LinkButton } from "@/components/link-button";
 import { resolveServiceLabelServer } from "@/features/services/service-label.server";
 import { getServiceTypeVisuals, TServiceTypeCode } from "@/features/services/service-type";
 import { assertNever } from "@/lib/assert-never";
@@ -58,13 +56,9 @@ export default async function ServicePage({ params, searchParams }: TProps) {
   const canEdit = role !== PROPERTY_ROLES.VIEWER;
 
   const serviceName = await resolveServiceLabelServer(service, serviceType);
-  const [tNav, tHeader] = await Promise.all([
-    getTranslations("nav"),
-    getTranslations("services.detail.header"),
-  ]);
+  const tNav = await getTranslations("nav");
   const { color, Icon } = getServiceTypeVisuals(serviceType.code as TServiceTypeCode);
   const providerName = currentContract?.provider.name ?? null;
-  const editHref = `${ROUTES.properties}/${id}/services/${service.id}/edit`;
 
   const renderActiveTab = (): ReactNode => {
     switch (activeTab) {
@@ -110,17 +104,12 @@ export default async function ServicePage({ params, searchParams }: TProps) {
       title={serviceName}
       meta={<PageMeta items={[providerName, property.name]} />}
       actions={
-        canEdit ? (
-          <div className="flex items-center gap-2">
-            <LinkButton
-              href={editHref}
-              icon={Pencil}
-              text={tHeader("editService")}
-              size="default"
-            />
-            <DeleteServiceAction serviceId={service.id} propertyId={id} serviceName={serviceName} />
-          </div>
-        ) : undefined
+        <PageActions
+          serviceId={service.id}
+          propertyId={id}
+          serviceName={serviceName}
+          canEdit={canEdit}
+        />
       }
     >
       <ServiceTabsNav propertyId={id} serviceId={serviceId} activeTab={activeTab} role={role} />

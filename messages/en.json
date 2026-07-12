@@ -274,8 +274,7 @@
         "installed": "Installed {date}"
       },
       "actions": {
-        "replace": "Replace meter",
-        "menu": "More options"
+        "replace": "Replace meter"
       },
       "details": {
         "title": "Details",
@@ -1583,8 +1582,7 @@
       "removeAccess": "Remove access",
       "cancel": "Cancel",
       "sendInvite": "Send invite",
-      "gotIt": "Got it",
-      "menu": "Member actions"
+      "gotIt": "Got it"
     },
     "banner": {
       "ownerInfo": "People you invite need an existing account. They will get immediate access — no email confirmation required in this version.",

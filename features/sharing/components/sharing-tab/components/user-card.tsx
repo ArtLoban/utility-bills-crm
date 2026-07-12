@@ -1,16 +1,10 @@
 "use client";
 
-import { MoreHorizontal } from "lucide-react";
 import { useTranslations } from "next-intl";
 
+import { ActionsMenu } from "@/components/actions-menu";
 import { Avatar } from "@/components/avatar";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { PROPERTY_ROLES, type PropertyId } from "@/lib/db/schema/properties";
 import type { UserId } from "@/lib/db/schema/auth";
 import type { TSharedMember } from "../types";
@@ -67,18 +61,16 @@ export const UserCard = ({
           {canManage && (
             <>
               <RoleSelect value={role} userId={id} propertyId={propertyId} />
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon-sm" aria-label={t("actions.menu")}>
-                    <MoreHorizontal />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem variant="destructive" onSelect={() => onRemove(id)}>
-                    {t("actions.removeAccess")}
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <ActionsMenu
+                items={[
+                  {
+                    kind: "item",
+                    label: t("actions.removeAccess"),
+                    destructive: true,
+                    onSelect: () => onRemove(id),
+                  },
+                ]}
+              />
             </>
           )}
           {isYou && (

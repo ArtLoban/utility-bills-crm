@@ -19,8 +19,7 @@ import { resolveServiceTypeLabelServer } from "@/features/services/service-label
 import { getMeterDetail } from "./_data/queries";
 import { MeterTabsNav } from "./_components/meter-tabs-nav";
 import { METER_TABS } from "./_components/constants";
-import { ReplaceMeterButton } from "./_components/replace-meter-button";
-import { OverflowMenu } from "./_components/overflow-menu";
+import { PageActions } from "./_components/page-actions";
 import { OverviewTab } from "./_components/tabs/overview-tab";
 import { ReadingsTab } from "./_components/tabs/readings-tab";
 import { resolveMeterTab } from "./_utils/resolve-tab";
@@ -112,14 +111,7 @@ export default async function MeterPage({ params, searchParams }: TProps) {
           ]}
         />
       }
-      actions={
-        canMutate && !isHistorical ? (
-          <div className="flex items-center gap-2">
-            <ReplaceMeterButton propertyId={id} meterId={meter.id} />
-            <OverflowMenu propertyId={id} meterId={meter.id} meterTitle={meterTitle} />
-          </div>
-        ) : undefined
-      }
+      actions={<PageActions meter={meter} meterTitle={meterTitle} canMutate={canMutate} />}
     >
       <MeterTabsNav propertyId={id} meterId={meterId} activeTab={activeTab} />
       {renderActiveTab()}

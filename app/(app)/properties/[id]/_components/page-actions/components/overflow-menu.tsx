@@ -10,23 +10,19 @@ import { ActionsMenu } from "@/components/actions-menu";
 import type { TAction } from "@/components/actions-menu/types";
 import { softDeleteProperty } from "@/features/properties";
 import { ROUTES } from "@/lib/routes";
-import { PROPERTY_ROLES } from "@/lib/db/schema/properties";
-import type { PropertyId, TPropertyRole } from "@/lib/db/schema/properties";
+import type { PropertyId } from "@/lib/db/schema/properties";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 
 type TProps = {
   propertyId: PropertyId;
   propertyName: string;
-  role: TPropertyRole;
 };
 
-export const PropertyDeleteAction = ({ propertyId, propertyName, role }: TProps) => {
+export const OverflowMenu = ({ propertyId, propertyName }: TProps) => {
   const t = useTranslations("properties");
   const router = useRouter();
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-
-  if (role !== PROPERTY_ROLES.OWNER) return null;
 
   const handleDelete = async () => {
     setIsDeleting(true);

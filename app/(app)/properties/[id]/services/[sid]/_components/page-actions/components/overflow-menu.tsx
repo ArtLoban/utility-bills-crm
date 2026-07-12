@@ -20,7 +20,7 @@ type TProps = {
   serviceName: string;
 };
 
-export const DeleteServiceAction = ({ serviceId, propertyId, serviceName }: TProps) => {
+export const OverflowMenu = ({ serviceId, propertyId, serviceName }: TProps) => {
   const router = useRouter();
   const t = useTranslations("services.detail.header");
   const [confirmOpen, setConfirmOpen] = useState(false);
