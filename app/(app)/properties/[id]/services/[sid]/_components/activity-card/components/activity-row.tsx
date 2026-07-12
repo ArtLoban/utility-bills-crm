@@ -4,9 +4,13 @@ import { ChevronRight, Receipt, Wallet } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 
 import { cn } from "@/lib/utils";
-import { formatMonthLabel } from "@/components/month-picker/utils";
 import { useFormatMoney } from "@/lib/format/use-format-money";
-import { formatDisplayDate, isoToYearMonth, toIsoDate } from "@/lib/format/date";
+import {
+  formatDisplayDate,
+  formatMonthYearLong,
+  isoToYearMonth,
+  toIsoDate,
+} from "@/lib/format/date";
 import type { TServiceActivityItem } from "../../../_data/queries";
 
 type TProps = {
@@ -21,7 +25,7 @@ export const ActivityRow = ({ item, isLast }: TProps) => {
 
   const isBill = item.type === "bill";
   const Icon = isBill ? Receipt : Wallet;
-  const monthYear = formatMonthLabel(isoToYearMonth(toIsoDate(item.date)), locale);
+  const monthYear = formatMonthYearLong(isoToYearMonth(toIsoDate(item.date)), locale);
 
   return (
     <div

@@ -1,5 +1,7 @@
 import { format, formatDistanceToNow } from "date-fns";
 
+import { capitalize } from "@/lib/utils/capitalize";
+
 // Shared date-fns format tokens — one source so machine value and display stay consistent.
 export const ISO_DATE_FORMAT = "yyyy-MM-dd"; // machine value: URLs, DB, form state
 export const ISO_MONTH_FORMAT = "yyyy-MM"; // machine value: YYYY-MM year-month (period filter, MonthPicker)
@@ -39,3 +41,36 @@ export const formatDateShort = (sortTs: number): string => {
 
   return format(date, "MMM d, yyyy");
 };
+
+// --- Month formatting ---
+// Canonical, locale-aware month/month-year formatting. Input is a "YYYY-MM" string so
+// the result is timezone-independent (no Date instant to reinterpret). The month name is
+// capitalized — ru/uk `Intl` yields lowercase — and the year is composed manually to drop
+// the locale era suffix ("июнь 2026 г." → "Июнь 2026"). Single source for every surface.
+const monthName = (yearMonth: string, locale: string, style: "long" | "short"): string => {
+  const [yearStr, monthStr] = yearMonth.split("-");
+
+  return capitalize(
+    new Intl.DateTimeFormat(locale, { month: style, timeZone: "UTC" }).format(
+      Date.UTC(Number(yearStr), Number(monthStr) - 1, 1),
+    ),
+  );
+};
+
+// "YYYY-MM" → "YYYY" (the year segment before the "-"). Avoids a magic slice length.
+const yearOf = (yearMonth: string): string => yearMonth.split("-")[0]!;
+
+const monthYear = (yearMonth: string, locale: string, style: "long" | "short"): string =>
+  `${monthName(yearMonth, locale, style)} ${yearOf(yearMonth)}`;
+
+export const formatMonthLong = (yearMonth: string, locale: string): string =>
+  monthName(yearMonth, locale, "long");
+
+export const formatMonthShort = (yearMonth: string, locale: string): string =>
+  monthName(yearMonth, locale, "short");
+
+export const formatMonthYearLong = (yearMonth: string, locale: string): string =>
+  monthYear(yearMonth, locale, "long");
+
+export const formatMonthYearShort = (yearMonth: string, locale: string): string =>
+  monthYear(yearMonth, locale, "short");

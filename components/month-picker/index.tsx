@@ -6,14 +6,9 @@ import { useLocale, useTranslations } from "next-intl";
 import { CalendarDays, ChevronLeft, ChevronRight } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { formatMonthYearLong } from "@/lib/format/date";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import {
-  currentYearMonth,
-  formatMonthLabel,
-  getMonthShortLabels,
-  parseYearMonth,
-  toYearMonth,
-} from "./utils";
+import { currentYearMonth, getMonthShortLabels, parseYearMonth, toYearMonth } from "./utils";
 
 type TProps = {
   value: string | null;
@@ -83,7 +78,7 @@ export const MonthPicker = React.forwardRef<HTMLButtonElement, TProps>(
             {...triggerProps}
           >
             <span className={cn("truncate", !value && "text-muted-foreground")}>
-              {value ? formatMonthLabel(value, locale) : placeholder}
+              {value ? formatMonthYearLong(value, locale) : placeholder}
             </span>
             <CalendarDays className="text-muted-foreground pointer-events-none size-4 shrink-0" />
           </button>

@@ -1,8 +1,8 @@
 "use client";
 
 import { format } from "date-fns";
-import { useFormatter } from "next-intl";
-import { DISPLAY_DATE_FORMAT } from "@/lib/format/date";
+import { useLocale } from "next-intl";
+import { DISPLAY_DATE_FORMAT, formatMonthYearLong, isoToYearMonth } from "@/lib/format/date";
 import { useFormatMoney } from "@/lib/format/use-format-money";
 import type { TBillGlobalRow } from "@/lib/db/access/bills";
 import { IconBadge } from "@/components/icon-badge";
@@ -16,16 +16,13 @@ type TProps = {
 
 export const BillCard = ({ row }: TProps) => {
   const { serviceTypeCode, serviceName, bill, property } = row;
-  const formatter = useFormatter();
+  const locale = useLocale();
   const formatMoney = useFormatMoney();
   const { color, Icon, label: typeLabel } = useServiceTypeMeta(serviceTypeCode);
   const serviceLabel = serviceName ?? typeLabel;
 
   const dateStr = format(new Date(bill.createdAt), DISPLAY_DATE_FORMAT);
-  const periodLabel = formatter.dateTime(new Date(bill.periodMonth), {
-    year: "numeric",
-    month: "long",
-  });
+  const periodLabel = formatMonthYearLong(isoToYearMonth(bill.periodMonth), locale);
   const amountStr = `−${formatMoney(bill.amount)}`;
 
   return (

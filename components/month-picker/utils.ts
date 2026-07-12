@@ -1,5 +1,3 @@
-import { capitalize } from "@/lib/utils/capitalize";
-
 const MONTHS_IN_YEAR = 12;
 const LABEL_REFERENCE_YEAR = 2000;
 
@@ -21,18 +19,6 @@ export const toYearMonth = (year: number, month: number): string =>
 export const currentYearMonth = (): string => {
   const now = new Date();
   return toYearMonth(now.getUTCFullYear(), now.getUTCMonth() + 1);
-};
-
-export const formatMonthLabel = (value: string, locale: string): string => {
-  const { year, month } = parseYearMonth(value);
-
-  return capitalize(
-    new Intl.DateTimeFormat(locale, {
-      month: "long",
-      year: "numeric",
-      timeZone: "UTC",
-    }).format(Date.UTC(year, month - 1, 1)),
-  );
 };
 
 export const getMonthShortLabels = (locale: string): string[] => {

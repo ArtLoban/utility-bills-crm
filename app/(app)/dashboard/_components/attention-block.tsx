@@ -1,9 +1,11 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
+import { format } from "date-fns";
 import { AlertTriangle, ChevronRight } from "lucide-react";
-import { getTranslations, getFormatter, getLocale } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
 
 import { formatMoney } from "@/lib/format/money";
+import { ISO_MONTH_FORMAT, formatMonthYearLong } from "@/lib/format/date";
 import { ROUTES } from "@/lib/routes";
 import type { TAttentionData } from "../_data/types";
 import { Surface } from "@/components/surface";
@@ -23,9 +25,8 @@ export const AttentionBlock = async ({ data }: TProps) => {
   const { totalDebt, debtServicesCount, missingReadingsCount, currentMonth } = data;
 
   const t = await getTranslations("dashboard.attention");
-  const format = await getFormatter();
   const locale = await getLocale();
-  const monthLabel = format.dateTime(currentMonth, { year: "numeric", month: "long" });
+  const monthLabel = formatMonthYearLong(format(currentMonth, ISO_MONTH_FORMAT), locale);
 
   const items: TAttentionItem[] = [];
 

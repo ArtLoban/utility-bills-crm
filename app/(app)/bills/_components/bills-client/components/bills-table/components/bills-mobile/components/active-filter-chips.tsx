@@ -5,8 +5,7 @@ import { Calendar, CalendarDays } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 
 import { FilterChip } from "@/components/filter-chip";
-import { formatMonthLabel } from "@/components/month-picker/utils";
-import { DISPLAY_DATE_FORMAT } from "@/lib/format/date";
+import { DISPLAY_DATE_FORMAT, formatMonthYearLong } from "@/lib/format/date";
 import { DATE_PARAMS } from "@/lib/types/common";
 import { useServiceTypeMetaFactory } from "@/features/services/hooks/use-service-type";
 import type { TServiceTypeCode } from "@/features/services/service-type";
@@ -41,7 +40,7 @@ export const ActiveFilterChips = ({ queryFilters }: TProps) => {
 
   const service = services ? getServiceTypeMeta(services as TServiceTypeCode) : undefined;
 
-  const periodLabel = periodFrom ? formatMonthLabel(periodFrom, locale) : null;
+  const periodLabel = periodFrom ? formatMonthYearLong(periodFrom, locale) : null;
 
   const dateRangeLabel =
     dateFrom && dateTo
