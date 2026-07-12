@@ -1,16 +1,17 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 
 import { ChartContainer, ChartLegend, ChartTooltip, type ChartConfig } from "@/components/ui/chart";
+import { formatMonthShort, formatMonthYearLong, isoToYearMonth } from "@/lib/format/date";
 import type { TMonthlyConsumptionAggregate } from "@/features/meters";
 import { SERVICE_TYPE_COLORS, type TServiceTypeCode } from "@/features/services/service-type";
 import { ZONE_COLOR_VARS, ZONE_SHORT_TAGS } from "@/lib/constants/zones";
 
 import { ChartTooltipCard } from "./components/chart-tooltip-card";
 import { LineChartLegend } from "@/components/line-chart-legend";
-import { formatMonthFull, formatMonthLabel, sumTooltipValues, toTooltipRows } from "./utils";
+import { sumTooltipValues, toTooltipRows } from "./utils";
 
 type TProps = {
   aggregate: TMonthlyConsumptionAggregate;
@@ -18,6 +19,7 @@ type TProps = {
 
 export const ConsumptionChart = ({ aggregate }: TProps) => {
   const t = useTranslations("dashboard.charts");
+  const locale = useLocale();
   const isMultiZone = aggregate.zones.length > 1;
   const serviceColor =
     SERVICE_TYPE_COLORS[aggregate.serviceTypeCode as TServiceTypeCode] ?? "var(--muted-foreground)";
@@ -58,7 +60,7 @@ export const ConsumptionChart = ({ aggregate }: TProps) => {
               tickLine={false}
               axisLine={false}
               tick={{ fontSize: 11.5, fill: "var(--color-muted-foreground)" }}
-              tickFormatter={formatMonthLabel}
+              tickFormatter={(value) => formatMonthShort(isoToYearMonth(String(value)), locale)}
               interval="preserveStartEnd"
             />
             <YAxis
@@ -74,7 +76,7 @@ export const ConsumptionChart = ({ aggregate }: TProps) => {
               content={({ active, payload, label }) =>
                 active && payload?.length ? (
                   <ChartTooltipCard
-                    header={formatMonthFull(String(label))}
+                    header={formatMonthYearLong(isoToYearMonth(String(label)), locale)}
                     rows={toTooltipRows(
                       payload,
                       (key) => String(chartConfig[key]?.label ?? key),

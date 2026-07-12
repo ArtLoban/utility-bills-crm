@@ -3,29 +3,6 @@ import { ROUTES } from "@/lib/routes";
 import type { TTooltipRow } from "./components/chart-tooltip-card";
 import type { TSeriesDrill } from "./series";
 
-// Format "2025-06-01" → "Jun" for X-axis tick labels.
-export const formatMonthLabel = (isoDate: string): string =>
-  new Date(isoDate + "T00:00:00Z").toLocaleDateString("en-US", {
-    month: "short",
-    timeZone: "UTC",
-  });
-
-// Format "2025-06-01" → "June 2025" for tooltip headers (full month name + year).
-export const formatMonthFull = (isoDate: string): string =>
-  new Date(isoDate + "T00:00:00Z").toLocaleDateString("en-US", {
-    month: "long",
-    year: "numeric",
-    timeZone: "UTC",
-  });
-
-// Format "2025-06-01" → "Jun 2025" for tooltips.
-export const formatMonthLong = (isoDate: string): string =>
-  new Date(isoDate + "T00:00:00Z").toLocaleDateString("en-US", {
-    month: "short",
-    year: "numeric",
-    timeZone: "UTC",
-  });
-
 // Build a bills list URL pre-filtered by a series' drill target and period range.
 // Used for drill-down from pie segments and bar stacks (Decision #148). A regular type
 // filters by its type code; a custom `other` series filters by its specific service id.

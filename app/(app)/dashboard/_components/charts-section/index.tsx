@@ -1,8 +1,10 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { parseAsString, parseAsStringLiteral, useQueryStates } from "nuqs";
+
+import { formatMonthYearShort, isoToYearMonth } from "@/lib/format/date";
 
 import {
   Select,
@@ -24,7 +26,6 @@ import { ExpensePieChart } from "./expense-pie-chart";
 import { LineChartCard } from "./line-chart-card";
 import { MonthlyBarChart } from "./monthly-bar-chart";
 import { TrendLineChart } from "./trend-line-chart";
-import { formatMonthLong } from "./utils";
 
 type TPropertyOption = {
   id: string;
@@ -73,6 +74,7 @@ export const ChartsSection = ({
 
   const t = useTranslations("dashboard.charts");
   const tServiceTypes = useTranslations("services.types");
+  const locale = useLocale();
 
   const isConsumptionMode = chartState.chartMode === "consumption";
   const hasConsumptionData = availableConsumptionServices.length > 0;
@@ -80,7 +82,7 @@ export const ChartsSection = ({
   const getServiceLabel = (code: string): string =>
     resolveServiceTypeLabel(code as TServiceTypeCode, tServiceTypes);
 
-  const periodLabel = `${formatMonthLong(resolvedDateFrom)} – ${formatMonthLong(resolvedDateTo)}`;
+  const periodLabel = `${formatMonthYearShort(isoToYearMonth(resolvedDateFrom), locale)} – ${formatMonthYearShort(isoToYearMonth(resolvedDateTo), locale)}`;
 
   // Chart series: regular types stay merged by concept, custom `other` split per service.
   const series = buildChartSeries(aggregate, tServiceTypes);

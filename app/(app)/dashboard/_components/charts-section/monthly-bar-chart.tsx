@@ -2,26 +2,19 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
 import { ChartContainer, ChartTooltip, type ChartConfig } from "@/components/ui/chart";
 import { useFormatMoney } from "@/lib/format/use-format-money";
-import { isoToYearMonth } from "@/lib/format/date";
+import { formatMonthShort, formatMonthYearLong, isoToYearMonth } from "@/lib/format/date";
 import type { TMonthlyExpensesAggregate } from "@/features/ledger";
 
 import { toBarData } from "../../_data/chart-transforms";
 import { BarChartLegend } from "./components/bar-chart-legend";
 import { ChartTooltipCard } from "./components/chart-tooltip-card";
 import type { TChartSeries } from "./series";
-import {
-  buildBillsDrillUrl,
-  formatMonthFull,
-  formatMonthLabel,
-  formatUahTick,
-  sumTooltipValues,
-  toTooltipRows,
-} from "./utils";
+import { buildBillsDrillUrl, formatUahTick, sumTooltipValues, toTooltipRows } from "./utils";
 import { Surface } from "@/components/surface";
 
 type TProps = {
@@ -34,6 +27,7 @@ type TProps = {
 export const MonthlyBarChart = ({ aggregate, series, title, subtitle }: TProps) => {
   const router = useRouter();
   const t = useTranslations("dashboard.charts");
+  const locale = useLocale();
   const formatMoney = useFormatMoney();
   const [hiddenSeries, setHiddenSeries] = useState<Set<string>>(new Set());
 
@@ -73,7 +67,7 @@ export const MonthlyBarChart = ({ aggregate, series, title, subtitle }: TProps) 
             tickLine={false}
             axisLine={false}
             tick={{ fontSize: 11.5, fill: "var(--color-muted-foreground)" }}
-            tickFormatter={formatMonthLabel}
+            tickFormatter={(value) => formatMonthShort(isoToYearMonth(String(value)), locale)}
             interval="preserveStartEnd"
           />
           <YAxis
@@ -89,7 +83,7 @@ export const MonthlyBarChart = ({ aggregate, series, title, subtitle }: TProps) 
             content={({ active, payload, label }) =>
               active && payload?.length ? (
                 <ChartTooltipCard
-                  header={formatMonthFull(String(label))}
+                  header={formatMonthYearLong(isoToYearMonth(String(label)), locale)}
                   rows={toTooltipRows(payload, labelOf, formatMoney)}
                   total={{
                     label: t("tooltip.total"),

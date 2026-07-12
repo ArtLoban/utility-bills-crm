@@ -1,23 +1,18 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 
 import { ChartContainer, ChartTooltip, type ChartConfig } from "@/components/ui/chart";
 import { useFormatMoney } from "@/lib/format/use-format-money";
+import { formatMonthShort, formatMonthYearLong, isoToYearMonth } from "@/lib/format/date";
 import type { TMonthlyExpensesAggregate } from "@/features/ledger";
 
 import { toLineData } from "../../_data/chart-transforms";
 import { ChartTooltipCard } from "./components/chart-tooltip-card";
 import { LineChartLegend } from "@/components/line-chart-legend";
 import type { TChartSeries } from "./series";
-import {
-  formatMonthFull,
-  formatMonthLabel,
-  formatUahTick,
-  sumTooltipValues,
-  toTooltipRows,
-} from "./utils";
+import { formatUahTick, sumTooltipValues, toTooltipRows } from "./utils";
 
 type TProps = {
   aggregate: TMonthlyExpensesAggregate;
@@ -26,6 +21,7 @@ type TProps = {
 
 export const TrendLineChart = ({ aggregate, series }: TProps) => {
   const t = useTranslations("dashboard.charts");
+  const locale = useLocale();
   const formatMoney = useFormatMoney();
   const lineData = toLineData(aggregate);
   const labelOf = (key: string): string => series.find((s) => s.key === key)?.label ?? key;
@@ -48,7 +44,7 @@ export const TrendLineChart = ({ aggregate, series }: TProps) => {
             tickLine={false}
             axisLine={false}
             tick={{ fontSize: 11.5, fill: "var(--color-muted-foreground)" }}
-            tickFormatter={formatMonthLabel}
+            tickFormatter={(value) => formatMonthShort(isoToYearMonth(String(value)), locale)}
             interval="preserveStartEnd"
           />
           <YAxis
@@ -64,7 +60,7 @@ export const TrendLineChart = ({ aggregate, series }: TProps) => {
             content={({ active, payload, label }) =>
               active && payload?.length ? (
                 <ChartTooltipCard
-                  header={formatMonthFull(String(label))}
+                  header={formatMonthYearLong(isoToYearMonth(String(label)), locale)}
                   rows={toTooltipRows(payload, labelOf, formatMoney)}
                   total={{
                     label: t("tooltip.total"),
