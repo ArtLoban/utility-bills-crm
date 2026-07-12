@@ -2,17 +2,12 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { MoreHorizontal, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { ActionsMenu } from "@/components/actions-menu";
+import type { TAction } from "@/components/actions-menu/types";
 import { softDeleteService } from "@/features/services";
 import type { TServiceId } from "@/lib/db/schema/services";
 import { IconBadge } from "@/components/icon-badge";
@@ -47,24 +42,19 @@ export const DeleteServiceAction = ({ serviceId, propertyId, serviceName }: TPro
     }
   };
 
+  const items: TAction[] = [
+    {
+      kind: "item",
+      label: t("delete.menu"),
+      icon: <Trash2 size={14} />,
+      destructive: true,
+      onSelect: () => setConfirmOpen(true),
+    },
+  ];
+
   return (
     <>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="outline" size="icon" aria-label={t("delete.menu")}>
-            <MoreHorizontal className="size-4" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuItem
-            className="text-destructive focus:text-destructive"
-            onSelect={() => setConfirmOpen(true)}
-          >
-            <Trash2 size={14} />
-            {t("delete.menu")}
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <ActionsMenu triggerVariant="outline" items={items} />
       <Modal
         title={t("delete.title")}
         open={confirmOpen}
