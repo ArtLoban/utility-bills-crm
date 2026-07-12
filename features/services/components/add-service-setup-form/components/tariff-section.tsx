@@ -20,6 +20,7 @@ type TProps = {
 
 export const TariffSection = ({ control, selectedType, effectiveZoneCount }: TProps) => {
   const t = useTranslations("services.serviceForm");
+  const tRates = useTranslations("tariffs");
 
   const measurementType = selectedType?.measurementType;
   const supportsZones = selectedType?.supportsZones ?? false;
@@ -44,7 +45,7 @@ export const TariffSection = ({ control, selectedType, effectiveZoneCount }: TPr
           step="0.01"
           min="0"
           placeholder={t("fields.fixedAmount.placeholder")}
-          adornment="UAH"
+          adornment={tRates("perMonth")}
         />
       ) : (
         <div className="flex flex-col gap-2">
