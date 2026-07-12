@@ -64,14 +64,12 @@ export const ReadingForm = ({
       name={zone.field}
       label={
         isSingleZone
-          ? t("fields.value.label", { unit: unitLabel })
-          : t("fields.value.labelZone", {
-              label: tZones((labelKeys[index] ?? "single") as Parameters<typeof tZones>[0]),
-              unit: unitLabel,
-            })
+          ? t("fields.value.label")
+          : tZones((labelKeys[index] ?? "single") as Parameters<typeof tZones>[0])
       }
       placeholder={placeholder}
       unit={unitLabel}
+      zoneIndex={index}
       zoneState={zoneStates[zone.field]}
       lastReadingDate={lastReadingDate}
       compact={!isSingleZone}

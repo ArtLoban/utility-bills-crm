@@ -8,6 +8,7 @@ import { FormTextField } from "@/components/form/form-text-field";
 import { formatReadingDelta, formatReadingNumber } from "@/features/readings/format";
 import type { TReadingFormValues } from "@/features/readings/schema";
 import type { TZoneState } from "@/features/readings/types";
+import { zoneTintStyle } from "@/lib/constants/zones";
 
 type TProps = {
   control: Control<TReadingFormValues>;
@@ -15,6 +16,7 @@ type TProps = {
   label: string;
   placeholder: string;
   unit: string;
+  zoneIndex: number;
   zoneState: TZoneState;
   lastReadingDate: string | null;
   compact: boolean;
@@ -26,6 +28,7 @@ export const ZoneValueField = ({
   label,
   placeholder,
   unit,
+  zoneIndex,
   zoneState,
   lastReadingDate,
   compact,
@@ -40,8 +43,13 @@ export const ZoneValueField = ({
         name={name}
         label={label}
         placeholder={placeholder}
+        type="number"
         inputMode="decimal"
+        step="any"
+        min="0"
+        adornment={unit}
         inputClassName="tabular-nums"
+        inputStyle={zoneTintStyle(zoneIndex)}
         required
       />
 

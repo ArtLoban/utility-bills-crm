@@ -22,8 +22,7 @@
           "label": "Дата показания"
         },
         "value": {
-          "label": "Значение ({unit})",
-          "labelZone": "{label} ({unit})",
+          "label": "Значение",
           "placeholder": "напр. 12650"
         },
         "notes": {

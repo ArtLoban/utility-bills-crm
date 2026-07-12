@@ -22,8 +22,7 @@
           "label": "Reading date"
         },
         "value": {
-          "label": "Value ({unit})",
-          "labelZone": "{label} ({unit})",
+          "label": "Value",
           "placeholder": "e.g. 12650"
         },
         "notes": {

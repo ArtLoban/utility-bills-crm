@@ -1,3 +1,5 @@
+import type { CSSProperties } from "react";
+
 import type { TServiceTypeUnit } from "@/lib/db/schema/service-types";
 import type { TTariff } from "@/lib/db/schema/tariffs";
 
@@ -13,6 +15,16 @@ export const ZONE_COLOR_VARS: readonly [string, string, string] = [
   "var(--zone-t3)",
 ];
 export const FIXED_RATE_COLOR_VAR = "var(--rate-fixed)";
+
+// Zone-tinted input styling (subtle border + fill in the zone's hue). Single source shared by
+// tariff rate inputs and reading value inputs so both surfaces stay visually in sync.
+export const zoneTintStyle = (index: number): CSSProperties => {
+  const color = ZONE_COLOR_VARS[index] ?? ZONE_COLOR_VARS[0];
+  return {
+    borderColor: `color-mix(in srgb, ${color} 50%, transparent)`,
+    background: `color-mix(in srgb, ${color} 5%, transparent)`,
+  };
+};
 
 export const UNIT_LABELS: Record<TServiceTypeUnit, string> = {
   kwh: "kWh",

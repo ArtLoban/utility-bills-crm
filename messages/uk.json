@@ -22,8 +22,7 @@
           "label": "Дата показника"
         },
         "value": {
-          "label": "Значення ({unit})",
-          "labelZone": "{label} ({unit})",
+          "label": "Значення",
           "placeholder": "напр. 12650"
         },
         "notes": {
