@@ -13,10 +13,11 @@ import {
 import { LineChartLegend } from "@/components/line-chart-legend";
 import { SectionCard } from "@/components/section-card";
 import { SectionCardEmpty } from "@/components/section-card-empty";
-import { UNIT_LABELS, ZONE_COLOR_VARS, ZONE_SHORT_TAGS } from "@/lib/constants/zones";
+import { ZONE_COLOR_VARS, ZONE_SHORT_TAGS } from "@/lib/constants/zones";
 import type { TReading } from "@/lib/db/schema/readings";
 import type { TMeter } from "@/lib/db/schema/meters";
 import type { TServiceType } from "@/lib/db/schema/service-types";
+import { createUnitLabeler } from "@/features/readings/format";
 import { getServiceTypeVisuals, TServiceTypeCode } from "@/features/services/service-type";
 
 type TChartPoint = {
@@ -45,9 +46,9 @@ export const ConsumptionChart = ({ readings, meter, serviceType }: TProps) => {
   }
 
   const { color: serviceColor } = getServiceTypeVisuals(serviceType.code as TServiceTypeCode);
-  const unitLabel = serviceType.unit ? UNIT_LABELS[serviceType.unit] : "";
-  const withUnit = (label: string) =>
-    unitLabel ? t("series.withUnit", { label, unit: unitLabel }) : label;
+  const withUnit = createUnitLabeler(serviceType.unit, (label, unit) =>
+    t("series.withUnit", { label, unit }),
+  );
 
   const t1Color = meter.zoneCount === 1 ? serviceColor : ZONE_COLOR_VARS[0];
 

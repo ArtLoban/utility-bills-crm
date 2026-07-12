@@ -3,7 +3,8 @@ import { useTranslations } from "next-intl";
 
 import { DateCell } from "@/components/data-table/cells/date-cell";
 import { TextCell } from "@/components/data-table/cells/text-cell";
-import { UNIT_LABELS, ZONE_SHORT_TAGS } from "@/lib/constants/zones";
+import { ZONE_SHORT_TAGS } from "@/lib/constants/zones";
+import { createUnitLabeler } from "@/features/readings/format";
 import { READINGS_SORT_COLUMNS } from "@/features/readings/types";
 import type { TMeter } from "@/lib/db/schema/meters";
 import type { TReading } from "@/lib/db/schema/readings";
@@ -25,9 +26,9 @@ export const getReadingsColumns = (
   serviceType: TServiceType,
   canMutate: boolean,
 ): ColumnDef<TReading>[] => {
-  const unitLabel = serviceType.unit ? UNIT_LABELS[serviceType.unit] : "";
-  const withUnit = (label: string) =>
-    unitLabel ? t("readings.columns.valueWithUnit", { label, unit: unitLabel }) : label;
+  const withUnit = createUnitLabeler(serviceType.unit, (label, unit) =>
+    t("readings.columns.valueWithUnit", { label, unit }),
+  );
 
   const zoneFields: TZoneColumn[] =
     meter.zoneCount === 1
