@@ -99,7 +99,7 @@ export const ChartsSection = ({
   const lineChartSubtitle =
     isConsumptionMode && effectiveService
       ? `${getServiceLabel(effectiveService.code)}, ${effectiveService.unit.toUpperCase()}`
-      : `${t("service.all")}, UAH`;
+      : `${t("service.all")}, ₴`;
 
   // null fallback covers the RSC transition window: isConsumptionMode flips on the client
   // immediately when the URL updates, but consumptionLineChartSlot stays null until the

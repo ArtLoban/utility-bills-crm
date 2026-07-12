@@ -890,7 +890,7 @@
       },
       "bar": {
         "title": "Monthly expenses",
-        "subtitle": "Stacked by service, UAH"
+        "subtitle": "Stacked by service, ₴"
       },
       "tooltip": {
         "total": "Total"
