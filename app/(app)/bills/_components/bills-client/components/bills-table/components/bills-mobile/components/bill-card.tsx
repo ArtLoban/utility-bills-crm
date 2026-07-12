@@ -49,6 +49,8 @@ export const BillCard = ({ row }: TProps) => {
           <span className="text-muted-foreground">{dateStr}</span>
           <span className="text-muted-foreground font-medium whitespace-nowrap">{periodLabel}</span>
         </div>
+
+        {bill.notes && <div className="text-muted-foreground mt-1 truncate">{bill.notes}</div>}
       </div>
 
       <BillRowActions bill={row} />

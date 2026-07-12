@@ -745,7 +745,7 @@
         "recordPayment": "Record payment"
       },
       "filters": {
-        "label": "Filter",
+        "label": "Filters",
         "property": "Property",
         "service": "Service",
         "period": "Period",

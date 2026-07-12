@@ -593,7 +593,7 @@
         "addPayment": "Добавить платёж"
       },
       "filters": {
-        "label": "Фильтр",
+        "label": "Фильтры",
         "property": "Объект",
         "service": "Услуга",
         "period": "Период",

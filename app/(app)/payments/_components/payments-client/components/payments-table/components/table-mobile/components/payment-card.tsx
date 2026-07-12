@@ -42,6 +42,8 @@ export const PaymentCard = ({ payment }: TProps) => {
         <div className="mt-1">
           <span className="text-muted-foreground">{dateStr}</span>
         </div>
+
+        {row.notes && <div className="text-muted-foreground mt-1 truncate">{row.notes}</div>}
       </div>
 
       <PaymentRowActions payment={payment} />

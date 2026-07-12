@@ -74,7 +74,7 @@ export const BillsTableMobile = ({ billsList, listParams, queryFilters }: TProps
           </div>
 
           <MobilePager pagination={pagination} listParams={listParams} />
-          <MobileTotals amount={totals.amount} />
+          <MobileTotals amount={totals.amount} label={t("footer.totalBilled")} />
         </>
       )}
     </div>

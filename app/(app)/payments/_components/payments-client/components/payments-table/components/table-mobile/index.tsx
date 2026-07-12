@@ -74,7 +74,11 @@ export const PaymentsTableMobile = ({ paymentsList, listParams, queryFilters }: 
           </div>
 
           <MobilePager pagination={pagination} listParams={listParams} />
-          <MobileTotals amount={totals.amount} tone={MOBILE_TOTALS_TONE.POSITIVE} />
+          <MobileTotals
+            amount={totals.amount}
+            label={t("footer.totalPaid")}
+            tone={MOBILE_TOTALS_TONE.POSITIVE}
+          />
         </>
       )}
     </div>
