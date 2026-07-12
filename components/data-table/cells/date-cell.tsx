@@ -6,7 +6,7 @@ import { DISPLAY_DATE_FORMAT } from "@/lib/format/date";
 import { format } from "date-fns";
 
 type TProps = {
-  value?: Date | string;
+  value?: Date | string | null;
   format?: "default" | "month";
   className?: string;
 };

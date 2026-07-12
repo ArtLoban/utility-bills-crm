@@ -3,12 +3,11 @@ import { useTranslations } from "next-intl";
 
 import { DateCell } from "@/components/data-table/cells/date-cell";
 import { ServiceCell } from "@/components/data-table/cells/service-cell";
-import { PropertyCell } from "@/components/data-table/cells/property-cell";
-import { Badge } from "@/components/ui/badge";
 import type { TMeterGlobalRow } from "@/lib/db/access/meters";
 import { METERS_SORT_COLUMNS } from "@/features/meters/types";
 
 import { LastReadingCell } from "../../last-reading-cell";
+import { MeterPropertyCell } from "../../meter-property-cell";
 import { MeterRowActions } from "../../meter-row-actions";
 
 type TTranslateFn = ReturnType<typeof useTranslations<"meters.list">>;
@@ -22,12 +21,7 @@ export const getMetersColumns = (
     accessorFn: (row) => row.property.name,
     header: t("columns.property"),
     cell: ({ row }) => (
-      <span className="inline-flex items-center gap-2">
-        <PropertyCell property={row.original.property} />
-        {showHistoricalBadge && row.original.meter.validTo !== null && (
-          <Badge>{t("badge.historical")}</Badge>
-        )}
-      </span>
+      <MeterPropertyCell row={row.original} showHistoricalBadge={showHistoricalBadge} />
     ),
     enableSorting: true,
   },
@@ -42,32 +36,19 @@ export const getMetersColumns = (
     id: "serial",
     accessorFn: (row) => row.meter.serialNumber,
     header: t("columns.serial"),
-    cell: ({ row }) => (
-      <span className="text-muted-foreground font-mono text-sm">
-        {row.original.meter.serialNumber ?? "—"}
-      </span>
-    ),
+    cell: ({ row }) => row.original.meter.serialNumber,
   },
   {
     id: "zones",
     accessorFn: (row) => row.meter.zoneCount,
     header: t("columns.zones"),
-    cell: ({ row }) => (
-      <span className="text-muted-foreground text-sm">
-        {t("zones.count", { count: row.original.meter.zoneCount })}
-      </span>
-    ),
+    cell: ({ row }) => t("zones.count", { count: row.original.meter.zoneCount }),
   },
   {
     id: METERS_SORT_COLUMNS.INSTALLED,
     accessorFn: (row) => row.meter.installedAt,
     header: t("columns.installed"),
-    cell: ({ row }) =>
-      row.original.meter.installedAt ? (
-        <DateCell value={row.original.meter.installedAt} />
-      ) : (
-        <span className="text-muted-foreground">—</span>
-      ),
+    cell: ({ row }) => <DateCell value={row.original.meter.installedAt} />,
     enableSorting: true,
   },
   {
