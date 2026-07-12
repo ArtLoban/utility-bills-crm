@@ -3,8 +3,8 @@
 import { Eye } from "lucide-react";
 import { useTranslations } from "next-intl";
 
-import type { TRowAction } from "@/components/data-table/components/row-actions/types";
-import { RowActions } from "@/components/data-table/components/row-actions";
+import type { TAction } from "@/components/actions-menu/types";
+import { ActionsMenu } from "@/components/actions-menu";
 import type { TMeterGlobalRow } from "@/lib/db/access/meters";
 import { ROUTES } from "@/lib/routes";
 
@@ -15,7 +15,7 @@ type TProps = {
 export const MeterRowActions = ({ row }: TProps) => {
   const t = useTranslations("meters.list");
 
-  const items: TRowAction[] = [
+  const items: TAction[] = [
     {
       kind: "link",
       label: t("actions.viewDetails"),
@@ -24,5 +24,5 @@ export const MeterRowActions = ({ row }: TProps) => {
     },
   ];
 
-  return <RowActions items={items} />;
+  return <ActionsMenu items={items} />;
 };

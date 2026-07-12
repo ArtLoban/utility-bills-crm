@@ -1,7 +1,7 @@
 "use client";
 
-import { RowActions } from "@/components/data-table/components/row-actions";
-import type { TRowAction } from "@/components/data-table/components/row-actions/types";
+import { ActionsMenu } from "@/components/actions-menu";
+import type { TAction } from "@/components/actions-menu/types";
 import type { TAdminPropertyRow } from "@/features/admin-properties/types";
 import { ROUTES } from "@/lib/routes";
 
@@ -14,7 +14,7 @@ export const PropertyRowActions = ({ row }: TProps) => {
   const isDeleted = row.deletedAt !== null;
   const detailHref = `${ROUTES.admin.properties}/${row.id}`;
 
-  const items: TRowAction[] = isDeleted
+  const items: TAction[] = isDeleted
     ? [
         { kind: "link", label: "View details", href: detailHref },
         { kind: "separator" },
@@ -31,5 +31,5 @@ export const PropertyRowActions = ({ row }: TProps) => {
         { kind: "link", label: "Go to property", href: `${ROUTES.properties}/${row.id}` },
       ];
 
-  return <RowActions items={items} />;
+  return <ActionsMenu items={items} />;
 };

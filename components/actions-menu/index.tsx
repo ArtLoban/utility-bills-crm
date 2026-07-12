@@ -1,7 +1,10 @@
 "use client";
 
+import Link from "next/link";
 import { MoreHorizontal } from "lucide-react";
+import { useTranslations } from "next-intl";
 
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,25 +12,28 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useTranslations } from "next-intl";
-import { TRowAction } from "./types";
-import Link from "next/link";
+import { TAction } from "./types";
 
 type TProps = {
-  items: TRowAction[];
+  items: TAction[];
+  triggerVariant?: "ghost" | "outline";
   triggerLabel?: string;
 };
 
-export const RowActions = ({ items, triggerLabel }: TProps) => {
-  const t = useTranslations("dataTable.rowActions");
+export const ActionsMenu = ({ items, triggerVariant = "ghost", triggerLabel }: TProps) => {
+  const t = useTranslations("common.actionsMenu");
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger
-        className="hover:bg-accent data-[state=open]:bg-accent inline-flex h-8 w-8 items-center justify-center rounded-md"
-        aria-label={triggerLabel ? triggerLabel : t("ariaLabel")}
-      >
-        <MoreHorizontal size={16} />
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant={triggerVariant}
+          size="icon"
+          className="data-[state=open]:bg-accent"
+          aria-label={triggerLabel ? triggerLabel : t("ariaLabel")}
+        >
+          <MoreHorizontal size={16} />
+        </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         {items.map((item, idx) => {

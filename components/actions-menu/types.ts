@@ -1,24 +1,24 @@
 import type { ReactNode } from "react";
 
-type TBaseRowAction = {
+type TBaseAction = {
   label: string;
   icon?: ReactNode;
   destructive?: boolean;
   disabled?: boolean;
 };
 
-type TItemRowAction = TBaseRowAction & {
+type TItemAction = TBaseAction & {
   kind?: "item";
   onSelect: () => void;
 };
 
-type TLinkRowAction = TBaseRowAction & {
+type TLinkAction = TBaseAction & {
   kind: "link";
   href: string;
 };
 
-type TSeparatorRowAction = {
+type TSeparatorAction = {
   kind: "separator";
 };
 
-export type TRowAction = TItemRowAction | TLinkRowAction | TSeparatorRowAction;
+export type TAction = TItemAction | TLinkAction | TSeparatorAction;

@@ -1,7 +1,7 @@
 import { Eye } from "lucide-react";
 
-import { RowActions } from "@/components/data-table/components/row-actions";
-import type { TRowAction } from "@/components/data-table/components/row-actions/types";
+import { ActionsMenu } from "@/components/actions-menu";
+import type { TAction } from "@/components/actions-menu/types";
 import { ROUTES } from "@/lib/routes";
 
 type TProps = {
@@ -9,7 +9,7 @@ type TProps = {
 };
 
 export const UserRowActions = ({ userId }: TProps) => {
-  const items: TRowAction[] = [
+  const items: TAction[] = [
     {
       kind: "link",
       label: "View details",
@@ -18,5 +18,5 @@ export const UserRowActions = ({ userId }: TProps) => {
     },
   ];
 
-  return <RowActions items={items} />;
+  return <ActionsMenu items={items} />;
 };

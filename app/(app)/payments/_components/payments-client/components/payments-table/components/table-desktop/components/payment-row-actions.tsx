@@ -3,8 +3,8 @@
 import { useTranslations } from "next-intl";
 import { Pencil, Trash2 } from "lucide-react";
 
-import type { TRowAction } from "@/components/data-table/components/row-actions/types";
-import { RowActions } from "@/components/data-table/components/row-actions";
+import type { TAction } from "@/components/actions-menu/types";
+import { ActionsMenu } from "@/components/actions-menu";
 import type { TPaymentGlobalRow } from "@/features/payments/types";
 import { usePaymentsTable } from "../../../../../context";
 
@@ -16,7 +16,7 @@ export const PaymentRowActions = ({ payment }: TProps) => {
   const t = useTranslations("dataTable.rowActions");
   const { requestDelete } = usePaymentsTable();
 
-  const items: TRowAction[] = [
+  const items: TAction[] = [
     {
       kind: "link",
       label: t("edit"),
@@ -32,5 +32,5 @@ export const PaymentRowActions = ({ payment }: TProps) => {
     },
   ];
 
-  return <RowActions items={items} />;
+  return <ActionsMenu items={items} />;
 };

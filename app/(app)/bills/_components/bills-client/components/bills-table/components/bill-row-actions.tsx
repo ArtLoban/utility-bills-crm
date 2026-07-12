@@ -3,8 +3,8 @@
 import { useRouter } from "next/navigation";
 import { Pencil, Trash2 } from "lucide-react";
 
-import type { TRowAction } from "@/components/data-table/components/row-actions/types";
-import { RowActions } from "@/components/data-table/components/row-actions";
+import type { TAction } from "@/components/actions-menu/types";
+import { ActionsMenu } from "@/components/actions-menu";
 import type { TBillGlobalRow } from "@/lib/db/access/bills";
 import { useBillsTable } from "@/app/(app)/bills/_components/bills-client/context";
 
@@ -16,7 +16,7 @@ export const BillRowActions = ({ bill }: TProps) => {
   const router = useRouter();
   const { requestDelete } = useBillsTable();
 
-  const items: TRowAction[] = [
+  const items: TAction[] = [
     {
       kind: "item",
       label: "Edit",
@@ -33,5 +33,5 @@ export const BillRowActions = ({ bill }: TProps) => {
     },
   ];
 
-  return <RowActions items={items} />;
+  return <ActionsMenu items={items} />;
 };
