@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { parseAsString, parseAsStringLiteral, useQueryStates } from "nuqs";
 
-import { formatMonthYearShort, isoToYearMonth } from "@/lib/format/date";
+import { formatMonthYearLong, isoToYearMonth } from "@/lib/format/date";
 
 import {
   Select,
@@ -82,7 +82,7 @@ export const ChartsSection = ({
   const getServiceLabel = (code: string): string =>
     resolveServiceTypeLabel(code as TServiceTypeCode, tServiceTypes);
 
-  const periodLabel = `${formatMonthYearShort(isoToYearMonth(resolvedDateFrom), locale)} – ${formatMonthYearShort(isoToYearMonth(resolvedDateTo), locale)}`;
+  const periodLabel = `${formatMonthYearLong(isoToYearMonth(resolvedDateFrom), locale)} – ${formatMonthYearLong(isoToYearMonth(resolvedDateTo), locale)}`;
 
   // Chart series: regular types stay merged by concept, custom `other` split per service.
   const series = buildChartSeries(aggregate, tServiceTypes);

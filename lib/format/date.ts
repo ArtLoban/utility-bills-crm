@@ -60,14 +60,8 @@ const monthName = (yearMonth: string, locale: string, style: "long" | "short"): 
 // "YYYY-MM" → "YYYY" (the year segment before the "-"). Avoids a magic slice length.
 const yearOf = (yearMonth: string): string => yearMonth.split("-")[0]!;
 
-const monthYear = (yearMonth: string, locale: string, style: "long" | "short"): string =>
-  `${monthName(yearMonth, locale, style)} ${yearOf(yearMonth)}`;
-
 export const formatMonthShort = (yearMonth: string, locale: string): string =>
   monthName(yearMonth, locale, "short");
 
 export const formatMonthYearLong = (yearMonth: string, locale: string): string =>
-  monthYear(yearMonth, locale, "long");
-
-export const formatMonthYearShort = (yearMonth: string, locale: string): string =>
-  monthYear(yearMonth, locale, "short");
+  `${monthName(yearMonth, locale, "long")} ${yearOf(yearMonth)}`;
