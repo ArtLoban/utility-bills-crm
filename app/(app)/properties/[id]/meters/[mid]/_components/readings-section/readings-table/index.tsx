@@ -9,6 +9,7 @@ import type { TMeter } from "@/lib/db/schema/meters";
 import type { TServiceType } from "@/lib/db/schema/service-types";
 
 import { INITIAL_FILTERS, URL_FIELDS } from "./constants";
+import { ReadingsTableActions } from "./components/readings-table-actions";
 import { ReadingsDesktop } from "./components/readings-desktop";
 import { ReadingsMobile } from "./components/readings-mobile";
 
@@ -27,7 +28,7 @@ export const ReadingsTable = ({ readingsList, meter, serviceType, canMutate }: T
   const queryFilters = useQueryFilters(URL_FIELDS, INITIAL_FILTERS);
 
   return (
-    <div>
+    <ReadingsTableActions>
       <div className="hidden md:block">
         <ReadingsDesktop
           readingsList={readingsList}
@@ -48,6 +49,6 @@ export const ReadingsTable = ({ readingsList, meter, serviceType, canMutate }: T
           canMutate={canMutate}
         />
       </div>
-    </div>
+    </ReadingsTableActions>
   );
 };

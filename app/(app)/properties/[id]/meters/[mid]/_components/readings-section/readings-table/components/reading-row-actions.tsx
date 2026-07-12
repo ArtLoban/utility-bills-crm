@@ -1,13 +1,15 @@
 "use client";
 
-import Link from "next/link";
-import { Pencil } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 
-import { Button } from "@/components/ui/button";
+import { ActionsMenu } from "@/components/actions-menu";
+import type { TAction } from "@/components/actions-menu/types";
 import { ROUTES } from "@/lib/routes";
 import type { TReading } from "@/lib/db/schema/readings";
 import type { TMeter } from "@/lib/db/schema/meters";
+
+import { useReadingsTable } from "../context";
 
 type TProps = {
   reading: TReading;
@@ -17,16 +19,26 @@ type TProps = {
 
 export const ReadingRowActions = ({ reading, meter, canMutate }: TProps) => {
   const t = useTranslations("meters.detail.readings");
+  const { requestDelete } = useReadingsTable();
 
   if (!canMutate) return null;
 
-  return (
-    <Button variant="ghost" size="icon" className="size-7" asChild aria-label={t("edit")}>
-      <Link
-        href={`${ROUTES.properties}/${meter.propertyId}/meters/${meter.id}/reading/${reading.id}/edit`}
-      >
-        <Pencil className="size-3.5" strokeWidth={1.75} />
-      </Link>
-    </Button>
-  );
+  const items: TAction[] = [
+    {
+      kind: "link",
+      label: t("edit"),
+      icon: <Pencil size={14} />,
+      href: `${ROUTES.properties}/${meter.propertyId}/meters/${meter.id}/reading/${reading.id}/edit`,
+    },
+    { kind: "separator" },
+    {
+      kind: "item",
+      label: t("delete.menuItem"),
+      icon: <Trash2 size={14} />,
+      destructive: true,
+      onSelect: () => requestDelete(reading),
+    },
+  ];
+
+  return <ActionsMenu items={items} />;
 };

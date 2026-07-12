@@ -177,6 +177,7 @@
     "actionsMenu": {
       "ariaLabel": "Open actions menu"
     },
+    "cancel": "Cancel",
     "demoBanner": {
       "message": "Demo mode",
       "cta": "Sign in with Google for full access"
@@ -293,6 +294,14 @@
         "submitFirst": "Submit first reading",
         "empty": "No readings yet.",
         "edit": "Edit reading",
+        "delete": {
+          "menuItem": "Delete reading",
+          "title": "Delete reading",
+          "question": "Delete the reading from <b>{date}</b>?",
+          "warning": "This action cannot be undone.",
+          "confirm": "Delete",
+          "success": "Reading deleted."
+        },
         "columns": {
           "date": "Date",
           "notes": "Notes"
