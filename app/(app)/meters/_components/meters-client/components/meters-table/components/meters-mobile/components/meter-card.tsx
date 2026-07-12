@@ -26,17 +26,14 @@ export const MeterCard = ({ row, showHistoricalBadge }: TProps) => {
       <div className="min-w-0 flex-1 text-sm">
         <div className="flex items-center gap-2">
           <IconBadge icon={Icon} color={color} size="sm" />
-          <span className="min-w-0 flex-1 truncate font-semibold tracking-tight">
-            {row.property.name}
-          </span>
+          <span className="min-w-0 flex-1 truncate font-semibold tracking-tight">{label}</span>
           {showHistoricalBadge && isHistorical && <Badge>{t("badge.historical")}</Badge>}
+          <span className="text-muted-foreground shrink-0 text-xs">
+            {t("zones.count", { count: row.meter.zoneCount })}
+          </span>
         </div>
 
-        <div className="text-muted-foreground mt-1.5 truncate">
-          {label}
-          <span className="px-1">·</span>
-          {t("zones.count", { count: row.meter.zoneCount })}
-        </div>
+        <div className="mt-1.5 truncate">{row.property.name}</div>
 
         <div className="text-muted-foreground mt-1 flex items-center justify-between gap-8 text-xs">
           <span className="shrink-0">{t("columns.serial")}</span>

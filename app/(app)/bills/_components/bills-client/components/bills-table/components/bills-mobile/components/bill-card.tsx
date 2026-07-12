@@ -42,7 +42,7 @@ export const BillCard = ({ row }: TProps) => {
         </div>
 
         <div className="mt-1.5">
-          <span className="text-muted-foreground block truncate">{property.name} </span>
+          <span className="block truncate">{property.name}</span>
         </div>
 
         <div className="mt-1 flex items-center justify-between">
