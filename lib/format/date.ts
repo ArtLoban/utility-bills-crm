@@ -63,9 +63,6 @@ const yearOf = (yearMonth: string): string => yearMonth.split("-")[0]!;
 const monthYear = (yearMonth: string, locale: string, style: "long" | "short"): string =>
   `${monthName(yearMonth, locale, style)} ${yearOf(yearMonth)}`;
 
-export const formatMonthLong = (yearMonth: string, locale: string): string =>
-  monthName(yearMonth, locale, "long");
-
 export const formatMonthShort = (yearMonth: string, locale: string): string =>
   monthName(yearMonth, locale, "short");
 
