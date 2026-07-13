@@ -528,6 +528,26 @@
     }
   },
   "payments": {
+    "detail": {
+      "title": "Платіж",
+      "fields": {
+        "property": "Об'єкт",
+        "paidAt": "Дата платежу",
+        "createdAt": "Створено"
+      },
+      "actions": {
+        "openService": "Відкрити послугу"
+      }
+    },
+    "delete": {
+      "confirm": {
+        "title": "Видалити платіж",
+        "description": "Видалити платіж <b>{service}</b> для <b>{property}</b>?",
+        "body": "Цю дію неможливо скасувати.",
+        "confirmLabel": "Видалити",
+        "cancelLabel": "Скасувати"
+      }
+    },
     "fields": {
       "property": {
         "label": "Об'єкт",
@@ -649,15 +669,6 @@
         "filtered": {
           "title": "Платежі не знайдено",
           "cta": "Скинути фільтри"
-        }
-      },
-      "delete": {
-        "confirm": {
-          "title": "Видалити платіж",
-          "description": "Видалити платіж <b>{service}</b> для <b>{property}</b>?",
-          "body": "Цю дію неможливо скасувати.",
-          "confirmLabel": "Видалити",
-          "cancelLabel": "Скасувати"
         }
       },
       "sort": {
@@ -888,6 +899,7 @@
       }
     },
     "rowActions": {
+      "view": "Переглянути",
       "edit": "Редагувати",
       "delete": "Видалити"
     },
@@ -1409,19 +1421,31 @@
     }
   },
   "bills": {
+    "detail": {
+      "title": "Рахунок",
+      "fields": {
+        "property": "Об'єкт",
+        "billingPeriod": "Період рахунку",
+        "attributionMonth": "Місяць нарахування",
+        "createdAt": "Створено"
+      },
+      "actions": {
+        "openService": "Відкрити послугу"
+      }
+    },
+    "delete": {
+      "confirm": {
+        "title": "Видалити рахунок",
+        "description": "Видалити рахунок <b>{service}</b> для <b>{property}</b>?",
+        "body": "Цю дію неможливо скасувати.",
+        "confirmLabel": "Видалити",
+        "cancelLabel": "Скасувати"
+      }
+    },
     "list": {
       "title": "Рахунки",
       "cta": {
         "addBill": "Додати рахунок"
-      },
-      "delete": {
-        "confirm": {
-          "title": "Видалити рахунок",
-          "description": "Видалити рахунок <b>{service}</b> для <b>{property}</b>?",
-          "body": "Цю дію неможливо скасувати.",
-          "confirmLabel": "Видалити",
-          "cancelLabel": "Скасувати"
-        }
       },
       "columns": {
         "date": "Дата",

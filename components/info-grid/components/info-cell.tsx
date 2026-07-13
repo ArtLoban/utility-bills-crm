@@ -8,6 +8,6 @@ export const InfoCell = ({ label, value, className }: TProps) => (
     <p className="text-muted-foreground mb-1 text-xs font-semibold tracking-wider uppercase">
       {label}
     </p>
-    <p className="text-foreground text-sm">{value}</p>
+    <div className="text-foreground text-sm">{value}</div>
   </div>
 );

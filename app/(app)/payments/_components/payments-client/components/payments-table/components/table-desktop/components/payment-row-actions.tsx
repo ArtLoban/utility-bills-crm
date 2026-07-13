@@ -1,11 +1,12 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Pencil, Trash2 } from "lucide-react";
+import { Eye, Pencil, Trash2 } from "lucide-react";
 
 import type { TAction } from "@/components/actions-menu/types";
 import { ActionsMenu } from "@/components/actions-menu";
 import type { TPaymentGlobalRow } from "@/features/payments/types";
+import { paymentPath } from "@/lib/routes";
 import { usePaymentsTable } from "../../../../../context";
 
 type TProps = {
@@ -19,9 +20,15 @@ export const PaymentRowActions = ({ payment }: TProps) => {
   const items: TAction[] = [
     {
       kind: "link",
+      label: t("view"),
+      icon: <Eye size={14} />,
+      href: paymentPath(payment.payment.id),
+    },
+    {
+      kind: "link",
       label: t("edit"),
       icon: <Pencil size={14} />,
-      href: `/payments/${payment.payment.id}/edit`,
+      href: `${paymentPath(payment.payment.id)}/edit`,
     },
     { kind: "separator" },
     {

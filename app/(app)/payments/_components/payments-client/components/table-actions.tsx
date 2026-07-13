@@ -41,19 +41,19 @@ export const PaymentsTableActions = ({ children, properties }: TProps) => {
       <ConfirmDialog
         open={rowToDelete !== null}
         onOpenChange={(open) => !open && setRowToDelete(null)}
-        title={t("list.delete.confirm.title")}
+        title={t("delete.confirm.title")}
         icon={Trash2}
-        description={t.rich("list.delete.confirm.description", {
+        description={t.rich("delete.confirm.description", {
           service: rowToDelete
             ? resolveServiceTypeLabel(rowToDelete.serviceTypeCode, tServiceTypes)
             : "",
           property: rowToDelete?.property.name ?? "",
           b: (chunks) => <strong>{chunks}</strong>,
         })}
-        warningText={t("list.delete.confirm.body")}
-        confirmLabel={t("list.delete.confirm.confirmLabel")}
+        warningText={t("delete.confirm.body")}
+        confirmLabel={t("delete.confirm.confirmLabel")}
         confirmIcon={Trash2}
-        cancelLabel={t("list.delete.confirm.cancelLabel")}
+        cancelLabel={t("delete.confirm.cancelLabel")}
         isPending={isPending}
         onConfirm={handleConfirm}
       />

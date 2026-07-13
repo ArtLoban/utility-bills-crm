@@ -1,3 +1,8 @@
+import type { BillId } from "@/lib/db/schema/bills";
+import type { PaymentId } from "@/lib/db/schema/payments";
+import type { PropertyId } from "@/lib/db/schema/properties";
+import type { TServiceId } from "@/lib/db/schema/services";
+
 export const ROUTES = {
   home: "/",
   about: "/about",
@@ -20,3 +25,11 @@ export const ROUTES = {
     debug: "/art-admin/debug",
   },
 } as const;
+
+// Detail-path builders — a single source for entity URLs (never hardcode the literal).
+export const billPath = (billId: BillId): string => `${ROUTES.bills}/${billId}`;
+
+export const paymentPath = (paymentId: PaymentId): string => `${ROUTES.payments}/${paymentId}`;
+
+export const serviceDetailPath = (propertyId: PropertyId, serviceId: TServiceId): string =>
+  `${ROUTES.properties}/${propertyId}/services/${serviceId}`;

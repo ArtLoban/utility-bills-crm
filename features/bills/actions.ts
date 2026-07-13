@@ -15,7 +15,7 @@ import { PROPERTY_ROLES } from "@/lib/db/schema/properties";
 import { appError, err, ok } from "@/lib/errors";
 import type { Result, TAppError } from "@/lib/errors";
 import { toIsoDate } from "@/lib/format/date";
-import { ROUTES } from "@/lib/routes";
+import { ROUTES, billPath } from "@/lib/routes";
 import { createBillSchema, updateBillSchema } from "./schema";
 import type { TCreateBillInput, TUpdateBillInput } from "./schema";
 
@@ -120,6 +120,8 @@ export const editBill = async (
   }
 
   revalidatePath(ROUTES.bills);
+  // The detail page (rendered under the intercepted edit modal) must reflect the edit.
+  revalidatePath(billPath(billId));
   return ok(undefined);
 };
 

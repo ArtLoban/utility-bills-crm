@@ -528,6 +528,26 @@
     }
   },
   "payments": {
+    "detail": {
+      "title": "Платёж",
+      "fields": {
+        "property": "Объект",
+        "paidAt": "Дата платежа",
+        "createdAt": "Создан"
+      },
+      "actions": {
+        "openService": "Открыть услугу"
+      }
+    },
+    "delete": {
+      "confirm": {
+        "title": "Удалить платёж",
+        "description": "Удалить платёж <b>{service}</b> для <b>{property}</b>?",
+        "body": "Это действие нельзя отменить.",
+        "confirmLabel": "Удалить",
+        "cancelLabel": "Отмена"
+      }
+    },
     "fields": {
       "property": {
         "label": "Объект",
@@ -680,15 +700,6 @@
         "filtered": {
           "title": "Платежи не найдены",
           "cta": "Сбросить фильтры"
-        }
-      },
-      "delete": {
-        "confirm": {
-          "title": "Удалить платёж",
-          "description": "Удалить платёж <b>{service}</b> для <b>{property}</b>?",
-          "body": "Это действие нельзя отменить.",
-          "confirmLabel": "Удалить",
-          "cancelLabel": "Отмена"
         }
       }
     }
@@ -888,6 +899,7 @@
       }
     },
     "rowActions": {
+      "view": "Просмотр",
       "edit": "Редактировать",
       "delete": "Удалить"
     },
@@ -1409,19 +1421,31 @@
     }
   },
   "bills": {
+    "detail": {
+      "title": "Счёт",
+      "fields": {
+        "property": "Объект",
+        "billingPeriod": "Период счёта",
+        "attributionMonth": "Месяц начисления",
+        "createdAt": "Создан"
+      },
+      "actions": {
+        "openService": "Открыть услугу"
+      }
+    },
+    "delete": {
+      "confirm": {
+        "title": "Удалить счёт",
+        "description": "Удалить счёт <b>{service}</b> для <b>{property}</b>?",
+        "body": "Это действие нельзя отменить.",
+        "confirmLabel": "Удалить",
+        "cancelLabel": "Отмена"
+      }
+    },
     "list": {
       "title": "Счета",
       "cta": {
         "addBill": "Добавить счёт"
-      },
-      "delete": {
-        "confirm": {
-          "title": "Удалить счёт",
-          "description": "Удалить счёт <b>{service}</b> для <b>{property}</b>?",
-          "body": "Это действие нельзя отменить.",
-          "confirmLabel": "Удалить",
-          "cancelLabel": "Отмена"
-        }
       },
       "columns": {
         "date": "Дата",

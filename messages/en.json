@@ -528,19 +528,31 @@
     }
   },
   "bills": {
+    "detail": {
+      "title": "Bill",
+      "fields": {
+        "property": "Property",
+        "billingPeriod": "Billing period",
+        "attributionMonth": "Attribution month",
+        "createdAt": "Created"
+      },
+      "actions": {
+        "openService": "Open service"
+      }
+    },
+    "delete": {
+      "confirm": {
+        "title": "Delete bill",
+        "description": "Delete <b>{service}</b> bill for <b>{property}</b>?",
+        "body": "This action cannot be undone.",
+        "confirmLabel": "Delete",
+        "cancelLabel": "Cancel"
+      }
+    },
     "list": {
       "title": "Bills",
       "cta": {
         "addBill": "Add Bill"
-      },
-      "delete": {
-        "confirm": {
-          "title": "Delete bill",
-          "description": "Delete <b>{service}</b> bill for <b>{property}</b>?",
-          "body": "This action cannot be undone.",
-          "confirmLabel": "Delete",
-          "cancelLabel": "Cancel"
-        }
       },
       "columns": {
         "date": "Date",
@@ -680,6 +692,26 @@
     }
   },
   "payments": {
+    "detail": {
+      "title": "Payment",
+      "fields": {
+        "property": "Property",
+        "paidAt": "Payment date",
+        "createdAt": "Created"
+      },
+      "actions": {
+        "openService": "Open service"
+      }
+    },
+    "delete": {
+      "confirm": {
+        "title": "Delete payment",
+        "description": "Delete <b>{service}</b> payment for <b>{property}</b>?",
+        "body": "This action cannot be undone.",
+        "confirmLabel": "Delete",
+        "cancelLabel": "Cancel"
+      }
+    },
     "fields": {
       "property": {
         "label": "Property",
@@ -832,15 +864,6 @@
         "filtered": {
           "title": "No payments match your filters",
           "cta": "Clear filters"
-        }
-      },
-      "delete": {
-        "confirm": {
-          "title": "Delete payment",
-          "description": "Delete <b>{service}</b> payment for <b>{property}</b>?",
-          "body": "This action cannot be undone.",
-          "confirmLabel": "Delete",
-          "cancelLabel": "Cancel"
         }
       }
     }
@@ -1040,6 +1063,7 @@
       }
     },
     "rowActions": {
+      "view": "View",
       "edit": "Edit",
       "delete": "Delete"
     },

@@ -14,7 +14,7 @@ import { requirePropertyRole } from "@/lib/db/access/properties";
 import { PROPERTY_ROLES } from "@/lib/db/schema/properties";
 import { appError, err, ok } from "@/lib/errors";
 import type { Result, TAppError } from "@/lib/errors";
-import { ROUTES } from "@/lib/routes";
+import { ROUTES, paymentPath } from "@/lib/routes";
 import { createPaymentSchema, updatePaymentSchema } from "./schema";
 import type { TCreatePaymentInput, TUpdatePaymentInput } from "./schema";
 
@@ -90,6 +90,7 @@ export const editPayment = async (
   }
 
   revalidatePath(ROUTES.payments);
+  revalidatePath(paymentPath(paymentId));
   return ok(undefined);
 };
 

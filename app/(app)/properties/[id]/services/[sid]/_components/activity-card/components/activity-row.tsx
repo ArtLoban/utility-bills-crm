@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { ChevronRight, Receipt, Wallet } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 
@@ -11,6 +12,9 @@ import {
   isoToYearMonth,
   toIsoDate,
 } from "@/lib/format/date";
+import { billPath, paymentPath } from "@/lib/routes";
+import type { BillId } from "@/lib/db/schema/bills";
+import type { PaymentId } from "@/lib/db/schema/payments";
 import type { TServiceActivityItem } from "../../../_data/queries";
 
 type TProps = {
@@ -27,10 +31,13 @@ export const ActivityRow = ({ item, isLast }: TProps) => {
   const Icon = isBill ? Receipt : Wallet;
   const monthYear = formatMonthYearLong(isoToYearMonth(toIsoDate(item.date)), locale);
 
+  const href = isBill ? billPath(item.id as BillId) : paymentPath(item.id as PaymentId);
+
   return (
-    <div
+    <Link
+      href={href}
       className={cn(
-        "group hover:bg-muted/50 flex cursor-pointer items-center gap-3.5 px-4 py-3 transition-colors sm:px-5",
+        "group hover:bg-muted/50 flex items-center gap-3.5 px-4 py-3 transition-colors sm:px-5",
         !isLast && "border-border border-b",
       )}
     >
@@ -61,6 +68,6 @@ export const ActivityRow = ({ item, isLast }: TProps) => {
       </div>
 
       <ChevronRight className="text-muted-foreground/40 group-hover:text-primary size-3.5 shrink-0 transition-colors" />
-    </div>
+    </Link>
   );
 };
