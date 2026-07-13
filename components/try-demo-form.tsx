@@ -1,15 +1,18 @@
+"use client";
+
 import type { ReactNode } from "react";
-import { auth } from "@/lib/auth";
 import { startDemoSessionAction } from "@/lib/auth/actions";
+import { usePublicSession } from "@/lib/hooks/use-public-session";
 
 type TProps = {
   children: ReactNode;
   className?: string;
 };
 
-export const TryDemoForm = async ({ children, className }: TProps) => {
-  const session = await auth();
-  if (session) return null;
+export const TryDemoForm = ({ children, className }: TProps) => {
+  const { user } = usePublicSession();
+
+  if (user) return null;
 
   return (
     <form action={startDemoSessionAction} className={className}>

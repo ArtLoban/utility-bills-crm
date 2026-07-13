@@ -19,7 +19,7 @@ import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 import { Sheet, SheetClose, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { ROUTES } from "@/lib/routes";
-import { signOutAction } from "@/lib/auth/actions";
+import { signOutAndGoHome } from "@/lib/auth/sign-out";
 import { DrawerHeader } from "@/components/drawer-header";
 import type { TNavUser } from "@/lib/types/nav";
 import type { TLink } from "../types";
@@ -145,7 +145,7 @@ export const AdminNavMobileMenu = ({ links, user }: TProps) => {
               </Link>
             </SheetClose>
             <button
-              onClick={() => signOutAction()}
+              onClick={() => signOutAndGoHome()}
               className="text-destructive hover:bg-destructive/10 flex h-11 w-full items-center gap-3 rounded-lg px-3 text-sm font-medium transition-colors"
             >
               <LogOut className="size-5 shrink-0" />

@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 import { Modal } from "@/components/modal";
 import { usePropertyForm } from "@/features/properties/hooks/use-property-form";
 import { PropertyForm } from "./property-form";
-import type { TPropertyDetail } from "@/app/(app)/properties/[id]/_data/queries";
+import type { TPropertyDetail } from "@/app/(secure)/(app)/properties/[id]/_data/queries";
 
 type TProps = {
   property?: TPropertyDetail;

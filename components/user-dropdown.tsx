@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { LogOut, Settings, Shield } from "lucide-react";
 import { ROUTES } from "@/lib/routes";
-import { signOutAction } from "@/lib/auth/actions";
+import { signOutAndGoHome } from "@/lib/auth/sign-out";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -81,7 +81,7 @@ export const UserDropdown = ({ user }: TProps) => {
 
         <DropdownMenuSeparator />
 
-        <DropdownMenuItem className="cursor-pointer" onClick={() => signOutAction()}>
+        <DropdownMenuItem className="cursor-pointer" onClick={() => signOutAndGoHome()}>
           <LogOut className="size-4" />
           {t("nav.account.signOut")}
         </DropdownMenuItem>
