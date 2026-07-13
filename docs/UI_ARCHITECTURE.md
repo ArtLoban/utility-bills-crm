@@ -36,6 +36,14 @@ The application has **four distinct surfaces** organized as Next.js App Router r
 
 The admin URL prefix `/art-admin` is deliberately non-standard (not `/admin`) as a light security-through-obscurity measure. Real protection is via middleware + layout check against `systemRole`.
 
+**Two root layouts (Decision #158).** There is no shared `app/layout.tsx`. `(public)` is its
+own **static root** (statically prerendered, CDN-cacheable, no `auth`/`cookies`/`getLocale` in
+its render path); `(auth)`, `(app)`, and `(admin)` live under a `(secure)` group whose root
+layout carries the dynamic concerns (locale/messages, server-resolved theme, session). Route
+groups don't affect URLs. Auth-conditional public chrome (Sign in ↔ Open CRM / Admin) is
+resolved by a **client island** via `/api/auth/session`, keeping the public pages cacheable
+and DB-free for anonymous visitors.
+
 ---
 
 ## Design System
@@ -688,6 +696,14 @@ Single screen with 4 tabs: Home | About | Project | Global.
 ## Public Landing
 
 Visual language: "Variant B" — shared design system with CRM, but more visual freedom (larger whitespace, subtle gradients allowed in hero, larger mockups, bigger typography in headings).
+
+**Rendering (Decision #158).** `/`, `/about`, `/project`, `/privacy`, `/terms` (plus
+`robots.txt`/`sitemap.xml`) are **statically prerendered and served from the CDN cache**;
+content comes from the landing CMS but is read at build/revalidation only, and is invalidated
+by the `revalidatePath` calls in the CMS save actions. Anonymous requests issue zero DB
+queries. The header's authenticated state (Open CRM / Admin / user menu vs Sign in) and the
+Try-demo button's visibility are resolved client-side via `/api/auth/session`, so the static
+shell is not sacrificed for the authenticated view.
 
 ### `/` — CRM showcase
 

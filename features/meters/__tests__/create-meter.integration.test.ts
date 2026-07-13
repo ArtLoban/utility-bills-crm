@@ -15,7 +15,7 @@ import type { MeterId } from "@/lib/db/schema/meters";
 import { meterServices } from "@/lib/db/schema/meter-services";
 import { ERROR_CODES } from "@/lib/errors";
 import { auth } from "@/lib/auth";
-import { getAvailableServiceTypesForMeter } from "@/app/(app)/properties/[id]/meters/_data/queries";
+import { getAvailableServiceTypesForMeter } from "@/app/(secure)/(app)/properties/[id]/meters/_data/queries";
 
 import { createMeter, replaceMeter } from "../actions";
 

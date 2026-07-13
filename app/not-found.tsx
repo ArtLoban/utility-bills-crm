@@ -1,37 +1,31 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { getTranslations } from "next-intl/server";
-import { SearchX } from "lucide-react";
-import { PublicHeader } from "@/components/public-header";
-import { Button } from "@/components/ui/button";
-import { IconBadge } from "@/components/icon-badge";
-import { ROUTES } from "@/lib/routes";
+import { Inter } from "next/font/google";
+import "./globals.css";
+import { NotFoundContent } from "@/components/not-found-content";
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+});
 
 export const metadata: Metadata = {
   title: "404 — Page not found",
 };
 
-export default async function NotFound() {
-  const t = await getTranslations("notFound");
+// Global fallback for unmatched URLs. With no shared root layout it must render
+// its own document; kept self-contained (no providers) like global-error.tsx.
+// Applies the dark class from cookie/localStorage before paint to avoid a flash.
+const themeScript = `(function(){var c=document.cookie.match(/NEXT_THEME=([^;]+)/)?.[1],l=localStorage.getItem('theme'),t=c||l;if(t==='dark')document.documentElement.classList.add('dark');})()`;
 
+export default function NotFound() {
   return (
-    <div className="flex flex-1 flex-col">
-      <PublicHeader />
-      <main className="flex flex-1 flex-col items-center justify-center px-6 pb-20 text-center md:pb-20">
-        <IconBadge icon={SearchX} color="var(--muted-foreground)" size="xl" />
-
-        <h2 className="mt-6 text-xl font-semibold md:text-2xl">{t("title")}</h2>
-
-        <p className="text-muted-foreground mt-2.5 max-w-xs text-sm leading-relaxed md:max-w-md">
-          {t("description")}
-        </p>
-
-        <div className="mt-6 w-full max-w-72 md:w-auto">
-          <Button asChild variant="default" className="h-11 w-full md:h-9 md:w-auto">
-            <Link href={ROUTES.home}>{t("goHome")}</Link>
-          </Button>
-        </div>
-      </main>
-    </div>
+    <html lang="en" suppressHydrationWarning className={`${inter.variable} h-full antialiased`}>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
+      <body className="bg-background text-foreground flex min-h-full flex-col">
+        <NotFoundContent />
+      </body>
+    </html>
   );
 }
