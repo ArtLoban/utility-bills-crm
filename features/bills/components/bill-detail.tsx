@@ -50,7 +50,6 @@ export const BillDetail = async ({ bill, serviceLabel }: TProps) => {
               icon={Icon}
               color={color}
               size="lg"
-              border
               className="max-sm:size-9 max-sm:[&>svg]:size-4.5"
             />
             <p className="text-foreground min-w-0 flex-1 truncate text-xl">{serviceLabel}</p>

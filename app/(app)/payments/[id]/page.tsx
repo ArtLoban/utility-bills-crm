@@ -7,7 +7,10 @@ import type { PaymentId } from "@/lib/db/schema/payments";
 import { paymentByIdForUser } from "@/lib/db/access/payments";
 import { roleAtLeast } from "@/lib/db/access/properties";
 import { PROPERTY_ROLES } from "@/lib/db/schema/properties";
+import { Wallet } from "lucide-react";
+
 import { PageContainer } from "@/components/page-container";
+import { IconBadge } from "@/components/icon-badge";
 import { PaymentDetail, PaymentDetailActions } from "@/features/payments";
 import { resolveServiceLabel } from "@/features/services/service-label";
 import { ROUTES } from "@/lib/routes";
@@ -40,6 +43,7 @@ export default async function PaymentDetailPage({ params }: TProps) {
     <PageContainer
       title={t("detail.title")}
       breadcrumbs={[{ label: t("list.title"), href: ROUTES.payments }, { label: serviceLabel }]}
+      leading={<IconBadge icon={Wallet} color="var(--success)" size="md" border />}
       actions={
         <PaymentDetailActions payment={payment} canMutate={canMutate} serviceLabel={serviceLabel} />
       }
