@@ -142,5 +142,6 @@ export const saveGlobalCms = async (data: TGlobalPayload): Promise<Result<void, 
   revalidatePath(ROUTES.home);
   revalidatePath(ROUTES.about);
   revalidatePath(ROUTES.project);
+  revalidatePath(ROUTES.sitemap);
   return ok(undefined);
 };
