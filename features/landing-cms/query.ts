@@ -1,4 +1,5 @@
 import { cache } from "react";
+import { unstable_cache } from "next/cache";
 
 import { db } from "@/lib/db/client";
 import { aboutHero, cmsFeatures, cmsLinks, homeHero, projectHero } from "@/lib/db/schema/cms";
@@ -11,6 +12,8 @@ import type {
 } from "@/lib/db/schema/cms";
 import { requireAdmin } from "@/lib/auth/guards";
 import { unwrapOrThrow } from "@/lib/unwrap-or-throw";
+
+import { CMS_CACHE_TAGS, CMS_CACHE_VERSION, type TCmsCacheTag } from "./cache-tags";
 
 // ---------------------------------------------------------------------------
 // Admin guard
@@ -89,18 +92,16 @@ export const getGlobalCms = async (): Promise<TCmsLinks | undefined> => {
 // never throw.
 // ---------------------------------------------------------------------------
 
-export const getPublicHome = cache(
-  async (): Promise<{
-    homeHero: THomeHero | undefined;
-    features: TCmsFeatures | undefined;
-  }> => {
-    const [homeHeroRow, featuresRow] = await Promise.all([_queryHomeHero(), _queryCmsFeatures()]);
-    return { homeHero: homeHeroRow, features: featuresRow };
-  },
-);
+const publicRead = <T>(read: () => Promise<T>, tag: TCmsCacheTag): (() => Promise<T>) =>
+  cache(unstable_cache(read, [CMS_CACHE_VERSION, tag], { tags: [tag], revalidate: false }));
 
-export const getPublicAbout = cache(_queryAboutHero);
+export const getPublicHome = publicRead(async () => {
+  const [homeHeroRow, featuresRow] = await Promise.all([_queryHomeHero(), _queryCmsFeatures()]);
+  return { homeHero: homeHeroRow, features: featuresRow };
+}, CMS_CACHE_TAGS.HOME);
 
-export const getPublicProject = cache(_queryProjectHero);
+export const getPublicAbout = publicRead(_queryAboutHero, CMS_CACHE_TAGS.ABOUT);
 
-export const getPublicLinks = cache(_queryCmsLinks);
+export const getPublicProject = publicRead(_queryProjectHero, CMS_CACHE_TAGS.PROJECT);
+
+export const getPublicLinks = publicRead(_queryCmsLinks, CMS_CACHE_TAGS.LINKS);

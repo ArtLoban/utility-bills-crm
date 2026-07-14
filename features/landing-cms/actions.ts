@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 
 import { db } from "@/lib/db/client";
 import { aboutHero, cmsFeatures, cmsLinks, homeHero, projectHero } from "@/lib/db/schema/cms";
@@ -10,6 +10,7 @@ import type { Result, TAppError } from "@/lib/errors";
 import { unwrapOrThrow } from "@/lib/unwrap-or-throw";
 import { ROUTES } from "@/lib/routes";
 
+import { CMS_CACHE_TAGS } from "./cache-tags";
 import { aboutSchema, globalSchema, homeSchema, projectSchema } from "./schema";
 import type { TAboutPayload, TGlobalPayload, THomePayload, TProjectPayload } from "./types";
 
@@ -62,8 +63,7 @@ export const saveHomeCms = async (data: THomePayload): Promise<Result<void, TApp
       .onConflictDoUpdate({ target: cmsFeatures.oneRow, set: featuresValues });
   });
 
-  revalidatePath(ROUTES.admin.landing);
-  revalidatePath(ROUTES.home);
+  updateTag(CMS_CACHE_TAGS.HOME);
   return ok(undefined);
 };
 
@@ -81,8 +81,7 @@ export const saveAboutCms = async (data: TAboutPayload): Promise<Result<void, TA
     .values(values)
     .onConflictDoUpdate({ target: aboutHero.oneRow, set: values });
 
-  revalidatePath(ROUTES.admin.landing);
-  revalidatePath(ROUTES.about);
+  updateTag(CMS_CACHE_TAGS.ABOUT);
   return ok(undefined);
 };
 
@@ -118,8 +117,7 @@ export const saveProjectCms = async (data: TProjectPayload): Promise<Result<void
     .values(values)
     .onConflictDoUpdate({ target: projectHero.oneRow, set: values });
 
-  revalidatePath(ROUTES.admin.landing);
-  revalidatePath(ROUTES.project);
+  updateTag(CMS_CACHE_TAGS.PROJECT);
   return ok(undefined);
 };
 
@@ -138,10 +136,7 @@ export const saveGlobalCms = async (data: TGlobalPayload): Promise<Result<void, 
     .values(values)
     .onConflictDoUpdate({ target: cmsLinks.oneRow, set: values });
 
-  revalidatePath(ROUTES.admin.landing);
-  revalidatePath(ROUTES.home);
-  revalidatePath(ROUTES.about);
-  revalidatePath(ROUTES.project);
+  updateTag(CMS_CACHE_TAGS.LINKS);
   revalidatePath(ROUTES.sitemap);
   return ok(undefined);
 };

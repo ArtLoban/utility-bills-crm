@@ -635,6 +635,12 @@ Rationale: the "product-first" framing had begun to systematically under-scope f
 > **Next (own task):** cache the CMS reads (`unstable_cache` + `revalidateTag`), single root untouched. `"use cache"` is the documented successor but needs app-wide `cacheComponents`, which changes rendering and navigation across the CRM — a deliberate migration, not a side effect of a landing fix.
 > **Tech debt:** `error.tsx` and `global-error.tsx` duplicate the fatal-error block (pre-existing). Lesson `0024`.
 
+> **#160 — Public CMS reads are cached with `unstable_cache`, one tag per reader, invalidated by `updateTag`.** Closes what #159 diagnosed. Rendering is untouched: public pages stay dynamic, the root layout stays single. Measured on a production build: an anonymous page cost 3/2/2/1/1 CMS queries before, 0 warm after, with a cold/warm pair as proof.
+> **One tag per reader**, which is also one per save action — a save invalidates exactly what it wrote and never juggles more than one tag.
+> **`updateTag`, not `revalidateTag`.** `revalidateTag(tag, "max")` is stale-while-revalidate: the admin would save and still see the old page. `updateTag` expires immediately (Server-Action-only, which our save actions are). Its 1-arg `revalidateTag` sibling is also now a type error in 16.2. The docs list only `fetch` tags and `'use cache'` as tag sources, so `unstable_cache` + `updateTag` was **verified by measurement, not assumed** — it works, and the save request re-warms the cache itself.
+> **The deployment id is in the cache key on purpose.** `unstable_cache` survives deploys, and CMS content also arrives via SQL migrations and the seed script, which run outside Next and cannot call `updateTag`. Without a deploy-scoped key that content would be masked indefinitely. Verified: a direct DB write does leave the cache stale until the key changes. Editing content out of band against a running server still needs a deploy (or a CMS save) to surface — accepted.
+> **`revalidatePath` stays only for the sitemap**, the one prerendered route reading the visibility flags (#134); a tag invalidates data, not a built route. Verified by toggling a flag. `/privacy` and `/terms` get nothing: they are dynamic, so a path revalidation there is inert, and the `links` tag already covers what the header puts on them. **No TTL** — a timer would quietly restore the DB wake-ups this removes.
+
 ## Open Questions
 
 Carried forward to Phase 7 (implementation) and beyond.
