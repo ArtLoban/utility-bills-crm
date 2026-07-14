@@ -53,7 +53,7 @@ MVP is defined as a **minimum viable portfolio piece** — a project that demons
 - **Error tracking:** Sentry (integrated, instrumentation-based)
 - **Testing:** Vitest + @testing-library/react
 - **Tooling:** ESLint (Flat Config), Prettier, Husky + lint-staged
-- **CI/CD:** GitHub Actions + Vercel auto-deploy
+- **CI/CD:** Vercel auto-deploy from GitHub (Actions-based checks planned, not set up)
 - **Hosting:** Vercel + Neon (both free tier)
 - **Package manager:** npm
 

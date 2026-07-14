@@ -135,13 +135,13 @@ The public layout reads the auth session to adapt its header (Login for anonymou
 
 ### Infrastructure
 
-| Layer            | Choice                         |
-| ---------------- | ------------------------------ |
-| App hosting      | Vercel (free tier)             |
-| Database hosting | Neon (free tier)               |
-| CI               | GitHub Actions                 |
-| Deployment       | Vercel auto-deploy from GitHub |
-| Package manager  | npm                            |
+| Layer            | Choice                          |
+| ---------------- | ------------------------------- |
+| App hosting      | Vercel (free tier)              |
+| Database hosting | Neon (free tier)                |
+| CI               | none yet (Actions planned, #21) |
+| Deployment       | Vercel auto-deploy from GitHub  |
+| Package manager  | npm                             |
 
 ## Architecture Decisions
 
@@ -284,9 +284,9 @@ Not tested in MVP: trivial CRUD, most UI components, auth flow (trusting the lib
 
 Mild Vercel lock-in is acknowledged and accepted.
 
-### CI/CD: Vercel deploys, GitHub Actions checks
+### CI/CD: Vercel deploys; the Actions half of #21 is not built
 
-Vercel handles deployment automatically. GitHub Actions runs quality checks in parallel. Branch protection on `main` prevents merging PRs with failing checks.
+Vercel deploys automatically and applies pending migrations during the build (#153). The other half of #21 — quality checks in GitHub Actions — does not exist: there is no `.github/` in the repo, so nothing runs lint/typecheck/tests on push, and branch protection has no checks to gate on. The only automated gate today is Husky + lint-staged at commit time; everything else is run by hand.
 
 ## Cross-cutting Principles
 
@@ -745,10 +745,10 @@ npm run lint          # ESLint
 npm run lint:fix      # ESLint with auto-fix
 npm run typecheck     # TypeScript check
 npm run format        # Prettier write
-npm run format:check  # Prettier check (used in CI)
+npm run format:check  # Prettier check
 
 npm run test          # Vitest
-npm run test:ui       # Vitest UI
+npm run test:watch    # Vitest watch mode
 
 npm run db:generate   # generate Drizzle migration from schema changes
 npm run db:migrate    # apply migrations
@@ -816,15 +816,16 @@ docs/                   project documentation
 
 ### Branching
 
-- `main` — protected, always deployable.
-- Feature branches for all work, merged via PR.
-- No direct commits to `main`.
+- `main` — always deployable. Work is committed straight to it; this is a solo project
+  (`CLAUDE.md` §6).
+- A branch and PR are opened deliberately, for a change worth isolating, not by default.
 
-### PR requirements
+### Quality gates
 
-- CI passes (lint, typecheck, format, build).
-- All conversations resolved.
-- Branch up to date with `main` before merge.
+- Husky + lint-staged run ESLint and Prettier over staged files at commit time — the only
+  automated gate that exists.
+- Lint, typecheck, tests and build are run by hand (see Commands). Nothing enforces them on
+  push: #21's Actions half was never built.
 
 ### Commit style
 
