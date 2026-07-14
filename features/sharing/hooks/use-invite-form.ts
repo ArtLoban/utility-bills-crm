@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
-import { useZodForm } from "@/lib/forms/use-zod-form";
+import { useLocalizedZodForm } from "@/lib/forms/use-localized-zod-form";
 import { useActionErrorHandler } from "@/lib/hooks/use-action-error-handler";
 import { ERROR_CODES } from "@/lib/errors";
 import { PROPERTY_ROLES, type PropertyId } from "@/lib/db/schema/properties";
@@ -21,7 +21,7 @@ export const useInviteForm = ({ propertyId, onClose }: TParams) => {
   const t = useTranslations("sharing");
   const handleActionError = useActionErrorHandler({ onClose });
 
-  const form = useZodForm({
+  const form = useLocalizedZodForm({
     schema: inviteFormSchema,
     namespace: "sharing",
     defaultValues: {

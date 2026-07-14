@@ -36,7 +36,7 @@ export type TCreateBillInput = z.infer<typeof createBillSchema>;
 export type TUpdateBillInput = z.infer<typeof updateBillSchema>;
 
 // Client form schema. Messages are relative i18n keys under the "bills" namespace,
-// translated by useZodForm. `amount` stays a string (the input model) and is converted
+// translated by useLocalizedZodForm. `amount` stays a string (the input model) and is converted
 // to a number at the action boundary, which keeps this schema transform-free.
 // `property` is not persisted on the bill (the link is via `serviceId`), but it is required
 // in the form: the user must pick a property to load and choose its services.

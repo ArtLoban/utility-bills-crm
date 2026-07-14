@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
-import { useZodForm } from "@/lib/forms/use-zod-form";
+import { useLocalizedZodForm } from "@/lib/forms/use-localized-zod-form";
 import { propertySchema } from "@/features/properties/schema";
 import { createProperty, editProperty } from "@/features/properties/actions";
 import { useActionErrorHandler } from "@/lib/hooks/use-action-error-handler";
@@ -21,7 +21,7 @@ export const usePropertyForm = ({ property, onClose }: TParams) => {
   const handleActionError = useActionErrorHandler({ onClose });
   const isEditMode = property !== undefined;
 
-  const form = useZodForm({
+  const form = useLocalizedZodForm({
     schema: propertySchema,
     namespace: "properties",
     defaultValues: buildDefaultValues(property),

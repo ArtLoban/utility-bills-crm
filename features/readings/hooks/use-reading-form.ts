@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { useWatch } from "react-hook-form";
 import { toast } from "sonner";
 
-import { useZodForm } from "@/lib/forms/use-zod-form";
+import { useLocalizedZodForm } from "@/lib/forms/use-localized-zod-form";
 import { useActionErrorHandler } from "@/lib/hooks/use-action-error-handler";
 import { ERROR_CODES } from "@/lib/errors";
 import { formatDisplayDate, toDatetimeOffset } from "@/lib/format/date";
@@ -34,7 +34,7 @@ export const useReadingForm = ({ meter, reading, lastReading, onClose }: TParams
 
   const schema = useMemo(() => buildReadingFormSchema(zoneCount), [zoneCount]);
 
-  const form = useZodForm({
+  const form = useLocalizedZodForm({
     schema,
     namespace: "readings",
     defaultValues: buildDefaultValues(reading),

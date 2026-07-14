@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
-import { useZodForm } from "@/lib/forms/use-zod-form";
+import { useLocalizedZodForm } from "@/lib/forms/use-localized-zod-form";
 import { useActionErrorHandler } from "@/lib/hooks/use-action-error-handler";
 import { ERROR_CODES } from "@/lib/errors";
 import type { TReminderAnchorType } from "@/lib/db/schema/notifications";
@@ -27,7 +27,7 @@ export const useReminderForm = ({ serviceId, reminder, onSuccess }: TParams) => 
   const handleActionError = useActionErrorHandler({});
   const isEditMode = reminder !== undefined;
 
-  const form = useZodForm({
+  const form = useLocalizedZodForm({
     schema: reminderFormSchema,
     namespace: "reminders",
     defaultValues: buildDefaultValues(reminder),

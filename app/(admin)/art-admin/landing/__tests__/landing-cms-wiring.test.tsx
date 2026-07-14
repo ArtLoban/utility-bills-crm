@@ -51,9 +51,11 @@ const GlobalFormWrapper = () => {
   return <GlobalTab form={form} onSave={handleSave} />;
 };
 
-// Helpers — use element IDs since SaveRow renders 2 save buttons (desktop + mobile)
+// SaveRow renders two save buttons (desktop + mobile); either one drives the same submit.
 const getSaveButton = () => screen.getAllByRole("button", { name: /save changes/i })[0]!;
-const getInput = (id: string) => document.getElementById(id) as HTMLInputElement;
+// Fields are addressed by their accessible label: the form shell owns the generated id,
+// so there is no stable id to target, and a label lookup fails loudly when it misses.
+const getInput = (label: RegExp) => screen.getByLabelText(label);
 
 // ---------------------------------------------------------------------------
 // Tests
@@ -79,7 +81,7 @@ describe("GlobalTab wiring", () => {
   it("Save button becomes enabled after editing a URL field", async () => {
     render(<GlobalFormWrapper />);
 
-    const linkedinInput = getInput("global-linkedin");
+    const linkedinInput = getInput(/linkedin url/i);
     await user.clear(linkedinInput);
     await user.type(linkedinInput, "https://linkedin.com/in/newprofile");
 
@@ -89,7 +91,7 @@ describe("GlobalTab wiring", () => {
   it("shows inline validation error when an invalid URL is submitted — no success toast", async () => {
     render(<GlobalFormWrapper />);
 
-    const linkedinInput = getInput("global-linkedin");
+    const linkedinInput = getInput(/linkedin url/i);
     await user.clear(linkedinInput);
     await user.type(linkedinInput, "not-a-valid-url");
 
@@ -107,7 +109,7 @@ describe("GlobalTab wiring", () => {
   it("on valid submit: calls action, shows success toast, and resets dirty state", async () => {
     render(<GlobalFormWrapper />);
 
-    const githubInput = getInput("global-github");
+    const githubInput = getInput(/github profile url/i);
     await user.clear(githubInput);
     await user.type(githubInput, "https://github.com/newuser");
 

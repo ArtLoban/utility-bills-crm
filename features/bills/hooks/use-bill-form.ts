@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
-import { useZodForm } from "@/lib/forms/use-zod-form";
+import { useLocalizedZodForm } from "@/lib/forms/use-localized-zod-form";
 import { billFormSchema } from "@/features/bills/schema";
 import { BillFormField } from "@/features/bills/types";
 import { createBill, editBill } from "@/features/bills/actions";
@@ -28,7 +28,7 @@ export const useBillForm = ({ bill, serviceOptions = {}, onClose }: TParams) => 
   const handleActionError = useActionErrorHandler({ onClose });
   const isEditMode = bill !== undefined;
 
-  const form = useZodForm({
+  const form = useLocalizedZodForm({
     schema: billFormSchema,
     namespace: "bills",
     defaultValues: buildDefaultValues(bill),

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
-import { useZodForm } from "@/lib/forms/use-zod-form";
+import { useLocalizedZodForm } from "@/lib/forms/use-localized-zod-form";
 import { resolveServiceTypeLabel } from "@/features/services/service-label";
 import { buildServicePickerOptions } from "@/features/services/build-service-picker-options";
 import { getServiceBalanceAction } from "@/features/ledger/actions";
@@ -39,7 +39,7 @@ export const usePaymentForm = ({
   const handleActionError = useActionErrorHandler({ onClose });
   const isEditMode = payment !== undefined;
 
-  const form = useZodForm({
+  const form = useLocalizedZodForm({
     schema: paymentFormSchema,
     namespace: "payments",
     defaultValues: buildDefaultValues(payment),

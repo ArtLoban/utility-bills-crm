@@ -1,6 +1,5 @@
 "use client";
 
-import { useTranslations } from "next-intl";
 import {
   useForm,
   type DefaultValues,
@@ -12,18 +11,21 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type z } from "zod";
 
-// useZodForm({ schema, namespace?, defaultValues, mode }) — RHF + zodResolver + перевод сообщений.
-// Схемы доменных форм хранят относительные i18n-ключи как Zod-сообщения; хук обходит дерево
-// FieldErrors и переводит каждый message через useTranslations(namespace), а FormMessage рендерит
-// готовые строки. Это стандарт для всех доменных форм.
-// namespace опционален: если не передан, перевод пропускается и сообщения схемы рендерятся как есть.
-// Используется для English-only форм (CMS-редакторы лендинга), где сообщения — готовые строки.
+// useZodForm({ schema, defaultValues, mode }) — RHF + zodResolver, no i18n.
+// Zod messages render exactly as the schema wrote them, so the schema holds ready
+// strings. This is the base primitive and it must stay free of next-intl: forms that
+// legitimately need no translation (the English-only landing CMS editors) would
+// otherwise still require a NextIntlClientProvider in scope.
+// Forms whose schemas store relative i18n keys use `useLocalizedZodForm`, which
+// composes this hook and supplies `translate`.
 
-type TUseZodFormParams<TSchema extends z.ZodType<FieldValues, FieldValues>> = {
+export type TTranslateMessage = (key: string) => string;
+
+export type TUseZodFormParams<TSchema extends z.ZodType<FieldValues, FieldValues>> = {
   schema: TSchema;
-  namespace?: Parameters<typeof useTranslations>[0];
   defaultValues: DefaultValues<z.output<TSchema>>;
   mode?: UseFormProps<z.output<TSchema>>["mode"];
+  translate?: TTranslateMessage;
 };
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
@@ -34,7 +36,7 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 // so FormMessage downstream renders a ready string instead of a raw key.
 const translateErrorMessages = (
   errors: Record<string, unknown>,
-  translate: (key: string) => string,
+  translate: TTranslateMessage,
 ): void => {
   for (const [key, value] of Object.entries(errors)) {
     if (key === "ref") continue;
@@ -50,15 +52,10 @@ const translateErrorMessages = (
 // current domain schema. Revisit the generics if a schema introduces a transform.
 export const useZodForm = <TSchema extends z.ZodType<FieldValues, FieldValues>>({
   schema,
-  namespace,
   defaultValues,
   mode = "onTouched",
+  translate,
 }: TUseZodFormParams<TSchema>): UseFormReturn<z.output<TSchema>> => {
-  const t = useTranslations(namespace);
-  // Keys are dynamic i18n paths produced by Zod; the full key union is too large
-  // to express here (the namespace is generic), so widen to `never` at the call.
-  const translate = (key: string): string => t(key as never);
-
   // zodResolver is typed Resolver<input, …, output>; we model the form on the parsed
   // output type (input ≡ output for our transform-free schemas), so bridge the value
   // generic here — the single unavoidable cast, contained to this helper.
@@ -69,7 +66,7 @@ export const useZodForm = <TSchema extends z.ZodType<FieldValues, FieldValues>>(
     mode,
     resolver: async (values, context, options) => {
       const result = await baseResolver(values, context, options);
-      if (namespace && result.errors) {
+      if (translate && result.errors) {
         translateErrorMessages(result.errors as Record<string, unknown>, translate);
       }
       return result;

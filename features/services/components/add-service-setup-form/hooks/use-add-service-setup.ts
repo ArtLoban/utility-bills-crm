@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
-import { useZodForm } from "@/lib/forms/use-zod-form";
+import { useLocalizedZodForm } from "@/lib/forms/use-localized-zod-form";
 import { createServiceWithSetup } from "@/features/services/actions.composite";
 import { useActionErrorHandler } from "@/lib/hooks/use-action-error-handler";
 import { ERROR_CODES } from "@/lib/errors";
@@ -30,7 +30,7 @@ export const useAddServiceSetup = ({ propertyId, serviceTypes, existingTypeIds }
   const router = useRouter();
   const handleActionError = useActionErrorHandler({ onClose: () => router.back() });
 
-  const form = useZodForm({
+  const form = useLocalizedZodForm({
     schema: serviceSetupFormSchema,
     namespace: "services.serviceForm",
     defaultValues: buildDefaultValues(),

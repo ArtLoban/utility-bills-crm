@@ -30,7 +30,7 @@ export type TCreatePaymentInput = z.infer<typeof createPaymentSchema>;
 export type TUpdatePaymentInput = z.infer<typeof updatePaymentSchema>;
 
 // Client form schema. Messages are relative i18n keys under the "payments" namespace,
-// translated by useZodForm. `amount` stays a string (the input model) and is converted
+// translated by useLocalizedZodForm. `amount` stays a string (the input model) and is converted
 // to a number at the action boundary, which keeps this schema transform-free.
 // `property` is not persisted on the payment (the link is via `serviceId`), but it is
 // required in the form: the user must pick a property to load and choose its services.

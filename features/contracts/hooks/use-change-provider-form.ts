@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
-import { useZodForm } from "@/lib/forms/use-zod-form";
+import { useLocalizedZodForm } from "@/lib/forms/use-localized-zod-form";
 import { changeProviderFormSchema } from "@/features/contracts/schema";
 import { changeProvider } from "@/features/contracts/actions";
 import { ChangeProviderFormField } from "@/features/contracts/types";
@@ -21,7 +21,7 @@ export const useChangeProviderForm = ({ serviceId, onClose }: TParams) => {
   const t = useTranslations("contracts");
   const handleActionError = useActionErrorHandler({ onClose });
 
-  const form = useZodForm({
+  const form = useLocalizedZodForm({
     schema: changeProviderFormSchema,
     namespace: "contracts",
     defaultValues: {

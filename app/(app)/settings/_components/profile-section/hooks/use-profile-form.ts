@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
 import { profileNameSchema, updateProfileName } from "@/features/profile";
-import { useZodForm } from "@/lib/forms/use-zod-form";
+import { useLocalizedZodForm } from "@/lib/forms/use-localized-zod-form";
 import { useActionErrorHandler } from "@/lib/hooks/use-action-error-handler";
 
 export const useProfileForm = (initialName: string) => {
@@ -13,7 +13,7 @@ export const useProfileForm = (initialName: string) => {
   const router = useRouter();
   const handleActionError = useActionErrorHandler({});
 
-  const form = useZodForm({
+  const form = useLocalizedZodForm({
     schema: profileNameSchema,
     namespace: "settings.profile",
     defaultValues: { name: initialName },

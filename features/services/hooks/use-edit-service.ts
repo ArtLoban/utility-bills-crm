@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
-import { useZodForm } from "@/lib/forms/use-zod-form";
+import { useLocalizedZodForm } from "@/lib/forms/use-localized-zod-form";
 import { editServiceSchema } from "@/features/services/schema";
 import { editService } from "@/features/services/actions";
 import { SERVICE_TYPE_CODES, type TServiceTypeCode } from "@/features/services/service-type";
@@ -30,7 +30,7 @@ export const useEditService = ({
   const handleActionError = useActionErrorHandler({ onClose });
   const nameRequired = serviceTypeCode === SERVICE_TYPE_CODES.OTHER;
 
-  const form = useZodForm({
+  const form = useLocalizedZodForm({
     schema: editServiceSchema,
     namespace: "services.editService",
     defaultValues: { name: initialName ?? "", notes: initialNotes ?? "" },

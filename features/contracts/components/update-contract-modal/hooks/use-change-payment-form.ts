@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
-import { useZodForm } from "@/lib/forms/use-zod-form";
+import { useLocalizedZodForm } from "@/lib/forms/use-localized-zod-form";
 import { changePaymentDetailsFormSchema } from "@/features/payment-details/schema";
 import { changePaymentDetails } from "@/features/payment-details/actions";
 import { useActionErrorHandler } from "@/lib/hooks/use-action-error-handler";
@@ -22,7 +22,7 @@ export const useChangePaymentForm = ({ contractId, onClose }: TParams) => {
   const t = useTranslations(UPDATE_CONTRACT_NAMESPACE);
   const handleActionError = useActionErrorHandler({ onClose });
 
-  const form = useZodForm({
+  const form = useLocalizedZodForm({
     schema: changePaymentDetailsFormSchema,
     namespace: UPDATE_CONTRACT_NAMESPACE,
     defaultValues: {
