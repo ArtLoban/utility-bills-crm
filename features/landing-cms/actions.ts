@@ -138,14 +138,9 @@ export const saveGlobalCms = async (data: TGlobalPayload): Promise<Result<void, 
     .values(values)
     .onConflictDoUpdate({ target: cmsLinks.oneRow, set: values });
 
-  // Links drive the header/footer on every public page (now statically cached)
-  // and the sitemap's URL visibility, so all of them must be revalidated.
   revalidatePath(ROUTES.admin.landing);
   revalidatePath(ROUTES.home);
   revalidatePath(ROUTES.about);
   revalidatePath(ROUTES.project);
-  revalidatePath(ROUTES.privacy);
-  revalidatePath(ROUTES.terms);
-  revalidatePath("/sitemap.xml");
   return ok(undefined);
 };

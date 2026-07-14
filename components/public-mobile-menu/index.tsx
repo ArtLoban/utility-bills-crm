@@ -10,18 +10,17 @@ import { PublicLogo } from "@/components/public-logo";
 import { DrawerHeader } from "@/components/drawer-header";
 import { DrawerAccount } from "@/components/drawer-account";
 import { ROUTES } from "@/lib/routes";
-import { usePublicSession } from "@/lib/hooks/use-public-session";
+import type { TNavUser } from "@/lib/types/nav";
 
 type TProps = {
+  user: TNavUser | null;
   showAbout: boolean;
   showProject: boolean;
 };
 
-// TODO: refactor component. Destructure Later
-export const PublicMobileMenu = ({ showAbout, showProject }: TProps) => {
+export const PublicMobileMenu = ({ user, showAbout, showProject }: TProps) => {
   const pathname = usePathname();
   const { resolvedTheme, setTheme } = useTheme();
-  const { user } = usePublicSession();
 
   const navLinkClass = (href: string) =>
     cn(

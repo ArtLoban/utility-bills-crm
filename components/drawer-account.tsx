@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { LogOut, Settings, Shield } from "lucide-react";
 import { SheetClose } from "@/components/ui/sheet";
 import { ROUTES } from "@/lib/routes";
-import { signOutAndGoHome } from "@/lib/auth/sign-out";
+import { signOutAction } from "@/lib/auth/actions";
 import type { TNavUser } from "@/lib/types/nav";
 
 type TProps = {
@@ -44,7 +44,7 @@ export const DrawerAccount = ({ user }: TProps) => {
       )}
 
       <button
-        onClick={() => signOutAndGoHome()}
+        onClick={() => signOutAction()}
         className="text-destructive hover:bg-destructive/10 flex h-11 w-full items-center gap-3 rounded-lg px-3 text-[14.5px] font-medium transition-colors"
       >
         <LogOut className="size-5 shrink-0" />

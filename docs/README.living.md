@@ -68,29 +68,17 @@ The application has **four distinct surfaces** with different access models:
 - **Admin** — restricted to users with `systemRole === 'admin'`. Defense-in-depth via middleware + layout checks.
 - **Auth** — sign-in, sign-out, and error pages (the `(auth)/` route group).
 
-Routing uses Next.js route groups with **two per-surface root layouts** (no shared
-`app/layout.tsx`):
+Routing uses Next.js route groups:
 
 ```
 app/
-  (public)/      static root layout — public landing/marketing (CDN-cached)
-  (secure)/      dynamic root layout — locale + theme + session
-    (auth)/      login, logout, error
-    (app)/       authenticated CRM
-    (admin)/     admin-only section
+  (public)/      public landing and marketing
+  (auth)/        login, logout
+  (app)/         authenticated CRM
+  (admin)/       admin-only section
 ```
 
-The `(public)` root is a **static shell**: no `auth()`/`cookies()`/`getLocale()` in its
-render path (English-only, static next-intl provider; theme resolved by a browser
-cookie script). The `(secure)` root keeps the dynamic concerns (locale/messages,
-server-resolved theme, session). A dynamic `<html lang>` for the localized app and a
-statically-cacheable public shell cannot share one root — hence the split (Decision
-#158).
-
-The public header adapts (Login for anonymous, Open CRM / Admin for authenticated
-users) via a **client island** that resolves the session from `/api/auth/session`, so
-the page stays statically prerendered and issues zero DB queries for anonymous
-visitors.
+The public layout reads the auth session to adapt its header (Login for anonymous, Open CRM for authenticated users, Admin link for admins).
 
 ## Tech Stack
 
@@ -657,8 +645,6 @@ Rationale: the "product-first" framing had begun to systematically under-scope f
 > **(4) DB invariant: zone contiguity** (`tariffs_zones_contiguous_check`, migration `0026`, additive) — populated rate zones are contiguous from T1; combined with the metered-XOR-fixed check this makes the tariff zone shape fully DB-enforced (a fixed tariff's `rate_t2`/`rate_t3` are now guaranteed NULL) and the zone count reliably derivable from the non-null rates. Full spec `.claude/instructions/zone-labeling-unification.md`; audit `.claude/instructions/research-zone-labeling-findings.md`.
 
 > **#157 — Bill and Payment gain real read-view pages; detail is page-only; "view" is an explicit action, not a row-click; no per-record payment status.** Before this, `/payments/[id]` redirected to the edit form and `/bills/[id]` did not exist, so notes and the billing period were unreadable, viewers were sent to an edit page, and the service page's "Recent activity" rows looked clickable but led nowhere. New read-view pages (`app/(app)/{bills,payments}/[id]/page.tsx`) render a presentational `BillDetail`/`PaymentDetail` (hero amount + `InfoGrid` + `NotesCard`) inside `PageContainer`; access reuses `billByIdForUser`/`paymentByIdForUser` (Decision #108: missing / soft-deleted / foreign → `notFound`). **(1) Page-only detail — no intercepted detail modal.** The provisional `@modal/(..)payments/[id]` redirect stub is deleted; a soft click on a list "View" lands on the full page. Edit from the detail page navigates to `/{entity}/[id]/edit`, which the existing `@modal` slot intercepts as a modal automatically (the detail page lives under the same layout), so no new intercept route is needed; `editBill`/`editPayment` additionally `revalidatePath` the detail path so it refreshes after a modal edit. **(2) Header actions are role-gated on the server** (`roleAtLeast(role, EDITOR)` → `canMutate` boolean passed to the client component) because `roleAtLeast` lives in the DB-heavy access module and must not be imported into a client bundle (lesson 0009). Owner/editor see Edit + Delete; viewer sees only "Open service". **(3) Row-click navigation was rejected.** Making a `<tr>` navigate via `onClick`/`router.push` is an anti-pattern (not a real link — no keyboard focus, no Cmd/middle-click, breaks text selection) and would push navigation concerns into the shared, domain-agnostic data-table primitive; instead every bills/payments row menu gains an explicit `View` item (real `kind:"link"`), which is accessible and keeps the data-table generic. The service page's "Recent activity" rows — a purpose-built clickable list, not a table — become real `next/link` anchors. **(4) No per-record paid/unpaid status** and no bill↔payment linkage: payment status is aggregate at the service level only (task product decision); the detail pages link out to the service, where balance is defined. Detail delete-confirm i18n was relocated `{bills,payments}.list.delete.confirm` → `{bills,payments}.delete.confirm` (bill/payment-level, now shared by list + detail); `dataTable.rowActions.view` added. Page `<title>` is a static English literal (`"Bill"`/`"Payment"`) — the author rejected a DB-fetching `generateMetadata` for a browser-tab label. Task spec `.claude/instructions/task-bill-payment-detail-pages.md`.
-
-> **#158 — Public landing pages are statically prerendered and CDN-cacheable, with zero DB queries on anonymous requests.** Before this, every anonymous visit rendered the public pages per request and hit the database, so DB compute never suspended (direct cost) and any traffic spike on the landing page translated 1:1 into DB load. Root cause was a chain of dynamic-rendering triggers on the public tree: the shared root layout (`getLocale`/`getMessages`/`cookies`/`auth`), the next-intl `getRequestConfig` (`cookies`), `auth()` in `PublicHeader`, and `auth()` in `TryDemoForm`. Four locked decisions. **(1) Two per-surface root layouts.** The shared `app/layout.tsx` is removed; `(public)` becomes a static root (`<html lang="en">`, static next-intl provider fed `en.json`, next-themes + a browser cookie script) and `(auth)/(app)/(admin)` move under a new `(secure)` group carrying the former root (locale/messages/server theme/session). A dynamic `<html lang>` for the localized app and a static public shell cannot share one root (only a root layout owns `<html>`), which forces the split; authenticated output is unchanged (only the layout file's location moved). PPR/`cacheComponents` was rejected — a global experimental flag, risky app-wide, and it would still need the client islands below for zero anonymous DB. **(2) Auth-conditional UI as client islands.** `usePublicSession` resolves the session from Auth.js's `/api/auth/session` (module-deduped to one request per load); the header actions, mobile menu, and Try-demo visibility read it client-side, so `auth()` leaves the public render path entirely. The unauthenticated view is the static fallback and swaps in after the fetch. Verified DB-free for anonymous: a request with no session cookie issues zero queries at both the page (served from the prerender) and `/api/auth/session`; the DB is touched only when a session cookie is present (a logged-in user's own request), identical to the prior `auth()` behavior. **(3) next-intl RSC provider reads cookies.** next-intl v4's `NextIntlClientProviderServer` awaits `getTimeZone()`/`getConfigNow()`/`getFormats()` even when `locale`/`messages` are passed explicitly — each reads `cookies()` and forces dynamic rendering. Fixed by rendering the **client** `NextIntlClientProvider` from a `"use client"` wrapper (`PublicIntlProvider`), which takes props and makes no server calls. **(4) Invalidation via the existing `revalidatePath`.** No `unstable_cache`/tags: once the pages are static, the `revalidatePath` calls already present in the CMS save actions invalidate them on admin edit (previously inert because the pages were dynamic); `saveGlobalCms` additionally revalidates `/privacy`, `/terms`, `/sitemap.xml`. **Follow-on:** sign-out was changed to clear the session then perform a full-document navigation home (`signOutAndGoHome`) rather than a soft server redirect, so the client auth islands on the static shell re-initialise as logged-out; a same-route soft redirect left them stale. The global `app/not-found.tsx` (unmatched URLs) became a minimal self-contained document without the header (like `global-error.tsx`); the in-group `(public)/not-found.tsx` keeps the header from the static layout. Task spec `.claude/instructions/task-public-routes-caching.md`.
 
 ## Open Questions
 
