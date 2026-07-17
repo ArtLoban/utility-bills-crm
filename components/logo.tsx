@@ -14,7 +14,7 @@ export const Logo = ({ href = ROUTES.home, className }: TProps) => {
       <div className="bg-primary flex size-7 items-center justify-center rounded-sm">
         <Zap className="text-primary-foreground size-4" strokeWidth={1.75} />
       </div>
-      <span className="text-md font-bold">UtilityBills CRM</span>
+      <span className="text-md font-bold">UtilityBills Tracker</span>
     </Link>
   );
 };

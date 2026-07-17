@@ -5,14 +5,14 @@ import { LegalSection } from "../_components/legal-section";
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
-  description: "What data UtilityBills CRM collects, why, and what you can do about it.",
+  description: "What data UtilityBills Tracker collects, why, and what you can do about it.",
 };
 
 export default function PrivacyPage() {
   return (
     <LegalPage title="Privacy Policy" lastUpdated="June 17, 2026">
       <p>
-        UtilityBills CRM (&ldquo;the Service&rdquo;, &ldquo;we&rdquo;) is a personal tool for
+        UtilityBills Tracker (&ldquo;the Service&rdquo;, &ldquo;we&rdquo;) is a personal tool for
         tracking household utility bills. This policy explains what data we collect, why, and what
         you can do about it.
       </p>

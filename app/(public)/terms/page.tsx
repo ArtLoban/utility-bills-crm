@@ -5,21 +5,21 @@ import { LegalSection } from "../_components/legal-section";
 
 export const metadata: Metadata = {
   title: "Terms of Service",
-  description: "The terms that govern your use of UtilityBills CRM.",
+  description: "The terms that govern your use of UtilityBills Tracker.",
 };
 
 export default function TermsPage() {
   return (
     <LegalPage title="Terms of Service" lastUpdated="June 17, 2026">
       <p>
-        These terms govern your use of UtilityBills CRM (&ldquo;the Service&rdquo;). By signing in,
-        you agree to them.
+        These terms govern your use of UtilityBills Tracker (&ldquo;the Service&rdquo;). By signing
+        in, you agree to them.
       </p>
 
       <LegalSection title="What the Service is">
         <p>
-          UtilityBills CRM is a personal, non-commercial tool for tracking household utility bills
-          across one or more properties, intended for personal and small-group use.
+          UtilityBills Tracker is a personal, non-commercial tool for tracking household utility
+          bills across one or more properties, intended for personal and small-group use.
         </p>
       </LegalSection>
 
