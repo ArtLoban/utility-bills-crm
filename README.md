@@ -18,6 +18,7 @@ Built primarily as a senior/architect-level growth playground in frontend engine
 
 - Phases 4–6 complete — architecture, data model, and UI design. See `db/DATA_MODEL.md`, `db/SCHEMA_REFERENCE.md`, `docs/UI_ARCHITECTURE.md`.
 - Phase 7 (build MVP) complete — deployed and live.
+- Beyond the MVP, **Telegram notifications** are shipped and live — user-authored monthly self-reminders delivered as a single daily digest.
 - The only remaining MVP criterion is **real users in active use** — onboarding the first real user (my wife, replacing the paper notebook).
 - Sentry error tracking is integrated (instrumentation-based, PII-scrubbed) — see Tech Stack below.
 
@@ -44,7 +45,8 @@ MVP is defined as a **minimum viable portfolio piece** — a project that demons
 - **Forms:** React Hook Form
 - **Tables:** TanStack Table
 - **Charts:** Recharts (via shadcn/ui Charts)
-- **Notifications:** sonner
+- **In-app toasts:** sonner
+- **Notifications delivery:** Telegram Bot API (daily digest via Vercel Cron)
 - **URL state:** nuqs
 - **Date utilities:** date-fns
 - **i18n:** next-intl (en/uk/ru)
@@ -146,28 +148,22 @@ docs/                   project documentation
 
 ## Roadmap
 
-### v1 (MVP)
+### Shipped
 
-Public landing, authenticated CRM, sharing, admin with CMS, i18n, theming.
+- **v1 (MVP)** — public landing, authenticated CRM, sharing, admin with CMS, i18n, theming.
+- **Telegram notifications** — user-authored monthly recurring self-reminders, one per service (anchored to a day of the month or N days before month-end, plus a required text), delivered as a single daily digest.
 
-### v2 — Extensions
+### Next up
 
-- Email/password authentication alongside Google
-- Telegram notifications — user-authored monthly recurring self-reminders, one per service (anchored to a day of the month or N days before month-end, plus a required text), delivered as a single daily digest
-- Google Drive integration for bill photos and receipts
+- **Google Drive integration** for bill photos and receipts — designed, not yet built.
 
-### v3 — Convenience and analytics
+### Possible future directions
 
-- Custom user-defined services
+No commitment — directions that may or may not happen:
+
 - Data export (CSV / Excel / PDF)
-- Full-text search
-- Device-level session management
-
-### v4+ — Automation
-
-- Email bill parsing
 - Integrations with provider APIs
-- Structured bill components for provider reconciliation
+- Funny Alien 👽
 
 ## License
 
@@ -175,4 +171,4 @@ This project is licensed under the **GNU Affero General Public License v3.0** �
 
 Copyright (C) 2026 Artem Loban
 
-If you'd like to use this code in a closed-source or commercial product, a separate commercial license is available. Reach out at `tymanrock@gmail.com`.
+If you'd like to use this code in a closed-source or commercial product, a separate commercial license is available. Reach out at `utilitybills.crm@gmail.com`.
