@@ -2,6 +2,7 @@ import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SkeletonLine } from "@/components/skeleton-line";
 import { SectionCard } from "@/components/section-card";
+import { SectionCardHeaderSkeleton } from "@/components/section-card-header-skeleton";
 
 const SERVICE_ROW_WIDTHS = [
   { name: "w-28", secondary: "w-40", amount: "w-16" },
@@ -11,12 +12,13 @@ const SERVICE_ROW_WIDTHS = [
 ] as const;
 
 export const ServicesCardSkeleton = () => (
-  <SectionCard
-    className="overflow-hidden"
-    title={<SkeletonLine size="sm" className="w-44" />}
-    description={<SkeletonLine size="xs" className="mt-1 w-40" />}
-    actions={<Skeleton className="h-7 w-28 rounded-md" />}
-  >
+  <SectionCard className="overflow-hidden">
+    <SectionCardHeaderSkeleton
+      titleWidth="w-44"
+      descriptionWidth="w-40"
+      actions={<Skeleton className="h-7 w-28 rounded-md" />}
+    />
+
     {SERVICE_ROW_WIDTHS.map((widths, index) => (
       <div
         key={index}

@@ -2,7 +2,7 @@ import type { ComponentProps, ReactNode } from "react";
 
 import { cn } from "@/lib/utils";
 
-type TProps = Omit<ComponentProps<"section">, "title"> & {
+type TProps = ComponentProps<"section"> & {
   title?: ReactNode;
   description?: ReactNode;
   actions?: ReactNode;
