@@ -4,7 +4,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 import { PropertyCardSkeleton } from "./components/property-card-skeleton";
 
-const SKELETON_CARD_COUNT = 6;
+const SKELETON_CARD_COUNT = 3;
 
 export const PropertiesSkeleton = () => {
   return (
