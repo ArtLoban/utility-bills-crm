@@ -5,10 +5,7 @@ import { Surface } from "@/components/surface";
 const ATTENTION_ITEM_WIDTHS = ["w-48", "w-96"] as const;
 
 export const AttentionBlockSkeleton = () => (
-  <Surface
-    elevation="sm"
-    className="border-l-warning flex flex-col gap-3 border-l-4 px-4 py-5 shadow-xs md:px-6"
-  >
+  <Surface elevation="sm" className="flex flex-col gap-3 border-l-4 px-4 py-5 shadow-xs md:px-6">
     <div className="flex items-center gap-2.5">
       <Skeleton className="size-4.5 shrink-0 rounded" />
       <SkeletonLine size="sm" className="w-32" />
